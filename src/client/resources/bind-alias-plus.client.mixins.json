@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.github.prohect.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "KeyboardInputMixin",
+    "KeyBoardMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+	}
+}
