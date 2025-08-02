@@ -19,10 +19,10 @@ public class KeyBoardMixin {
             //switch action because 0 -> release 1 -> down 2 -> pressing, and 2 is triggered constantly
             switch (action) {
                 case 0:
-                    BindAliasPlusClient.keyQueue.add(new KeyPressed(keyFromCode, false));
+                    BindAliasPlusClient.KEY_QUEUE.add(new KeyPressed(keyFromCode, false));
                     break;
                 case 1:
-                    BindAliasPlusClient.keyQueue.add(new KeyPressed(keyFromCode, true));
+                    BindAliasPlusClient.KEY_QUEUE.add(new KeyPressed(keyFromCode, true));
                     break;
             }
         }

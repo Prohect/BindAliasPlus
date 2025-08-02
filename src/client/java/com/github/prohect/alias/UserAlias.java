@@ -6,9 +6,15 @@ import java.util.ArrayList;
  * a userAlias could not have args
  */
 public class UserAlias implements AliasWithoutArgs {
-    ArrayList<AliasWithArgsRecord> aliases = new ArrayList<>();
+    ArrayList<AliasWithArgsRecord> aliases;
+    final String args;
 
     public UserAlias(String args) {
+        this.args = args;
+    }
+
+    private void decodeArgs2Alias(String args) {
+        aliases = new ArrayList<>();
         String[] strings = args.split("\\|");
         for (String string : strings) {
             String[] splits = string.split("\\\\");
@@ -58,6 +64,7 @@ public class UserAlias implements AliasWithoutArgs {
      */
     @Override
     public void run(String args) {
+        decodeArgs2Alias(this.args);
         for (AliasWithArgsRecord aliasRecord : aliases) {
             Alias alias = aliasRecord.alias();
             if (alias instanceof UserAlias userAlias) {
@@ -69,6 +76,7 @@ public class UserAlias implements AliasWithoutArgs {
     }
 
     public void runInternal(String args, Alias originUserAlias) {
+        decodeArgs2Alias(this.args);
         for (AliasWithArgsRecord aliasRecord : aliases) {
             Alias alias = aliasRecord.alias();
             if (alias instanceof UserAlias userAlias) {
