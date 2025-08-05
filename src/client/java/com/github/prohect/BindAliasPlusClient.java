@@ -3,8 +3,7 @@ package com.github.prohect;
 import com.github.prohect.alias.AliasWithoutArgs;
 import com.github.prohect.alias.Aliases;
 import com.github.prohect.alias.UserAlias;
-import com.github.prohect.alias.builtinAlias.HelloWorldAlias;
-import com.github.prohect.alias.builtinAlias.LogAlias;
+import com.github.prohect.alias.builtinAlias.*;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -104,8 +103,15 @@ public class BindAliasPlusClient implements ClientModInitializer {
 
         //load builtin aliasesWithArgs
         Aliases.aliasesWithArgs.put("log", new LogAlias());
+        Aliases.aliasesWithArgs.put("builtinAttack", new AttackAlias());
+        Aliases.aliasesWithArgs.put("slot", new SlotAlias());
+        Aliases.aliasesWithArgs.put("builtinUse", new UseAlias());
         //load builtin aliasesWithoutArgs
         Aliases.aliasesWithoutArgs.put("helloWorld", new HelloWorldAlias());
+        Aliases.aliasesWithoutArgs.put("+attack", new UserAlias("builtinAttack\\\\1"));
+        Aliases.aliasesWithoutArgs.put("-attack", new UserAlias("builtinAttack\\\\0"));
+        Aliases.aliasesWithoutArgs.put("+use", new UserAlias("builtinUse\\\\1"));
+        Aliases.aliasesWithoutArgs.put("-use", new UserAlias("builtinUse\\\\0"));
 
 
         //load user alias defined by user, would be ... like read a json file locally and cast them into aliases

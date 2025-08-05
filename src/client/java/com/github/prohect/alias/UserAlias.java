@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * a userAlias could not have args
  */
-public class UserAlias implements AliasWithoutArgs {
+public final class UserAlias implements AliasWithoutArgs {
     ArrayList<AliasWithArgsRecord> aliases;
     final String args;
 
