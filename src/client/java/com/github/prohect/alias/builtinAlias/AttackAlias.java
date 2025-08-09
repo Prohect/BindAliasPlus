@@ -20,7 +20,7 @@ public class AttackAlias extends BuiltinAliasWithArgs {
                 flag = true;
                 break;
             default:
-                BindAliasPlusClient.LOGGER.warn("Invalid arguments");
+                BindAliasPlusClient.LOGGER.warn("[Attack]Invalid arguments");
                 break;
         }
         KeyBinding attackKey = MinecraftClient.getInstance().options.attackKey;

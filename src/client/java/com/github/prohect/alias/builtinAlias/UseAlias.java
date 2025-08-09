@@ -16,7 +16,7 @@ public class UseAlias extends BuiltinAliasWithArgs {
                 flag = true;
                 break;
             default:
-                BindAliasPlusClient.LOGGER.warn("Invalid arguments");
+                BindAliasPlusClient.LOGGER.warn("[Use]Invalid arguments");
                 break;
         }
         KeyBinding attackKey = MinecraftClient.getInstance().options.useKey;

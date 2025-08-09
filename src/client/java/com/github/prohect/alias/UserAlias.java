@@ -1,5 +1,7 @@
 package com.github.prohect.alias;
 
+import com.github.prohect.BindAliasPlusClient;
+
 import java.util.ArrayList;
 
 /**
@@ -34,24 +36,32 @@ public final class UserAlias implements AliasWithoutArgs {
                     AliasWithoutArgs aliasWithoutArgs = Aliases.aliasesWithoutArgs.get(aliasName);
                     if (aliasWithoutArgs != null)
                         aliases.add(new AliasWithArgsRecord(aliasWithoutArgs, ""));
+                    else BindAliasPlusClient.LOGGER.error("Alias with name {} not found.", aliasName);
                     break;
-                case 2:
+                default:
                     String aliasName2 = "";
-                    String args2 = "";
+                    StringBuilder args2 = new StringBuilder();
                     boolean flag = false;
+                    boolean flag1 = false;
                     for (String split : splits) {
                         if (!split.isBlank()) {
                             if (!flag) {
                                 aliasName2 = split.trim();
                                 flag = true;
                             } else {
-                                args2 = split.trim();
+                                if (!flag1) {
+                                    args2.append(split.trim());
+                                    flag1 = true;
+                                } else {
+                                    args2.append("\\").append(split.trim());
+                                }
                             }
                         }
                     }
                     AliasWithArgs aliasWithArgs = Aliases.aliasesWithArgs.get(aliasName2);
                     if (aliasWithArgs != null)
-                        aliases.add(new AliasWithArgsRecord(aliasWithArgs, args2));
+                        aliases.add(new AliasWithArgsRecord(aliasWithArgs, args2.toString()));
+                    else BindAliasPlusClient.LOGGER.error("Alias  with name {} not found.", aliasName2);
                     break;
             }
         }
