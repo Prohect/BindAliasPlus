@@ -5,6 +5,7 @@ import com.github.prohect.alias.Aliases;
 import com.github.prohect.alias.UserAlias;
 import com.github.prohect.alias.builtinAlias.*;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.minecraft.client.util.InputUtil;
@@ -32,70 +33,44 @@ public class BindAliasPlusClient implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             dispatcher.register(literal("alias")
                     .then(argument("name", StringArgumentType.word())
-                            .then(argument("aliasName", StringArgumentType.word())
+                            .then(argument("definition", StringArgumentType.greedyString())
                                     .suggests((context, builder) -> {
-                                        Aliases.aliasesWithoutArgs.keySet().forEach(builder::suggest);
-                                        Aliases.aliasesWithArgs.keySet().forEach(builder::suggest);
-                                        return builder.buildFuture();
-                                    })
-                                    .then(argument("extra definition", StringArgumentType.greedyString())
-                                            .suggests((context, builder) -> {
-                                                String soFar = builder.getRemaining();
-                                                int a = soFar.lastIndexOf("\\");
-                                                int n = soFar.lastIndexOf("|");
-                                                if (n < a || n == -1) return builder.buildFuture();
-                                                String currentToken = soFar.substring(n + 1);
+                                        String soFar = builder.getRemaining();
+                                        if (soFar.isBlank()) {
+                                            SuggestionsBuilder finalBuilder = builder;
+                                            Aliases.aliasesWithoutArgs.forEach((name, alias) -> {
+                                                finalBuilder.suggest(name);
+                                            });
+                                            Aliases.aliasesWithArgs.forEach((name, alias) -> {
+                                                finalBuilder.suggest(name);
+                                            });
+                                            return builder.buildFuture();
+                                        }
+                                        int a = soFar.lastIndexOf("\\");
+                                        int n = soFar.lastIndexOf("|");
+                                        if (n < a /* it's under an arg's definition, don't need to provide alias name suggests*/)
+                                            return builder.buildFuture();
+                                        String currentToken = soFar.substring(n + 1);
 
-                                                builder = builder.createOffset(builder.getStart() + n + 1);
+                                        builder = builder.createOffset(builder.getStart() + n + 1);
 
-                                                com.mojang.brigadier.suggestion.SuggestionsBuilder finalBuilder = builder;
-                                                Aliases.aliasesWithoutArgs.keySet().forEach(alias -> {
-                                                    if (alias.startsWith(currentToken)) {
-                                                        finalBuilder.suggest(alias, Text.literal("alias without args"));
-                                                    }
-                                                });
-                                                Aliases.aliasesWithArgs.keySet().forEach(alias -> {
-                                                    if (alias.startsWith(currentToken)) {
-                                                        finalBuilder.suggest(alias, Text.literal("alias with args"));
-                                                    }
-                                                });
+                                        SuggestionsBuilder finalBuilder = builder;
+                                        Aliases.aliasesWithoutArgs.keySet().forEach(alias -> {
+                                            if (alias.startsWith(currentToken)) {
+                                                finalBuilder.suggest(alias, Text.literal("alias without args"));
+                                            }
+                                        });
+                                        Aliases.aliasesWithArgs.keySet().forEach(alias -> {
+                                            if (alias.startsWith(currentToken)) {
+                                                finalBuilder.suggest(alias, Text.literal("alias with args"));
+                                            }
+                                        });
 
-                                                return builder.buildFuture();
-                                            })
-                                            .executes(context -> {
-                                                String name = StringArgumentType.getString(context, "name");
-                                                String aliasName = StringArgumentType.getString(context, "aliasName");
-                                                String def = StringArgumentType.getString(context, "extra definition");
-
-                                                if (Aliases.aliasesWithArgs.containsKey(name)) {
-                                                    context.getSource().sendFeedback(Text.literal("Can't replace builtinAlias " + name));
-                                                    return 0;
-                                                }
-
-                                                AliasWithoutArgs aliasWithoutArgs = Aliases.aliasesWithoutArgs.get(name);
-                                                if (aliasWithoutArgs != null && !(aliasWithoutArgs instanceof UserAlias)) {
-                                                    context.getSource().sendFeedback(Text.literal("Can't replace builtinAlias " + name));
-                                                    return 0;
-                                                }
-
-                                                Aliases.aliasesWithoutArgs.put(name, new UserAlias(aliasName + "\\" + def));
-
-                                                context.getSource().sendFeedback(Text.literal("Alias " + name + " = " + aliasName + def));
-                                                return 1;
-                                            })))));
-        });
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-            dispatcher.register(literal("alias")
-                    .then(argument("name", StringArgumentType.word())
-                            .then(argument("aliasName", StringArgumentType.word())
-                                    .suggests((context, builder) -> {
-                                        Aliases.aliasesWithoutArgs.keySet().forEach(builder::suggest);
-                                        Aliases.aliasesWithArgs.keySet().forEach(builder::suggest);
                                         return builder.buildFuture();
                                     })
                                     .executes(context -> {
                                         String name = StringArgumentType.getString(context, "name");
-                                        String aliasName = StringArgumentType.getString(context, "aliasName");
+                                        String def = StringArgumentType.getString(context, "definition");
 
                                         if (Aliases.aliasesWithArgs.containsKey(name)) {
                                             context.getSource().sendFeedback(Text.literal("Can't replace builtinAlias " + name));
@@ -108,9 +83,9 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                             return 0;
                                         }
 
-                                        Aliases.aliasesWithoutArgs.put(name, new UserAlias(aliasName));
+                                        Aliases.aliasesWithoutArgs.put(name, new UserAlias(def));
 
-                                        context.getSource().sendFeedback(Text.literal("Alias " + name + " = " + aliasName));
+                                        context.getSource().sendFeedback(Text.literal("Alias " + name + " = " + def));
                                         return 1;
                                     }))));
         });
@@ -170,33 +145,58 @@ public class BindAliasPlusClient implements ClientModInitializer {
 
         //load builtin aliasesWithArgs
         Aliases.aliasesWithArgs.put("log", new LogAlias());
-        Aliases.aliasesWithArgs.put("builtinAttack", new AttackAlias());
         Aliases.aliasesWithArgs.put("slot", new SlotAlias());
+        Aliases.aliasesWithArgs.put("swapSlot", new SwapSlotAlias());
+        Aliases.aliasesWithArgs.put("builtinAttack", new AttackAlias());
         Aliases.aliasesWithArgs.put("builtinUse", new UseAlias());
-        Aliases.aliasesWithArgs.put("switchSlot", new SwitchSlotAlias());
+        Aliases.aliasesWithArgs.put("builtinForward", new ForwardAlias());
+        Aliases.aliasesWithArgs.put("builtinBack", new BackAlias());
+        Aliases.aliasesWithArgs.put("builtinLeft", new LeftAlias());
+        Aliases.aliasesWithArgs.put("builtinRight", new RightAlias());
+        Aliases.aliasesWithArgs.put("builtinJump", new JumpAlias());
+        Aliases.aliasesWithArgs.put("builtinSneak", new SneakAlias());
+        Aliases.aliasesWithArgs.put("builtinSprint", new SprintAlias());
+        Aliases.aliasesWithArgs.put("builtinDrop", new DropAlias());
+        Aliases.aliasesWithArgs.put("wait", new WaitAlias());
         //load builtin aliasesWithoutArgs
-        Aliases.aliasesWithoutArgs.put("helloWorld", new HelloWorldAlias());
         Aliases.aliasesWithoutArgs.put("swapHand", new SwapHandAlias());
-        Aliases.aliasesWithoutArgs.put("+attack", new UserAlias("builtinAttack\\\\1"));
-        Aliases.aliasesWithoutArgs.put("-attack", new UserAlias("builtinAttack\\\\0"));
-        Aliases.aliasesWithoutArgs.put("+use", new UserAlias("builtinUse\\\\1"));
-        Aliases.aliasesWithoutArgs.put("-use", new UserAlias("builtinUse\\\\0"));
+        Aliases.aliasesWithoutArgs.put("+attack", new UserAlias("builtinAttack\\1"));
+        Aliases.aliasesWithoutArgs.put("-attack", new UserAlias("builtinAttack\\0"));
+        Aliases.aliasesWithoutArgs.put("+use", new UserAlias("builtinUse\\1"));
+        Aliases.aliasesWithoutArgs.put("-use", new UserAlias("builtinUse\\0"));
+        Aliases.aliasesWithoutArgs.put("+forward", new UserAlias("builtinForward\\1"));
+        Aliases.aliasesWithoutArgs.put("-forward", new UserAlias("builtinForward\\0"));
+        Aliases.aliasesWithoutArgs.put("+back", new UserAlias("builtinBack\\1"));
+        Aliases.aliasesWithoutArgs.put("-back", new UserAlias("builtinBack\\0"));
+        Aliases.aliasesWithoutArgs.put("+left", new UserAlias("builtinLeft\\1"));
+        Aliases.aliasesWithoutArgs.put("-left", new UserAlias("builtinLeft\\0"));
+        Aliases.aliasesWithoutArgs.put("+right", new UserAlias("builtinRight\\1"));
+        Aliases.aliasesWithoutArgs.put("-right", new UserAlias("builtinRight\\0"));
+        Aliases.aliasesWithoutArgs.put("+jump", new UserAlias("builtinJump\\1"));
+        Aliases.aliasesWithoutArgs.put("-jump", new UserAlias("builtinJump\\0"));
+        Aliases.aliasesWithoutArgs.put("+sneak", new UserAlias("builtinSneak\\1"));
+        Aliases.aliasesWithoutArgs.put("-sneak", new UserAlias("builtinSneak\\0"));
+        Aliases.aliasesWithoutArgs.put("+sprint", new UserAlias("builtinSprint\\1"));
+        Aliases.aliasesWithoutArgs.put("-sprint", new UserAlias("builtinSprint\\0"));
+        Aliases.aliasesWithoutArgs.put("drop", new UserAlias("builtinDrop\\0"));
+        Aliases.aliasesWithoutArgs.put("dropStack", new UserAlias("builtinDrop\\1"));
 
+        //put your elytra in slot 10 ( the first slot of the first row of your inventory, then you can do this
+        ///alias equipElytra swapSlot\10\39
+        ///alias +fly equipElytra|jump|wait\1|jump|slot\9|+use|wait\1|-use
+        ///alias -fly equipElytra
+        ///bind mouse5 +fly
 
-        //load user alias defined by user, would be ... like read a json file locally and cast them into aliases
-        /*
-        Aliases.aliasesWithoutArgs.put("+kpw", new UserAlias("log\\\\ on key w pressed\\|helloWorld"));
-        Aliases.aliasesWithoutArgs.put("-kpw", new UserAlias("log\\\\ on key w released"));
-        Aliases.aliasesWithoutArgs.put("-kps", new UserAlias("log\\\\ on key s released"));*/
-
-        //register keybinds
-        /*
-        BINDING_PLUS.put(InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_W), new KeyBindingPlus("+kpw", "-kpw"));
-        BINDING_PLUS.put(InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_S), new KeyBindingPlus("helloWorld", "-kps"));*/
     }
 
     private InputUtil.Key parseKey(String name) {
-        InputUtil.Key key = InputUtil.fromTranslationKey("key.keyboard." + name.toLowerCase());
+        InputUtil.Key key = null;
+        try {
+            key = InputUtil.fromTranslationKey("key.keyboard." + name.toLowerCase());
+        } catch (Exception e) {
+            BindAliasPlusClient.LOGGER.error(e.getMessage());
+        }
+
         if (key == null) {
             if (name.toLowerCase().startsWith("mouse")) {
                 try {

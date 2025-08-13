@@ -1,4 +1,4 @@
 package com.github.prohect.alias;
 
-public interface AliasWithoutArgs extends  Alias {
+public interface AliasWithoutArgs extends Alias {
 }

@@ -35,7 +35,7 @@ public class SlotAlias extends BuiltinAliasWithArgs {
                 BindAliasPlusClient.LOGGER.warn("[Slot]Inventory is null");
                 return;
             }
-            inventory.setSelectedSlot(i);
+            inventory.setSelectedSlot(i-1);
             try {
                 minecraftClient.getNetworkHandler().sendPacket(new UpdateSelectedSlotC2SPacket(i - 1));
             } catch (Exception e) {

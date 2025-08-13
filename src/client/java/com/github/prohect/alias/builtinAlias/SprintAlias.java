@@ -4,15 +4,12 @@ import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 
-public class AttackAlias extends BuiltinAliasWithBooleanArgs {
-
-
+public class SprintAlias extends BuiltinAliasWithBooleanArgs {
     @Override
     public void run(String args) {
         parseArgs(args);
-        KeyBinding attackKey = MinecraftClient.getInstance().options.attackKey;
-        attackKey.setPressed(flag);
-        if (flag) KeyBinding.onKeyPressed(attackKey.boundKey);
+        KeyBinding sprintKey = MinecraftClient.getInstance().options.sprintKey;
+        sprintKey.setPressed(flag);
+        if (flag) KeyBinding.onKeyPressed(sprintKey.boundKey);
     }
-
 }

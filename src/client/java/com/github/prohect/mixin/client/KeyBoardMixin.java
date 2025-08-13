@@ -16,19 +16,19 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 
-//TODO:add MouseMixin
+@SuppressWarnings("DuplicatedCode")
 @Mixin(Keyboard.class)
 public class KeyBoardMixin {
     @Inject(at = @At("HEAD"), method = "onKey")
     private void onKey(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci) {
+        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        if (window != minecraftClient.getWindow().getHandle()) return;
 //        BindAliasPlusClient.LOGGER.info("{}: {}", key, action);
         InputUtil.Key keyFromCode = InputUtil.Type.KEYSYM.createFromCode(key);
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
         if (minecraftClient.player != null) {
             Screen sc = minecraftClient.currentScreen;
-            if (sc instanceof ChatScreen || sc instanceof CommandBlockScreen || sc instanceof SignEditScreen || sc instanceof BookEditScreen) {
+            if (sc instanceof ChatScreen || sc instanceof CommandBlockScreen || sc instanceof SignEditScreen || sc instanceof BookEditScreen)
                 return;
-            }
         }
         if (BindAliasPlusClient.BINDING_PLUS.containsKey(keyFromCode)) {
             //switch action because 0 -> release 1 -> down 2 -> pressing, and 2 is triggered constantly

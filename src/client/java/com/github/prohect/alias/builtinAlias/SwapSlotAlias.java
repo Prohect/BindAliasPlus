@@ -18,10 +18,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 
-public class SwitchSlotAlias extends BuiltinAliasWithArgs {
+public class SwapSlotAlias extends BuiltinAliasWithArgs {
 
     /**
-     * @param args pattern: slot1 slot2, spilt by white space, 0 means the second hand, 1-9 means hotbarSlots
+     * @param args pattern: slot1 slot2, spilt by white space,
+     *             0 means the second hand,
+     *             1-9 means hotbarSlots,
+     *             10-36 means slots inside inventory,
+     *             37-40 means equipments, 37 is feet, 40 means head
      */
     @Override
     public void run(String args) {
@@ -35,7 +39,7 @@ public class SwitchSlotAlias extends BuiltinAliasWithArgs {
             slots[0] = Integer.parseInt(strings[0]);
             slots[1] = Integer.parseInt(strings[1]);
 
-            if (slots[0] < 0 || slots[1] < 0 || slots[0] > 36 || slots[1] > 36 || slots[0] == slots[1]) {
+            if (slots[0] < 0 || slots[1] < 0 || slots[0] > 40 || slots[1] > 40 || slots[0] == slots[1]) {
                 BindAliasPlusClient.LOGGER.warn("[SwitchSlot]Invalid arguments: slot index out of bounds");
                 return;
             }
