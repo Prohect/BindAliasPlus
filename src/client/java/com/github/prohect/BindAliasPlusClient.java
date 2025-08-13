@@ -182,10 +182,11 @@ public class BindAliasPlusClient implements ClientModInitializer {
         Aliases.aliasesWithoutArgs.put("dropStack", new UserAlias("builtinDrop\\1"));
 
         //put your elytra in slot 10 ( the first slot of the first row of your inventory, then you can do this
-        ///alias equipElytra swapSlot\10\39
-        ///alias +fly equipElytra|jump|wait\1|jump|slot\9|+use|wait\1|-use
-        ///alias -fly equipElytra
-        ///bind mouse5 +fly
+        // /alias equipElytra swapSlot\10\39
+        // /alias jump +jump|wait\1|-jump
+        // /alias +fly equipElytra|jump|wait\1|jump|slot\9|+use|wait\1|-use
+        // /alias -fly equipElytra
+        // /bind mouse5 +fly
 
     }
 
