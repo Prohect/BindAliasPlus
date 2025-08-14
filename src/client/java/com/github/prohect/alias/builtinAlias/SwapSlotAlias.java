@@ -30,20 +30,26 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs {
     @Override
     public void run(String args) {
         String[] strings = args.split("\\\\");
-        if (strings.length != 2) {
-            BindAliasPlusClient.LOGGER.warn("[SwitchSlot]Invalid arguments:args pattern not expected");
-            return;
-        }
         int[] slots = new int[2];
-        try {
+        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        if (strings.length != 2) {
+            if (strings.length == 1) {
+                slots[0] = Integer.parseInt(strings[0]);
+                assert minecraftClient.player != null;
+                slots[1] = minecraftClient.player.getInventory().getSelectedSlot();
+            } else {
+                BindAliasPlusClient.LOGGER.warn("[SwitchSlot]Invalid arguments:args pattern not expected");
+                return;
+            }
+        } else {
             slots[0] = Integer.parseInt(strings[0]);
             slots[1] = Integer.parseInt(strings[1]);
-
+        }
+        try {
             if (slots[0] < 0 || slots[1] < 0 || slots[0] > 40 || slots[1] > 40 || slots[0] == slots[1]) {
                 BindAliasPlusClient.LOGGER.warn("[SwitchSlot]Invalid arguments: slot index out of bounds");
                 return;
             }
-            MinecraftClient minecraftClient = MinecraftClient.getInstance();
 
             ClientPlayNetworkHandler networkHandler = minecraftClient.getNetworkHandler();
 
