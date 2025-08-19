@@ -21,7 +21,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs {
 
     /**
      * @param args args typed by user.
-     *             pattern: slot1 slot2, spilt by white space,
+     *             pattern: slot1 slot2, or slot1, spilt by white space,
      *             1-9 means hotbarSlots,
      *             10-36 means slots inside inventory,
      *             37-40 means equipments, 37 is feet, 40 is head
