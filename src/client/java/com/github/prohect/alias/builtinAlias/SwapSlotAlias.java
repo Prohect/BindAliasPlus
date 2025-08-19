@@ -16,110 +16,139 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import org.jetbrains.annotations.Nullable;
 
 public class SwapSlotAlias extends BuiltinAliasWithArgs {
 
     /**
      * @param args pattern: slot1 slot2, spilt by white space,
-     *             0 means the second hand,
      *             1-9 means hotbarSlots,
      *             10-36 means slots inside inventory,
-     *             37-40 means equipments, 37 is feet, 40 means head
+     *             37-offhand means equipments, 37 is feet, offhand is head
+     *             41 means the second hand,
      */
     @Override
     public void run(String args) {
-        String[] strings = args.split("\\\\");
-        int[] slots = new int[2];
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        if (strings.length != 2) {
-            if (strings.length == 1) {
-                slots[0] = Integer.parseInt(strings[0]);
-                assert minecraftClient.player != null;
-                slots[1] = minecraftClient.player.getInventory().getSelectedSlot();
+        ClientPlayerEntity player = minecraftClient.player;
+        if (player == null) {
+            BindAliasPlusClient.LOGGER.warn("[switchSlot]Player is null");
+            return;
+        }
+        PlayerInventory inventory = player.getInventory();
+        if (inventory == null) {
+            BindAliasPlusClient.LOGGER.warn("[switchSlot]Inventory is null");
+            return;
+        }
+        int selectedSlot = inventory.getSelectedSlot();
+        ClientPlayNetworkHandler networkHandler = minecraftClient.getNetworkHandler();
+        if (networkHandler == null) {
+            BindAliasPlusClient.LOGGER.warn("[SwitchSlot]network handler is null");
+            return;
+        }
+
+        String[] strings = args.split("\\\\");
+        int[] slots = new int[]{0, selectedSlot};
+        try {
+            if (strings.length == 1) slots[0] = Integer.parseInt(strings[0]) - 1;
+            else if (strings.length == 2) {
+                slots[0] = Integer.parseInt(strings[0]) - 1;
+                slots[1] = Integer.parseInt(strings[1]) - 1;
             } else {
                 BindAliasPlusClient.LOGGER.warn("[SwitchSlot]Invalid arguments:args pattern not expected");
                 return;
             }
-        } else {
-            slots[0] = Integer.parseInt(strings[0]);
-            slots[1] = Integer.parseInt(strings[1]);
-        }
-        try {
-            if (slots[0] < 0 || slots[1] < 0 || slots[0] > 40 || slots[1] > 40 || slots[0] == slots[1]) {
-                BindAliasPlusClient.LOGGER.warn("[SwitchSlot]Invalid arguments: slot index out of bounds");
-                return;
-            }
-
-            ClientPlayNetworkHandler networkHandler = minecraftClient.getNetworkHandler();
-
-            if (networkHandler == null) {
-                BindAliasPlusClient.LOGGER.warn("[SwitchSlot]network handler is null");
-                return;
-            }
-
-            ClientPlayerEntity player = minecraftClient.player;
-            if (player == null) {
-                BindAliasPlusClient.LOGGER.warn("[switchSlot]Player is null");
-                return;
-            }
-            PlayerInventory inventory = player.getInventory();
-            if (inventory == null) {
-                BindAliasPlusClient.LOGGER.warn("[switchSlot]Inventory is null");
-                return;
-            }
-
-            int selectedSlot = player.getInventory().getSelectedSlot();
-            Screen currentScreen = minecraftClient.currentScreen;
-            boolean creativeInventory = currentScreen instanceof CreativeInventoryScreen;
-            boolean inInventory = currentScreen instanceof InventoryScreen || creativeInventory;
-            if (creativeInventory) {
-                currentScreen.close();
-            }
-            InventoryScreen inventoryScreen = inInventory ? creativeInventory ? new InventoryScreen(player) : (InventoryScreen) currentScreen : new InventoryScreen(player);
-            if (!inInventory) minecraftClient.setScreen(inventoryScreen);
-            if (creativeInventory) minecraftClient.setScreen(inventoryScreen);
-            try {
-                if (slots[0] <= 9 && slots[1] <= 9) {
-                    if (slots[0] == 0) {
-                        networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(slots[1] - 1));
-                        networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN));
-                    } else if (slots[1] == 0) {
-                        networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(slots[0] - 1));
-                        networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN));
-                    } else {
-                        networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(slots[0] - 1));
-                        networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN));
-                        networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(slots[1] - 1));
-                        networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN));
-                        networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(slots[0] - 1));
-                        networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN));
-                    }
-                } else {
-                    ClientPlayerInteractionManager interactionManager = minecraftClient.interactionManager;
-                    if (slots[0] == 0) {
-                        interactionManager.clickSlot(inventoryScreen.handler.syncId, getSlot(inventoryScreen, slots[1] - 1).id, 40, SlotActionType.SWAP, player);
-                    } else if (slots[1] == 0) {
-                        interactionManager.clickSlot(inventoryScreen.handler.syncId, getSlot(inventoryScreen, slots[0] - 1).id, 40, SlotActionType.SWAP, player);
-                    } else {
-                        interactionManager.clickSlot(inventoryScreen.handler.syncId, getSlot(inventoryScreen, slots[0] - 1).id, 40, SlotActionType.SWAP, player);
-                        interactionManager.clickSlot(inventoryScreen.handler.syncId, getSlot(inventoryScreen, slots[1] - 1).id, 40, SlotActionType.SWAP, player);
-                        interactionManager.clickSlot(inventoryScreen.handler.syncId, getSlot(inventoryScreen, slots[0] - 1).id, 40, SlotActionType.SWAP, player);
-                    }
-                }
-                networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(selectedSlot - 1));
-            } catch (Exception e) {
-                BindAliasPlusClient.LOGGER.error("[SwitchSlot]Failed to update selected slot.", e);
-            } finally {
-                if (!inInventory) inventoryScreen.close();
-            }
-
         } catch (NumberFormatException e) {
             BindAliasPlusClient.LOGGER.warn("[SwitchSlot]Invalid arguments: cant parse number");
+            return;
         }
+
+        if (slots[0] < 0 || slots[1] < 0 || slots[0] > 40 || slots[1] > 40 || slots[0] == slots[1]) {
+            BindAliasPlusClient.LOGGER.warn("[SwitchSlot]Invalid arguments: slot index out of bounds, or slot index1 equals to slot index2");
+            return;
+        }
+
+        Screen currentScreen = minecraftClient.currentScreen;
+        boolean creativeInventory = currentScreen instanceof CreativeInventoryScreen;
+        boolean inInventory = currentScreen instanceof InventoryScreen || creativeInventory;
+        if (creativeInventory) currentScreen.close();
+
+        try {
+            final int offhand = 40;
+            boolean slot0IsOffhand = slots[0] == offhand;
+            boolean hasOffHand = slots[1] == offhand || slot0IsOffhand;
+            int ratherOffhand = slot0IsOffhand ? slots[1] : slots[0];
+
+            boolean slot0IsHotbar = slots[0] < 9;
+            boolean hasHotbar = slots[1] < 9 || slot0IsHotbar;
+            int hotbar = slot0IsHotbar ? slots[0] : slots[1];
+            int ratherHotbar = slot0IsHotbar ? slots[1] : slots[0];
+
+            boolean insideHotbarsAndOffHand = (slot0IsHotbar || slot0IsOffhand) && (slots[1] < 9 || slots[1] == offhand);
+            if (insideHotbarsAndOffHand) {
+                if (hasOffHand) {
+                    swapSlotOffhand(networkHandler, ratherOffhand);
+                } else {
+                    swapSlotOffhand(networkHandler, slots[0]);
+                    swapSlotOffhand(networkHandler, slots[1]);
+                    swapSlotOffhand(networkHandler, slots[0]);
+                }
+                networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(selectedSlot));
+            } else {
+                InventoryScreen inventoryScreen = inInventory ? creativeInventory ? new InventoryScreen(player) : (InventoryScreen) currentScreen : new InventoryScreen(player);
+                if (!inInventory) minecraftClient.setScreen(inventoryScreen);
+                if (creativeInventory) minecraftClient.setScreen(inventoryScreen);
+                try {
+                    ClientPlayerInteractionManager interactionManager = minecraftClient.interactionManager;
+                    if (interactionManager != null) {
+
+                        if (hasOffHand) {
+                            Slot slotRatherOffhand = getSlot(inventoryScreen, ratherOffhand);
+                            if (slotRatherOffhand != null)
+                                clickSlot(interactionManager, inventoryScreen, slotRatherOffhand, offhand, player);
+                            else BindAliasPlusClient.LOGGER.warn("[switchSlot]Slot {} is null", ratherOffhand);
+                        } else if (hasHotbar) {
+                            Slot slotRatherHotbar = getSlot(inventoryScreen, ratherHotbar);
+                            if (slotRatherHotbar != null)
+                                clickSlot(interactionManager, inventoryScreen, slotRatherHotbar, hotbar, player);
+                            else BindAliasPlusClient.LOGGER.warn("[switchSlot]Slot {} is nul", ratherHotbar);
+                        } else {
+                            Slot slot0 = getSlot(inventoryScreen, slots[0]);
+                            Slot slot1 = getSlot(inventoryScreen, slots[1]);
+                            if (slot0 != null) {
+                                if (slot1 != null) {
+                                    clickSlot(interactionManager, inventoryScreen, slot0, offhand, player);
+                                    clickSlot(interactionManager, inventoryScreen, slot1, offhand, player);
+                                    clickSlot(interactionManager, inventoryScreen, slot0, offhand, player);
+                                } else BindAliasPlusClient.LOGGER.warn("[SwitchSlot]slot1 {} is null", slots[1]);
+                            } else BindAliasPlusClient.LOGGER.warn("[SwitchSlot]slot0 {} is null", slots[0]);
+                        }
+                    } else BindAliasPlusClient.LOGGER.warn("[SwitchSlot]interactionManager is null");
+                } finally {
+                    if (!inInventory) inventoryScreen.close();
+                }
+            }
+        } catch (Exception e) {
+            BindAliasPlusClient.LOGGER.error("[SwitchSlot]Failed to swap slots.", e);
+        }
+
+
     }
 
-    private static @Nullable Slot getSlot(InventoryScreen inventoryScreen, int index) {
+    /**
+     * @param slot   the slot of an inventory of a screen, chest inventory or player inventory for example
+     * @param button could be 0,1,...,8 which means hotbars, or offhand which means hasOffHand, would be used to get a certain slot object via playerInventory.getStack(button)
+     *               <p>value range check inside
+     */
+    private static void clickSlot(ClientPlayerInteractionManager interactionManager, InventoryScreen inventoryScreen, Slot slot, int button, ClientPlayerEntity player) {
+        interactionManager.clickSlot(inventoryScreen.handler.syncId, slot.id, button, SlotActionType.SWAP, player);
+    }
+
+    private static void swapSlotOffhand(ClientPlayNetworkHandler networkHandler, int ratherOffhand) {
+        networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(ratherOffhand));
+        networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN));
+    }
+
+    private static Slot getSlot(InventoryScreen inventoryScreen, int index) {
         for (Slot slot : inventoryScreen.handler.slots) {
             if (slot.getIndex() == index && slot.inventory instanceof PlayerInventory) {
                 return slot;
