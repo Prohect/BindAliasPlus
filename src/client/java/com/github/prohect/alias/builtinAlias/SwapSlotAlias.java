@@ -20,10 +20,11 @@ import net.minecraft.util.math.Direction;
 public class SwapSlotAlias extends BuiltinAliasWithArgs {
 
     /**
-     * @param args pattern: slot1 slot2, spilt by white space,
+     * @param args args typed by user.
+     *             pattern: slot1 slot2, spilt by white space,
      *             1-9 means hotbarSlots,
      *             10-36 means slots inside inventory,
-     *             37-offhand means equipments, 37 is feet, offhand is head
+     *             37-40 means equipments, 37 is feet, 40 is head
      *             41 means the second hand,
      */
     @Override
@@ -136,7 +137,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs {
 
     /**
      * @param slot   the slot of an inventory of a screen, chest inventory or player inventory for example
-     * @param button could be 0,1,...,8 which means hotbars, or offhand which means hasOffHand, would be used to get a certain slot object via playerInventory.getStack(button)
+     * @param button index of a list, could be 0,1,...,8 which means hotbars, or 40 which means hasOffHand, would be used to get a certain slot object via playerInventory.getStack(button)
      *               <p>value range check inside
      */
     private static void clickSlot(ClientPlayerInteractionManager interactionManager, InventoryScreen inventoryScreen, Slot slot, int button, ClientPlayerEntity player) {
