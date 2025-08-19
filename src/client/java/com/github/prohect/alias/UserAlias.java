@@ -4,6 +4,8 @@ import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.builtinAlias.WaitAlias;
 
 import java.util.ArrayDeque;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * a userAlias could not have args
@@ -79,7 +81,7 @@ public final class UserAlias implements AliasWithoutArgs {
             AliasRecord aliasRecord = aliases.poll();
             Alias alias = aliasRecord.alias();
             if (alias instanceof UserAlias userAlias) {
-                userAlias.runInternal(this);
+                userAlias.runInternal(List.of(this));
             } else if (alias instanceof WaitAlias waitAlias) {
                 StringBuilder definitionLeft = new StringBuilder();
                 AliasRecord aliasRecord1;
@@ -95,17 +97,20 @@ public final class UserAlias implements AliasWithoutArgs {
         }
     }
 
-    public void runInternal(UserAlias originUserAlias) {
+    /**
+     * @param userAliasesCallChains it's first element must be the rootAlias userAlias of the call chain
+     */
+    public void runInternal(List<UserAlias> userAliasesCallChains) {
         decodeArgs2Alias(this.args);
         while (!aliases.isEmpty()) {
             AliasRecord aliasRecord = aliases.poll();
             Alias alias = aliasRecord.alias();
             if (alias instanceof UserAlias userAlias) {
-                if (userAlias == originUserAlias) {
+                if (userAliasesCallChains.contains(userAlias)) {
                     //infinite loop is not allowed,  ignore them
                     continue;
                 }
-                userAlias.runInternal(originUserAlias);
+                userAlias.runInternal(Stream.concat(userAliasesCallChains.stream(), Stream.of(userAlias)).toList());
             } else if (alias instanceof WaitAlias waitAlias) {
                 StringBuilder definitionLeft = new StringBuilder();
                 AliasRecord aliasRecord1;
@@ -113,8 +118,10 @@ public final class UserAlias implements AliasWithoutArgs {
                     aliasRecord1 = aliases.poll();
                     definitionLeft.append("|").append(aliasRecord1.aliasName()).append("\\").append(aliasRecord1.args());
                 }
-                while (!originUserAlias.aliases.isEmpty()) {
-                    aliasRecord1 = originUserAlias.aliases.poll();
+                while (true) {
+                    UserAlias rootAlias = userAliasesCallChains.getFirst();
+                    if (rootAlias.aliases.isEmpty()) break;
+                    aliasRecord1 = rootAlias.aliases.poll();
                     definitionLeft.append("|").append(aliasRecord1.aliasName()).append("\\").append(aliasRecord1.args());
                 }
                 waitAlias.run(aliasRecord.args(), definitionLeft.toString());
