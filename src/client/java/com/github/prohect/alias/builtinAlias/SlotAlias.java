@@ -7,18 +7,18 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 
-public class SlotAlias extends BuiltinAliasWithArgs {
+public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
     /**
      * @param args from 1-9
      */
     @SuppressWarnings("DataFlowIssue")
     @Override
-    public void run(String args) {
+    public SlotAlias run(String args) {
         try {
             int i = Integer.parseInt(args);
             if (!(1 <= i && i <= 9)) {
                 BindAliasPlusClient.LOGGER.warn("[Slot]Invalid input! Please enter a number between 1 and 9");
-                return;
+                return this;
             }
 
 /*            KeyBinding hotbarKey = MinecraftClient.getInstance().options.hotbarKeys[i - 1];
@@ -29,12 +29,12 @@ public class SlotAlias extends BuiltinAliasWithArgs {
             ClientPlayerEntity player = minecraftClient.player;
             if (player == null) {
                 BindAliasPlusClient.LOGGER.warn("[Slot]Player is null");
-                return;
+                return this;
             }
             PlayerInventory inventory = player.getInventory();
             if (inventory == null) {
                 BindAliasPlusClient.LOGGER.warn("[Slot]Inventory is null");
-                return;
+                return this;
             }
             inventory.setSelectedSlot(i - 1);
             try {
@@ -45,5 +45,6 @@ public class SlotAlias extends BuiltinAliasWithArgs {
         } catch (NumberFormatException e) {
             BindAliasPlusClient.LOGGER.warn("[Slot]Invalid arguments for slot alias");
         }
+        return this;
     }
 }

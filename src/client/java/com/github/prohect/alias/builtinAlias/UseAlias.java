@@ -5,9 +5,9 @@ import com.github.prohect.alias.BuiltinAliasWithArgs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 
-public class UseAlias extends BuiltinAliasWithArgs {
+public class UseAlias extends BuiltinAliasWithArgs<UseAlias> {
     @Override
-    public void run(String args) {
+    public UseAlias run(String args) {
         boolean flag = false;
         switch (args) {
             case "0":
@@ -24,5 +24,6 @@ public class UseAlias extends BuiltinAliasWithArgs {
         if (flag) {
             KeyBinding.onKeyPressed(attackKey.boundKey);
         }
+        return this;
     }
 }

@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public interface Alias {
-    List<Alias> blackList4lockCursor = new ArrayList<>();
-    HashMap<String, AliasWithoutArgs> aliasesWithoutArgs = new HashMap<>();
-    HashMap<String, AliasWithoutArgs> aliasesWithoutArgs_fromBindCommand = new HashMap<>();
-    HashMap<String, AliasWithArgs> aliasesWithArgs = new HashMap<>();
+public interface Alias<T extends Alias<T>> {
+    List<Alias<?>> blackList4lockCursor = new ArrayList<>();
+    HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs = new HashMap<>();
+    HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs_fromBindCommand = new HashMap<>();
+    HashMap<String, AliasWithArgs<?>> aliasesWithArgs = new HashMap<>();
     String divider4AliasDefinition = " ";
     String divider4AliasArgs = "\\";
 
@@ -28,12 +28,12 @@ public interface Alias {
         return oppositeDefinition.toString();
     }
 
-    void run(String args);
+    T run(String args);
 
-    @SuppressWarnings("UnusedReturnValue")
-    default Alias addToLockCursorBlackList() {
+    @SuppressWarnings({"unchecked", "UnusedReturnValue"})
+    default T addToLockCursorBlackList() {
         blackList4lockCursor.add(this);
-        return this;
+        return (T) this;
     }
 
 }

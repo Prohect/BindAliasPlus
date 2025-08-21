@@ -5,12 +5,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 
 
-public class RightAlias extends BuiltinAliasWithBooleanArgs {
+public class RightAlias extends BuiltinAliasWithBooleanArgs<RightAlias> {
     @Override
-    public void run(String args) {
+    public RightAlias run(String args) {
         parseArgs(args);
         KeyBinding rightKey = MinecraftClient.getInstance().options.rightKey;
         rightKey.setPressed(flag);
         if (flag) KeyBinding.onKeyPressed(rightKey.boundKey);
+        return this;
     }
 }

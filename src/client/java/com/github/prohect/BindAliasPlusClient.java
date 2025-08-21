@@ -9,21 +9,30 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
+import static com.github.prohect.BindAliasPlus.MOD_ID;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class BindAliasPlusClient implements ClientModInitializer {
+    public static final Path cfgPath = FabricLoader.getInstance().getConfigDir().resolve(MOD_ID + ".cfg");
 
     public static final ArrayDeque<KeyPressed> KEY_QUEUE = new ArrayDeque<>();
     public static final Map<InputUtil.Key, KeyBindingPlus> BINDING_PLUS = new HashMap<>();
@@ -32,6 +41,48 @@ public class BindAliasPlusClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        //load builtin alias
+
+        //load builtin aliasesWithArgs
+        new LogAlias().putToAliasesWithArgs("log");
+        new SlotAlias().putToAliasesWithArgs("slot");
+        new SwapSlotAlias().putToAliasesWithArgs("swapSlot");
+        new AttackAlias().putToAliasesWithArgs("builtinAttack");
+        new UseAlias().putToAliasesWithArgs("builtinUse");
+        new ForwardAlias().putToAliasesWithArgs("builtinForward");
+        new BackAlias().putToAliasesWithArgs("builtinBack");
+        new LeftAlias().putToAliasesWithArgs("builtinLeft");
+        new RightAlias().putToAliasesWithArgs("builtinRight");
+        new JumpAlias().putToAliasesWithArgs("builtinJump");
+        new SneakAlias().putToAliasesWithArgs("builtinSneak");
+        new SprintAlias().putToAliasesWithArgs("builtinSprint");
+        new DropAlias().putToAliasesWithArgs("builtinDrop").addToLockCursorBlackList();
+        WaitAlias waitAlias = new WaitAlias().putToAliasesWithArgs("wait");
+
+        //load builtin aliasesWithoutArgs
+        new SwapHandAlias().putToAliasesWithoutArgs("swapHand");
+        new ReloadCFGAlias().putToAliasesWithoutArgs("reloadCFG");
+        new UserAlias("builtinAttack\\1").putToAliasesWithoutArgs("+attack");
+        new UserAlias("builtinAttack\\0").putToAliasesWithoutArgs("-attack");
+        new UserAlias("builtinUse\\1").putToAliasesWithoutArgs("+use");
+        new UserAlias("builtinUse\\0").putToAliasesWithoutArgs("-use");
+        new UserAlias("builtinForward\\1").putToAliasesWithoutArgs("+forward");
+        new UserAlias("builtinForward\\0").putToAliasesWithoutArgs("-forward");
+        new UserAlias("builtinBack\\1").putToAliasesWithoutArgs("+back");
+        new UserAlias("builtinBack\\0").putToAliasesWithoutArgs("-back");
+        new UserAlias("builtinLeft\\1").putToAliasesWithoutArgs("+left");
+        new UserAlias("builtinLeft\\0").putToAliasesWithoutArgs("-left");
+        new UserAlias("builtinRight\\1").putToAliasesWithoutArgs("+right");
+        new UserAlias("builtinRight\\0").putToAliasesWithoutArgs("-right");
+        new UserAlias("builtinJump\\1").putToAliasesWithoutArgs("+jump");
+        new UserAlias("builtinJump\\0").putToAliasesWithoutArgs("-jump");
+        new UserAlias("builtinSneak\\1").putToAliasesWithoutArgs("+sneak");
+        new UserAlias("builtinSneak\\0").putToAliasesWithoutArgs("-sneak");
+        new UserAlias("builtinSprint\\1").putToAliasesWithoutArgs("+sprint");
+        new UserAlias("builtinSprint\\0").putToAliasesWithoutArgs("-sprint");
+        new UserAlias("builtinDrop\\0").putToAliasesWithoutArgs("drop");
+        new UserAlias("builtinDrop\\1").putToAliasesWithoutArgs("dropStack");
+
         // register command alias
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
                 dispatcher.register(literal("alias")
@@ -124,55 +175,49 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                         default -> 0;
                                     };
                                 }))));
+        // register command reloadBindAlias
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
+                dispatcher.register(literal("reloadCFG").executes(context -> {
+                    if (MinecraftClient.getInstance().player == null) return 0;
+                    loadCFG();
+                    return 1;
+                })));
 
-        //load builtin alias
-
-        //load builtin aliasesWithArgs
-        new LogAlias().putToAliasesWithArgs("log");
-        new SlotAlias().putToAliasesWithArgs("slot");
-        new SwapSlotAlias().putToAliasesWithArgs("swapSlot");
-        new AttackAlias().putToAliasesWithArgs("builtinAttack");
-        new UseAlias().putToAliasesWithArgs("builtinUse");
-        new ForwardAlias().putToAliasesWithArgs("builtinForward");
-        new BackAlias().putToAliasesWithArgs("builtinBack");
-        new LeftAlias().putToAliasesWithArgs("builtinLeft");
-        new RightAlias().putToAliasesWithArgs("builtinRight");
-        new JumpAlias().putToAliasesWithArgs("builtinJump");
-        new SneakAlias().putToAliasesWithArgs("builtinSneak");
-        new SprintAlias().putToAliasesWithArgs("builtinSprint");
-        new DropAlias().putToAliasesWithArgs("builtinDrop").addToLockCursorBlackList();
-        new WaitAlias().putToAliasesWithArgs("wait");
-
-        //load builtin aliasesWithoutArgs
-        new SwapHandAlias().putToAliasesWithoutArgs("swapHand");
-        new UserAlias("builtinAttack\\1").putToAliasesWithoutArgs("+attack");
-        new UserAlias("builtinAttack\\0").putToAliasesWithoutArgs("-attack");
-        new UserAlias("builtinUse\\1").putToAliasesWithoutArgs("+use");
-        new UserAlias("builtinUse\\0").putToAliasesWithoutArgs("-use");
-        new UserAlias("builtinForward\\1").putToAliasesWithoutArgs("+forward");
-        new UserAlias("builtinForward\\0").putToAliasesWithoutArgs("-forward");
-        new UserAlias("builtinBack\\1").putToAliasesWithoutArgs("+back");
-        new UserAlias("builtinBack\\0").putToAliasesWithoutArgs("-back");
-        new UserAlias("builtinLeft\\1").putToAliasesWithoutArgs("+left");
-        new UserAlias("builtinLeft\\0").putToAliasesWithoutArgs("-left");
-        new UserAlias("builtinRight\\1").putToAliasesWithoutArgs("+right");
-        new UserAlias("builtinRight\\0").putToAliasesWithoutArgs("-right");
-        new UserAlias("builtinJump\\1").putToAliasesWithoutArgs("+jump");
-        new UserAlias("builtinJump\\0").putToAliasesWithoutArgs("-jump");
-        new UserAlias("builtinSneak\\1").putToAliasesWithoutArgs("+sneak");
-        new UserAlias("builtinSneak\\0").putToAliasesWithoutArgs("-sneak");
-        new UserAlias("builtinSprint\\1").putToAliasesWithoutArgs("+sprint");
-        new UserAlias("builtinSprint\\0").putToAliasesWithoutArgs("-sprint");
-        new UserAlias("builtinDrop\\0").putToAliasesWithoutArgs("drop");
-        new UserAlias("builtinDrop\\1").putToAliasesWithoutArgs("dropStack");
+        // load cfg
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            if (MinecraftClient.getInstance().player != null) waitAlias.run("1", "reloadCFG");
+        });
 
 
         //put your elytra in slot 10 ( the first slot of the first row of your inventory, then you can do this
         // /alias equipElytra swapSlot\10\39
-        // /alias jump +jump|wait\1|-jump
-        // /alias +fly equipElytra|jump|wait\1|jump|slot\9|+use|wait\1|-use
+        // /alias jump +jump wait\1 -jump
+        // /alias +fly equipElytra jump wait\1 jump slot\9 +use wait\1 -use
         // /alias -fly equipElytra
         // /bind mouse5 +fly
+
+    }
+
+    public static void loadCFG() {
+        try {
+            if (cfgPath.toFile().createNewFile()) return;
+        } catch (IOException e) {
+            LOGGER.error("Could not create file {}", cfgPath, e);
+        }
+        byte[] data = null;
+        try (InputStream inputStream = Files.newInputStream(cfgPath)) {
+            data = new byte[inputStream.available()];
+            while (inputStream.available() > 0) inputStream.read(data);
+        } catch (IOException e) {
+            LOGGER.error("Failed to open cfg file", e);
+        }
+        if (data == null) return;
+        String cfg = new String(data);
+        assert MinecraftClient.getInstance().player != null;
+        cfg.lines().forEach(line -> {
+            if (line.startsWith("alias ") || line.startsWith("bind ") || line.startsWith("bindByAliasName ") || line.startsWith("unbind "))
+                MinecraftClient.getInstance().player.networkHandler.sendChatCommand(line);
+        });
 
     }
 
@@ -207,7 +252,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
 
     private int commandAliasExecute(String name, String definition) {
         if (Alias.aliasesWithArgs.containsKey(name)) return 2;
-        AliasWithoutArgs aliasWithoutArgs = Alias.aliasesWithoutArgs.get(name);
+        AliasWithoutArgs<?> aliasWithoutArgs = Alias.aliasesWithoutArgs.get(name);
         if (aliasWithoutArgs != null && !(aliasWithoutArgs instanceof UserAlias)) return 3;
         Alias.aliasesWithoutArgs.put(name, new UserAlias(definition));
         return 1;
@@ -218,7 +263,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         boolean flag0 = true;//t -> +-aliasName binding pattern
         boolean flag = true;//t -> +aliasName or it doesn't contain +- and would be triggered when pressing down as default
         boolean flag1 = true;//t -> aliasName stays the same, else subString(1)
-        AliasWithoutArgs alias = Alias.aliasesWithoutArgs.get(aliasName);
+        AliasWithoutArgs<?> alias = Alias.aliasesWithoutArgs.get(aliasName);
         if (alias == null) {
             flag1 = false;
             if ((aliasName.startsWith("+")) || aliasName.startsWith("-")) {
@@ -240,7 +285,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         String aliasNameFinal = flag1 ? aliasName : aliasName.substring(1);
         String aliasNameFinalExtra = flag ? (flag1 ? "-" + aliasNameFinal.substring(1) : "-" + aliasNameFinal) : (flag1 ? "+" + aliasNameFinal.substring(1) : "+" + aliasNameFinal);
         if (flag0) {
-            AliasWithoutArgs aliasWithoutArgs = Alias.aliasesWithoutArgs.get(aliasNameFinalExtra);
+            AliasWithoutArgs<?> aliasWithoutArgs = Alias.aliasesWithoutArgs.get(aliasNameFinalExtra);
             if (aliasWithoutArgs == null) aliasNameFinalExtra = "";
         } else aliasNameFinalExtra = "";
 

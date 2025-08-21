@@ -20,7 +20,7 @@ import net.minecraft.util.math.Direction;
 
 import java.util.regex.Pattern;
 
-public class SwapSlotAlias extends BuiltinAliasWithArgs {
+public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
 
     /**
      * @param args args typed by user.
@@ -31,23 +31,23 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs {
      *             41 means the second hand,
      */
     @Override
-    public void run(String args) {
+    public SwapSlotAlias run(String args) {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         ClientPlayerEntity player = minecraftClient.player;
         if (player == null) {
             BindAliasPlusClient.LOGGER.warn("[switchSlot]Player is null");
-            return;
+            return this;
         }
         PlayerInventory inventory = player.getInventory();
         if (inventory == null) {
             BindAliasPlusClient.LOGGER.warn("[switchSlot]Inventory is null");
-            return;
+            return this;
         }
         int selectedSlot = inventory.getSelectedSlot();
         ClientPlayNetworkHandler networkHandler = minecraftClient.getNetworkHandler();
         if (networkHandler == null) {
             BindAliasPlusClient.LOGGER.warn("[SwitchSlot]network handler is null");
-            return;
+            return this;
         }
 
         String[] strings = args.split(Pattern.quote(Alias.divider4AliasArgs));
@@ -59,16 +59,16 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs {
                 slots[1] = Integer.parseInt(strings[1]) - 1;
             } else {
                 BindAliasPlusClient.LOGGER.warn("[SwitchSlot]Invalid arguments:args pattern not expected");
-                return;
+                return this;
             }
         } catch (NumberFormatException e) {
             BindAliasPlusClient.LOGGER.warn("[SwitchSlot]Invalid arguments: cant parse number");
-            return;
+            return this;
         }
 
         if (slots[0] < 0 || slots[1] < 0 || slots[0] > 40 || slots[1] > 40 || slots[0] == slots[1]) {
             BindAliasPlusClient.LOGGER.warn("[SwitchSlot]Invalid arguments: slot index out of bounds, or slot index1 equals to slot index2");
-            return;
+            return this;
         }
 
         Screen currentScreen = minecraftClient.currentScreen;
@@ -135,7 +135,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs {
             BindAliasPlusClient.LOGGER.error("[SwitchSlot]Failed to swap slots.", e);
         }
 
-
+        return this;
     }
 
     /**

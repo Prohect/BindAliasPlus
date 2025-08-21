@@ -3,9 +3,10 @@ package com.github.prohect.alias;
 /**
  * only builtinAlias should have valid args
  */
-public interface AliasWithArgs extends Alias {
-    default AliasWithArgs putToAliasesWithArgs(String key) {
+public interface AliasWithArgs<T extends AliasWithArgs<T>> extends Alias<T> {
+    @SuppressWarnings("unchecked")
+    default T putToAliasesWithArgs(String key) {
         Alias.aliasesWithArgs.put(key, this);
-        return this;
+        return (T) this;
     }
 }

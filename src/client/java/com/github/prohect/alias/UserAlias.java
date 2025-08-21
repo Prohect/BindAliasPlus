@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 /**
  * a userAlias could not have args
  */
-public final class UserAlias implements AliasWithoutArgs {
+public final class UserAlias implements AliasWithoutArgs<UserAlias> {
     final ArrayDeque<AliasRecord> aliases = new ArrayDeque<>();
     final String args;
 
@@ -36,7 +36,7 @@ public final class UserAlias implements AliasWithoutArgs {
                             break;
                         }
                     }
-                    AliasWithoutArgs aliasWithoutArgs = Alias.aliasesWithoutArgs.get(aliasName);
+                    AliasWithoutArgs<?> aliasWithoutArgs = Alias.aliasesWithoutArgs.get(aliasName);
                     if (aliasWithoutArgs != null)
                         aliases.add(new AliasRecord(aliasWithoutArgs, "", aliasName));
                     else BindAliasPlusClient.LOGGER.info("Alias with name {} not found.", aliasName);
@@ -61,7 +61,7 @@ public final class UserAlias implements AliasWithoutArgs {
                             }
                         }
                     }
-                    AliasWithArgs aliasWithArgs = Alias.aliasesWithArgs.get(aliasName2);
+                    AliasWithArgs<?> aliasWithArgs = Alias.aliasesWithArgs.get(aliasName2);
                     if (aliasWithArgs != null)
                         aliases.add(new AliasRecord(aliasWithArgs, args2.toString(), aliasName2));
                     else BindAliasPlusClient.LOGGER.info("Alias  with name {} not found.", aliasName2);
@@ -76,11 +76,11 @@ public final class UserAlias implements AliasWithoutArgs {
      * may have some difficult progress but finally run some builtin aliases
      */
     @Override
-    public void run(String args) {
+    public UserAlias run(String args) {
         decodeArgs2Alias(this.args);
         while (!aliases.isEmpty()) {
             AliasRecord aliasRecord = aliases.poll();
-            Alias alias = aliasRecord.alias();
+            Alias<?> alias = aliasRecord.alias();
             if (alias instanceof UserAlias userAlias) {
                 userAlias.runInternal(List.of(this));
             } else if (alias instanceof WaitAlias waitAlias) {
@@ -91,11 +91,12 @@ public final class UserAlias implements AliasWithoutArgs {
                     definitionLeft.append(Alias.divider4AliasDefinition).append(aliasRecord1.aliasName()).append(Alias.divider4AliasArgs).append(aliasRecord1.args());
                 }
                 waitAlias.run(aliasRecord.args(), definitionLeft.toString());
-                return;
+                return this;
             } else {
                 alias.run(aliasRecord.args());
             }
         }
+        return this;
     }
 
     /**
@@ -105,7 +106,7 @@ public final class UserAlias implements AliasWithoutArgs {
         decodeArgs2Alias(this.args);
         while (!aliases.isEmpty()) {
             AliasRecord aliasRecord = aliases.poll();
-            Alias alias = aliasRecord.alias();
+            Alias<?> alias = aliasRecord.alias();
             if (alias instanceof UserAlias userAlias) {
                 if (userAliasesCallChains.contains(userAlias)) {
                     //infinite loop is not allowed,  ignore them
