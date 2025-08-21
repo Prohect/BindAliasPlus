@@ -141,7 +141,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
     /**
      * @param slot   the slot of an inventory of a screen, chest inventory or player inventory for example
      * @param button index of a list, could be 0,1,...,8 which means hotbars, or 40 which means hasOffHand, would be used to get a certain slot object via playerInventory.getStack(button)
-     *               <p>value range check inside
+     *               <p>value range check inside, only 0-8 and 40 allowed
      */
     private static void clickSlot(ClientPlayerInteractionManager interactionManager, InventoryScreen inventoryScreen, Slot slot, int button, ClientPlayerEntity player) {
         interactionManager.clickSlot(inventoryScreen.handler.syncId, slot.id, button, SlotActionType.SWAP, player);

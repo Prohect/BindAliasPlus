@@ -58,6 +58,10 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new SprintAlias().putToAliasesWithArgs("builtinSprint");
         new DropAlias().putToAliasesWithArgs("builtinDrop").addToLockCursorBlackList();
         WaitAlias waitAlias = new WaitAlias().putToAliasesWithArgs("wait");
+        new YawAlias().putToAliasesWithArgs("yaw");
+        new PitchAlias().putToAliasesWithArgs("pitch");
+        new SetYawAlias().putToAliasesWithArgs("setYaw");
+        new SetPitchAlias().putToAliasesWithArgs("setPitch");
 
         //load builtin aliasesWithoutArgs
         new SwapHandAlias().putToAliasesWithoutArgs("swapHand");
