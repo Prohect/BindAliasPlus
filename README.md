@@ -103,7 +103,7 @@ Quickly swap to a bow, use it, and swap back:
 | Command | Purpose | Example |
 |---------|---------|---------|
 | `/alias <name> <definition>` | Create a custom alias. | `/alias myAlias +jump wait\1 -jump` |
-| `/bind <key> <definition>` | Bind a key to a sequence of aliases by definition of this command or an existing alias. | `/bind g +forward wait\10 -forward   OR   /bind n +attack +forward` |
+| `/bind <key> <definition>` | Bind a key to a sequence of aliases by definition of this command or an existing alias. | `/bind g +forward wait\10 -forward   OR   /bind n dropStack` |
 | `/bindByAliasName <key> <alias>` | Bind a key to an existing alias. | `/bindByAliasName mouse5 +fly` |
 | `/unbind <key>` | Remove a key binding. | `/unbind mouse5` |
 | `/reloadCFG` | Reload config from file. | `/reloadCFG` |
