@@ -120,4 +120,4 @@ Contributions are welcome! Feel free to open issues for bugs/feature requests or
 
 
 ## License
-This mod is licensed under the [MIT License](LICENSE).
+This mod is licensed under the [Creative Commons Zero v1.0 Universal](LICENSE).
