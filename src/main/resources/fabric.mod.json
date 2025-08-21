@@ -3,13 +3,13 @@
   "id": "bind-alias-plus",
   "version": "${version}",
   "name": "bind Alias Plus",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "be like cfg pro in counter strike!",
   "authors": [
-    "Me!"
+    "prohect!"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://modrinth.com/mod/bind-alias-plus",
+    "sources": "https://github.com/Prohect/BindAliasPlus"
   },
   "license": "CC0-1.0",
   "icon": "assets/bind-alias-plus/icon.png",
