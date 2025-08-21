@@ -39,6 +39,26 @@ public class BindAliasPlusClient implements ClientModInitializer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("bind-alias-plus");
 
+
+    /*
+     * put your elytra in slot 10 ( the first slot of the first row of your inventory,
+     * and firework in slot 19 ( the first slot of the second row of your inventory,
+     * then you can do this
+     * */
+    // /alias equipElytra swapSlot\10\39
+    // /alias jump +jump wait\1 -jump
+    // /alias +fly equipElytra jump wait\1 jump swapSlot\19 +use -use
+    // /alias -fly equipElytra swapSlot\19
+    // /bind mouse5 +fly
+
+    /*
+     * put your bow in slot 11 ( the second slot of the first row of your inventory
+     * then u can do this
+     * */
+    // /alias +bow swapSlot\11 +use
+    // /alias -bow swapSlot\11 -use
+    // /bind mouse4 +bow
+
     @Override
     public void onInitializeClient() {
         //load builtin alias
@@ -191,15 +211,6 @@ public class BindAliasPlusClient implements ClientModInitializer {
         ClientPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             if (MinecraftClient.getInstance().player != null) waitAlias.run("1", "reloadCFG");
         });
-
-
-        //put your elytra in slot 10 ( the first slot of the first row of your inventory, then you can do this
-        // /alias equipElytra swapSlot\10\39
-        // /alias jump +jump wait\1 -jump
-        // /alias +fly equipElytra jump wait\1 jump slot\9 +use wait\1 -use
-        // /alias -fly equipElytra
-        // /bind mouse5 +fly
-
     }
 
     public static void loadCFG() {
