@@ -5,6 +5,7 @@ import com.github.prohect.alias.builtinAlias.WaitAlias;
 
 import java.util.ArrayDeque;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -19,9 +20,9 @@ public final class UserAlias implements AliasWithoutArgs {
     }
 
     private void decodeArgs2Alias(String args) {
-        String[] strings = args.split("\\|");
+        String[] strings = args.split(Pattern.quote(Alias.divider4AliasDefinition));
         for (String aliasNameAndArgs : strings) {
-            String[] splits = aliasNameAndArgs.split("\\\\");
+            String[] splits = aliasNameAndArgs.split(Pattern.quote(Alias.divider4AliasArgs));
             int count = splits.length;
             for (String split : splits) if (split.isBlank()) --count;
             switch (count) {
@@ -35,10 +36,10 @@ public final class UserAlias implements AliasWithoutArgs {
                             break;
                         }
                     }
-                    AliasWithoutArgs aliasWithoutArgs = Aliases.aliasesWithoutArgs.get(aliasName);
+                    AliasWithoutArgs aliasWithoutArgs = Alias.aliasesWithoutArgs.get(aliasName);
                     if (aliasWithoutArgs != null)
                         aliases.add(new AliasRecord(aliasWithoutArgs, "", aliasName));
-                    else BindAliasPlusClient.LOGGER.error("Alias with name {} not found.", aliasName);
+                    else BindAliasPlusClient.LOGGER.info("Alias with name {} not found.", aliasName);
                     break;
                 default:
                     String aliasName2 = "";
@@ -55,15 +56,15 @@ public final class UserAlias implements AliasWithoutArgs {
                                     args2.append(split.trim());
                                     flag1 = true;
                                 } else {
-                                    args2.append("\\").append(split.trim());
+                                    args2.append(Alias.divider4AliasArgs).append(split.trim());
                                 }
                             }
                         }
                     }
-                    AliasWithArgs aliasWithArgs = Aliases.aliasesWithArgs.get(aliasName2);
+                    AliasWithArgs aliasWithArgs = Alias.aliasesWithArgs.get(aliasName2);
                     if (aliasWithArgs != null)
                         aliases.add(new AliasRecord(aliasWithArgs, args2.toString(), aliasName2));
-                    else BindAliasPlusClient.LOGGER.error("Alias  with name {} not found.", aliasName2);
+                    else BindAliasPlusClient.LOGGER.info("Alias  with name {} not found.", aliasName2);
                     break;
             }
         }
@@ -87,7 +88,7 @@ public final class UserAlias implements AliasWithoutArgs {
                 AliasRecord aliasRecord1;
                 while (!aliases.isEmpty()) {
                     aliasRecord1 = aliases.poll();
-                    definitionLeft.append("|").append(aliasRecord1.aliasName()).append("\\").append(aliasRecord1.args());
+                    definitionLeft.append(Alias.divider4AliasDefinition).append(aliasRecord1.aliasName()).append(Alias.divider4AliasArgs).append(aliasRecord1.args());
                 }
                 waitAlias.run(aliasRecord.args(), definitionLeft.toString());
                 return;
@@ -108,6 +109,7 @@ public final class UserAlias implements AliasWithoutArgs {
             if (alias instanceof UserAlias userAlias) {
                 if (userAliasesCallChains.contains(userAlias)) {
                     //infinite loop is not allowed,  ignore them
+                    BindAliasPlusClient.LOGGER.warn("[switchSlot]infinite loop detected checking UserAliasesCallChains.");
                     continue;
                 }
                 userAlias.runInternal(Stream.concat(userAliasesCallChains.stream(), Stream.of(userAlias)).toList());
@@ -116,13 +118,13 @@ public final class UserAlias implements AliasWithoutArgs {
                 AliasRecord aliasRecord1;
                 while (!aliases.isEmpty()) {
                     aliasRecord1 = aliases.poll();
-                    definitionLeft.append("|").append(aliasRecord1.aliasName()).append("\\").append(aliasRecord1.args());
+                    definitionLeft.append(Alias.divider4AliasDefinition).append(aliasRecord1.aliasName()).append(Alias.divider4AliasArgs).append(aliasRecord1.args());
                 }
                 while (true) {
                     UserAlias rootAlias = userAliasesCallChains.getFirst();
                     if (rootAlias.aliases.isEmpty()) break;
                     aliasRecord1 = rootAlias.aliases.poll();
-                    definitionLeft.append("|").append(aliasRecord1.aliasName()).append("\\").append(aliasRecord1.args());
+                    definitionLeft.append(Alias.divider4AliasDefinition).append(aliasRecord1.aliasName()).append(Alias.divider4AliasArgs).append(aliasRecord1.args());
                 }
                 waitAlias.run(aliasRecord.args(), definitionLeft.toString());
                 return;

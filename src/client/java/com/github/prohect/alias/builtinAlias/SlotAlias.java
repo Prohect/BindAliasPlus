@@ -11,6 +11,7 @@ public class SlotAlias extends BuiltinAliasWithArgs {
     /**
      * @param args from 1-9
      */
+    @SuppressWarnings("DataFlowIssue")
     @Override
     public void run(String args) {
         try {

@@ -2,7 +2,7 @@ package com.github.prohect.mixin.client;
 
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.KeyPressed;
-import com.github.prohect.alias.Aliases;
+import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
@@ -51,9 +51,10 @@ public class MouseMixin {
      */
     @Inject(at = @At("RETURN"), method = "lockCursor")
     private void lockCursor(CallbackInfo ci) {
-        Aliases.aliasesWithArgs.forEach((aliasName, aliasWithArgs) -> {
+        Alias.aliasesWithArgs.forEach((aliasName, aliasWithArgs) -> {
             if (aliasWithArgs instanceof BuiltinAliasWithBooleanArgs builtinAliasWithBooleanArgs)
-                if (builtinAliasWithBooleanArgs.flag) builtinAliasWithBooleanArgs.run("1");
+                if (builtinAliasWithBooleanArgs.flag && !Alias.blackList4lockCursor.contains(builtinAliasWithBooleanArgs))
+                    builtinAliasWithBooleanArgs.run("1");
         });
     }
 }

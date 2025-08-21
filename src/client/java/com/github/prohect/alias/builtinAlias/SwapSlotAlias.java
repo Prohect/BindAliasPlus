@@ -1,6 +1,7 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -16,6 +17,8 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+
+import java.util.regex.Pattern;
 
 public class SwapSlotAlias extends BuiltinAliasWithArgs {
 
@@ -47,7 +50,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs {
             return;
         }
 
-        String[] strings = args.split("\\\\");
+        String[] strings = args.split(Pattern.quote(Alias.divider4AliasArgs));
         int[] slots = new int[]{0, selectedSlot};
         try {
             if (strings.length == 1) slots[0] = Integer.parseInt(strings[0]) - 1;

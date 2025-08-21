@@ -3,8 +3,8 @@ package com.github.prohect.mixin.client;
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.KeyBindingPlus;
 import com.github.prohect.KeyPressed;
+import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.AliasWithoutArgs;
-import com.github.prohect.alias.Aliases;
 import net.minecraft.client.input.KeyboardInput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,7 +20,8 @@ public class KeyboardInputMixin {
             // should only be aliasWithoutArgs, so the args would be an empty string
             KeyBindingPlus keyBindingPlus;
             if ((keyBindingPlus = BindAliasPlusClient.BINDING_PLUS.get(keyPressed.key())) != null) {
-                AliasWithoutArgs aliasWithoutArgs = keyPressed.pressed() ? Aliases.aliasesWithoutArgs.get(keyBindingPlus.aliasNameOnKeyPressed()) : Aliases.aliasesWithoutArgs.get(keyBindingPlus.aliasNameOnKeyReleased());
+                AliasWithoutArgs aliasWithoutArgs = keyPressed.pressed() ? Alias.aliasesWithoutArgs.get(keyBindingPlus.aliasNameOnKeyPressed()) : Alias.aliasesWithoutArgs.get(keyBindingPlus.aliasNameOnKeyReleased());
+                aliasWithoutArgs = aliasWithoutArgs == null ? (keyPressed.pressed() ? Alias.aliasesWithoutArgs_fromBindCommand.get(keyBindingPlus.aliasNameOnKeyPressed()) : Alias.aliasesWithoutArgs_fromBindCommand.get(keyBindingPlus.aliasNameOnKeyReleased())) : aliasWithoutArgs;
                 if (aliasWithoutArgs != null) aliasWithoutArgs.run("");
             }
         }
