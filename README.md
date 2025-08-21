@@ -29,15 +29,6 @@ BindAliasPlus enhances your Minecraft gameplay by letting you define custom alia
 - **Key Binding**: A link between a physical key (e.g., `mouse5`, `keyboard.g`) and an alias (or two aliases: one for press, one for release).
 
 
-### Commands
-| Command | Syntax | Description |
-|---------|--------|-------------|
-| `/alias` | `/alias <name> <definition>` | Creates a custom alias. `definition` can include built-in aliases or other custom aliases (space-separated). |
-| `/bind` | `/bind <key> <definition>` | Binds a key to a sequence of actions. Executes on key press; auto-generates a release action for parts of `definition` starts with `+` or `-`. |
-| `/bindByAliasName` | `/bindByAliasName <key> <aliasName>` | Binds a key to an existing alias (uses `+aliasName` on press, `-aliasName` on release if available). |
-| `/unbind` | `/unbind <key>` | Removes the binding for a key. |
-| `/reloadCFG` | `/reloadCFG` | Reloads aliases and bindings from the config file. |
-
 
 ### Built-in Aliases
 BindAliasPlus includes prebuilt aliases for common actions. They are divided into **aliases with arguments** and **aliases without arguments**.
