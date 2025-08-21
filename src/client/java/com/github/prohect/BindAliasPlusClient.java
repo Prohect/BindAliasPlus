@@ -43,6 +43,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
     /*
      * put your elytra in slot 10 ( the first slot of the first row of your inventory,
      * and firework in slot 19 ( the first slot of the second row of your inventory,
+     * no need to take place of your hotbars,
      * then you can do this
      * */
     // /alias equipElytra swapSlot\10\39
@@ -56,7 +57,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
      * then u can do this
      * */
     // /alias +bow swapSlot\11 +use
-    // /alias -bow swapSlot\11 -use
+    // /alias -bow -use swapSlot\11
     // /bind mouse4 +bow
 
     @Override
