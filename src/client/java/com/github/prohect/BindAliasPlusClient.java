@@ -5,12 +5,10 @@ import com.github.prohect.alias.AliasWithoutArgs;
 import com.github.prohect.alias.UserAlias;
 import com.github.prohect.alias.builtinAlias.*;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import org.slf4j.Logger;
@@ -37,28 +35,23 @@ public class BindAliasPlusClient implements ClientModInitializer {
         // register command alias
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
                 dispatcher.register(literal("alias")
-                        .then(argument("name", StringArgumentType.word())
+                        .then(argument("keyName", StringArgumentType.word())
                                 .then(argument("definition", StringArgumentType.greedyString())
                                         .suggests((context, builder) -> getSuggestions4aliasDefinitionCompletableFuture(builder))
                                         .executes(context -> {
-                                            final String name = StringArgumentType.getString(context, "name");
-                                            final String def = StringArgumentType.getString(context, "definition");
-
-                                            if (Alias.aliasesWithArgs.containsKey(name)) {
-                                                context.getSource().sendFeedback(Text.literal("Can't replace builtinAlias " + name));
-                                                return 0;
-                                            }
-
-                                            AliasWithoutArgs aliasWithoutArgs = Alias.aliasesWithoutArgs.get(name);
-                                            if (aliasWithoutArgs != null && !(aliasWithoutArgs instanceof UserAlias)) {
-                                                context.getSource().sendFeedback(Text.literal("Can't replace builtinAlias " + name));
-                                                return 0;
-                                            }
-
-                                            Alias.aliasesWithoutArgs.put(name, new UserAlias(def));
-
-                                            context.getSource().sendFeedback(Text.literal("Alias " + name + " = " + def));
-                                            return 1;
+                                            String name = StringArgumentType.getString(context, "keyName");
+                                            String definition = StringArgumentType.getString(context, "definition");
+                                            return switch (commandAliasExecute(name, definition)) {
+                                                case 1 -> {
+                                                    context.getSource().sendFeedback(Text.literal("Alias " + name + " = " + definition));
+                                                    yield 1;
+                                                }
+                                                case 2, 3 -> {
+                                                    context.getSource().sendFeedback(Text.literal("Can't replace builtinAlias " + name));
+                                                    yield 0;
+                                                }
+                                                default -> 0;
+                                            };
                                         })))));
         // register command bindByAliasName
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
@@ -70,23 +63,22 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                             return builder.buildFuture();
                                         })
                                         .executes(context -> {
-                                            int i = tryExecuteBindByAliasName(context, "aliasName");
                                             String keyName = StringArgumentType.getString(context, "key");
                                             String aliasName = StringArgumentType.getString(context, "aliasName");
-                                            return switch (i) {
-                                                case 0 -> {
+                                            return switch (commandBindByAliasNameExecute(keyName, aliasName)) {
+                                                case 1 -> {
                                                     context.getSource().sendFeedback(Text.literal("§aBound key " + keyName + " to alias " + aliasName));
+                                                    yield 1;
+                                                }
+                                                case 2, 3 -> {
+                                                    context.getSource().sendFeedback(Text.literal("§cAlias " + aliasName + " does not exist!"));
                                                     yield 0;
                                                 }
-                                                case 1, 2 -> {
-                                                    context.getSource().sendFeedback(Text.literal("§cAlias " + aliasName + " does not exist!"));
-                                                    yield 1;
-                                                }
-                                                case 3 -> {
+                                                case 4 -> {
                                                     context.getSource().sendFeedback(Text.literal("§cUnknown key: " + keyName));
-                                                    yield 1;
+                                                    yield 0;
                                                 }
-                                                default -> i;
+                                                default -> 0;
                                             };
                                         })))));
         // register command bind
@@ -96,35 +88,23 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                 .then(argument("definition", StringArgumentType.greedyString())
                                         .suggests((context, builder) -> getSuggestions4aliasDefinitionCompletableFuture(builder))
                                         .executes(context -> {
-                                            final String keyName = StringArgumentType.getString(context, "key");
-                                            final String definition = StringArgumentType.getString(context, "definition");
-                                            if (tryExecuteBindByAliasName(context, "definition") == 0) {
-                                                context.getSource().sendFeedback(Text.literal("§aBound key " + keyName + " to alias " + definition));
-                                                return 0;
-                                            }
-                                            final StringBuilder aliasName = new StringBuilder();
-                                            final StringBuilder aliasName1 = new StringBuilder();
-                                            final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-                                            final Random rng = new Random();
-                                            for (int i = 0; i < 16; i++)
-                                                aliasName.append(CHARACTERS.charAt(rng.nextInt(CHARACTERS.length())));
-                                            for (int i = 0; i < 16; i++)
-                                                aliasName1.append(CHARACTERS.charAt(rng.nextInt(CHARACTERS.length())));
-
-                                            InputUtil.Key key = parseKey(keyName);
-                                            if (key == null) {
-                                                context.getSource().sendFeedback(Text.literal("§cUnknown key: " + keyName));
-                                                return 0;
-                                            }
-
-                                            Alias.aliasesWithoutArgs_fromBindCommand.put(String.valueOf(aliasName), new UserAlias(definition));
-                                            String oppositeDefinition = Alias.getOppositeDefinition(definition);
-                                            if (!oppositeDefinition.isBlank()) {
-                                                Alias.aliasesWithoutArgs_fromBindCommand.put(String.valueOf(aliasName1), new UserAlias(oppositeDefinition));
-                                            }
-                                            BINDING_PLUS.put(key, new KeyBindingPlus(aliasName.toString(), oppositeDefinition.isBlank() ? "" : aliasName1.toString()));
-                                            context.getSource().sendFeedback(Text.literal("bind " + key + " = " + definition));
-                                            return 1;
+                                            String keyName = StringArgumentType.getString(context, "key");
+                                            String definition = StringArgumentType.getString(context, "definition");
+                                            return switch (commandBindExecute(keyName, definition)) {
+                                                case 1 -> {
+                                                    context.getSource().sendFeedback(Text.literal("§aBound key " + keyName + " to alias " + definition));
+                                                    yield 1;
+                                                }
+                                                case 2 -> {
+                                                    context.getSource().sendFeedback(Text.literal("§cUnknown key: " + keyName));
+                                                    yield 0;
+                                                }
+                                                case 3 -> {
+                                                    context.getSource().sendFeedback(Text.literal("bind " + keyName + " = " + definition));
+                                                    yield 0;
+                                                }
+                                                default -> 0;
+                                            };
                                         })))));
         // register command bind
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
@@ -132,13 +112,17 @@ public class BindAliasPlusClient implements ClientModInitializer {
                         .then(argument("key", StringArgumentType.word())
                                 .executes(context -> {
                                     String keyName = StringArgumentType.getString(context, "key");
-                                    InputUtil.Key key = parseKey(keyName);
-                                    if (key == null) {
-                                        context.getSource().sendFeedback(Text.literal("§cUnknown key: " + keyName));
-                                        return 0;
-                                    }
-                                    BINDING_PLUS.remove(key);
-                                    return 1;
+                                    return switch (commandUnbindExecute(keyName)) {
+                                        case 0 -> {
+                                            context.getSource().sendFeedback(Text.literal("§cUnknown key: " + keyName));
+                                            yield 0;
+                                        }
+                                        case 1 -> {
+                                            context.getSource().sendFeedback(Text.literal("§cUnbind key: " + keyName));
+                                            yield 1;
+                                        }
+                                        default -> 0;
+                                    };
                                 }))));
 
         //load builtin alias
@@ -192,9 +176,44 @@ public class BindAliasPlusClient implements ClientModInitializer {
 
     }
 
-    private int tryExecuteBindByAliasName(CommandContext<FabricClientCommandSource> context, String thirdCommandMeaning) {
-        String keyName = StringArgumentType.getString(context, "key");
-        String aliasName = StringArgumentType.getString(context, thirdCommandMeaning);
+    private int commandUnbindExecute(String keyName) {
+        InputUtil.Key key = parseKey(keyName);
+        if (key == null) return 0;
+        BINDING_PLUS.remove(key);
+        return 1;
+    }
+
+    private int commandBindExecute(String keyName, String definition) {
+        if (commandBindByAliasNameExecute(keyName, definition) == 1) return 1;
+        final StringBuilder aliasName = new StringBuilder();
+        final StringBuilder aliasName1 = new StringBuilder();
+        final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        final Random rng = new Random();
+        for (int i = 0; i < 16; i++)
+            aliasName.append(CHARACTERS.charAt(rng.nextInt(CHARACTERS.length())));
+        for (int i = 0; i < 16; i++)
+            aliasName1.append(CHARACTERS.charAt(rng.nextInt(CHARACTERS.length())));
+
+        InputUtil.Key key = parseKey(keyName);
+        if (key == null) return 2;
+
+        Alias.aliasesWithoutArgs_fromBindCommand.put(String.valueOf(aliasName), new UserAlias(definition));
+        String oppositeDefinition = Alias.getOppositeDefinition(definition);
+        if (!oppositeDefinition.isBlank())
+            Alias.aliasesWithoutArgs_fromBindCommand.put(String.valueOf(aliasName1), new UserAlias(oppositeDefinition));
+        BINDING_PLUS.put(key, new KeyBindingPlus(aliasName.toString(), oppositeDefinition.isBlank() ? "" : aliasName1.toString()));
+        return 3;
+    }
+
+    private int commandAliasExecute(String name, String definition) {
+        if (Alias.aliasesWithArgs.containsKey(name)) return 2;
+        AliasWithoutArgs aliasWithoutArgs = Alias.aliasesWithoutArgs.get(name);
+        if (aliasWithoutArgs != null && !(aliasWithoutArgs instanceof UserAlias)) return 3;
+        Alias.aliasesWithoutArgs.put(name, new UserAlias(definition));
+        return 1;
+    }
+
+    private int commandBindByAliasNameExecute(String keyName, String aliasName) {
 
         boolean flag0 = true;//t -> +-aliasName binding pattern
         boolean flag = true;//t -> +aliasName or it doesn't contain +- and would be triggered when pressing down as default
@@ -204,12 +223,11 @@ public class BindAliasPlusClient implements ClientModInitializer {
             flag1 = false;
             if ((aliasName.startsWith("+")) || aliasName.startsWith("-")) {
                 alias = Alias.aliasesWithoutArgs.get(aliasName.substring(1));
-                if (alias == null) {
-                    return 1;
-                } else if (aliasName.startsWith("-")) flag = false;
+                if (alias == null) return 2;
+                else if (aliasName.startsWith("-")) flag = false;
             } else {
                 flag0 = false;
-                return 2;
+                return 3;
             }
         } else {
             flag = !aliasName.startsWith("-");
@@ -217,9 +235,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         }
 
         InputUtil.Key key = parseKey(keyName);
-        if (key == null) {
-            return 3;
-        }
+        if (key == null) return 4;
 
         String aliasNameFinal = flag1 ? aliasName : aliasName.substring(1);
         String aliasNameFinalExtra = flag ? (flag1 ? "-" + aliasNameFinal.substring(1) : "-" + aliasNameFinal) : (flag1 ? "+" + aliasNameFinal.substring(1) : "+" + aliasNameFinal);
@@ -243,7 +259,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         }
         int a = soFar.lastIndexOf(Alias.divider4AliasArgs);
         int n = soFar.lastIndexOf(Alias.divider4AliasDefinition);
-        if (n < a /* it's under an arg's definition, don't need to provide alias name suggests*/)
+        if (n < a /* it's under an arg's definition, don't need to provide alias keyName suggests*/)
             return builder.buildFuture();
         String currentToken = soFar.substring(n + 1);
 
@@ -251,14 +267,10 @@ public class BindAliasPlusClient implements ClientModInitializer {
 
         SuggestionsBuilder finalBuilder = builder;
         Alias.aliasesWithoutArgs.keySet().forEach(alias -> {
-            if (alias.startsWith(currentToken)) {
-                finalBuilder.suggest(alias, Text.literal("alias without args"));
-            }
+            if (alias.startsWith(currentToken)) finalBuilder.suggest(alias, Text.literal("alias without args"));
         });
         Alias.aliasesWithArgs.keySet().forEach(alias -> {
-            if (alias.startsWith(currentToken)) {
-                finalBuilder.suggest(alias, Text.literal("alias with args"));
-            }
+            if (alias.startsWith(currentToken)) finalBuilder.suggest(alias, Text.literal("alias with args"));
         });
 
         return builder.buildFuture();
