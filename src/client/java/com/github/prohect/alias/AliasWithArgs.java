@@ -9,4 +9,10 @@ public interface AliasWithArgs<T extends AliasWithArgs<T>> extends Alias<T> {
         Alias.aliasesWithArgs.put(key, this);
         return (T) this;
     }
+
+    @SuppressWarnings("unchecked")
+    default T putToAliasesWithArgs_notSuggested(String key) {
+        Alias.aliasesWithArgs_notSuggested.put(key, this);
+        return (T) this;
+    }
 }

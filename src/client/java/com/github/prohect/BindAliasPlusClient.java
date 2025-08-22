@@ -66,19 +66,19 @@ public class BindAliasPlusClient implements ClientModInitializer {
 
         //load builtin aliasesWithArgs
         WaitAlias waitAlias;
+        new AttackAlias().putToAliasesWithArgs_notSuggested("builtinAttack");
+        new UseAlias().putToAliasesWithArgs_notSuggested("builtinUse");
+        new ForwardAlias().putToAliasesWithArgs_notSuggested("builtinForward");
+        new BackAlias().putToAliasesWithArgs_notSuggested("builtinBack");
+        new LeftAlias().putToAliasesWithArgs_notSuggested("builtinLeft");
+        new RightAlias().putToAliasesWithArgs_notSuggested("builtinRight");
+        new JumpAlias().putToAliasesWithArgs_notSuggested("builtinJump");
+        new SneakAlias().putToAliasesWithArgs_notSuggested("builtinSneak");
+        new SprintAlias().putToAliasesWithArgs_notSuggested("builtinSprint");
+        new DropAlias().putToAliasesWithArgs_notSuggested("builtinDrop").addToLockCursorBlackList();
         new LogAlias().putToAliasesWithArgs("log");
         new SlotAlias().putToAliasesWithArgs("slot");
         new SwapSlotAlias().putToAliasesWithArgs("swapSlot");
-        new AttackAlias().putToAliasesWithArgs("builtinAttack");
-        new UseAlias().putToAliasesWithArgs("builtinUse");
-        new ForwardAlias().putToAliasesWithArgs("builtinForward");
-        new BackAlias().putToAliasesWithArgs("builtinBack");
-        new LeftAlias().putToAliasesWithArgs("builtinLeft");
-        new RightAlias().putToAliasesWithArgs("builtinRight");
-        new JumpAlias().putToAliasesWithArgs("builtinJump");
-        new SneakAlias().putToAliasesWithArgs("builtinSneak");
-        new SprintAlias().putToAliasesWithArgs("builtinSprint");
-        new DropAlias().putToAliasesWithArgs("builtinDrop").addToLockCursorBlackList();
         waitAlias = new WaitAlias().putToAliasesWithArgs("wait");
         new YawAlias().putToAliasesWithArgs("yaw");
         new PitchAlias().putToAliasesWithArgs("pitch");
@@ -273,7 +273,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
     }
 
     private int commandAliasExecute(String name, String definition) {
-        if (Alias.aliasesWithArgs.containsKey(name)) return 2;
+        if (Alias.aliasesWithArgs_notSuggested.containsKey(name) || Alias.aliasesWithArgs.containsKey(name)) return 2;
         AliasWithoutArgs<?> aliasWithoutArgs = Alias.aliasesWithoutArgs.get(name);
         if (aliasWithoutArgs != null && !(aliasWithoutArgs instanceof UserAlias)) return 3;
         Alias.aliasesWithoutArgs.put(name, new UserAlias(definition));

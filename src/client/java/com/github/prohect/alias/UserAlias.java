@@ -71,6 +71,7 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
         while (!aliases.isEmpty()) {
             AliasRecord aliasRecord = aliases.poll();
             Alias<?> alias = Alias.aliasesWithoutArgs.get(aliasRecord.aliasName());
+            alias = alias == null ? Alias.aliasesWithArgs_notSuggested.get(aliasRecord.aliasName()) : alias;
             alias = alias == null ? Alias.aliasesWithArgs.get(aliasRecord.aliasName()) : alias;
             switch (alias) {
                 case null -> {
@@ -100,6 +101,7 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
         while (!aliases.isEmpty()) {
             AliasRecord aliasRecord = aliases.poll();
             Alias<?> alias = Alias.aliasesWithoutArgs.get(aliasRecord.aliasName());
+            alias = alias == null ? Alias.aliasesWithArgs_notSuggested.get(aliasRecord.aliasName()) : alias;
             alias = alias == null ? Alias.aliasesWithArgs.get(aliasRecord.aliasName()) : alias;
             switch (alias) {
                 case null -> {

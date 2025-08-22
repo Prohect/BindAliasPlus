@@ -12,6 +12,7 @@ public interface Alias<T extends Alias<T>> {
     HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs = new HashMap<>();
     HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs_fromBindCommand = new HashMap<>();
     HashMap<String, AliasWithArgs<?>> aliasesWithArgs = new HashMap<>();
+    HashMap<String, AliasWithArgs<?>> aliasesWithArgs_notSuggested = new HashMap<>();
     char divider4AliasDefinition = ' ';
     char divider4AliasArgs = '\\';
 
