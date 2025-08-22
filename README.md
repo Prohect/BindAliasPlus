@@ -29,30 +29,66 @@ BindAliasPlus enhances your Minecraft gameplay by letting you define custom alia
 - **Key Binding**: A link between a physical key (e.g., `mouse5`, `keyboard.g`) and an alias (or two aliases: one for press, one for release).
 
 
-
 ### Built-in Aliases
 BindAliasPlus includes prebuilt aliases for common actions. They are divided into **aliases with arguments** and **aliases without arguments**.
 
 #### Aliases with Arguments
-    note:slots defined by mc:
-    1-9 -> hotbarSlots,
-    10-36 -> slots inside inventory,10-19 first row
-    37-40 -> equipments, 37 is feet, 40 is head
-    41 -> the second hand,
-- `swapSlot\slot1\slot2`: Swaps items between two inventory slots (e.g., `swapSlot\10\19` swaps slot 10 and 19).
-- `wait\ticks`: Pauses execution for `ticks` (20 ticks = 1 second; e.g., `wait\20` for 1 second).
-- `use\0`/`use\1`: Stops/Starts using the held item (e.g., `use\1` to hold right-click).
-- `attack\0`/`attack\1`: Stops/Starts attacking (e.g., `attack\1` to hold left-click).
-- `slot\slotNumber`: Switches to a hotbar slot (1-9; e.g., `slot\3` for hotbar slot 3).
-- `yaw\degrees`/`pitch\degrees`: Adjusts player rotation (e.g., `yaw\90` to turn 90° right).
-- `setYaw\degrees`/`setPitch\degrees`: Sets player rotation to a specific value (e.g., `setYaw\0` for north).
+*Note: Slots follow Minecraft's internal numbering:*
+- 1-9 → Hotbar slots
+- 10-36 → Inventory slots (10-19 = first row)
+- 37-40 → Equipment slots (37 = feet, 38 = legs, 39 = chest, 40 = head)
+- 41 → Offhand slot
+
+| Alias | Description | Example |
+|-------|-------------|---------|
+| `log` | Logs a message to the game console (for debugging). | `log\Hello World` |
+| `slot\slotNumber` | Switches to a specific hotbar slot (1-9). | `slot\3` (switches to hotbar slot 3) |
+| `swapSlot\slot1\slot2` | Swaps items between two inventory slots. | `swapSlot\10\39` (swaps inventory slot 10 with chestplate slot) |
+| `swapSlot\slot1` | Swaps items between the currently held hotbar slot (main hand) and the specified `slot1`. | `swapSlot\19` (swaps current hotbar slot with inventory slot 19) |
+| `builtinAttack\state` | Controls attack state (1 = start pressing attack, 0 = stop pressing attack). | `builtinAttack\1` (holds left-click) |
+| `builtinUse\state` | Controls item use state (1 = start using, 0 = stop using). | `builtinUse\1` (holds right-click) |
+| `builtinForward\state` | Controls forward movement (1 = start moving, 0 = stop). | `builtinForward\1` (moves forward) |
+| `builtinBack\state` | Controls backward movement (1 = start moving, 0 = stop). | `builtinBack\1` (moves backward) |
+| `builtinLeft\state` | Controls left movement (1 = start moving, 0 = stop). | `builtinLeft\1` (moves left) |
+| `builtinRight\state` | Controls right movement (1 = start moving, 0 = stop). | `builtinRight\1` (moves right) |
+| `builtinJump\state` | Controls jumping (1 = start jumping, 0 = stop). | `builtinJump\1` (holds jump) |
+| `builtinSneak\state` | Controls sneaking (1 = start sneaking, 0 = stop). | `builtinSneak\1` (holds sneak) |
+| `builtinSprint\state` | Controls sprinting (1 = start sprinting, 0 = stop). | `builtinSprint\1` (starts sprinting) |
+| `builtinDrop\mode` | Controls item dropping (0 = drop one item, 1 = drop entire stack). | `builtinDrop\1` (drops full stack) |
+| `wait\ticks` | Pauses execution for a specified number of ticks (20 ticks = 1 second). | `wait\20` (waits 1 second) |
+| `yaw\degrees` | Adjusts player yaw (horizontal rotation) by a relative degree value. | `yaw\90` (turns 90° right) |
+| `pitch\degrees` | Adjusts player pitch (vertical rotation) by a relative degree value. | `pitch\-30` (looks 30° down) |
+| `setYaw\degrees` | Sets player yaw to an absolute degree value (0 = north, 90 = east). | `setYaw\180` (faces south) |
+| `setPitch\degrees` | Sets player pitch to an absolute degree value (-90 = straight up, 90 = straight down). | `setPitch\0` (looks straight ahead) |
+
 
 #### Aliases without Arguments
-- `+jump`/`-jump`: Starts/Stops jumping.
-- `+forward`/`-forward`: Starts/Stops moving forward.
-- `swapHand`: Swaps items between main and offhand.
-- `drop`: Drops one item; `dropStack`: Drops the entire stack.
-- `reloadCFG`: Reloads the config file.
+These are shorthand aliases that map to common `state=1` (start) and `state=0` (stop) actions for simpler usage:
+
+| Alias | Equivalent To | Description |
+|-------|---------------|-------------|
+| `+attack` | `builtinAttack\1` | Starts attacking (holds left-click). |
+| `-attack` | `builtinAttack\0` | Stops attacking (releases left-click). |
+| `+use` | `builtinUse\1` | Starts using held item (holds right-click). |
+| `-use` | `builtinUse\0` | Stops using held item (releases right-click). |
+| `+forward` | `builtinForward\1` | Starts moving forward. |
+| `-forward` | `builtinForward\0` | Stops moving forward. |
+| `+back` | `builtinBack\1` | Starts moving backward. |
+| `-back` | `builtinBack\0` | Stops moving backward. |
+| `+left` | `builtinLeft\1` | Starts moving left. |
+| `-left` | `builtinLeft\0` | Stops moving left. |
+| `+right` | `builtinRight\1` | Starts moving right. |
+| `-right` | `builtinRight\0` | Stops moving right. |
+| `+jump` | `builtinJump\1` | Starts jumping (holds jump key). |
+| `-jump` | `builtinJump\0` | Stops jumping (releases jump key). |
+| `+sneak` | `builtinSneak\1` | Starts sneaking (holds sneak key). |
+| `-sneak` | `builtinSneak\0` | Stops sneaking (releases sneak key). |
+| `+sprint` | `builtinSprint\1` | Starts sprinting (holds sprint key). |
+| `-sprint` | `builtinSprint\0` | Stops sprinting (releases sprint key). |
+| `drop` | `builtinDrop\0` | Drops one item from the held stack. |
+| `dropStack` | `builtinDrop\1` | Drops the entire held stack. |
+| `swapHand` | — | Swaps items between main hand and offhand. |
+| `reloadCFG` | — | Reloads the config file (applies changes without restarting). |
 
 
 ### Examples
@@ -81,6 +117,7 @@ Automate elytra deployment and firework use with a single key:
 
 #### 2. Quick Bow Usage
 Quickly swap to a bow, use it, and swap back:
+(bow wont need a hotbar any more, also try this for Fortune and SilkTouch pickaxe or enderpearl)
 ```bash
 # Define +bow (on press): swap to bow (slot 11) → start using
 /alias +bow swapSlot\11 +use
@@ -96,7 +133,25 @@ Quickly swap to a bow, use it, and swap back:
 ## Configuration
 - **Config File**: At `config/bind-alias-plus.cfg`. Automatically created if there is not one.
 - **Auto-Load**: Aliases and bindings in the config file are loaded automatically when joining a server.
-- **Manual Edit**: You can directly edit the config file to add/modify aliases/bindings (use the same syntax as in-game commands).
+- **Manual Edit**: You can directly edit the config file to add/modify aliases/bindings (use the same syntax as in-game commands).  
+  **Example Config Content**:
+  ```
+  # BindAliasPlus config example
+  # Define aliases for elytra equipment
+  alias +equipElytra swapSlot\10\39
+  alias -equipElytra swapSlot\10\39
+  # Define aliases for fireworks handling
+  alias +holdFireworks swapSlot\26
+  alias -holdFireworks swapSlot\26
+  # Define a simple jump action
+  alias jump +jump wait\1 -jump
+  # Define fly action sequence (on press)
+  alias +fly +equipElytra jump wait\1 jump +holdFireworks +use -use
+  # Define fly action sequence (on release)
+  alias -fly -equipElytra -holdFireworks
+  # Bind mouse5 to the +fly/-fly aliases
+  bind mouse5 +fly
+  ```
 
 
 ## Commands Reference
