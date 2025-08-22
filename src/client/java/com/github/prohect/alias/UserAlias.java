@@ -4,12 +4,12 @@ import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.builtinAlias.WaitAlias;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
- * a userAlias could not have args
+ * a userAlias could not have definition
  */
 public final class UserAlias implements AliasWithoutArgs<UserAlias> {
     final ArrayDeque<AliasRecord> aliases = new ArrayDeque<>();
@@ -20,51 +20,41 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
     }
 
     private void decodeArgs2Alias(String args) {
-        String[] strings = args.split(Pattern.quote(Alias.divider4AliasDefinition));
-        for (String aliasNameAndArgs : strings) {
-            String[] splits = aliasNameAndArgs.split(Pattern.quote(Alias.divider4AliasArgs));
-            int count = splits.length;
-            for (String split : splits) if (split.isBlank()) --count;
+        ArrayList<String> definitions = Alias.getDefinitions(args);
+        for (String definition : definitions) {
+            ArrayList<String> definitionSplits = Alias.getDefinitionSplits(definition);
+            int count = definitionSplits.size();
+            for (String split : definitionSplits) if (split.isBlank()) --count;
             switch (count) {
                 case 0:
                     break;
                 case 1:
                     String aliasName = "";
-                    for (String split : splits) {
-                        if (!split.isBlank()) {
-                            aliasName = split.trim();
+                    for (String definitionSplit : definitionSplits) {
+                        if (!definitionSplit.isBlank()) {
+                            aliasName = definitionSplit.trim();
                             break;
                         }
                     }
-                    AliasWithoutArgs<?> aliasWithoutArgs = Alias.aliasesWithoutArgs.get(aliasName);
-                    if (aliasWithoutArgs != null)
-                        aliases.add(new AliasRecord(aliasWithoutArgs, "", aliasName));
-                    else BindAliasPlusClient.LOGGER.info("Alias with name {} not found.", aliasName);
+                    aliases.add(new AliasRecord("", aliasName));
                     break;
                 default:
                     String aliasName2 = "";
                     StringBuilder args2 = new StringBuilder();
-                    boolean flag = false;
-                    boolean flag1 = false;
-                    for (String split : splits) {
-                        if (!split.isBlank()) {
-                            if (!flag) {
-                                aliasName2 = split.trim();
-                                flag = true;
-                            } else {
-                                if (!flag1) {
-                                    args2.append(split.trim());
-                                    flag1 = true;
-                                } else {
-                                    args2.append(Alias.divider4AliasArgs).append(split.trim());
-                                }
-                            }
+                    boolean onAliasName = true;//otherwise on alias definition
+                    boolean needDivider = false;
+                    for (String definitionSplit : definitionSplits)
+                        if (!definitionSplit.isBlank()) {
+                            String trimmed = definitionSplit.trim();
+                            if (onAliasName) {
+                                aliasName2 = trimmed;
+                                onAliasName = false;
+                            } else if (!needDivider) {
+                                args2.append(trimmed);
+                                needDivider = true;
+                            } else args2.append(Alias.divider4AliasArgs).append(trimmed);
                         }
-                    }
-                    AliasWithArgs<?> aliasWithArgs = Alias.aliasesWithArgs.get(aliasName2);
-                    if (aliasWithArgs != null)
-                        aliases.add(new AliasRecord(aliasWithArgs, args2.toString(), aliasName2));
-                    else BindAliasPlusClient.LOGGER.info("Alias  with name {} not found.", aliasName2);
+                    aliases.add(new AliasRecord(args2.toString(), aliasName2));
                     break;
             }
         }
@@ -80,20 +70,23 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
         decodeArgs2Alias(this.args);
         while (!aliases.isEmpty()) {
             AliasRecord aliasRecord = aliases.poll();
-            Alias<?> alias = aliasRecord.alias();
-            if (alias instanceof UserAlias userAlias) {
-                userAlias.runInternal(List.of(this));
-            } else if (alias instanceof WaitAlias waitAlias) {
-                StringBuilder definitionLeft = new StringBuilder();
-                AliasRecord aliasRecord1;
-                while (!aliases.isEmpty()) {
-                    aliasRecord1 = aliases.poll();
-                    definitionLeft.append(Alias.divider4AliasDefinition).append(aliasRecord1.aliasName()).append(Alias.divider4AliasArgs).append(aliasRecord1.args());
+            Alias<?> alias = Alias.aliasesWithoutArgs.get(aliasRecord.aliasName());
+            alias = alias == null ? Alias.aliasesWithArgs.get(aliasRecord.aliasName()) : alias;
+            switch (alias) {
+                case null -> {
                 }
-                waitAlias.run(aliasRecord.args(), definitionLeft.toString());
-                return this;
-            } else {
-                alias.run(aliasRecord.args());
+                case UserAlias userAlias -> userAlias.runInternal(List.of(this));
+                case WaitAlias waitAlias -> {
+                    StringBuilder definitionLeft = new StringBuilder();
+                    AliasRecord aliasRecord1;
+                    while (!aliases.isEmpty()) {
+                        aliasRecord1 = aliases.poll();
+                        definitionLeft.append(Alias.divider4AliasDefinition).append(aliasRecord1.aliasName()).append(Alias.divider4AliasArgs).append(aliasRecord1.args());
+                    }
+                    waitAlias.run(aliasRecord.args(), definitionLeft.toString());
+                    return this;
+                }
+                default -> alias.run(aliasRecord.args());
             }
         }
         return this;
@@ -106,31 +99,36 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
         decodeArgs2Alias(this.args);
         while (!aliases.isEmpty()) {
             AliasRecord aliasRecord = aliases.poll();
-            Alias<?> alias = aliasRecord.alias();
-            if (alias instanceof UserAlias userAlias) {
-                if (userAliasesCallChains.contains(userAlias)) {
-                    //infinite loop is not allowed,  ignore them
-                    BindAliasPlusClient.LOGGER.warn("[switchSlot]infinite loop detected checking UserAliasesCallChains.");
-                    continue;
+            Alias<?> alias = Alias.aliasesWithoutArgs.get(aliasRecord.aliasName());
+            alias = alias == null ? Alias.aliasesWithArgs.get(aliasRecord.aliasName()) : alias;
+            switch (alias) {
+                case null -> {
                 }
-                userAlias.runInternal(Stream.concat(userAliasesCallChains.stream(), Stream.of(userAlias)).toList());
-            } else if (alias instanceof WaitAlias waitAlias) {
-                StringBuilder definitionLeft = new StringBuilder();
-                AliasRecord aliasRecord1;
-                while (!aliases.isEmpty()) {
-                    aliasRecord1 = aliases.poll();
-                    definitionLeft.append(Alias.divider4AliasDefinition).append(aliasRecord1.aliasName()).append(Alias.divider4AliasArgs).append(aliasRecord1.args());
+                case UserAlias userAlias -> {
+                    if (userAliasesCallChains.contains(userAlias)) {
+                        //infinite loop is not allowed,  ignore them
+                        BindAliasPlusClient.LOGGER.warn("[switchSlot]infinite loop detected checking UserAliasesCallChains.");
+                        continue;
+                    }
+                    userAlias.runInternal(Stream.concat(userAliasesCallChains.stream(), Stream.of(userAlias)).toList());
                 }
-                while (true) {
-                    UserAlias rootAlias = userAliasesCallChains.getFirst();
-                    if (rootAlias.aliases.isEmpty()) break;
-                    aliasRecord1 = rootAlias.aliases.poll();
-                    definitionLeft.append(Alias.divider4AliasDefinition).append(aliasRecord1.aliasName()).append(Alias.divider4AliasArgs).append(aliasRecord1.args());
+                case WaitAlias waitAlias -> {
+                    StringBuilder definitionLeft = new StringBuilder();
+                    AliasRecord aliasRecord1;
+                    while (!aliases.isEmpty()) {
+                        aliasRecord1 = aliases.poll();
+                        definitionLeft.append(Alias.divider4AliasDefinition).append(aliasRecord1.aliasName()).append(Alias.divider4AliasArgs).append(aliasRecord1.args());
+                    }
+                    while (true) {
+                        UserAlias rootAlias = userAliasesCallChains.getFirst();
+                        if (rootAlias.aliases.isEmpty()) break;
+                        aliasRecord1 = rootAlias.aliases.poll();
+                        definitionLeft.append(Alias.divider4AliasDefinition).append(aliasRecord1.aliasName()).append(Alias.divider4AliasArgs).append(aliasRecord1.args());
+                    }
+                    waitAlias.run(aliasRecord.args(), definitionLeft.toString());
+                    return;
                 }
-                waitAlias.run(aliasRecord.args(), definitionLeft.toString());
-                return;
-            } else {
-                alias.run(aliasRecord.args());
+                default -> alias.run(aliasRecord.args());
             }
         }
     }

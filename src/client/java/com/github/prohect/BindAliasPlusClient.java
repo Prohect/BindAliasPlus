@@ -65,6 +65,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         //load builtin alias
 
         //load builtin aliasesWithArgs
+        WaitAlias waitAlias;
         new LogAlias().putToAliasesWithArgs("log");
         new SlotAlias().putToAliasesWithArgs("slot");
         new SwapSlotAlias().putToAliasesWithArgs("swapSlot");
@@ -78,11 +79,14 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new SneakAlias().putToAliasesWithArgs("builtinSneak");
         new SprintAlias().putToAliasesWithArgs("builtinSprint");
         new DropAlias().putToAliasesWithArgs("builtinDrop").addToLockCursorBlackList();
-        WaitAlias waitAlias = new WaitAlias().putToAliasesWithArgs("wait");
+        waitAlias = new WaitAlias().putToAliasesWithArgs("wait");
         new YawAlias().putToAliasesWithArgs("yaw");
         new PitchAlias().putToAliasesWithArgs("pitch");
         new SetYawAlias().putToAliasesWithArgs("setYaw");
         new SetPitchAlias().putToAliasesWithArgs("setPitch");
+        new AliasAlias().putToAliasesWithArgs("alias");
+        new BindAlias().putToAliasesWithArgs("bind");
+        new UnbindAlias().putToAliasesWithArgs("unbind");
 
         //load builtin aliasesWithoutArgs
         new SwapHandAlias().putToAliasesWithoutArgs("swapHand");
@@ -112,11 +116,11 @@ public class BindAliasPlusClient implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
                 dispatcher.register(literal("alias")
                         .then(argument("keyName", StringArgumentType.word())
-                                .then(argument("definition", StringArgumentType.greedyString())
+                                .then(argument("args", StringArgumentType.greedyString())
                                         .suggests((context, builder) -> getSuggestions4aliasDefinitionCompletableFuture(builder))
                                         .executes(context -> {
                                             String name = StringArgumentType.getString(context, "keyName");
-                                            String definition = StringArgumentType.getString(context, "definition");
+                                            String definition = StringArgumentType.getString(context, "args");
                                             return switch (commandAliasExecute(name, definition)) {
                                                 case 1 -> {
                                                     context.getSource().sendFeedback(Text.literal("Alias " + name + " = " + definition));
@@ -161,11 +165,11 @@ public class BindAliasPlusClient implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
                 dispatcher.register(literal("bind")
                         .then(argument("key", StringArgumentType.word())
-                                .then(argument("definition", StringArgumentType.greedyString())
+                                .then(argument("args", StringArgumentType.greedyString())
                                         .suggests((context, builder) -> getSuggestions4aliasDefinitionCompletableFuture(builder))
                                         .executes(context -> {
                                             String keyName = StringArgumentType.getString(context, "key");
-                                            String definition = StringArgumentType.getString(context, "definition");
+                                            String definition = StringArgumentType.getString(context, "args");
                                             return switch (commandBindExecute(keyName, definition)) {
                                                 case 1 -> {
                                                     context.getSource().sendFeedback(Text.literal("§aBound key " + keyName + " to alias " + definition));
@@ -244,8 +248,8 @@ public class BindAliasPlusClient implements ClientModInitializer {
         return 1;
     }
 
-    private int commandBindExecute(String keyName, String definition) {
-        if (commandBindByAliasNameExecute(keyName, definition) == 1) return 1;
+    private int commandBindExecute(String keyName, String args) {
+        if (commandBindByAliasNameExecute(keyName, args) == 1) return 1;
         final StringBuilder aliasName = new StringBuilder();
         final StringBuilder aliasName1 = new StringBuilder();
         final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -258,8 +262,8 @@ public class BindAliasPlusClient implements ClientModInitializer {
         InputUtil.Key key = parseKey(keyName);
         if (key == null) return 2;
 
-        Alias.aliasesWithoutArgs_fromBindCommand.put(String.valueOf(aliasName), new UserAlias(definition));
-        String oppositeDefinition = Alias.getOppositeDefinition(definition);
+        Alias.aliasesWithoutArgs_fromBindCommand.put(String.valueOf(aliasName), new UserAlias(args));
+        String oppositeDefinition = Alias.getOppositeDefinition(args);
         if (!oppositeDefinition.isBlank())
             Alias.aliasesWithoutArgs_fromBindCommand.put(String.valueOf(aliasName1), new UserAlias(oppositeDefinition));
         BINDING_PLUS.put(key, new KeyBindingPlus(aliasName.toString(), oppositeDefinition.isBlank() ? "" : aliasName1.toString()));
@@ -320,7 +324,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         }
         int a = soFar.lastIndexOf(Alias.divider4AliasArgs);
         int n = soFar.lastIndexOf(Alias.divider4AliasDefinition);
-        if (n < a /* it's under an arg's definition, don't need to provide alias keyName suggests*/)
+        if (n < a /* it's under an arg's args, don't need to provide alias keyName suggests*/)
             return builder.buildFuture();
         String currentToken = soFar.substring(n + 1);
 

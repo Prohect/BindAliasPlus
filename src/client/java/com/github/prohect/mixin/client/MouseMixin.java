@@ -52,7 +52,7 @@ public class MouseMixin {
     @Inject(at = @At("RETURN"), method = "lockCursor")
     private void lockCursor(CallbackInfo ci) {
         Alias.aliasesWithArgs.forEach((aliasName, aliasWithArgs) -> {
-            if (aliasWithArgs instanceof BuiltinAliasWithBooleanArgs builtinAliasWithBooleanArgs)
+            if (aliasWithArgs instanceof BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs)
                 if (builtinAliasWithBooleanArgs.flag && !Alias.blackList4lockCursor.contains(builtinAliasWithBooleanArgs))
                     builtinAliasWithBooleanArgs.run("1");
         });

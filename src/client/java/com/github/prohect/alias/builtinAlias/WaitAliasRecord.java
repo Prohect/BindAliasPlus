@@ -18,10 +18,10 @@ public class WaitAliasRecord {
     }
 
     public void tick() {
-        --ticks;
         if (ticks <= 0) {
             new UserAlias(definition).run("");
             WaitAlias.tasksWaiting.remove(this);
         }
+        --ticks;
     }
 }

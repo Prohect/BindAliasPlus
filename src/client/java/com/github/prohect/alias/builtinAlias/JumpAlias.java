@@ -1,5 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
+import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
@@ -11,6 +12,7 @@ public class JumpAlias extends BuiltinAliasWithBooleanArgs<JumpAlias> {
         KeyBinding jumpKey = MinecraftClient.getInstance().options.jumpKey;
         jumpKey.setPressed(flag);
         if (flag) KeyBinding.onKeyPressed(jumpKey.boundKey);
+        BindAliasPlusClient.LOGGER.info("{}Jump alias {}", Thread.currentThread().getName(), args);
         return this;
     }
 }

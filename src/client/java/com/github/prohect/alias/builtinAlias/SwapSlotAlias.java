@@ -50,7 +50,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             return this;
         }
 
-        String[] strings = args.split(Pattern.quote(Alias.divider4AliasArgs));
+        String[] strings = args.split(Pattern.quote(String.valueOf(Alias.divider4AliasArgs)));
         int[] slots = new int[]{0, selectedSlot};
         try {
             if (strings.length == 1) slots[0] = Integer.parseInt(strings[0]) - 1;
