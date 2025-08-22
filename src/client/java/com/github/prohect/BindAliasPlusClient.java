@@ -87,6 +87,8 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new AliasAlias().putToAliasesWithArgs("alias");
         new BindAlias().putToAliasesWithArgs("bind");
         new UnbindAlias().putToAliasesWithArgs("unbind");
+        new SayAlias().putToAliasesWithArgs("say");
+        new SendCommandAlias().putToAliasesWithArgs("sendCommand");
 
         //load builtin aliasesWithoutArgs
         new SwapHandAlias().putToAliasesWithoutArgs("swapHand");
