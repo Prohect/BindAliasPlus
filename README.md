@@ -57,16 +57,6 @@ BindAliasPlus includes prebuilt aliases for common actions. They are divided int
 | `slot\slotNumber`      | Switches to a specific hotbar slot (1-9).                                                 | `slot\3` (switches to hotbar slot 3)                                           |
 | `swapSlot\slot1\slot2` | Swaps items between two inventory slots.                                                  | `swapSlot\10\39` (swaps inventory slot 10 with chestplate slot)                |
 | `swapSlot\slot1`       | Swaps items between the currently held hotbar slot (main hand) and the specified `slot1`. | `swapSlot\19` (swaps current hotbar slot with inventory slot 19)               |
-| `builtinAttack\state`  | Controls attack state (1 = start pressing attack, 0 = stop pressing attack).              | `builtinAttack\1` (holds left-click)                                           |
-| `builtinUse\state`     | Controls item use state (1 = start using, 0 = stop using).                                | `builtinUse\1` (holds right-click)                                             |
-| `builtinForward\state` | Controls forward movement (1 = start moving, 0 = stop).                                   | `builtinForward\1` (moves forward)                                             |
-| `builtinBack\state`    | Controls backward movement (1 = start moving, 0 = stop).                                  | `builtinBack\1` (moves backward)                                               |
-| `builtinLeft\state`    | Controls left movement (1 = start moving, 0 = stop).                                      | `builtinLeft\1` (moves left)                                                   |
-| `builtinRight\state`   | Controls right movement (1 = start moving, 0 = stop).                                     | `builtinRight\1` (moves right)                                                 |
-| `builtinJump\state`    | Controls jumping (1 = start jumping, 0 = stop).                                           | `builtinJump\1` (holds jump)                                                   |
-| `builtinSneak\state`   | Controls sneaking (1 = start sneaking, 0 = stop).                                         | `builtinSneak\1` (holds sneak)                                                 |
-| `builtinSprint\state`  | Controls sprinting (1 = start sprinting, 0 = stop).                                       | `builtinSprint\1` (starts sprinting)                                           |
-| `builtinDrop\mode`     | Controls item dropping (0 = drop one item, 1 = drop entire stack).                        | `builtinDrop\1` (drops full stack)                                             |
 | `wait\ticks`           | Pauses execution for a specified number of ticks (20 ticks = 1 second).                   | `wait\20` (waits 1 second)                                                     |
 | `yaw\degrees`          | Adjusts player yaw (horizontal rotation) by a relative degree value.                      | `yaw\90` (turns 90° right)                                                     |
 | `pitch\degrees`        | Adjusts player pitch (vertical rotation) by a relative degree value.                      | `pitch\-30` (looks 30° down)                                                   |
