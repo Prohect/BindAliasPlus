@@ -44,7 +44,7 @@ BindAliasPlus includes prebuilt aliases for common actions. They are divided int
 | `log` | Logs a message to the game console (for debugging). | `log\Hello World` |
 | `slot\slotNumber` | Switches to a specific hotbar slot (1-9). | `slot\3` (switches to hotbar slot 3) |
 | `swapSlot\slot1\slot2` | Swaps items between two inventory slots. | `swapSlot\10\39` (swaps inventory slot 10 with chestplate slot) |
-| `builtinAttack\state` | Controls attack state (1 = start attacking, 0 = stop attacking). | `builtinAttack\1` (holds left-click) |
+| `builtinAttack\state` | Controls attack state (1 = start pressing attack, 0 = stop pressing attack). | `builtinAttack\1` (holds left-click) |
 | `builtinUse\state` | Controls item use state (1 = start using, 0 = stop using). | `builtinUse\1` (holds right-click) |
 | `builtinForward\state` | Controls forward movement (1 = start moving, 0 = stop). | `builtinForward\1` (moves forward) |
 | `builtinBack\state` | Controls backward movement (1 = start moving, 0 = stop). | `builtinBack\1` (moves backward) |
