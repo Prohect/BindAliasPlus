@@ -17,11 +17,17 @@ public class WaitAliasRecord {
         this.definition = definition;
     }
 
-    public void tick() {
+    /**
+     *
+     * @return 1 if taskWaiting performed, 0 if taskWaiting still wait
+     */
+    public int tick() {
         if (ticks <= 0) {
             new UserAlias(definition).run("");
             WaitAlias.tasksWaiting.remove(this);
+            return 1;
         }
         --ticks;
+        return 0;
     }
 }
