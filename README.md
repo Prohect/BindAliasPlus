@@ -94,7 +94,7 @@ These are shorthand aliases that map to common `state=1` (start) and `state=0` (
 | `-sprint`   | `builtinSprint\0`  | Stops sprinting (releases sprint key).                        |
 | `drop`      | `builtinDrop\0`    | Drops one item from the held stack.                           |
 | `dropStack` | `builtinDrop\1`    | Drops the entire held stack.                                  |
-| `swapHand`  | —                  | Swaps items between main hand and offhand.                    |
+| `swapHand`  | _                  | Swaps items between main hand and offhand.                    |
 | `reloadCFG` | —                  | Reloads the config file (applies changes without restarting). |
 
 ### Examples
