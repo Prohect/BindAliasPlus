@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = MinecraftClient.class)
 public class MinecraftClientMixin {
-    @Inject(at = @At("RETURN"), method = "tick")
+    @Inject(at = @At("HEAD"), method = "tick")
     private void tick(CallbackInfo ci) {
         int size = WaitAlias.tasksWaiting.size();
         for (int i = 0; i < size; i++) {
