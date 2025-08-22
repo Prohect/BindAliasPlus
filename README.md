@@ -117,7 +117,7 @@ Automate elytra deployment and firework use with a single key:
 # put your firework in slot 19 ( the first slot of the second row of your inventory,
 /alias +fly equipElytra jump wait\1 jump swapSlot\19 +use -use
 
-# Define -fly (on key release): re-equip what u equiped before
+# Define -fly (on key release): re-equip what u equipped before
 /alias -fly equipElytra swapSlot\19
 
 # Bind mouse button 5 to +fly/-fly
@@ -127,7 +127,7 @@ Automate elytra deployment and firework use with a single key:
 #### 2. Quick Bow Usage
 
 Quickly swap to a bow, use it, and swap back:
-(bow wont need a hotbar any more, also try this for Fortune and SilkTouch pickaxe or enderpearl)
+(bow won't need a hotbar anymore, also try this for Fortune and SilkTouch pickaxe or enderPearl)
 
 ```bash
 # Define +bow (on press): swap to bow (slot 11) → start using
