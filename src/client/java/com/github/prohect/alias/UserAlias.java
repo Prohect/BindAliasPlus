@@ -65,6 +65,7 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
      * <p>
      * may have some difficult progress but finally run some builtin aliases
      */
+    @SuppressWarnings("DuplicatedCode")
     @Override
     public UserAlias run(String args) {
         decodeArgs2Alias(this.args);
@@ -96,6 +97,7 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
     /**
      * @param userAliasesCallChains it's first element must be the rootAlias userAlias of the call chain
      */
+    @SuppressWarnings("DuplicatedCode")
     public void runInternal(List<UserAlias> userAliasesCallChains) {
         decodeArgs2Alias(this.args);
         while (!aliases.isEmpty()) {
