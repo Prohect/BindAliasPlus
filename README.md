@@ -161,8 +161,12 @@ Quickly swap to a bow, use it, and swap back:
   alias +fly +equipElytra jump wait\1 jump +holdFireworks +use -use
   # Define fly action sequence (on release)
   alias -fly -equipElytra -holdFireworks
+  
   # Bind mouse5 to the +fly/-fly aliases
-  bind mouse5 +fly
+
+  alias fly1 bind\"mouse5 fly2" +fly
+  alias fly2 bind\"mouse5 fly1" -fly
+  bind mouse5 fly1  //OR//  bind mouse5 +fly 
   ```
 
 ## Commands Reference
