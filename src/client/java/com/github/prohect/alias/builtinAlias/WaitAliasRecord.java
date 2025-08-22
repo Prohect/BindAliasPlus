@@ -18,7 +18,6 @@ public class WaitAliasRecord {
     }
 
     /**
-     *
      * @return 1 if taskWaiting performed, 0 if taskWaiting still wait
      */
     public int tick() {
