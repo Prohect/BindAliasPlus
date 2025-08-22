@@ -153,8 +153,8 @@ Quickly swap to a bow, use it, and swap back:
   alias +equipElytra swapSlot\10\39
   alias -equipElytra swapSlot\10\39
   # Define aliases for fireworks handling
-  alias +holdFireworks swapSlot\26
-  alias -holdFireworks swapSlot\26
+  alias +holdFireworks swapSlot\26\41
+  alias -holdFireworks swapSlot\26\41
   # Define a simple jump action
   alias jump +jump wait\1 -jump
   # Define fly action sequence (on press)
