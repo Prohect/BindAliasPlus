@@ -117,6 +117,7 @@ Automate elytra deployment and firework use with a single key:
 
 #### 2. Quick Bow Usage
 Quickly swap to a bow, use it, and swap back:
+(bow wont need a hotbar any more, also try this for Fortune and SilkTouch pickaxe or enderpearl)
 ```bash
 # Define +bow (on press): swap to bow (slot 11) → start using
 /alias +bow swapSlot\11 +use
