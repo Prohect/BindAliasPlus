@@ -183,7 +183,7 @@ Quickly swap to a bow, use it, and swap back:
 
 - **Compatibility**: Works with most Fabric mods; may conflict with mods that modify key handling or inventory
   mechanics.
-- **Minecraft Version**: Requires Minecraft 1.19+ (check releases for version-specific builds).
+- **Minecraft Version**: Requires Minecraft 1.21+ (check releases for version-specific builds).
 - **Safety**: Avoid excessive automation on servers with anti-cheat systems (some actions may be flagged).
 
 ## Contributing
