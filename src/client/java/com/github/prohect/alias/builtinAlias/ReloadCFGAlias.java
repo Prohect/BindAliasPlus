@@ -6,7 +6,7 @@ import com.github.prohect.alias.BuiltinAliasWithoutArgs;
 public class ReloadCFGAlias extends BuiltinAliasWithoutArgs<ReloadCFGAlias> {
     @Override
     public ReloadCFGAlias run(String args) {
-        BindAliasPlusClient.loadCFG();
+        BindAliasPlusClient.INSTANCE.loadCFG();
         return this;
     }
 }

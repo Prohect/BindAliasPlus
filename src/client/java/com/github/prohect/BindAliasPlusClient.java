@@ -32,6 +32,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.arg
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class BindAliasPlusClient implements ClientModInitializer {
+    public static final BindAliasPlusClient INSTANCE = new BindAliasPlusClient();
     public static final Path cfgPath = FabricLoader.getInstance().getConfigDir().resolve(MOD_ID + ".cfg");
 
     public static final ArrayDeque<KeyPressed> KEY_QUEUE = new ArrayDeque<>();
@@ -220,7 +221,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         });
     }
 
-    public static void loadCFG() {
+    public void loadCFG() {
         try {
             if (cfgPath.toFile().createNewFile()) return;
         } catch (IOException e) {
@@ -237,8 +238,33 @@ public class BindAliasPlusClient implements ClientModInitializer {
         String cfg = new String(data);
         assert MinecraftClient.getInstance().player != null;
         cfg.lines().forEach(line -> {
-            if (line.startsWith("alias ") || line.startsWith("bind ") || line.startsWith("bindByAliasName ") || line.startsWith("unbind "))
-                MinecraftClient.getInstance().player.networkHandler.sendChatCommand(line);
+            try {
+                if (line.startsWith("alias ")) {
+                    String string = line.substring("alias ".length());
+                    int i = string.indexOf(' ');
+                    String substring = string.substring(0, i);
+                    commandAliasExecute(substring, string.substring(i + 1));
+                } else if (line.startsWith("bind ")) {
+                    String string = line.substring("bind ".length());
+                    int i = string.indexOf(' ');
+                    String substring = string.substring(0, i);
+                    commandBindExecute(substring, string.substring(i + 1));
+                } else if (line.startsWith("bindByAliasName ")) {
+                    String string = line.substring("bindByAliasName ".length());
+                    int i = string.indexOf(' ');
+                    String substring = string.substring(0, i);
+                    commandBindByAliasNameExecute(substring, string.substring(i + 1));
+                } else if (line.startsWith("unbind ")) {
+                    String string = line.substring("unbind ".length());
+                    if (string.indexOf(' ') == -1)
+                        commandUnbindExecute(string);
+                } else {
+                    BindAliasPlusClient.LOGGER.warn("Unknown command: {}", line);
+                }
+            } catch (Exception e) {
+                BindAliasPlusClient.LOGGER.warn("Failed to load CFG file", e);
+            }
+
         });
 
     }
@@ -272,11 +298,12 @@ public class BindAliasPlusClient implements ClientModInitializer {
         return 3;
     }
 
-    private int commandAliasExecute(String name, String definition) {
-        if (Alias.aliasesWithArgs_notSuggested.containsKey(name) || Alias.aliasesWithArgs.containsKey(name)) return 2;
-        AliasWithoutArgs<?> aliasWithoutArgs = Alias.aliasesWithoutArgs.get(name);
+    private int commandAliasExecute(String aliasName, String definition) {
+        if (Alias.aliasesWithArgs_notSuggested.containsKey(aliasName) || Alias.aliasesWithArgs.containsKey(aliasName))
+            return 2;
+        AliasWithoutArgs<?> aliasWithoutArgs = Alias.aliasesWithoutArgs.get(aliasName);
         if (aliasWithoutArgs != null && !(aliasWithoutArgs instanceof UserAlias)) return 3;
-        Alias.aliasesWithoutArgs.put(name, new UserAlias(definition));
+        Alias.aliasesWithoutArgs.put(aliasName, new UserAlias(definition));
         return 1;
     }
 
