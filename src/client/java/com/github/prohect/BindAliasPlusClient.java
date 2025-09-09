@@ -264,7 +264,6 @@ public class BindAliasPlusClient implements ClientModInitializer {
             } catch (Exception e) {
                 BindAliasPlusClient.LOGGER.warn("Failed to load CFG file", e);
             }
-
         });
 
     }
@@ -374,16 +373,15 @@ public class BindAliasPlusClient implements ClientModInitializer {
         InputUtil.Key key = null;
         try {
             key = InputUtil.fromTranslationKey("key.keyboard." + name.toLowerCase());
-        } catch (Exception e) {
-            BindAliasPlusClient.LOGGER.error(e.getMessage());
+        } catch (Exception ignored) {
         }
-
         if (key == null) {
             if (name.toLowerCase().startsWith("mouse")) {
                 try {
                     int button = Integer.parseInt(name.substring(5));
                     return InputUtil.Type.MOUSE.createFromCode(button - 1);
-                } catch (Exception ignored) {
+                } catch (Exception e) {
+                    BindAliasPlusClient.LOGGER.warn("Invalid key definition: {}", name);
                 }
             }
         }
