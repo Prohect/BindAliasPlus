@@ -7,7 +7,7 @@ with simple key presses.
 
 BindAliasPlus enhances your Minecraft gameplay by letting you define custom aliases for sequences of actions and bind
 them to keys. Whether you need to quickly swap inventory slots, automate elytra flight, or chain multiple actions (like
-using a bow or placing blocks), this mod simplifies repetitive tasks through configurable aliases and key bindings.
+using a bow or placing blocks that not even in your hotbars or second hand), this mod simplifies repetitive tasks through configurable aliases and key bindings.
 
 ## Features
 
