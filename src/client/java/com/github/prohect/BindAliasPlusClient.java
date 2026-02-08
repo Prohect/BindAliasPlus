@@ -403,36 +403,45 @@ public class BindAliasPlusClient implements ClientModInitializer {
             .lines()
             .forEach(line -> {
                 try {
-                    if (line.startsWith("alias ")) {
-                        String string = line.substring("alias ".length());
-                        int i = string.indexOf(' ');
-                        String substring = string.substring(0, i);
-                        commandAliasExecute(substring, string.substring(i + 1));
-                    } else if (line.startsWith("bind ")) {
-                        String string = line.substring("bind ".length());
-                        int i = string.indexOf(' ');
-                        String substring = string.substring(0, i);
-                        commandBindExecute(substring, string.substring(i + 1));
-                    } else if (line.startsWith("bindByAliasName ")) {
-                        String string = line.substring(
-                            "bindByAliasName ".length()
-                        );
-                        int i = string.indexOf(' ');
-                        String substring = string.substring(0, i);
-                        commandBindByAliasNameExecute(
-                            substring,
-                            string.substring(i + 1)
-                        );
-                    } else if (line.startsWith("unbind ")) {
-                        String string = line.substring("unbind ".length());
-                        if (string.indexOf(' ') == -1) commandUnbindExecute(
-                            string
-                        );
-                    } else {
-                        BindAliasPlusClient.LOGGER.warn(
-                            "Unknown command: {}",
-                            line
-                        );
+                    line = line.trim();
+                    if (!(line.isBlank() || line.startsWith("#"))) {
+                        if (line.startsWith("alias ")) {
+                            String string = line.substring("alias ".length());
+                            int i = string.indexOf(' ');
+                            String substring = string.substring(0, i);
+                            commandAliasExecute(
+                                substring,
+                                string.substring(i + 1)
+                            );
+                        } else if (line.startsWith("bind ")) {
+                            String string = line.substring("bind ".length());
+                            int i = string.indexOf(' ');
+                            String substring = string.substring(0, i);
+                            commandBindExecute(
+                                substring,
+                                string.substring(i + 1)
+                            );
+                        } else if (line.startsWith("bindByAliasName ")) {
+                            String string = line.substring(
+                                "bindByAliasName ".length()
+                            );
+                            int i = string.indexOf(' ');
+                            String substring = string.substring(0, i);
+                            commandBindByAliasNameExecute(
+                                substring,
+                                string.substring(i + 1)
+                            );
+                        } else if (line.startsWith("unbind ")) {
+                            String string = line.substring("unbind ".length());
+                            if (string.indexOf(' ') == -1) commandUnbindExecute(
+                                string
+                            );
+                        } else {
+                            BindAliasPlusClient.LOGGER.warn(
+                                "Unknown command: {}",
+                                line
+                            );
+                        }
                     }
                 } catch (Exception e) {
                     BindAliasPlusClient.LOGGER.warn(
