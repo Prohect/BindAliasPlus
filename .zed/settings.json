@@ -2,8 +2,27 @@
   "lsp": {
     "jdtls": {
       "settings": {
-        "java.format.settings.url": "file://./formatter.xml"
-      }
-    }
-  }
+        "java.format.settings.url": "file://./formatter.xml",
+        "initialization_options": {
+          "settings": {
+            "java": {
+              "configuration": {
+                "updateBuildConfiguration": "automatic",
+              },
+              "import": {
+                "gradle": {
+                  "enabled": true,
+                },
+              },
+              "errors": {
+                "incompleteClasspath": {
+                  "severity": "warning",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 }
