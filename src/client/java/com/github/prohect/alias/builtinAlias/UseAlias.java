@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 
 public class UseAlias extends BuiltinAliasWithArgs<UseAlias> {
+
     @Override
     public UseAlias run(String args) {
         boolean flag = false;

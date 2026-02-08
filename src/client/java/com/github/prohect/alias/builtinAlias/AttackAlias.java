@@ -6,7 +6,6 @@ import net.minecraft.client.option.KeyBinding;
 
 public class AttackAlias extends BuiltinAliasWithBooleanArgs<AttackAlias> {
 
-
     @Override
     public AttackAlias run(String args) {
         parseArgs(args);
@@ -15,5 +14,4 @@ public class AttackAlias extends BuiltinAliasWithBooleanArgs<AttackAlias> {
         if (flag) KeyBinding.onKeyPressed(attackKey.boundKey);
         return this;
     }
-
 }

@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 
 public class JumpAlias extends BuiltinAliasWithBooleanArgs<JumpAlias> {
+
     @Override
     public JumpAlias run(String args) {
         parseArgs(args);

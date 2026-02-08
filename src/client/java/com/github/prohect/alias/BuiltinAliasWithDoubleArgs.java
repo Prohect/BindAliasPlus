@@ -2,7 +2,10 @@ package com.github.prohect.alias;
 
 import com.github.prohect.BindAliasPlusClient;
 
-public abstract class BuiltinAliasWithDoubleArgs<T extends BuiltinAliasWithDoubleArgs<T>> extends BuiltinAliasWithArgs<T> {
+public abstract class BuiltinAliasWithDoubleArgs<
+    T extends BuiltinAliasWithDoubleArgs<T>
+> extends BuiltinAliasWithArgs<T> {
+
     public double flag;
 
     /**

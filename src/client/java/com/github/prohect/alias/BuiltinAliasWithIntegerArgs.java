@@ -2,7 +2,10 @@ package com.github.prohect.alias;
 
 import com.github.prohect.BindAliasPlusClient;
 
-public abstract class BuiltinAliasWithIntegerArgs<T extends BuiltinAliasWithIntegerArgs<T>> extends BuiltinAliasWithArgs<T> {
+public abstract class BuiltinAliasWithIntegerArgs<
+    T extends BuiltinAliasWithIntegerArgs<T>
+> extends BuiltinAliasWithArgs<T> {
+
     public int flag;
 
     /**

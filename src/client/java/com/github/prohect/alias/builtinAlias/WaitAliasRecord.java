@@ -3,6 +3,7 @@ package com.github.prohect.alias.builtinAlias;
 import com.github.prohect.alias.UserAlias;
 
 public class WaitAliasRecord {
+
     /**
      * same as tick of mc
      */

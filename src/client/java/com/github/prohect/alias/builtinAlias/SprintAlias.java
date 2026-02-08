@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 
 public class SprintAlias extends BuiltinAliasWithBooleanArgs<SprintAlias> {
+
     @Override
     public SprintAlias run(String args) {
         parseArgs(args);

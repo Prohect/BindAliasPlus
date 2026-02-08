@@ -2,25 +2,30 @@ package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.BuiltinAliasWithIntegerArgs;
-
 import java.util.ArrayList;
 
 public class WaitAlias extends BuiltinAliasWithIntegerArgs<WaitAlias> {
-    public static final ArrayList<WaitAliasRecord> tasksWaiting = new ArrayList<>();
+
+    public static final ArrayList<WaitAliasRecord> tasksWaiting =
+        new ArrayList<>();
 
     @Deprecated
     @Override
     public WaitAlias run(String args) {
         parseArgs(args);
         if (flag > 0) tasksWaiting.add(new WaitAliasRecord(flag, ""));
-        else BindAliasPlusClient.LOGGER.error("Invalid arguments: ticks of waitAlias could only be positive integers.");
+        else BindAliasPlusClient.LOGGER.error(
+            "Invalid arguments: ticks of waitAlias could only be positive integers."
+        );
         return this;
     }
 
     public WaitAlias run(String args, String definition) {
         parseArgs(args);
         if (flag >= 0) tasksWaiting.add(new WaitAliasRecord(flag, definition));
-        else BindAliasPlusClient.LOGGER.error("Invalid arguments:ticks not expected");
+        else BindAliasPlusClient.LOGGER.error(
+            "Invalid arguments:ticks not expected"
+        );
         return this;
     }
 }

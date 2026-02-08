@@ -20,24 +20,39 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @SuppressWarnings("DuplicatedCode")
 @Mixin(Mouse.class)
 public class MouseMixin {
+
     @Inject(at = @At("HEAD"), method = "onMouseButton")
-    private void onMouseButton(long window, int button, int action, int mods, CallbackInfo ci) {
+    private void onMouseButton(
+        long window,
+        int button,
+        int action,
+        int mods,
+        CallbackInfo ci
+    ) {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         if (window != minecraftClient.getWindow().getHandle()) return;
         InputUtil.Key key = InputUtil.Type.MOUSE.createFromCode(button);
         if (minecraftClient.player != null) {
             Screen sc = minecraftClient.currentScreen;
-            if (sc instanceof ChatScreen || sc instanceof CommandBlockScreen || sc instanceof SignEditScreen || sc instanceof BookEditScreen)
-                return;
+            if (
+                sc instanceof ChatScreen ||
+                sc instanceof CommandBlockScreen ||
+                sc instanceof SignEditScreen ||
+                sc instanceof BookEditScreen
+            ) return;
         }
         if (BindAliasPlusClient.BINDING_PLUS.containsKey(key)) {
             //switch action because 0 -> release 1 -> down 2 -> pressing, and 2 is triggered constantly
             switch (action) {
                 case 0:
-                    BindAliasPlusClient.KEY_QUEUE.add(new KeyPressed(key, false));
+                    BindAliasPlusClient.KEY_QUEUE.add(
+                        new KeyPressed(key, false)
+                    );
                     break;
                 case 1:
-                    BindAliasPlusClient.KEY_QUEUE.add(new KeyPressed(key, true));
+                    BindAliasPlusClient.KEY_QUEUE.add(
+                        new KeyPressed(key, true)
+                    );
                     break;
             }
         }
@@ -51,15 +66,31 @@ public class MouseMixin {
      */
     @Inject(at = @At("RETURN"), method = "lockCursor")
     private void lockCursor(CallbackInfo ci) {
-        Alias.aliasesWithArgs_notSuggested.forEach((aliasName, aliasWithArgs) -> {
-            if (aliasWithArgs instanceof BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs)
-                if (builtinAliasWithBooleanArgs.flag && !Alias.blackList4lockCursor.contains(builtinAliasWithBooleanArgs))
-                    builtinAliasWithBooleanArgs.run("1");
-        });
+        Alias.aliasesWithArgs_notSuggested.forEach(
+            (aliasName, aliasWithArgs) -> {
+                if (
+                    aliasWithArgs instanceof
+                        BuiltinAliasWithBooleanArgs<
+                            ?
+                        > builtinAliasWithBooleanArgs
+                ) if (
+                    builtinAliasWithBooleanArgs.flag &&
+                    !Alias.blackList4lockCursor.contains(
+                        builtinAliasWithBooleanArgs
+                    )
+                ) builtinAliasWithBooleanArgs.run("1");
+            }
+        );
         Alias.aliasesWithArgs.forEach((aliasName, aliasWithArgs) -> {
-            if (aliasWithArgs instanceof BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs)
-                if (builtinAliasWithBooleanArgs.flag && !Alias.blackList4lockCursor.contains(builtinAliasWithBooleanArgs))
-                    builtinAliasWithBooleanArgs.run("1");
+            if (
+                aliasWithArgs instanceof
+                    BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs
+            ) if (
+                builtinAliasWithBooleanArgs.flag &&
+                !Alias.blackList4lockCursor.contains(
+                    builtinAliasWithBooleanArgs
+                )
+            ) builtinAliasWithBooleanArgs.run("1");
         });
     }
 }

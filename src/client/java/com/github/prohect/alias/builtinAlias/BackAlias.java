@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 
 public class BackAlias extends BuiltinAliasWithBooleanArgs<BackAlias> {
+
     @Override
     public BackAlias run(String args) {
         parseArgs(args);

@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 
 public class SneakAlias extends BuiltinAliasWithBooleanArgs<SneakAlias> {
+
     @Override
     public SneakAlias run(String args) {
         parseArgs(args);

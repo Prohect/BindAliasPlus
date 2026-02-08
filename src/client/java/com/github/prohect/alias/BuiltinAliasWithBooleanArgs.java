@@ -2,7 +2,10 @@ package com.github.prohect.alias;
 
 import com.github.prohect.BindAliasPlusClient;
 
-public abstract class BuiltinAliasWithBooleanArgs<T extends BuiltinAliasWithBooleanArgs<T>> extends BuiltinAliasWithArgs<T> {
+public abstract class BuiltinAliasWithBooleanArgs<
+    T extends BuiltinAliasWithBooleanArgs<T>
+> extends BuiltinAliasWithArgs<T> {
+
     public boolean flag;
 
     /**

@@ -7,5 +7,4 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param args only builtin aliasWithArgs should have valid one, else empty(not null)
  */
-public record AliasRecord(@NotNull String args, @NotNull String aliasName) {
-}
+public record AliasRecord(@NotNull String args, @NotNull String aliasName) {}

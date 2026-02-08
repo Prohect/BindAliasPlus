@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Hand;
 
 public class DropAlias extends BuiltinAliasWithBooleanArgs<DropAlias> {
+
     /**
      * @param args if args is "1", drop the whole stack, if args is "0", drop a single one
      */

@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 
 public class YawAlias extends BuiltinAliasWithDoubleArgs<YawAlias> {
+
     @Override
     public YawAlias run(String args) {
         parseArgs(args);

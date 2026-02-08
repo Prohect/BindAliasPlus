@@ -4,8 +4,8 @@ import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 
-
 public class RightAlias extends BuiltinAliasWithBooleanArgs<RightAlias> {
+
     @Override
     public RightAlias run(String args) {
         parseArgs(args);

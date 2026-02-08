@@ -9,18 +9,28 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
 public class SwapHandAlias extends BuiltinAliasWithoutArgs<SwapHandAlias> {
+
     @Override
     public SwapHandAlias run(String args) {
-/*        KeyBinding key = MinecraftClient.getInstance().options.swapHandsKey;
+        /*        KeyBinding key = MinecraftClient.getInstance().options.swapHandsKey;
         key.setPressed(true);
         key.setPressed(false);
         KeyBinding.onKeyPressed(key.boundKey);*/
-        ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+        ClientPlayNetworkHandler networkHandler =
+            MinecraftClient.getInstance().getNetworkHandler();
         if (networkHandler == null) {
-            BindAliasPlusClient.LOGGER.warn("[SwapHand] Network handler is null");
+            BindAliasPlusClient.LOGGER.warn(
+                "[SwapHand] Network handler is null"
+            );
             return this;
         }
-        networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN));
+        networkHandler.sendPacket(
+            new PlayerActionC2SPacket(
+                PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND,
+                BlockPos.ORIGIN,
+                Direction.DOWN
+            )
+        );
         return this;
     }
 }

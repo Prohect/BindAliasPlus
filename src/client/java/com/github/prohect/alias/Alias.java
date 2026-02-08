@@ -1,18 +1,18 @@
 package com.github.prohect.alias;
 
-
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 public interface Alias<T extends Alias<T>> {
     List<Alias<?>> blackList4lockCursor = new ArrayList<>();
     HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs = new HashMap<>();
-    HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs_fromBindCommand = new HashMap<>();
+    HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs_fromBindCommand =
+        new HashMap<>();
     HashMap<String, AliasWithArgs<?>> aliasesWithArgs = new HashMap<>();
-    HashMap<String, AliasWithArgs<?>> aliasesWithArgs_notSuggested = new HashMap<>();
+    HashMap<String, AliasWithArgs<?>> aliasesWithArgs_notSuggested =
+        new HashMap<>();
     char divider4AliasDefinition = ' ';
     char divider4AliasArgs = '\\';
 
@@ -24,9 +24,15 @@ public interface Alias<T extends Alias<T>> {
         ArrayList<String> definitions = getDefinitions(args);
         definitions.forEach(definition -> {
             if (definition.startsWith("+")) {
-                oppositeDefinition.append("-").append(definition.substring(1)).append(Alias.divider4AliasDefinition);
+                oppositeDefinition
+                    .append("-")
+                    .append(definition.substring(1))
+                    .append(Alias.divider4AliasDefinition);
             } else if (definition.startsWith("-")) {
-                oppositeDefinition.append("+").append(definition.substring(1)).append(Alias.divider4AliasDefinition);
+                oppositeDefinition
+                    .append("+")
+                    .append(definition.substring(1))
+                    .append(Alias.divider4AliasDefinition);
             }
         });
         return oppositeDefinition.toString();
@@ -53,7 +59,9 @@ public interface Alias<T extends Alias<T>> {
                 lastStepSubmit = true;
             }
         }
-        if (!currentDefinition.isEmpty()) definitions.add(currentDefinition.toString());
+        if (!currentDefinition.isEmpty()) definitions.add(
+            currentDefinition.toString()
+        );
         return definitions;
     }
 
@@ -78,16 +86,17 @@ public interface Alias<T extends Alias<T>> {
                 lastStepSubmit = true;
             }
         }
-        if (!currentDefinition.isEmpty()) definitionSplits.add(currentDefinition.toString());
+        if (!currentDefinition.isEmpty()) definitionSplits.add(
+            currentDefinition.toString()
+        );
         return definitionSplits;
     }
 
     T run(String args);
 
-    @SuppressWarnings({"unchecked", "UnusedReturnValue"})
+    @SuppressWarnings({ "unchecked", "UnusedReturnValue" })
     default T addToLockCursorBlackList() {
         blackList4lockCursor.add(this);
         return (T) this;
     }
-
 }
