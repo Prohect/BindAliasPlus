@@ -398,7 +398,7 @@
             id="org.eclipse.jdt.core.compiler.problem.assertIdentifier"
             value="error"
         />
-<setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="space" />
+<setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="tab" />
 <setting
             id="org.eclipse.jdt.core.formatter.insert_space_after_semicolon_in_try_resources"
             value="insert"
@@ -1107,7 +1107,7 @@
         />
 <setting
             id="org.eclipse.jdt.core.formatter.use_tabs_only_for_leading_indentations"
-            value="false"
+            value="true"
         />
 <setting
             id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_annotation"
