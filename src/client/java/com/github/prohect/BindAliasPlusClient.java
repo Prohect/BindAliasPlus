@@ -22,7 +22,6 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
@@ -71,7 +70,6 @@ public class BindAliasPlusClient implements ClientModInitializer {
         //load builtin alias
 
         //load builtin aliasesWithArgs
-        WaitAlias waitAlias;
         new AttackAlias().putToAliasesWithArgs_notSuggested("builtinAttack");
         new UseAlias().putToAliasesWithArgs_notSuggested("builtinUse");
         new ForwardAlias().putToAliasesWithArgs_notSuggested("builtinForward");
@@ -87,7 +85,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new LogAlias().putToAliasesWithArgs("log");
         new SlotAlias().putToAliasesWithArgs("slot");
         new SwapSlotAlias().putToAliasesWithArgs("swapSlot");
-        waitAlias = new WaitAlias().putToAliasesWithArgs("wait");
+        new WaitAlias().putToAliasesWithArgs("wait");
         new YawAlias().putToAliasesWithArgs("yaw");
         new PitchAlias().putToAliasesWithArgs("pitch");
         new SetYawAlias().putToAliasesWithArgs("setYaw");
@@ -121,6 +119,9 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new UserAlias("builtinSprint\\0").putToAliasesWithoutArgs("-sprint");
         new UserAlias("builtinDrop\\0").putToAliasesWithoutArgs("drop");
         new UserAlias("builtinDrop\\1").putToAliasesWithoutArgs("dropStack");
+
+        // load cfg
+        loadCFG();
 
         // register command alias
         ClientCommandRegistrationCallback.EVENT.register(
@@ -373,14 +374,6 @@ public class BindAliasPlusClient implements ClientModInitializer {
                     })
                 )
         );
-
-        // load cfg
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            if (MinecraftClient.getInstance().player != null) waitAlias.run(
-                "1",
-                "reloadCFG"
-            );
-        });
     }
 
     public void loadCFG() {
@@ -398,12 +391,12 @@ public class BindAliasPlusClient implements ClientModInitializer {
         }
         if (data == null) return;
         String cfg = new String(data);
-        assert MinecraftClient.getInstance().player != null;
         cfg
             .lines()
             .forEach(line -> {
                 try {
                     line = line.trim();
+                    if (line.startsWith("/")) line = line.substring(1).trim();
                     if (!(line.isBlank() || line.startsWith("#"))) {
                         if (line.startsWith("alias ")) {
                             String string = line.substring("alias ".length());
