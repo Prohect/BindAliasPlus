@@ -1,0 +1,9 @@
+{
+  "lsp": {
+    "jdtls": {
+      "settings": {
+        "java.format.settings.url": "file://./formatter.xml"
+      }
+    }
+  }
+}
