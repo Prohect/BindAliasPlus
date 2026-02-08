@@ -4,9 +4,7 @@
   "version": "${version}",
   "name": "bind Alias Plus",
   "description": "be like cfg pro in counter strike!",
-  "authors": [
-    "prohect!"
-  ],
+  "authors": ["prohect!"],
   "contact": {
     "homepage": "https://modrinth.com/mod/bind-alias-plus",
     "sources": "https://github.com/Prohect/BindAliasPlus"
@@ -15,15 +13,9 @@
   "icon": "assets/bind-alias-plus/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "com.github.prohect.BindAliasPlus"
-    ],
-    "client": [
-      "com.github.prohect.BindAliasPlusClient"
-    ],
-    "fabric-datagen": [
-      "com.github.prohect.BindAliasPlusDataGenerator"
-    ]
+    "main": ["com.github.prohect.BindAliasPlus"],
+    "client": ["com.github.prohect.BindAliasPlusClient"],
+    "fabric-datagen": ["com.github.prohect.BindAliasPlusDataGenerator"]
   },
   "mixins": [
     "bind-alias-plus.mixins.json",
@@ -34,8 +26,8 @@
   ],
   "accessWidener": "bind-alias-plus-client.accesswidener",
   "depends": {
-    "fabricloader": ">=0.16.14",
-    "minecraft": ">=1.21.4 <=1.21.8",
+    "fabricloader": ">=0.18.4",
+    "minecraft": "=1.21.4",
     "java": ">=21",
     "fabric-api": "*"
   },
