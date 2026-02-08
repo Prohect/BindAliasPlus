@@ -508,7 +508,8 @@ public class BindAliasPlusClient implements ClientModInitializer {
         String aliasName
     ) {
         boolean flag0 = true; //t -> +-aliasName binding pattern
-        boolean flag = true; //t -> +aliasName or it doesn't contain +- and would be triggered when pressing down as default
+        /*t -> +aliasName or it doesn't contain +- and would be triggered when pressing down as default*/
+        boolean flag = true;
         boolean flag1 = true; //t -> aliasName stays the same, else subString(1)
         AliasWithoutArgs<?> alias = Alias.aliasesWithoutArgs.get(aliasName);
         if (alias == null) {
