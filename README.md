@@ -62,8 +62,8 @@ BindAliasPlus includes prebuilt aliases for common actions. They are divided int
 | `pitch\degrees`        | Adjusts player pitch (vertical rotation) by a relative degree value.                      | `pitch\-30` (looks 30° down)                                                   |
 | `setYaw\degrees`       | Sets player yaw to an absolute degree value (0 = north, 90 = east).                       | `setYaw\180` (faces south)                                                     |
 | `setPitch\degrees`     | Sets player pitch to an absolute degree value (-90 = straight up, 90 = straight down).    | `setPitch\0` (looks straight ahead)                                            |
-| `alias\args`           | almost same as command alias, except u need to cover args with double quotes.             | `alias\"meow say\nya~"` (create of replace an alias)                           |
-| `bind\args`            | almost same as command bind, except u need to cover args with double quotes.              | `bind\"m meow wait\0 +fly"` (create of replace a bind)                         |
+| `alias\args`           | almost same as command alias, except u need to cover args with double quotes.             | `alias\"meow say\nya~"` (create or replace an alias)                           |
+| `bind\args`            | almost same as command bind, except u need to cover args with double quotes.              | `bind\"m meow wait\0 +fly"` (create or replace a bind)                         |
 | `unbind\keyName`       | almost same as command unbind.                                                            | `unbind\m` (unbind binds on a key)                                             |
 | `say\string`           | say a chat message.                                                                       | `say\"How old r u?"` (send a chat message that is "how old r u?")              |
 | `sendCommand\command`  | send a command.                                                                           | `sendCommand\"gamemode creative"` (send a command that is "gamemode creative") |
