@@ -23,7 +23,7 @@ using a bow or placing blocks that not even in your hotbars or second hand), thi
 
 1. Ensure you have [Fabric Loader](https://fabricmc.net/use/) installed for your Minecraft version.
 2. Download the latest `bind-alias-plus-*.*.*.jar` from
-   the [releases page](https://github.com/prohect/BindAliasPlus/releases).
+   the [releases page](https://modrinth.com/mod/bind-alias-plus/versions).
 3. Place the JAR file in your Minecraft `mods` folder.
 4. Launch Minecraft with the Fabric loader.
 
