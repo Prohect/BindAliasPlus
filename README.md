@@ -143,7 +143,7 @@ Quickly swap to a bow, use it, and swap back:
 ## Configuration
 
 - **Config File**: At `config/bind-alias-plus.cfg`. Automatically created if there is not one.
-- **Auto-Load**: Aliases and bindings in the config file are loaded automatically when joining a server.
+- **Auto-Load**: Aliases and bindings in the config file are loaded automatically when the mod loads.
 - **Manual Edit**: You can directly edit the config file to add/modify aliases/bindings (use the same syntax as in-game
   commands).  
   **Example Config Content**:
