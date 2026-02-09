@@ -42,7 +42,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             BindAliasPlusClient.LOGGER.warn("[switchSlot]Inventory is null");
             return this;
         }
-        int selectedSlot = inventory.selectedSlot;
+        int selectedSlot = inventory.getSelectedSlot();
         ClientPlayNetworkHandler networkHandler =
             minecraftClient.getNetworkHandler();
         if (networkHandler == null) {
