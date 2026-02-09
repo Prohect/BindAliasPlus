@@ -45,8 +45,9 @@ public interface Alias<T extends Alias<T>> {
         boolean lastStepSubmit = false;
         for (char c : args.toCharArray()) {
             if (c != Alias.divider4AliasDefinition) {
-                if (c == '"') coveredByDoubleQuotes = !coveredByDoubleQuotes;
-                else currentDefinition.append(c);
+                if (c == '"') {
+                    coveredByDoubleQuotes = !coveredByDoubleQuotes;
+                } else currentDefinition.append(c);
                 lastStepSubmit = false;
             } else {
                 if (coveredByDoubleQuotes) {
@@ -59,9 +60,9 @@ public interface Alias<T extends Alias<T>> {
                 lastStepSubmit = true;
             }
         }
-        if (!currentDefinition.isEmpty()) definitions.add(
-            currentDefinition.toString()
-        );
+        if (!currentDefinition.isEmpty()) {
+            definitions.add(currentDefinition.toString());
+        }
         return definitions;
     }
 
@@ -72,8 +73,9 @@ public interface Alias<T extends Alias<T>> {
         boolean lastStepSubmit = false;
         for (char c : definition.toCharArray()) {
             if (c != Alias.divider4AliasArgs) {
-                if (c == '"') coveredByDoubleQuotes = !coveredByDoubleQuotes;
-                else currentDefinition.append(c);
+                if (c == '"') {
+                    coveredByDoubleQuotes = !coveredByDoubleQuotes;
+                } else currentDefinition.append(c);
                 lastStepSubmit = false;
             } else {
                 if (coveredByDoubleQuotes) {
@@ -86,9 +88,11 @@ public interface Alias<T extends Alias<T>> {
                 lastStepSubmit = true;
             }
         }
-        if (!currentDefinition.isEmpty()) definitionSplits.add(
-            currentDefinition.toString()
-        );
+        if (!currentDefinition.isEmpty()) {
+            definitionSplits.add(currentDefinition.toString());
+        }
+        // Filter out empty/blank splits caused by trailing backslashes
+        definitionSplits.removeIf(String::isBlank);
         return definitionSplits;
     }
 
