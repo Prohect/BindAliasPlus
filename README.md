@@ -3,7 +3,9 @@
 A Minecraft Fabric client mod that allows creating custom aliases and key bindings to automate complex in-game actions
 with simple key presses.
 
-English | [简体中文](README_CN.md)
+<!-- languages -->
+- 🇺🇸 [English](README.md)
+- 🇨🇳 [中文 (简体)](README_CN.md)
 
 ## Overview
 

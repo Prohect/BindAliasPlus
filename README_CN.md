@@ -1,8 +1,10 @@
 # BindAliasPlus
 
-一个 Minecraft Fabric 客户端模组，允许创建自定义别名和按键绑定，通过简单的按键操作来自动化复杂的游戏内动作。
+一个 Minecraft Fabric 客户端模组,允许创建自定义别名和按键绑定,通过简单的按键操作来自动化复杂的游戏内动作。
 
-[English](README.md) | 简体中文
+<!-- languages -->
+- 🇺🇸 [English](README.md)
+- 🇨🇳 [中文 (简体)](README_CN.md)
 
 ## 概述
 
