@@ -3,6 +3,8 @@
 A Minecraft Fabric client mod that allows creating custom aliases and key bindings to automate complex in-game actions
 with simple key presses.
 
+English | [简体中文](README_CN.md)
+
 ## Overview
 
 BindAliasPlus enhances your Minecraft gameplay by letting you define custom aliases for sequences of actions and bind
