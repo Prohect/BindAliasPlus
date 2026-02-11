@@ -97,13 +97,35 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                 case WaitAlias waitAlias -> {
                     StringBuilder definitionLeft = new StringBuilder();
                     AliasRecord aliasRecord1;
+                    boolean firstItem = true;
                     while (!aliases.isEmpty()) {
                         aliasRecord1 = aliases.poll();
-                        definitionLeft
-                            .append(Alias.divider4AliasDefinition)
-                            .append(aliasRecord1.aliasName())
-                            .append(Alias.divider4AliasArgs)
-                            .append(aliasRecord1.args());
+                        if (!firstItem) {
+                            definitionLeft.append(
+                                Alias.divider4AliasDefinition
+                            );
+                        }
+                        definitionLeft.append(aliasRecord1.aliasName());
+                        if (!aliasRecord1.args().isEmpty()) {
+                            definitionLeft.append(Alias.divider4AliasArgs);
+                            // Quote args if they contain spaces to prevent splitting
+                            String argsStr = aliasRecord1.args();
+                            if (
+                                argsStr.contains(
+                                    String.valueOf(
+                                        Alias.divider4AliasDefinition
+                                    )
+                                )
+                            ) {
+                                definitionLeft
+                                    .append('"')
+                                    .append(argsStr)
+                                    .append('"');
+                            } else {
+                                definitionLeft.append(argsStr);
+                            }
+                        }
+                        firstItem = false;
                     }
                     waitAlias.run(
                         aliasRecord.args(),
@@ -159,23 +181,66 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                 case WaitAlias waitAlias -> {
                     StringBuilder definitionLeft = new StringBuilder();
                     AliasRecord aliasRecord1;
+                    boolean firstItem = true;
                     while (!aliases.isEmpty()) {
                         aliasRecord1 = aliases.poll();
-                        definitionLeft
-                            .append(Alias.divider4AliasDefinition)
-                            .append(aliasRecord1.aliasName())
-                            .append(Alias.divider4AliasArgs)
-                            .append(aliasRecord1.args());
+                        if (!firstItem) {
+                            definitionLeft.append(
+                                Alias.divider4AliasDefinition
+                            );
+                        }
+                        definitionLeft.append(aliasRecord1.aliasName());
+                        if (!aliasRecord1.args().isEmpty()) {
+                            definitionLeft.append(Alias.divider4AliasArgs);
+                            // Quote args if they contain spaces to prevent splitting
+                            String argsStr = aliasRecord1.args();
+                            if (
+                                argsStr.contains(
+                                    String.valueOf(
+                                        Alias.divider4AliasDefinition
+                                    )
+                                )
+                            ) {
+                                definitionLeft
+                                    .append('"')
+                                    .append(argsStr)
+                                    .append('"');
+                            } else {
+                                definitionLeft.append(argsStr);
+                            }
+                        }
+                        firstItem = false;
                     }
                     while (true) {
                         UserAlias rootAlias = userAliasesCallChains.getFirst();
                         if (rootAlias.aliases.isEmpty()) break;
                         aliasRecord1 = rootAlias.aliases.poll();
-                        definitionLeft
-                            .append(Alias.divider4AliasDefinition)
-                            .append(aliasRecord1.aliasName())
-                            .append(Alias.divider4AliasArgs)
-                            .append(aliasRecord1.args());
+                        if (!firstItem) {
+                            definitionLeft.append(
+                                Alias.divider4AliasDefinition
+                            );
+                        }
+                        definitionLeft.append(aliasRecord1.aliasName());
+                        if (!aliasRecord1.args().isEmpty()) {
+                            definitionLeft.append(Alias.divider4AliasArgs);
+                            // Quote args if they contain spaces to prevent splitting
+                            String argsStr = aliasRecord1.args();
+                            if (
+                                argsStr.contains(
+                                    String.valueOf(
+                                        Alias.divider4AliasDefinition
+                                    )
+                                )
+                            ) {
+                                definitionLeft
+                                    .append('"')
+                                    .append(argsStr)
+                                    .append('"');
+                            } else {
+                                definitionLeft.append(argsStr);
+                            }
+                        }
+                        firstItem = false;
                     }
                     waitAlias.run(
                         aliasRecord.args(),
