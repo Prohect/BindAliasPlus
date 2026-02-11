@@ -45,6 +45,9 @@ public class BindAliasPlusClient implements ClientModInitializer {
         "bind-alias-plus"
     );
 
+    // Silent mode flag - when true, suppresses feedback messages in chat
+    public static boolean silentMode = false;
+
     /*
      * put your elytra in slot 10 ( the first slot of the first row of your inventory,
      * and firework in slot 19 ( the first slot of the second row of your inventory,
@@ -95,6 +98,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new UnbindAlias().putToAliasesWithArgs("unbind");
         new SayAlias().putToAliasesWithArgs("say");
         new SendCommandAlias().putToAliasesWithArgs("sendCommand");
+        new SilentAlias().putToAliasesWithArgs_notSuggested("builtinSilent");
 
         //load builtin aliasesWithoutArgs
         new SwapHandAlias().putToAliasesWithoutArgs("swapHand");
@@ -119,6 +123,8 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new UserAlias("builtinSprint\\0").putToAliasesWithoutArgs("-sprint");
         new UserAlias("builtinDrop\\0").putToAliasesWithoutArgs("drop");
         new UserAlias("builtinDrop\\1").putToAliasesWithoutArgs("dropStack");
+        new UserAlias("builtinSilent\\1").putToAliasesWithoutArgs("+silent");
+        new UserAlias("builtinSilent\\0").putToAliasesWithoutArgs("-silent");
 
         // load cfg
         loadCFG();
@@ -149,27 +155,31 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                         commandAliasExecute(name, definition)
                                     ) {
                                         case 1 -> {
-                                            context
-                                                .getSource()
-                                                .sendFeedback(
-                                                    Text.literal(
-                                                        "Alias " +
-                                                            name +
-                                                            " = " +
-                                                            definition
-                                                    )
-                                                );
+                                            if (!silentMode) {
+                                                context
+                                                    .getSource()
+                                                    .sendFeedback(
+                                                        Text.literal(
+                                                            "Alias " +
+                                                                name +
+                                                                " = " +
+                                                                definition
+                                                        )
+                                                    );
+                                            }
                                             yield 1;
                                         }
                                         case 2, 3 -> {
-                                            context
-                                                .getSource()
-                                                .sendFeedback(
-                                                    Text.literal(
-                                                        "Can't replace builtinAlias " +
-                                                            name
-                                                    )
-                                                );
+                                            if (!silentMode) {
+                                                context
+                                                    .getSource()
+                                                    .sendFeedback(
+                                                        Text.literal(
+                                                            "Can't replace builtinAlias " +
+                                                                name
+                                                        )
+                                                    );
+                                            }
                                             yield 0;
                                         }
                                         default -> 0;
@@ -210,39 +220,45 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                         )
                                     ) {
                                         case 1 -> {
-                                            context
-                                                .getSource()
-                                                .sendFeedback(
-                                                    Text.literal(
-                                                        "§aBound key " +
-                                                            keyName +
-                                                            " to alias " +
-                                                            aliasName
-                                                    )
-                                                );
+                                            if (!silentMode) {
+                                                context
+                                                    .getSource()
+                                                    .sendFeedback(
+                                                        Text.literal(
+                                                            "§aBound key " +
+                                                                keyName +
+                                                                " to alias " +
+                                                                aliasName
+                                                        )
+                                                    );
+                                            }
                                             yield 1;
                                         }
                                         case 2, 3 -> {
-                                            context
-                                                .getSource()
-                                                .sendFeedback(
-                                                    Text.literal(
-                                                        "§cAlias " +
-                                                            aliasName +
-                                                            " does not exist!"
-                                                    )
-                                                );
+                                            if (!silentMode) {
+                                                context
+                                                    .getSource()
+                                                    .sendFeedback(
+                                                        Text.literal(
+                                                            "§cAlias " +
+                                                                aliasName +
+                                                                " does not exist!"
+                                                        )
+                                                    );
+                                            }
                                             yield 0;
                                         }
                                         case 4 -> {
-                                            context
-                                                .getSource()
-                                                .sendFeedback(
-                                                    Text.literal(
-                                                        "§cUnknown key: " +
-                                                            keyName
-                                                    )
-                                                );
+                                            if (!silentMode) {
+                                                context
+                                                    .getSource()
+                                                    .sendFeedback(
+                                                        Text.literal(
+                                                            "§cUnknown key: " +
+                                                                keyName
+                                                        )
+                                                    );
+                                            }
                                             yield 0;
                                         }
                                         default -> 0;
@@ -279,40 +295,46 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                         commandBindExecute(keyName, definition)
                                     ) {
                                         case 1 -> {
-                                            context
-                                                .getSource()
-                                                .sendFeedback(
-                                                    Text.literal(
-                                                        "§aBound key " +
-                                                            keyName +
-                                                            " to alias " +
-                                                            definition
-                                                    )
-                                                );
+                                            if (!silentMode) {
+                                                context
+                                                    .getSource()
+                                                    .sendFeedback(
+                                                        Text.literal(
+                                                            "§aBound key " +
+                                                                keyName +
+                                                                " to alias " +
+                                                                definition
+                                                        )
+                                                    );
+                                            }
                                             yield 1;
                                         }
                                         case 2 -> {
-                                            context
-                                                .getSource()
-                                                .sendFeedback(
-                                                    Text.literal(
-                                                        "§cUnknown key: " +
-                                                            keyName
-                                                    )
-                                                );
+                                            if (!silentMode) {
+                                                context
+                                                    .getSource()
+                                                    .sendFeedback(
+                                                        Text.literal(
+                                                            "§cUnknown key: " +
+                                                                keyName
+                                                        )
+                                                    );
+                                            }
                                             yield 0;
                                         }
                                         case 3 -> {
-                                            context
-                                                .getSource()
-                                                .sendFeedback(
-                                                    Text.literal(
-                                                        "bind " +
-                                                            keyName +
-                                                            " = " +
-                                                            definition
-                                                    )
-                                                );
+                                            if (!silentMode) {
+                                                context
+                                                    .getSource()
+                                                    .sendFeedback(
+                                                        Text.literal(
+                                                            "bind " +
+                                                                keyName +
+                                                                " = " +
+                                                                definition
+                                                        )
+                                                    );
+                                            }
                                             yield 0;
                                         }
                                         default -> 0;
@@ -335,23 +357,29 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                 );
                                 return switch (commandUnbindExecute(keyName)) {
                                     case 0 -> {
-                                        context
-                                            .getSource()
-                                            .sendFeedback(
-                                                Text.literal(
-                                                    "§cUnknown key: " + keyName
-                                                )
-                                            );
+                                        if (!silentMode) {
+                                            context
+                                                .getSource()
+                                                .sendFeedback(
+                                                    Text.literal(
+                                                        "§cUnknown key: " +
+                                                            keyName
+                                                    )
+                                                );
+                                        }
                                         yield 0;
                                     }
                                     case 1 -> {
-                                        context
-                                            .getSource()
-                                            .sendFeedback(
-                                                Text.literal(
-                                                    "§cUnbind key: " + keyName
-                                                )
-                                            );
+                                        if (!silentMode) {
+                                            context
+                                                .getSource()
+                                                .sendFeedback(
+                                                    Text.literal(
+                                                        "§cUnbind key: " +
+                                                            keyName
+                                                    )
+                                                );
+                                        }
                                         yield 1;
                                     }
                                     default -> 0;
