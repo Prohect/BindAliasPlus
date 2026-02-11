@@ -3,6 +3,10 @@
 A Minecraft Fabric client mod that allows creating custom aliases and key bindings to automate complex in-game actions
 with simple key presses.
 
+<!-- languages -->
+- 🇺🇸 [English](README.md)
+- 🇨🇳 [中文 (简体)](README_CN.md)
+
 ## Overview
 
 BindAliasPlus enhances your Minecraft gameplay by letting you define custom aliases for sequences of actions and bind
@@ -23,7 +27,7 @@ using a bow or placing blocks that not even in your hotbars or second hand), thi
 
 1. Ensure you have [Fabric Loader](https://fabricmc.net/use/) installed for your Minecraft version.
 2. Download the latest `bind-alias-plus-*.*.*.jar` from
-   the [releases page](https://github.com/prohect/BindAliasPlus/releases).
+   the [releases page](https://modrinth.com/mod/bind-alias-plus/versions).
 3. Place the JAR file in your Minecraft `mods` folder.
 4. Launch Minecraft with the Fabric loader.
 
@@ -95,6 +99,8 @@ These are shorthand aliases that map to common `state=1` (start) and `state=0` (
 | `drop`      | `builtinDrop\0`    | Drops one item from the held stack.                           |
 | `dropStack` | `builtinDrop\1`    | Drops the entire held stack.                                  |
 | `swapHand`  | _                  | Swaps items between main hand and offhand.                    |
+| `+silent`   | `builtinSilent\1`  | Enables silent mode (suppresses command feedback messages).   |
+| `-silent`   | `builtinSilent\0`  | Disables silent mode (re-enables command feedback messages).  |
 | `reloadCFG` | —                  | Reloads the config file (applies changes without restarting). |
 
 ### Examples
@@ -140,10 +146,46 @@ Quickly swap to a bow, use it, and swap back:
 /bind mouse4 +bow
 ```
 
+#### 3. Using Silent Mode to Prevent Chat Spam
+
+When creating toggle binds (like fly1/fly2 scripts), you can use silent mode to suppress feedback messages and avoid cluttering the chat:
+
+```bash
+# Example 1: State switcher pattern (toggles state on each key press)
+# This approach maintains state even after releasing the key
+# Using silent mode to prevent "Bound key..." messages
+
+# Define fly1 (state 1): enable silent, rebind mouse5 to fly2, activate elytra, disable silent
+/alias fly1 +silent bind\"mouse5 fly2" +equipElytra -silent
+
+# Define fly2 (state 2): enable silent, rebind mouse5 to fly1, deactivate elytra, disable silent
+/alias fly2 +silent bind\"mouse5 fly1" -equipElytra -silent
+
+# Initial bind to mouse5
+/bind mouse5 fly1
+
+# Example 2: State switcher without wrapping actions in silent mode
+# The bind command itself will be silent, but +fly/-fly execute normally
+# This is cleaner when you want the state change to be silent but actions to have feedback
+/alias fly1 bind\"mouse5 fly2" +fly
+/alias fly2 bind\"mouse5 fly1" -fly
+/bind mouse5 fly1
+
+# Example 3: Press-and-hold pattern (different from state switcher!)
+# This approach uses +/- aliases: action on press, opposite action on release
+# Note: Using "/bind mouse5 +silent" would only enable silent mode while holding the key
+/alias quietFly +silent equipElytra jump wait\1 jump swapSlot\19 +use -use -silent
+```
+
+**Note**: 
+- **State switcher** (`fly1`/`fly2` pattern): Toggles between two states on each key press, state persists after release
+- **Press-and-hold** (`+alias`/`-alias` pattern): Executes on press, reverses on release (like `/bind mouse5 +fly`)
+- Silent mode only suppresses command feedback messages in chat. Error/warning logs are not affected.
+
 ## Configuration
 
 - **Config File**: At `config/bind-alias-plus.cfg`. Automatically created if there is not one.
-- **Auto-Load**: Aliases and bindings in the config file are loaded automatically when joining a server.
+- **Auto-Load**: Aliases and bindings in the config file are loaded automatically when the mod loads.
 - **Manual Edit**: You can directly edit the config file to add/modify aliases/bindings (use the same syntax as in-game
   commands).  
   **Example Config Content**:
@@ -162,11 +204,17 @@ Quickly swap to a bow, use it, and swap back:
   # Define fly action sequence (on release)
   alias -fly -equipElytra -holdFireworks
   
-  # Bind mouse5 to the +fly/-fly aliases
-
+  # Two ways to bind the key:
+  
+  # Option 1: State switcher pattern (toggles state on each press, state persists)
+  # This is cleaner - the bind commands are silent, but +fly/-fly execute normally
   alias fly1 bind\"mouse5 fly2" +fly
   alias fly2 bind\"mouse5 fly1" -fly
-  bind mouse5 fly1  //OR//  bind mouse5 +fly 
+  bind mouse5 fly1
+  
+  # Option 2: Press-and-hold pattern (activates on press, reverses on release)
+  # Use this when you want the action only while holding the key
+  bind mouse5 +fly
   ```
 
 ## Commands Reference
