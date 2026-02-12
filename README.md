@@ -54,6 +54,7 @@ BindAliasPlus includes prebuilt aliases for common actions. They are divided int
 - 41 → Offhand slot
 -
 - u can cover args with double quotes so that the white space inside will not be referred as split mark.
+- **RECOMMENDED for nested definitions**: When using `alias`, `bind`, `unbind`, `say`, or `sendCommand` builtin aliases inside other alias definitions, use semicolon `;` instead of space ` ` as the divider between arguments. This allows you to use normal space dividers in the nested definition without conflict. Example: `alias +testAlias bind\v;+anotherAlias alias\+yetAnotherAlias;+anotherAlias;+jump alias\+nextAlias;wait\2;+yetAnotherAlias wait\1 bind\x;+testAlias` - here semicolons separate the arguments for these builtin aliases, while spaces work normally.
 
 | Alias                  | Description                                                                               | Example                                                                        |
 |------------------------|-------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
