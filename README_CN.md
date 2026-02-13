@@ -1,239 +1,262 @@
 # BindAliasPlus
 
-一个 Minecraft Fabric 客户端模组,允许创建自定义别名和按键绑定,通过简单的按键操作来自动化复杂的游戏内动作。
+一个 Fabric **客户端**模组，让你创建**别名**（宏）并**将它们绑定到按键/鼠标按钮**，这样一次按键就可以运行完整的动作序列——类似于"绑定/别名配置"工作流。
 
 <!-- languages -->
 - 🇺🇸 [English](README.md)
 - 🇨🇳 [中文 (简体)](README_CN.md)
 
-## 概述
+> 仅限客户端：服务器不需要安装此模组。
 
-BindAliasPlus 通过让你定义自定义别名来执行一系列动作并将其绑定到按键上，从而增强你的 Minecraft 游戏体验。无论你需要快速交换物品栏槽位、自动化鞘翅飞行，还是链接多个动作（比如使用不在快捷栏或副手中的弓或放置方块），这个模组都能通过可配置的别名和按键绑定来简化重复性任务。
-
-## 特性
-
-- **自定义别名**：为单个或多个游戏内动作创建可重用的别名（例如：交换物品、使用能力、移动）。
-- **按键绑定**：将别名绑定到按键，支持按下和释放时执行不同的动作。
-- **内置别名**：为常见动作预定义的别名（例如：`swapSlot`、`wait`、`use`、`attack`）。
-- **命令系统**：直观的命令来管理别名和绑定（例如：`/alias`、`/bind`、`/unbind`）。
-- **配置持久化**：将别名和绑定保存在配置文件中，加入服务器时自动加载。
-- **链式动作**：组合别名来创建复杂的序列（例如：装备鞘翅 → 使用烟花 → 飞行）。
+---
 
 ## 安装
 
-1. 确保你已为你的 Minecraft 版本安装了 [Fabric Loader](https://fabricmc.net/use/)。
-2. 从[发布页面](https://modrinth.com/mod/bind-alias-plus/versions)下载最新的 `bind-alias-plus-*.*.*.jar`。
-3. 将 JAR 文件放入你的 Minecraft `mods` 文件夹。
-4. 使用 Fabric loader 启动 Minecraft。
+1. 为你的 Minecraft 版本安装 [Fabric Loader](https://fabricmc.net/use/)。
+2. 从 Modrinth 下载模组：https://modrinth.com/mod/bind-alias-plus/versions
+3. 将 `.jar` 文件放入你的 Minecraft `mods` 文件夹。
+4. 启动 Minecraft。
 
-## 使用方法
+---
 
-### 核心概念
+## 核心理念
 
-- **别名（Alias）**：可以执行的自定义或内置动作（或一系列动作）。
-- **按键绑定（Key Binding）**：物理按键（例如：`mouse5`、`keyboard.g`）与别名之间的链接（或两个别名：一个用于按下，一个用于释放）。
+你将**别名**定义为一系列**步骤**，然后绑定一个按键来运行它。
 
-### 内置别名
+- 步骤之间用**空格**分隔。
+- 一个步骤可以是：
+  - 无参数的别名：`jump`
+  - 带参数的别名：`swapSlot\10\39`（参数用反斜杠 `\` 分隔）
 
-BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的别名**和**不带参数的别名**。
+你可以绑定按键，使得：
+- **按下**时运行一个别名
+- **释放**时运行另一个别名（典型的 `+something` / `-something` 模式）
 
-#### 带参数的别名
+---
 
-*注意：槽位遵循 Minecraft 的内部编号：*
+## 语法
 
-- 1-9 → 快捷栏槽位
-- 10-36 → 物品栏槽位（10-19 = 第一行）
-- 37-40 → 装备槽位（37 = 脚部，38 = 腿部，39 = 胸部，40 = 头部）
-- 41 → 副手槽位
--
-- 你可以用双引号包裹参数,这样其中的空格就不会被视为分隔符。
-- **推荐用于嵌套定义**: 在其他别名定义内使用 `alias`、`bind`、`unbind`、`say` 或 `sendCommand` 内置别名时,使用分号 `;` 而不是空格 ` ` 作为参数之间的分隔符。这样你就可以在嵌套定义中使用正常的空格分隔符而不会产生冲突。示例: `alias +testAlias bind\v;+anotherAlias alias\+yetAnotherAlias;+anotherAlias;+jump alias\+nextAlias;wait\2;+yetAnotherAlias wait\1 bind\x;+testAlias` - 这里分号分隔这些内置别名的参数,而空格正常工作。
+### A) 别名定义按空格分割
 
-| 别名                    | 描述                                                           | 示例                                                            |
-|------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
-| `log`                  | 将消息记录到游戏控制台（用于调试）。                                          | `log\Hello World`                                             |
-| `slot\slotNumber`      | 切换到特定的快捷栏槽位（1-9）。                                            | `slot\3`（切换到快捷栏槽位 3）                                         |
-| `swapSlot\slot1\slot2` | 交换两个物品栏槽位之间的物品。                                              | `swapSlot\10\39`（将物品栏槽位 10 与胸甲槽位交换）                           |
-| `swapSlot\slot1`       | 交换当前持有的快捷栏槽位（主手）与指定的 `slot1` 之间的物品。                          | `swapSlot\19`（将当前快捷栏槽位与物品栏槽位 19 交换）                           |
-| `wait\ticks`           | 暂停执行指定数量的游戏刻（20 刻 = 1 秒）。                                    | `wait\20`（等待 1 秒）                                            |
-| `yaw\degrees`          | 按相对度数值调整玩家偏航角（水平旋转）。                                         | `yaw\90`（向右转 90°）                                            |
-| `pitch\degrees`        | 按相对度数值调整玩家俯仰角（垂直旋转）。                                         | `pitch\-30`（向下看 30°）                                         |
-| `setYaw\degrees`       | 将玩家偏航角设置为绝对度数值（0 = 北，90 = 东）。                                | `setYaw\180`（面向南）                                            |
-| `setPitch\degrees`     | 将玩家俯仰角设置为绝对度数值（-90 = 垂直向上，90 = 垂直向下）。                        | `setPitch\0`（直视前方）                                           |
-| `alias\args`           | 几乎与命令 alias 相同，但需要用双引号括起参数。                                   | `alias\"meow say\nya~"`（创建或替换别名）                             |
-| `bind\args`            | 几乎与命令 bind 相同，只是你需要用双引号包裹参数。                                 | `bind\"m meow wait\0 +fly"`（创建或替换绑定）                         |
-| `unbind\keyName`       | 几乎与命令 unbind 相同。                                              | `unbind\m`（解除按键上的绑定）                                         |
-| `say\string`           | 发送聊天消息。                                                      | `say\"How old r u?"`（发送聊天消息 "how old r u?"）                  |
-| `sendCommand\command`  | 发送命令。                                                        | `sendCommand\"gamemode creative"`（发送命令 "gamemode creative"） |
+别名定义是一系列**按空格 ` ` 分割**的步骤：
 
-#### 不带参数的别名
+- `equipElytra jump wait\1 jump swapSlot\19 +use -use`
 
-这些是映射到常见 `state=1`（开始）和 `state=0`（停止）动作的简写别名，使用更简单：
+### B) **步骤参数**按反斜杠 `\` 分割
 
-| 别名          | 等价于                  | 描述                       |
-|-------------|----------------------|--------------------------|
-| `+attack`   | `builtinAttack\1`    | 开始攻击（按住左键）。              |
-| `-attack`   | `builtinAttack\0`    | 停止攻击（释放左键）。              |
-| `+use`      | `builtinUse\1`       | 开始使用持有的物品（按住右键）。         |
-| `-use`      | `builtinUse\0`       | 停止使用持有的物品（释放右键）。         |
-| `+forward`  | `builtinForward\1`   | 开始向前移动。                  |
-| `-forward`  | `builtinForward\0`   | 停止向前移动。                  |
-| `+back`     | `builtinBack\1`      | 开始向后移动。                  |
-| `-back`     | `builtinBack\0`      | 停止向后移动。                  |
-| `+left`     | `builtinLeft\1`      | 开始向左移动。                  |
-| `-left`     | `builtinLeft\0`      | 停止向左移动。                  |
-| `+right`    | `builtinRight\1`     | 开始向右移动。                  |
-| `-right`    | `builtinRight\0`     | 停止向右移动。                  |
-| `+jump`     | `builtinJump\1`      | 开始跳跃（按住跳跃键）。             |
-| `-jump`     | `builtinJump\0`      | 停止跳跃（释放跳跃键）。             |
-| `+sneak`    | `builtinSneak\1`     | 开始潜行（按住潜行键）。             |
-| `-sneak`    | `builtinSneak\0`     | 停止潜行（释放潜行键）。             |
-| `+sprint`   | `builtinSprint\1`    | 开始疾跑（按住疾跑键）。             |
-| `-sprint`   | `builtinSprint\0`    | 停止疾跑（释放疾跑键）。             |
-| `drop`              | `builtinDrop\0`         | 丢弃持有堆叠中的一个物品。                 |
-| `dropStack`         | `builtinDrop\1`         | 丢弃整个持有的堆叠。                    |
-| `swapHand`          | _                       | 交换主手和副手之间的物品。                 |
-| `cyclePerspective`  | —                       | 循环切换摄像机视角（第一人称、第三人称后视、第三人称前视）。 |
-| `FPS`               | `builtinSetPerspective\0` | 切换到第一人称视角。                    |
-| `TPS`               | `builtinSetPerspective\1` | 切换到第三人称后视。                    |
-| `TPS2`              | `builtinSetPerspective\2` | 切换到第三人称前视。                    |
-| `+silent`           | `builtinSilent\1`       | 启用静默模式（禁止命令反馈消息）。             |
-| `-silent`           | `builtinSilent\0`       | 禁用静默模式（重新启用命令反馈消息）。           |
-| `reloadCFG`         | —                       | 重新加载配置文件（无需重启即可应用更改）。         |
+如果一个步骤包含 `\`，第一个 `\` 之前的部分是别名名称，其余部分是它的参数：
 
-### 示例
+- `swapSlot\10\39` → 别名名称 `swapSlot`，参数：`10`、`39`
+- `wait\20` → 别名名称 `wait`，参数：`20`
 
-以下是一些实用示例帮助你入门：
+### C) 单个**步骤参数**内的空格
 
-#### 1. 鞘翅 + 烟花自动化
+如果单个**步骤参数**必须包含空格，请用**双引号**包裹该参数。
 
-使用单个按键自动化鞘翅部署和烟花使用：
+这主要对发送聊天/命令的内置别名或嵌套定义（见下一节）很重要。
 
-```bash
-# 定义别名以将鞘翅装备到槽位 39（胸甲槽位）
-# 将你的鞘翅放在槽位 10（物品栏第一行的第一个槽位）
-/alias equipElytra swapSlot\10\39
+---
 
-# 定义别名以跳跃一次
-/alias jump +jump wait\1 -jump
+## 嵌套定义（重要）：`BuiltinAliasWithGreedyStringArgs` 和 `;`
 
-# 定义 +fly（按键按下时）：装备鞘翅 → 跳跃两次以打开它 → 使用烟花
-# 将你的烟花放在槽位 19（物品栏第二行的第一个槽位）
-/alias +fly equipElytra jump wait\1 jump swapSlot\19 +use -use
+一些内置别名接受**贪婪字符串**负载，这样你可以从另一个别名内部定义/绑定/解绑/聊天/运行命令：
 
-# 定义 -fly（按键释放时）：重新装备之前装备的物品
-/alias -fly equipElytra swapSlot\19
+- `alias`
+- `bind`
+- `unbind`
+- `say`
+- `sendCommand`
 
-# 将鼠标按钮 5 绑定到 +fly/-fly
-/bind mouse5 +fly
-```
+### 关键技巧：使用 `;` 避免引号
 
-#### 2. 快速使用弓
+外部解析总是按**空格**分割别名步骤。
 
-快速切换到弓、使用它，然后切换回来：
-（弓不再需要占用快捷栏，对于时运和精准采集镐或末影珍珠也可以尝试这个方法）
+所以如果你编写的嵌套负载包含空格，你通常需要引号来将其保持为单个参数。
 
-```bash
-# 定义 +bow（按下时）：切换到弓（槽位 11） → 开始使用
-/alias +bow swapSlot\11 +use
+然而，对于贪婪字符串内置别名，**你也可以通过避免引号**的方式，将嵌套负载写成单个令牌，并使用**分号 `;`** 来分隔该令牌内的各部分。
 
-# 定义 -bow（释放时）：停止使用 → 切换回来
-/alias -bow -use swapSlot\11
+示例（两种方式都有效）：
 
-# 将鼠标按钮 4 绑定到 +bow/-bow
-/bind mouse4 +bow
-```
+- 使用引号（负载有空格）：
+  - `/alias makeJumpAlias alias\"jump +jump wait\1 -jump"`
 
-#### 3. 使用静默模式防止聊天刷屏
+- 不使用引号（负载是一个令牌，使用 `;` 作为分隔符）：
+  - `/alias makeJumpAlias alias\jump;+jump;wait\1;-jump`
 
-创建切换绑定（如 fly1/fly2 脚本）时，你可以使用静默模式来抑制反馈消息，避免聊天栏被刷屏：
+### 贪婪字符串内置别名如何处理负载
 
-```bash
-# 示例 1：状态切换模式（每次按键切换状态）
-# 这种方法在释放按键后仍保持状态
-# 使用静默模式防止 "Bound key..." 消息
+- `alias\...`、`bind\...`、`unbind\...`：
+  - 在将最终聊天命令发送到游戏之前，它们**将 `;` 替换为空格 ` `**。
+  - 这就是 `/alias makeJumpAlias alias\jump;+jump;wait\1;-jump` 有效的原因：当调用 `makeJumpAlias` 时，它会发送聊天命令 `/alias jump +jump wait\1 -jump`。
 
-# 定义 fly1（状态 1）：启用静默，将 mouse5 重新绑定到 fly2，激活鞘翅，禁用静默
-/alias fly1 +silent bind\"mouse5 fly2" +equipElytra -silent
+- `say\...` 和 `sendCommand\...`：
+  - 它们**不替换 `;`**。
+  - 你在其负载中放入的任何内容都会按原样发送（所以 `;` 作为字面字符保留）。
 
-# 定义 fly2（状态 2）：启用静默，将 mouse5 重新绑定到 fly1，停用鞘翅，禁用静默
-/alias fly2 +silent bind\"mouse5 fly1" -equipElytra -silent
+---
 
-# 初始绑定到 mouse5
-/bind mouse5 fly1
+## 命令
 
-# 示例 2：不将动作包裹在静默模式中的状态切换
-# bind 命令本身会是静默的，但 +fly/-fly 正常执行
-# 当你希望状态改变是静默的但动作有反馈时，这样更简洁
-/alias fly1 bind\"mouse5 fly2" +fly
-/alias fly2 bind\"mouse5 fly1" -fly
-/bind mouse5 fly1
+### `/alias <name> <definition>`
+创建或替换一个**用户别名**。
 
-# 示例 3：按住模式（不同于状态切换！）
-# 这种方法使用 +/- 别名：按下时执行动作，释放时执行相反动作
-# 注意：使用 "/bind mouse5 +silent" 只会在按住按键时启用静默模式
-/alias quietFly +silent equipElytra jump wait\1 jump swapSlot\19 +use -use -silent
-```
+注意：
+- 你**不能覆盖**内置别名。
+- 用户别名通过将定义展开为步骤来运行。
 
-**注意**：
-- **状态切换**（`fly1`/`fly2` 模式）：每次按键切换两种状态，释放后状态保持
-- **按住模式**（`+alias`/`-alias` 模式）：按下时执行，释放时反转（如 `/bind mouse5 +fly`）
-- 静默模式只抑制聊天中的命令反馈消息。错误/警告日志不受影响。
+示例：
+- `/alias pearl swapSlot\12 +use wait\1 -use swapSlot\12`
 
-## 配置
+### `/bind <key> <definition-or-aliasName>`
+绑定一个按键/鼠标按钮。
 
-- **配置文件**：位于 `config/bind-alias-plus.cfg`。如果不存在会自动创建。
-- **自动加载**：配置文件中的别名和绑定在模组加载时自动加载。
-- **手动编辑**：你可以直接编辑配置文件来添加/修改别名/绑定（使用与游戏内命令相同的语法）。  
-  **配置文件内容示例**：
-  ```
-  # BindAliasPlus 配置示例
-  # 定义鞘翅装备的别名
-  alias +equipElytra swapSlot\10\39
-  alias -equipElytra swapSlot\10\39
-  # 定义烟花处理的别名
-  alias +holdFireworks swapSlot\26\41
-  alias -holdFireworks swapSlot\26\41
-  # 定义简单的跳跃动作
-  alias jump +jump wait\1 -jump
-  # 定义飞行动作序列（按下时）
-  alias +fly +equipElytra jump wait\1 jump +holdFireworks +use -use
-  # 定义飞行动作序列（释放时）
-  alias -fly -equipElytra -holdFireworks
-  
-  # 两种绑定按键的方式：
-  
-  # 方式 1：状态切换模式（每次按下切换状态，状态持续保持）
-  # 这样更简洁 - bind 命令是静默的，但 +fly/-fly 正常执行
-  alias fly1 bind\"mouse5 fly2" +fly
-  alias fly2 bind\"mouse5 fly1" -fly
-  bind mouse5 fly1
-  
-  # 方式 2：按住模式（按下时激活，释放时反转）
-  # 当你希望动作仅在按住按键时执行时使用此方式
-  bind mouse5 +fly
-  ```
+行为：
+1. 如果 `<definition-or-aliasName>` 匹配现有的别名名称（包括 `+name`/`-name` 形式），它会绑定到该别名。
+2. 否则，它将其视为内联定义，并为绑定创建一个内部别名。
 
-## 命令参考
+按下/释放行为：
+- 如果你的绑定定义包含 `+something` 和/或 `-something`，模组可以从这些 `+/-` 步骤自动派生一个"相反的"释放端。
 
-| 命令                               | 用途                                                                                                                                  | 示例                                                       |
-|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
-| `/alias <name> <definition>`     | 创建自定义别名。                                                                                                                            | `/alias myAlias +jump wait\1 -jump`                      |
-| `/bind <key> <definition>`       | 将按键绑定到此命令定义的别名序列或现有别名。对于通过分隔符分割的每个定义（双引号内的内容仍为同一块），如果以 + 或 - 开头，它将创建一个相反的别名。例如第一个例子，它还将 -forward 和 +back 绑定到键盘键 g 的释放 | `/bind g +forward wait\10 -back   或   /bind n dropStack` |
-| `/bindByAliasName <key> <alias>` | 将按键绑定到现有别名。                                                                                                                         | `/bindByAliasName mouse5 +fly`                           |
-| `/unbind <key>`                  | 移除按键绑定。                                                                                                                             | `/unbind mouse5`                                         |
-| `/reloadCFG`                     | 从文件重新加载配置。                                                                                                                          | `/reloadCFG`                                             |
+示例：
+- `/bind g jump`
+- `/bind g +forward wait\10 -forward`
 
-## 注意事项
+### `/bindByAliasName <key> <aliasName>`
+直接将按键绑定到现有的别名名称。
 
-- **兼容性**：与大多数 Fabric 模组兼容；可能与修改按键处理或物品栏机制的模组冲突。
-- **Minecraft 版本**：需要 Minecraft 1.21+（查看发布页面获取特定版本的构建）。
-- **安全性**：避免在带有反作弊系统的服务器上过度自动化（某些动作可能会被标记）。
+示例：
+- `/bindByAliasName mouse5 +fly`
+- `/bindByAliasName g jump`
 
-## 贡献
+### `/unbind <key>`
+移除绑定。
 
-欢迎贡献！请随时为错误/功能请求提出 issue，或提交改进的 pull request。
+示例：
+- `/unbind mouse5`
+
+### `/reloadCFG`
+从磁盘重新加载配置文件。
+
+---
+
+## 配置文件
+
+路径：
+- `config/bind-alias-plus.cfg`
+
+规则：
+- 每行一个命令
+- 开头的 `/` 是可选的
+- `#` 开始注释行
+
+示例：
+
+- `alias jump +jump wait\1 -jump`
+- `alias +bow swapSlot\11 +use`
+- `alias -bow -use swapSlot\11`
+- `bind mouse4 +bow`
+
+编辑后重新加载：
+- `/reloadCFG`
+
+---
+
+## 内置别名
+
+BindAliasPlus 附带了内置别名，你可以在别名定义中调用它们。
+
+### 1) 带参数的内置别名（参数之间使用 `\`）
+
+| 别名 | 参数 | 功能 | 示例 |
+|---|---:|---|---|
+| `log\text` | text | 将消息记录到控制台（调试） | `log\Hello` |
+| `slot\n` | `n=1..9` | 选择快捷栏槽位 | `slot\3` |
+| `swapSlot\a\b` | `a,b` | 交换两个槽位 | `swapSlot\10\39` |
+| `swapSlot\a` | `a` | 将槽位 `a` 与**当前选择的快捷栏槽位**交换 | `swapSlot\19` |
+| `wait\ticks` | ticks | 延迟执行（`20 刻 = 1 秒`） | `wait\20` |
+| `yaw\deg` | deg | 增加偏航角（相对） | `yaw\90` |
+| `pitch\deg` | deg | 增加俯仰角（相对） | `pitch\-30` |
+| `setYaw\deg` | deg | 设置偏航角（绝对） | `setYaw\180` |
+| `setPitch\deg` | deg | 设置俯仰角（绝对） | `setPitch\0` |
+| `alias\payload` / `alias\"payload"` | payload | 创建/替换别名。如果你想避免引号，可以将负载写成一个令牌并使用 `;`（它将被转换为空格）。 | `alias\jump;+jump;wait\1;-jump` |
+| `bind\payload` / `bind\"payload"` | payload | 绑定按键。如果你想避免引号，将负载写成一个令牌并使用 `;`（它将被转换为空格）。 | `bind\mouse4;+bow` |
+| `unbind\key` | key | 解绑按键。（不需要特殊的 `;` 处理。） | `unbind\g` |
+| `say\text` / `say\"text"` | text | 发送聊天消息。`;` 在这里不是特殊字符（它会按字面发送）。只有文本有空格时才需要引号。 | `say\"hello world"` |
+| `sendCommand\cmd` / `sendCommand\"cmd"` | cmd | 发送命令（不带开头的 `/`）。`;` 在这里不是特殊字符。只有命令有空格时才需要引号。 | `sendCommand\"gamemode creative"` |
+
+#### `swapSlot` 的槽位编号
+
+槽位遵循 Minecraft 的内部索引（在本模组的 UI 文档中）：
+
+- `1-9` → 快捷栏
+- `10-36` → 物品栏
+- `37-40` → 装备槽位（37 脚部 … 40 头部）
+- `41` → 副手
+
+### 2) 无参数的别名（直接动作）
+
+这些默认可用，对于按下/释放模式很方便：
+
+| 别名 | 等价于 | 功能 |
+|---|---|---|
+| `+attack` / `-attack` | `builtinAttack\1` / `builtinAttack\0` | 按住/释放左键 |
+| `+use` / `-use` | `builtinUse\1` / `builtinUse\0` | 按住/释放右键 |
+| `+forward` / `-forward` | `builtinForward\1` / `builtinForward\0` | 按住/释放前进 |
+| `+back` / `-back` | `builtinBack\1` / `builtinBack\0` | 按住/释放后退 |
+| `+left` / `-left` | `builtinLeft\1` / `builtinLeft\0` | 按住/释放左移 |
+| `+right` / `-right` | `builtinRight\1` / `builtinRight\0` | 按住/释放右移 |
+| `+jump` / `-jump` | `builtinJump\1` / `builtinJump\0` | 按住/释放跳跃 |
+| `+sneak` / `-sneak` | `builtinSneak\1` / `builtinSneak\0` | 按住/释放潜行 |
+| `+sprint` / `-sprint` | `builtinSprint\1` / `builtinSprint\0` | 按住/释放疾跑 |
+| `drop` / `dropStack` | `builtinDrop\0` / `builtinDrop\1` | 丢弃一个/整个堆叠 |
+| `swapHand` | — | 交换主手和副手 |
+| `cyclePerspective` | — | 循环摄像机视角 |
+| `FPS` / `TPS` / `TPS2` | `builtinSetPerspective\0/1/2` | 设置特定视角 |
+| `+silent` / `-silent` | `builtinSilent\1` / `builtinSilent\0` | 抑制/恢复绑定/别名反馈消息 |
+| `reloadCFG` | — | 重新加载配置文件 |
+
+---
+
+## 示例
+
+### 鞘翅 + 烟花（按住）
+
+放置：
+- 鞘翅在槽位 `10`（物品栏第一行，第一个槽位）
+- 烟花在槽位 `19`（物品栏第二行，第一个槽位）
+
+然后：
+
+- `/alias equipElytra swapSlot\10\39`
+- `/alias jump +jump wait\1 -jump`
+- `/alias +fly equipElytra jump wait\1 jump swapSlot\19 +use -use`
+- `/alias -fly equipElytra swapSlot\19`
+- `/bind mouse5 +fly`
+
+### 快速使用弓而不占用快捷栏槽位
+
+将你的弓放在槽位 `11`：
+
+- `/alias +bow swapSlot\11 +use`
+- `/alias -bow -use swapSlot\11`
+- `/bind mouse4 +bow`
+
+### 切换绑定模式（按下时重新绑定）
+
+你可以通过将按键重新绑定到另一个别名来构建"按下以切换状态"脚本。
+如果你这样做，可以使用 `+silent/-silent` 来避免绑定反馈导致的聊天刷屏。
+
+（示例思路：按一次绑定到 state2 并执行某些操作，再按一次绑定回 state1 并执行其他操作。你可以有多个状态。）
+
+---
+
+## 注意事项/限制
+
+- 在以下情况下，按键绑定触发会被忽略：聊天输入、告示牌编辑器、书本编辑器、命令方块界面。
+- 某些服务器的反作弊系统可能会对自动化操作产生怀疑。请负责任地使用。
+
+---
 
 ## 许可证
 
-此模组基于 [Creative Commons Zero v1.0 Universal](LICENSE) 许可。
+[CC0-1.0](LICENSE)
