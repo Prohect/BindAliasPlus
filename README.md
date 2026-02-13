@@ -149,13 +149,6 @@ Rules:
 - Leading `/` is optional
 - `#` starts a comment line
 
-Example:
-
-- `alias jump +jump wait\1 -jump`
-- `alias +bow swapSlot\11 +use`
-- `alias -bow -use swapSlot\11`
-- `bind mouse4 +bow`
-
 Reload after editing:
 - `/reloadCFG`
 
@@ -241,12 +234,80 @@ Put your bow in slot `11`:
 - `/alias -bow -use swapSlot\11`
 - `/bind mouse4 +bow`
 
-### Toggle bind pattern (rebind on press)
+### Toggle bind pattern (state switcher)
 
-You can build “press to switch state” scripts by rebinding a key to another alias.
-If you do that, `+silent/-silent` can be used to avoid chat spam from bind feedback.
+You can create toggle switches by rebinding a key to different aliases on each press. This is useful when you want state to persist after releasing the key (unlike press-and-hold pattern).
 
-(Example idea: press once to bind to state2 and do something, press again to bind back to state1 and do something. You can have multiple states.)
+#### Complete elytra toggle example
+
+Put:
+- Elytra in slot `10` (inventory first row, first slot)
+- Fireworks in slot `26` (inventory third row, first slot)
+
+Config file setup:
+
+```
+# Define reusable equipment aliases
+alias +equipElytra swapSlot\10\39
+alias -equipElytra swapSlot\10\39
+alias +holdFireworks swapSlot\26\41
+alias -holdFireworks swapSlot\26\41
+
+# Define jump helper
+alias jump +jump wait\1 -jump
+
+# Define the actual fly action
+alias +fly +equipElytra jump wait\1 jump +holdFireworks +use -use
+alias -fly -equipElytra -holdFireworks
+
+# State switcher: creates two states that toggle back and forth
+alias fly1 bind\"mouse5 fly2" +fly
+alias fly2 bind\"mouse5 fly1" -fly
+
+# Initial bind
+bind mouse5 fly1
+```
+
+How it works:
+1. Press `mouse5` → executes `fly1` → rebinds `mouse5` to `fly2` → runs `+fly` (equips elytra and activates)
+2. Press `mouse5` again → executes `fly2` → rebinds `mouse5` back to `fly1` → runs `-fly` (unequips elytra)
+3. State persists even after releasing the key (this is the key difference from press-and-hold pattern)
+
+#### Using `+silent/-silent` to avoid chat spam
+
+When rebinding keys frequently, you'll see "Bound key..." messages. Use silent mode to suppress them:
+
+```
+# Wrap bind commands in silent mode
+alias fly1 +silent bind\"mouse5 fly2" -silent +fly
+alias fly2 +silent bind\"mouse5 fly1" -silent -fly
+bind mouse5 fly1
+```
+
+Or keep it cleaner - the `bind` built-in is already silent by default when called from inside an alias:
+
+```
+# The bind commands won't spam, but +fly/-fly will show normal feedback
+alias fly1 bind\"mouse5 fly2" +fly
+alias fly2 bind\"mouse5 fly1" -fly
+bind mouse5 fly1
+```
+
+#### Toggle vs Press-and-hold comparison
+
+**Toggle pattern** (state switcher):
+- Use `bind mouse5 fly1` with rebinding logic
+- State persists after releasing the key
+- Press once to activate, press again to deactivate
+- Good for: toggleable modes, equipment swapping
+
+**Press-and-hold pattern**:
+- Use `bind mouse5 +fly` directly
+- Activates on press, deactivates on release
+- Must hold the key to keep active
+- Good for: temporary actions, charge-and-release mechanics
+
+Both patterns can use the same `+fly/-fly` aliases!
 
 ---
 

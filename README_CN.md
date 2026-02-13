@@ -149,13 +149,6 @@
 - 开头的 `/` 是可选的
 - `#` 开始注释行
 
-示例：
-
-- `alias jump +jump wait\1 -jump`
-- `alias +bow swapSlot\11 +use`
-- `alias -bow -use swapSlot\11`
-- `bind mouse4 +bow`
-
 编辑后重新加载：
 - `/reloadCFG`
 
@@ -241,12 +234,80 @@ BindAliasPlus 附带了内置别名，你可以在别名定义中调用它们。
 - `/alias -bow -use swapSlot\11`
 - `/bind mouse4 +bow`
 
-### 切换绑定模式（按下时重新绑定）
+### 切换绑定模式（状态开关）
 
-你可以通过将按键重新绑定到另一个别名来构建"按下以切换状态"脚本。
-如果你这样做，可以使用 `+silent/-silent` 来避免绑定反馈导致的聊天刷屏。
+你可以通过每次按键时重新绑定到不同的别名来创建状态开关。当你希望状态在释放按键后仍然保持时（不同于按住模式），这很有用。
 
-（示例思路：按一次绑定到 state2 并执行某些操作，再按一次绑定回 state1 并执行其他操作。你可以有多个状态。）
+#### 完整的鞘翅切换示例
+
+准备：
+- 鞘翅放在槽位 `10`（物品栏第一行，第一格）
+- 烟花放在槽位 `26`（物品栏第三行，第一格）
+
+配置文件设置：
+
+```
+# 定义可复用的装备别名
+alias +equipElytra swapSlot\10\39
+alias -equipElytra swapSlot\10\39
+alias +holdFireworks swapSlot\26\41
+alias -holdFireworks swapSlot\26\41
+
+# 定义跳跃辅助
+alias jump +jump wait\1 -jump
+
+# 定义实际的飞行动作
+alias +fly +equipElytra jump wait\1 jump +holdFireworks +use -use
+alias -fly -equipElytra -holdFireworks
+
+# 状态开关：创建两个来回切换的状态
+alias fly1 bind\"mouse5 fly2" +fly
+alias fly2 bind\"mouse5 fly1" -fly
+
+# 初始绑定
+bind mouse5 fly1
+```
+
+工作原理：
+1. 按下 `mouse5` → 执行 `fly1` → 将 `mouse5` 重新绑定到 `fly2` → 运行 `+fly`（装备鞘翅并激活）
+2. 再次按下 `mouse5` → 执行 `fly2` → 将 `mouse5` 绑定回 `fly1` → 运行 `-fly`（卸下鞘翅）
+3. 状态在释放按键后仍然保持（这是与按住模式的关键区别）
+
+#### 使用 `+silent/-silent` 避免聊天刷屏
+
+频繁重新绑定按键时，你会看到"Bound key..."消息。使用静默模式来抑制它们：
+
+```
+# 用静默模式包裹绑定命令
+alias fly1 +silent bind\"mouse5 fly2" -silent +fly
+alias fly2 +silent bind\"mouse5 fly1" -silent -fly
+bind mouse5 fly1
+```
+
+或者保持简洁——从别名内部调用 `bind` 内置别名时默认就是静默的：
+
+```
+# bind 命令不会刷屏，但 +fly/-fly 会显示正常的反馈
+alias fly1 bind\"mouse5 fly2" +fly
+alias fly2 bind\"mouse5 fly1" -fly
+bind mouse5 fly1
+```
+
+#### 切换模式 vs 按住模式对比
+
+**切换模式**（状态开关）：
+- 使用 `bind mouse5 fly1` 配合重新绑定逻辑
+- 状态在释放按键后仍然保持
+- 按一次激活，再按一次关闭
+- 适用于：可切换的模式、装备交换
+
+**按住模式**：
+- 直接使用 `bind mouse5 +fly`
+- 按下时激活，释放时关闭
+- 必须按住按键才能保持激活
+- 适用于：临时动作、蓄力释放机制
+
+两种模式可以使用相同的 `+fly/-fly` 别名！
 
 ---
 
