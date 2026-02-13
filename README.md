@@ -246,7 +246,7 @@ Put your bow in slot `11`:
 You can build “press to switch state” scripts by rebinding a key to another alias.
 If you do that, `+silent/-silent` can be used to avoid chat spam from bind feedback.
 
-(Example idea: press once to bind to state2, press again to bind back to state1. You can have multiple states.)
+(Example idea: press once to bind to state2 and do something, press again to bind back to state1 and do something. You can have multiple states.)
 
 ---
 
