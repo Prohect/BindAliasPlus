@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.BookEditScreen;
 import net.minecraft.client.gui.screen.ingame.CommandBlockScreen;
 import net.minecraft.client.gui.screen.ingame.SignEditScreen;
+import net.minecraft.client.input.MouseInput;
 import net.minecraft.client.util.InputUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,14 +25,13 @@ public class MouseMixin {
     @Inject(at = @At("HEAD"), method = "onMouseButton")
     private void onMouseButton(
         long window,
-        int button,
+        MouseInput input,
         int action,
-        int mods,
         CallbackInfo ci
     ) {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         if (window != minecraftClient.getWindow().getHandle()) return;
-        InputUtil.Key key = InputUtil.Type.MOUSE.createFromCode(button);
+        InputUtil.Key key = InputUtil.Type.MOUSE.createFromCode(input.button());
         if (minecraftClient.player != null) {
             Screen sc = minecraftClient.currentScreen;
             if (

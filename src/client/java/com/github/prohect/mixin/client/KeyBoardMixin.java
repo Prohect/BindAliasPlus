@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.BookEditScreen;
 import net.minecraft.client.gui.screen.ingame.CommandBlockScreen;
 import net.minecraft.client.gui.screen.ingame.SignEditScreen;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.util.InputUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,16 +23,16 @@ public class KeyBoardMixin {
     @Inject(at = @At("HEAD"), method = "onKey")
     private void onKey(
         long window,
-        int key,
-        int scancode,
         int action,
-        int modifiers,
+        KeyInput input,
         CallbackInfo ci
     ) {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         if (window != minecraftClient.getWindow().getHandle()) return;
-        //        BindAliasPlusClient.LOGGER.info("{}: {}", key, action);
-        InputUtil.Key keyFromCode = InputUtil.Type.KEYSYM.createFromCode(key);
+        //        BindAliasPlusClient.LOGGER.info("{}: {}", input.key(), action);
+        InputUtil.Key keyFromCode = InputUtil.Type.KEYSYM.createFromCode(
+            input.key()
+        );
         if (minecraftClient.player != null) {
             Screen sc = minecraftClient.currentScreen;
             if (
