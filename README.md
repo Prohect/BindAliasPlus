@@ -34,32 +34,6 @@ You can bind keys so that:
 
 ---
 
-## Quickstart
-
-### 1) Make a simple alias
-
-Tap jump:
-
-- `/alias jump +jump wait\1 -jump`
-
-### 2) Bind it
-
-- `/bind g jump`
-
-Or bind an inline definition directly:
-
-- `/bind g +jump wait\1 -jump`
-
-### 3) Press-and-hold pattern
-
-Hold bow on press, stop on release:
-
-- `/alias +bow swapSlot\11 +use`
-- `/alias -bow -use swapSlot\11`
-- `/bind mouse4 +bow`
-
----
-
 ## Syntax
 
 ### A) Alias definitions are split by spaces
