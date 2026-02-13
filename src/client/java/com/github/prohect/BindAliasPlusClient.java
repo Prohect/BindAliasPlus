@@ -99,8 +99,12 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new SayAlias().putToAliasesWithArgs("say");
         new SendCommandAlias().putToAliasesWithArgs("sendCommand");
         new SilentAlias().putToAliasesWithArgs_notSuggested("builtinSilent");
+        new SetPerspectiveAlias().putToAliasesWithArgs_notSuggested(
+            "builtinSetPerspective"
+        );
 
         //load builtin aliasesWithoutArgs
+        new CyclePerspectiveAlias().putToAliasesWithoutArgs("cyclePerspective");
         new SwapHandAlias().putToAliasesWithoutArgs("swapHand");
         new ReloadCFGAlias().putToAliasesWithoutArgs("reloadCFG");
         new UserAlias("builtinAttack\\1").putToAliasesWithoutArgs("+attack");
@@ -125,6 +129,15 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new UserAlias("builtinDrop\\1").putToAliasesWithoutArgs("dropStack");
         new UserAlias("builtinSilent\\1").putToAliasesWithoutArgs("+silent");
         new UserAlias("builtinSilent\\0").putToAliasesWithoutArgs("-silent");
+        new UserAlias("builtinSetPerspective\\0").putToAliasesWithoutArgs(
+            "FPS"
+        );
+        new UserAlias("builtinSetPerspective\\1").putToAliasesWithoutArgs(
+            "TPS"
+        );
+        new UserAlias("builtinSetPerspective\\2").putToAliasesWithoutArgs(
+            "TPS2"
+        );
 
         // load cfg
         loadCFG();

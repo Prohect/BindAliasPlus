@@ -60,7 +60,7 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | `pitch\degrees`        | 按相对度数值调整玩家俯仰角（垂直旋转）。                                         | `pitch\-30`（向下看 30°）                                         |
 | `setYaw\degrees`       | 将玩家偏航角设置为绝对度数值（0 = 北，90 = 东）。                                | `setYaw\180`（面向南）                                            |
 | `setPitch\degrees`     | 将玩家俯仰角设置为绝对度数值（-90 = 垂直向上，90 = 垂直向下）。                        | `setPitch\0`（直视前方）                                           |
-| `alias\args`           | 几乎与命令 alias 相同，只是你需要用双引号包裹参数。                                | `alias\"meow say\nya~"`（创建或替换别名）                             |
+| `alias\args`           | 几乎与命令 alias 相同，但需要用双引号括起参数。                                   | `alias\"meow say\nya~"`（创建或替换别名）                             |
 | `bind\args`            | 几乎与命令 bind 相同，只是你需要用双引号包裹参数。                                 | `bind\"m meow wait\0 +fly"`（创建或替换绑定）                         |
 | `unbind\keyName`       | 几乎与命令 unbind 相同。                                              | `unbind\m`（解除按键上的绑定）                                         |
 | `say\string`           | 发送聊天消息。                                                      | `say\"How old r u?"`（发送聊天消息 "how old r u?"）                  |
@@ -90,12 +90,16 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | `-sneak`    | `builtinSneak\0`     | 停止潜行（释放潜行键）。             |
 | `+sprint`   | `builtinSprint\1`    | 开始疾跑（按住疾跑键）。             |
 | `-sprint`   | `builtinSprint\0`    | 停止疾跑（释放疾跑键）。             |
-| `drop`      | `builtinDrop\0`      | 从持有的堆叠中丢弃一个物品。           |
-| `dropStack` | `builtinDrop\1`      | 丢弃整个持有的堆叠。               |
-| `swapHand`  | _                    | 交换主手和副手之间的物品。            |
-| `+silent`   | `builtinSilent\1`    | 启用静默模式（禁止命令反馈消息）。        |
-| `-silent`   | `builtinSilent\0`    | 禁用静默模式（重新启用命令反馈消息）。      |
-| `reloadCFG` | —                    | 重新加载配置文件（无需重启即可应用更改）。    |
+| `drop`              | `builtinDrop\0`         | 丢弃持有堆叠中的一个物品。                 |
+| `dropStack`         | `builtinDrop\1`         | 丢弃整个持有的堆叠。                    |
+| `swapHand`          | _                       | 交换主手和副手之间的物品。                 |
+| `cyclePerspective`  | —                       | 循环切换摄像机视角（第一人称、第三人称后视、第三人称前视）。 |
+| `FPS`               | `builtinSetPerspective\0` | 切换到第一人称视角。                    |
+| `TPS`               | `builtinSetPerspective\1` | 切换到第三人称后视。                    |
+| `TPS2`              | `builtinSetPerspective\2` | 切换到第三人称前视。                    |
+| `+silent`           | `builtinSilent\1`       | 启用静默模式（禁止命令反馈消息）。             |
+| `-silent`           | `builtinSilent\0`       | 禁用静默模式（重新启用命令反馈消息）。           |
+| `reloadCFG`         | —                       | 重新加载配置文件（无需重启即可应用更改）。         |
 
 ### 示例
 

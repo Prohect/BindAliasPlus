@@ -77,7 +77,7 @@ BindAliasPlus includes prebuilt aliases for common actions. They are divided int
 
 These are shorthand aliases that map to common `state=1` (start) and `state=0` (stop) actions for simpler usage:
 
-| Alias       | Equivalent To      | Description                                                   |
+| Alias               | Equivalent To      | Description                                                   |
 |-------------|--------------------|---------------------------------------------------------------|
 | `+attack`   | `builtinAttack\1`  | Starts attacking (holds left-click).                          |
 | `-attack`   | `builtinAttack\0`  | Stops attacking (releases left-click).                        |
@@ -97,12 +97,16 @@ These are shorthand aliases that map to common `state=1` (start) and `state=0` (
 | `-sneak`    | `builtinSneak\0`   | Stops sneaking (releases sneak key).                          |
 | `+sprint`   | `builtinSprint\1`  | Starts sprinting (holds sprint key).                          |
 | `-sprint`   | `builtinSprint\0`  | Stops sprinting (releases sprint key).                        |
-| `drop`      | `builtinDrop\0`    | Drops one item from the held stack.                           |
-| `dropStack` | `builtinDrop\1`    | Drops the entire held stack.                                  |
-| `swapHand`  | _                  | Swaps items between main hand and offhand.                    |
-| `+silent`   | `builtinSilent\1`  | Enables silent mode (suppresses command feedback messages).   |
-| `-silent`   | `builtinSilent\0`  | Disables silent mode (re-enables command feedback messages).  |
-| `reloadCFG` | —                  | Reloads the config file (applies changes without restarting). |
+| `drop`              | `builtinDrop\0`    | Drops one item from the held stack.                           |
+| `dropStack`         | `builtinDrop\1`    | Drops the entire held stack.                                  |
+| `swapHand`          | _                  | Swaps items between main hand and offhand.                    |
+| `cyclePerspective`  | —                  | Cycles through camera perspectives (F1, F3-back, F3-front).   |
+| `FPS`               | `builtinSetPerspective\0` | Switches to first-person view.                         |
+| `TPS`               | `builtinSetPerspective\1` | Switches to third-person back view.                    |
+| `TPS2`              | `builtinSetPerspective\2` | Switches to third-person front view.                   |
+| `+silent`           | `builtinSilent\1`  | Enables silent mode (suppresses command feedback messages).   |
+| `-silent`           | `builtinSilent\0`  | Disables silent mode (re-enables command feedback messages).  |
+| `reloadCFG`         | —                  | Reloads the config file (applies changes without restarting). |
 
 ### Examples
 
