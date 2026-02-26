@@ -161,6 +161,49 @@ Usage in aliases:
 ### `/reloadCFG`
 Reload config file from disk.
 
+### `/unloadCFGAliases`
+Remove all user aliases that were loaded from the config file.
+
+Notes:
+- Only removes aliases with `fromAutoload=true` (loaded during startup)
+- Runtime-created aliases (via `/alias` command) are preserved
+- Useful for testing different configurations without restart
+
+Example:
+- `/unloadCFGAliases` - Remove all config file aliases
+
+### `/unloadCFGBinds`
+Remove all keybindings that were loaded from the config file.
+
+Notes:
+- Only removes bindings with `fromAutoload=true` (loaded during startup)
+- Runtime-created bindings (via `/bind` or `/bindByAliasName` commands) are preserved
+- Also cleans up associated internal aliases
+
+Example:
+- `/unloadCFGBinds` - Remove all config file keybindings
+
+### `/unloadCFGVars`
+Remove all variables that were loaded from the config file.
+
+Notes:
+- Only removes variables tracked in `AUTOLOADED_VARIABLES`
+- Runtime-created variables (via `/var` command) are preserved
+
+Example:
+- `/unloadCFGVars` - Remove all config file variables
+
+### `/unloadCFGAll`
+Remove all aliases, keybindings, and variables that were loaded from the config file.
+
+Notes:
+- Convenience command that calls all three unload operations
+- Preserves all runtime-created items
+- Perfect for switching between different config profiles
+
+Example:
+- `/unloadCFGAll` - Remove all config file items at once
+
 ---
 
 ## Configuration file
@@ -232,6 +275,10 @@ These are available by default and are convenient for press/release patterns:
 | `FPS` / `TPS` / `TPS2` | `builtinSetPerspective\0/1/2` | Set specific perspective |
 | `+silent` / `-silent` | `builtinSilent\1` / `builtinSilent\0` | Suppress/restore bind/alias feedback messages |
 | `reloadCFG` | — | Reload config file |
+| `unloadCFGAliases` | — | Remove all aliases loaded from config file |
+| `unloadCFGBinds` | — | Remove all keybindings loaded from config file |
+| `unloadCFGVars` | — | Remove all variables loaded from config file |
+| `unloadCFGAll` | — | Remove all config file items (aliases, bindings, variables) |
 
 ---
 
@@ -373,6 +420,46 @@ bind mouse5 fly1
 - Good for: temporary actions, charge-and-release mechanics
 
 Both patterns can use the same `+fly/-fly` aliases!
+
+### Config profile management
+
+You can switch between different configuration "profiles" using the unload commands:
+
+```
+# Scenario: Testing a new config setup
+
+# 1. Start with your main config loaded automatically
+# Your config file has: aliases, bindings, variables
+
+# 2. During gameplay, create some test items
+/alias quickTest +forward wait\20 -forward
+/bind h quickTest
+/var testSlot hotbarSlot
+
+# 3. Want to try a different config? Unload the old one
+/unloadCFGAll
+
+# 4. Your test items are still there!
+# quickTest alias, h binding, and testSlot variable preserved
+
+# 5. Manually create new config items or edit config file
+/alias newAlias +jump wait\10 -jump
+/bind g newAlias
+
+# 6. Or reload from an edited config file
+/reloadCFG
+
+# 7. To remove only specific categories
+/unloadCFGAliases  # Only aliases from config
+/unloadCFGBinds    # Only bindings from config
+/unloadCFGVars     # Only variables from config
+```
+
+**Use cases:**
+- **Quick testing:** Try new configs without restarting Minecraft
+- **Profile switching:** Unload PvP config, load building config
+- **Safe experimentation:** Test changes, unload if bad, keep runtime items
+- **Debugging:** Isolate which config items cause issues
 
 ---
 

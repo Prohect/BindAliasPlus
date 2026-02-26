@@ -33,6 +33,10 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
     // Global variable storage
     public static final Map<String, Integer> VARIABLES = new HashMap<>();
 
+    // Track which variables were loaded from config file
+    public static final java.util.Set<String> AUTOLOADED_VARIABLES =
+        new java.util.HashSet<>();
+
     // Pattern to check if variable name starts with a number (not allowed)
     private static final Pattern STARTS_WITH_NUMBER = Pattern.compile(
         "^[0-9].*"
@@ -73,6 +77,60 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
 
         // Store variable
         VARIABLES.put(varName, value);
+        BindAliasPlusClient.LOGGER.info(
+            "[var] Variable '{}' set to {}",
+            varName,
+            value
+        );
+
+        return this;
+    }
+
+    /**
+     * Run the var alias with autoload tracking
+     */
+    public VarAlias run(String args, boolean fromAutoload) {
+        ArrayList<String> argsList = Alias.getDefinitionSplits(args);
+
+        if (argsList.size() < 2) {
+            BindAliasPlusClient.LOGGER.error(
+                "[var] Invalid arguments: expected varName and source. Usage: var\\varName\\source"
+            );
+            return this;
+        }
+
+        String varName = argsList.get(0).trim();
+        String source = argsList.get(1).trim();
+
+        // Validate variable name
+        if (!isValidVarName(varName)) {
+            BindAliasPlusClient.LOGGER.error(
+                "[var] Invalid variable name '{}': variable names cannot start with a number",
+                varName
+            );
+            return this;
+        }
+
+        // Get value from source
+        Integer value = getValueFromSource(source);
+        if (value == null) {
+            BindAliasPlusClient.LOGGER.error(
+                "[var] Failed to get value from source '{}'",
+                source
+            );
+            return this;
+        }
+
+        // Store variable
+        VARIABLES.put(varName, value);
+
+        // Track if from autoload
+        if (fromAutoload) {
+            AUTOLOADED_VARIABLES.add(varName);
+        } else {
+            AUTOLOADED_VARIABLES.remove(varName);
+        }
+
         BindAliasPlusClient.LOGGER.info(
             "[var] Variable '{}' set to {}",
             varName,

@@ -161,6 +161,49 @@
 ### `/reloadCFG`
 从磁盘重载配置文件。
 
+### `/unloadCFGAliases`
+移除所有从配置文件加载的用户别名。
+
+注意：
+- 仅移除带有 `fromAutoload=true` 的别名（启动时加载）
+- 运行时创建的别名（通过 `/alias` 命令）会被保留
+- 适用于无需重启即可测试不同配置
+
+示例：
+- `/unloadCFGAliases` - 移除所有配置文件中的别名
+
+### `/unloadCFGBinds`
+移除所有从配置文件加载的按键绑定。
+
+注意：
+- 仅移除带有 `fromAutoload=true` 的绑定（启动时加载）
+- 运行时创建的绑定（通过 `/bind` 或 `/bindByAliasName` 命令）会被保留
+- 同时清理相关的内部别名
+
+示例：
+- `/unloadCFGBinds` - 移除所有配置文件中的按键绑定
+
+### `/unloadCFGVars`
+移除所有从配置文件加载的变量。
+
+注意：
+- 仅移除 `AUTOLOADED_VARIABLES` 中跟踪的变量
+- 运行时创建的变量（通过 `/var` 命令）会被保留
+
+示例：
+- `/unloadCFGVars` - 移除所有配置文件中的变量
+
+### `/unloadCFGAll`
+移除所有从配置文件加载的别名、按键绑定和变量。
+
+注意：
+- 便捷命令，调用所有三个卸载操作
+- 保留所有运行时创建的项目
+- 非常适合在不同配置文件之间切换
+
+示例：
+- `/unloadCFGAll` - 一次性移除所有配置文件项目
+
 ---
 
 ## 配置文件
@@ -232,6 +275,10 @@ BindAliasPlus 附带了内置别名，你可以在你的别名定义中调用它
 | `FPS` / `TPS` / `TPS2` | `builtinSetPerspective\0/1/2` | 设置特定视角 |
 | `+silent` / `-silent` | `builtinSilent\1` / `builtinSilent\0` | 抑制/恢复 绑定/别名 反馈消息 |
 | `reloadCFG` | — | 重载配置文件 |
+| `unloadCFGAliases` | — | 移除所有从配置文件加载的别名 |
+| `unloadCFGBinds` | — | 移除所有从配置文件加载的按键绑定 |
+| `unloadCFGVars` | — | 移除所有从配置文件加载的变量 |
+| `unloadCFGAll` | — | 移除所有配置文件项目（别名、绑定、变量） |
 
 ---
 
@@ -373,6 +420,46 @@ bind mouse5 fly1
 - 适用于：临时动作，蓄力释放机制
 
 两种模式都可以使用相同的 `+fly/-fly` 别名！
+
+### 配置文件管理
+
+你可以使用卸载命令在不同的配置"配置文件"之间切换：
+
+```
+# 场景：测试新的配置设置
+
+# 1. 启动时自动加载主配置
+# 你的配置文件中有：别名、绑定、变量
+
+# 2. 游戏过程中，创建一些测试项目
+/alias quickTest +forward wait\20 -forward
+/bind h quickTest
+/var testSlot hotbarSlot
+
+# 3. 想尝试不同的配置？卸载旧配置
+/unloadCFGAll
+
+# 4. 你的测试项目仍然存在！
+# quickTest 别名、h 绑定和 testSlot 变量得以保留
+
+# 5. 手动创建新的配置项目或编辑配置文件
+/alias newAlias +jump wait\10 -jump
+/bind g newAlias
+
+# 6. 或从编辑过的配置文件重新加载
+/reloadCFG
+
+# 7. 仅移除特定类别
+/unloadCFGAliases  # 仅移除配置文件中的别名
+/unloadCFGBinds    # 仅移除配置文件中的绑定
+/unloadCFGVars     # 仅移除配置文件中的变量
+```
+
+**使用场景：**
+- **快速测试：** 无需重启 Minecraft 即可尝试新配置
+- **配置文件切换：** 卸载 PvP 配置，加载建筑配置
+- **安全实验：** 测试更改，如果不好就卸载，保留运行时项目
+- **调试：** 隔离哪些配置项目导致问题
 
 ---
 

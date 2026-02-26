@@ -5,118 +5,70 @@ All notable changes to BindAliasPlus will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] - 2025-01-26
+## [1.1.1] - 2025-01-26
 
 ### Added
-- **Variable System** - Store and retrieve integer values dynamically during gameplay
-  - New `/var <varName> <source>` command to create variables
-  - New `var\name\source` builtin alias for use in alias definitions
-  - Variable names cannot start with numbers (validation enforced)
-  - Config file support for `var` commands
+- **Autoload Tracking System** - Distinguish between config-loaded and runtime-created items
+  - All aliases, keybindings, and variables now track their source (autoload vs runtime)
+  - Items created during `loadCFG()` are marked as `fromAutoload=true`
+  - Items created via in-game commands are marked as `fromAutoload=false`
 
-- **Variable Sources:**
-  - `hotbarSlot` / `selectedSlot` - Capture current hotbar slot (1-9)
-  - `itemsOfSlot0` - Read item count from offhand slot
-  - `itemsOfSlot1-9` - Read item count from hotbar slots
-  - Direct integers (1-41) - Store literal values
+- **New Built-in Aliases:**
+  - `unloadCFGAliases` - Remove all user aliases loaded from config file
+  - `unloadCFGBinds` - Remove all keybindings loaded from config file
+  - `unloadCFGVars` - Remove all variables loaded from config file
+  - `unloadCFGAll` - Remove all autoloaded aliases, bindings, and variables at once
 
-- **Enhanced Aliases:**
-  - `slot\n` now accepts variable names in addition to numbers
-  - `swapSlot\a\b` now accepts variable names for both arguments
-  - Variables automatically resolved to integers when used
+- **New Commands:**
+  - `/unloadCFGAliases` - Unload config file aliases only
+  - `/unloadCFGBinds` - Unload config file keybindings only
+  - `/unloadCFGVars` - Unload config file variables only
+  - `/unloadCFGAll` - Unload all config file items in one command
 
-- **Documentation:**
-  - Comprehensive README updates with variable examples
-  - Developer documentation in DEVELOP.md
-  - Quick start guide (VARIABLE_QUICKSTART.md)
-  - Example configuration with variables (example-with-variables.cfg)
-  - Complete feature summaries and technical documentation
+### Changed
+- Enhanced `KeyBindingPlus` record with `fromAutoload` field
+- Enhanced `UserAlias` class with `fromAutoload` tracking
+- Enhanced `VarAlias` with `AUTOLOADED_VARIABLES` set for tracking
+- Updated all command executors to support autoload parameter
+- Convenience constructors added for backward compatibility
 
 ### Use Cases
-- Save and restore hotbar slots
-- Dynamic weapon/tool switching
-- Track consumable item counts (arrows, food, potions)
-- Monitor offhand inventory
-- Create resource-aware macros
-- Build state-switching systems
+- **Quick testing:** Unload config and test new setups without restart
+- **Profile switching:** Unload current config, load different one
+- **Safe experimentation:** Test config changes, unload if bad, keep runtime items
+- **Debugging:** Isolate config issues by unloading and testing individually
 
 ### Examples
 ```
-# Save current slot
-/var savedSlot hotbarSlot
-/alias restore slot\savedSlot
+# Load config at startup (automatic)
+# Config creates: aliases, bindings, variables
 
-# Track arrow count
-/var arrowCount itemsOfSlot2
-/alias checkArrows var\arrowCount\itemsOfSlot2 log\arrowCount
+# During gameplay, create runtime items
+/alias testAlias +forward wait\20 -forward
+/bind g testAlias
+/var mySlot hotbarSlot
 
-# Dynamic weapon switching
-/var sword 1
-/var bow 2
-/alias toSword slot\sword
-/alias toBow slot\bow
+# Unload only config file items
+/unloadCFGAll
+
+# Your runtime-created items are preserved!
+# testAlias, g binding, and mySlot variable still exist
+
+# Reload config for fresh start
+/reloadCFG
+
+# Or unload specific categories
+/unloadCFGAliases  # Only remove config aliases
+/unloadCFGBinds    # Only remove config bindings
+/unloadCFGVars     # Only remove config variables
 ```
 
-## [1.0.4] - Previous Release
-
-### Features
-- Alias system with user-defined macros
-- Key/mouse button binding with press/release behavior
-- Built-in aliases for movement, combat, inventory management
-- Slot swapping and hotbar selection
-- Wait/delay functionality with tick-based scheduling
-- Camera angle manipulation (yaw/pitch)
-- Configuration file support
-- Silent mode for suppressing feedback messages
-- Toggle and press-and-hold binding patterns
-- Nested alias definitions with greedy string support
-- Elytra and equipment management helpers
-
-### Built-in Aliases
-- Movement: `+forward`, `+back`, `+left`, `+right`, `+jump`, `+sneak`, `+sprint`
-- Combat: `+attack`, `+use`, `drop`, `dropStack`
-- Inventory: `slot`, `swapSlot`, `swapHand`
-- Camera: `yaw`, `pitch`, `setYaw`, `setPitch`, `cyclePerspective`
-- Utility: `wait`, `log`, `say`, `sendCommand`
-- Meta: `alias`, `bind`, `unbind`, `reloadCFG`, `+silent`
-
-### Commands
-- `/alias <name> <definition>` - Create user aliases
-- `/bind <key> <definition>` - Bind keys to aliases
-- `/bindByAliasName <key> <aliasName>` - Direct alias binding
-- `/unbind <key>` - Remove key bindings
-- `/reloadCFG` - Reload configuration file
-
----
-
-## Version History Summary
-
-- **1.1.0** - Variable system with dynamic value storage and item count tracking
-- **1.0.4** - Initial public release with full alias and binding system
-
----
-
-## Upgrade Notes
-
-### Upgrading to 1.1.0
-- Fully backward compatible - no breaking changes
-- All existing configs and aliases work unchanged
-- New variable features are opt-in
-- Variables persist only during game session (cleared on quit)
-- To use variables on startup, add `var` commands to config file
-
----
-
-## Future Roadmap
-
-### Potential Features
-- Extended slot range (itemsOfSlot10-41 for full inventory)
-- Item type detection and conditional logic
-- Durability tracking for tools/armor
-- Mathematical operations on variables (add, multiply, etc)
-- Variable persistence between sessions
-- Conditional alias execution (if/else logic)
-- Additional game state sources (health, hunger, coordinates)
+### Technical Details
+- `KeyBindingPlus` now includes `boolean fromAutoload` field
+- `UserAlias` tracks origin with `fromAutoload` field and getter/setter
+- `VarAlias.AUTOLOADED_VARIABLES` HashSet tracks autoloaded variable names
+- All unload operations preserve runtime-created items
+- Unload commands work seamlessly with existing reload functionality
 
 ---
 
