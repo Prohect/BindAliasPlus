@@ -134,6 +134,30 @@
 示例：
 - `/unbind mouse5`
 
+### `/var <变量名> <来源>`
+创建或更新一个 **变量**，用于存储整数值。
+
+来源：
+- `hotbarSlot` 或 `selectedSlot` - 当前快捷栏槽位 (1-9)
+- `itemsOfSlot0` 到 `itemsOfSlot9` - 槽位中的物品数量 (0=副手, 1-9=快捷栏)
+- 数字 (1-41) - 直接整数值
+
+变量命名规则：
+- 变量名 **不能以数字开头**
+
+示例：
+- `/var mySlot hotbarSlot` - 将当前快捷栏槽位存储到变量 `mySlot`
+- `/var backup 5` - 将数字 5 存储到变量 `backup`
+- `/var arrowCount itemsOfSlot2` - 存储快捷栏槽位 2 的物品数量
+- `/var offhandItems itemsOfSlot0` - 存储副手槽位的物品数量
+
+在别名中使用：
+- 变量可以在 `slot` 和 `swapSlot` 别名中使用
+- `/alias saveSlot var\mySlot\hotbarSlot` - 保存当前槽位
+- `/alias restoreSlot slot\mySlot` - 切换到已保存的槽位
+- `/alias swapWithSaved swapSlot\mySlot\hotbarSlot` - 交换当前槽位与已保存的槽位
+- `/alias countArrows var\arrows\itemsOfSlot9` - 统计槽位 9 的物品数量
+
 ### `/reloadCFG`
 从磁盘重载配置文件。
 
@@ -163,9 +187,10 @@ BindAliasPlus 附带了内置别名，你可以在你的别名定义中调用它
 | 别名 | 参数 | 作用 | 示例 |
 |---|---:|---|---|
 | `log\text` | text | 将消息记录到控制台 (调试) | `log\Hello` |
-| `slot\n` | `n=1..9` | 选择快捷栏槽位 | `slot\3` |
-| `swapSlot\a\b` | `a,b` | 交换两个槽位 | `swapSlot\10\39` |
-| `swapSlot\a` | `a` | 将槽位 `a` 与 **当前选定的快捷栏槽位** 交换 | `swapSlot\19` |
+| `slot\n` | `n=1..9` 或变量 | 选择快捷栏槽位 (支持变量) | `slot\3` 或 `slot\mySlot` |
+| `swapSlot\a\b` | `a,b` (数字或变量) | 交换两个槽位 | `swapSlot\10\39` 或 `swapSlot\mySlot\5` |
+| `swapSlot\a` | `a` (数字或变量) | 将槽位 `a` 与 **当前选定的快捷栏槽位** 交换 | `swapSlot\19` 或 `swapSlot\mySlot` |
+| `var\name\source` | name, source | 将值存储在变量中。来源可以是 `hotbarSlot`、`selectedSlot`、`itemsOfSlot0-9` (物品数量) 或数字。变量名不能以数字开头。 | `var\mySlot\hotbarSlot` 或 `var\backup\5` 或 `var\count\itemsOfSlot2` |
 | `wait\ticks` | ticks | 延迟执行 (`20 ticks = 1 秒`) | `wait\20` |
 | `yaw\deg` | deg | 增加偏航角 (相对) | `yaw\90` |
 | `pitch\deg` | deg | 增加俯仰角 (相对) | `pitch\-30` |
@@ -233,6 +258,46 @@ BindAliasPlus 附带了内置别名，你可以在你的别名定义中调用它
 - `/alias +bow swapSlot\11 +use`
 - `/alias -bow -use swapSlot\11`
 - `/bind mouse4 +bow`
+
+### 使用变量的槽位记忆系统
+
+保存当前快捷栏槽位并稍后恢复：
+
+- `/alias saveSlot var\savedSlot\hotbarSlot`
+- `/alias restoreSlot slot\savedSlot`
+- `/bind f5 saveSlot`
+- `/bind f6 restoreSlot`
+
+或在已保存槽位和当前槽位之间交换：
+
+- `/alias saveAndSwap var\backup\hotbarSlot slot\3`
+- `/alias swapBack slot\backup`
+- `/bind f7 saveAndSwap`
+- `/bind f8 swapBack`
+
+跟踪物品数量：
+
+- `/alias checkArrows var\arrowCount\itemsOfSlot2 log\arrowCount`
+- `/alias checkOffhand var\offhandCount\itemsOfSlot0 log\offhandCount`
+- `/bind i checkArrows`
+
+进阶：动态武器切换：
+
+```
+# 保存你的战斗槽位 (例如，槽位 1 有剑)
+var combatSlot 1
+
+# 保存你的建筑槽位 (例如，槽位 3 有方块)
+var buildSlot 3
+
+# 快速切换别名
+alias toCombat slot\combatSlot
+alias toBuild slot\buildSlot
+
+# 绑定到按键
+bind q toCombat
+bind e toBuild
+```
 
 ### 切换绑定模式 (状态切换器)
 
@@ -315,6 +380,7 @@ bind mouse5 fly1
 
 - 当你在以下界面输入时，按键绑定触发会被忽略：聊天、告示牌编辑、书本编辑、命令方块界面。
 - 自动化操作在某些服务器上可能被视为可疑（反作弊）。请负责任地使用。
+- 变量仅在当前游戏会话期间保持 - 退出游戏后会被清除。
 
 ---
 
