@@ -102,6 +102,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new SetPerspectiveAlias().putToAliasesWithArgs_notSuggested(
             "builtinSetPerspective"
         );
+        new VarAlias().putToAliasesWithArgs("var");
 
         //load builtin aliasesWithoutArgs
         new CyclePerspectiveAlias().putToAliasesWithoutArgs("cyclePerspective");
@@ -415,6 +416,30 @@ public class BindAliasPlusClient implements ClientModInitializer {
                     })
                 )
         );
+        // register command var
+        ClientCommandRegistrationCallback.EVENT.register(
+            (dispatcher, registryAccess) ->
+                dispatcher.register(
+                    literal("var").then(
+                        argument("varName", StringArgumentType.word()).then(
+                            argument(
+                                "source",
+                                StringArgumentType.word()
+                            ).executes(context -> {
+                                String varName = StringArgumentType.getString(
+                                    context,
+                                    "varName"
+                                );
+                                String source = StringArgumentType.getString(
+                                    context,
+                                    "source"
+                                );
+                                return commandVarExecute(varName, source);
+                            })
+                        )
+                    )
+                )
+        );
     }
 
     public void loadCFG() {
@@ -470,6 +495,14 @@ public class BindAliasPlusClient implements ClientModInitializer {
                             if (string.indexOf(' ') == -1) commandUnbindExecute(
                                 string
                             );
+                        } else if (line.startsWith("var ")) {
+                            String string = line.substring("var ".length());
+                            int i = string.indexOf(' ');
+                            if (i != -1) {
+                                String varName = string.substring(0, i);
+                                String source = string.substring(i + 1);
+                                commandVarExecute(varName, source);
+                            }
                         } else {
                             BindAliasPlusClient.LOGGER.warn(
                                 "Unknown command: {}",
@@ -484,6 +517,34 @@ public class BindAliasPlusClient implements ClientModInitializer {
                     );
                 }
             });
+    }
+
+    private int commandVarExecute(String varName, String source) {
+        new VarAlias().run(varName + Alias.divider4AliasArgs + source);
+
+        // Check if variable was successfully created
+        if (VarAlias.VARIABLES.containsKey(varName)) {
+            if (!silentMode) {
+                MinecraftClient.getInstance().player.sendMessage(
+                    Text.literal(
+                        "Variable '" +
+                            varName +
+                            "' set to " +
+                            VarAlias.VARIABLES.get(varName)
+                    ),
+                    false
+                );
+            }
+            return 1;
+        } else {
+            if (!silentMode) {
+                MinecraftClient.getInstance().player.sendMessage(
+                    Text.literal("§cFailed to set variable '" + varName + "'"),
+                    false
+                );
+            }
+            return 0;
+        }
     }
 
     private int commandUnbindExecute(String keyName) {

@@ -134,6 +134,30 @@ Remove a bind.
 Example:
 - `/unbind mouse5`
 
+### `/var <varName> <source>`
+Create or update a **variable** that stores an integer value.
+
+Sources:
+- `hotbarSlot` or `selectedSlot` - Current hotbar slot (1-9)
+- `itemsOfSlot0` to `itemsOfSlot9` - Item count in slot (0=offhand, 1-9=hotbar)
+- A number (1-41) - Direct integer value
+
+Variable naming rules:
+- Variable names **cannot start with a number**
+
+Examples:
+- `/var mySlot hotbarSlot` - Store current hotbar slot into variable `mySlot`
+- `/var backup 5` - Store the number 5 into variable `backup`
+- `/var arrowCount itemsOfSlot2` - Store item count from hotbar slot 2
+- `/var offhandItems itemsOfSlot0` - Store item count from offhand slot
+
+Usage in aliases:
+- Variables can be used in `slot` and `swapSlot` aliases
+- `/alias saveSlot var\mySlot\hotbarSlot` - Save current slot
+- `/alias restoreSlot slot\mySlot` - Switch to saved slot
+- `/alias swapWithSaved swapSlot\mySlot\hotbarSlot` - Swap current with saved
+- `/alias countArrows var\arrows\itemsOfSlot9` - Count items in slot 9
+
 ### `/reloadCFG`
 Reload config file from disk.
 
@@ -163,9 +187,10 @@ BindAliasPlus ships with built-in aliases you can call inside your alias definit
 | Alias | Arguments | What it does | Example |
 |---|---:|---|---|
 | `log\text` | text | Log message to console (debug) | `log\Hello` |
-| `slot\n` | `n=1..9` | Select hotbar slot | `slot\3` |
-| `swapSlot\a\b` | `a,b` | Swap two slots | `swapSlot\10\39` |
-| `swapSlot\a` | `a` | Swap slot `a` with the **currently selected hotbar slot** | `swapSlot\19` |
+| `slot\n` | `n=1..9` or variable | Select hotbar slot (supports variables) | `slot\3` or `slot\mySlot` |
+| `swapSlot\a\b` | `a,b` (numbers or variables) | Swap two slots | `swapSlot\10\39` or `swapSlot\mySlot\5` |
+| `swapSlot\a` | `a` (number or variable) | Swap slot `a` with the **currently selected hotbar slot** | `swapSlot\19` or `swapSlot\mySlot` |
+| `var\name\source` | name, source | Store a value in a variable. Source can be `hotbarSlot`, `selectedSlot`, `itemsOfSlot0-9` (item count), or a number. Variable names cannot start with numbers. | `var\mySlot\hotbarSlot` or `var\backup\5` or `var\count\itemsOfSlot2` |
 | `wait\ticks` | ticks | Delay execution (`20 ticks = 1 second`) | `wait\20` |
 | `yaw\deg` | deg | Add to yaw (relative) | `yaw\90` |
 | `pitch\deg` | deg | Add to pitch (relative) | `pitch\-30` |
@@ -233,6 +258,46 @@ Put your bow in slot `11`:
 - `/alias +bow swapSlot\11 +use`
 - `/alias -bow -use swapSlot\11`
 - `/bind mouse4 +bow`
+
+### Slot memory system using variables
+
+Save your current hotbar slot and restore it later:
+
+- `/alias saveSlot var\savedSlot\hotbarSlot`
+- `/alias restoreSlot slot\savedSlot`
+- `/bind f5 saveSlot`
+- `/bind f6 restoreSlot`
+
+Or swap between saved slot and current slot:
+
+- `/alias saveAndSwap var\backup\hotbarSlot slot\3`
+- `/alias swapBack slot\backup`
+- `/bind f7 saveAndSwap`
+- `/bind f8 swapBack`
+
+Track item counts:
+
+- `/alias checkArrows var\arrowCount\itemsOfSlot2 log\arrowCount`
+- `/alias checkOffhand var\offhandCount\itemsOfSlot0 log\offhandCount`
+- `/bind i checkArrows`
+
+Advanced: Dynamic weapon switching:
+
+```
+# Save your combat slot (e.g., slot 1 with sword)
+var combatSlot 1
+
+# Save your building slot (e.g., slot 3 with blocks)
+var buildSlot 3
+
+# Quick switch aliases
+alias toCombat slot\combatSlot
+alias toBuild slot\buildSlot
+
+# Bind to keys
+bind q toCombat
+bind e toBuild
+```
 
 ### Toggle bind pattern (state switcher)
 
@@ -315,6 +380,7 @@ Both patterns can use the same `+fly/-fly` aliases!
 
 - Keybind triggers are ignored while you are typing in: chat, sign editor, book editor, command block screen.
 - Automation can be suspicious on some servers (anti-cheat). Use responsibly.
+- Variables persist only during the current game session - they are cleared when you quit.
 
 ---
 

@@ -28,6 +28,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
      *             10-36 means slots inside inventory,
      *             37-40 means equipments, 37 is feet, 40 is head
      *             41 means the second hand,
+     *             Also supports variable names (e.g., mySlot) created with var alias
      */
     @Override
     public SwapSlotAlias run(String args) {
@@ -56,21 +57,41 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             Pattern.quote(String.valueOf(Alias.divider4AliasArgs))
         );
         int[] slots = new int[] { 0, selectedSlot };
-        try {
-            if (strings.length == 1) slots[0] =
-                Integer.parseInt(strings[0]) - 1;
-            else if (strings.length == 2) {
-                slots[0] = Integer.parseInt(strings[0]) - 1;
-                slots[1] = Integer.parseInt(strings[1]) - 1;
-            } else {
+
+        if (strings.length == 1) {
+            Integer resolvedSlot = VarAlias.resolveValue(strings[0]);
+            if (resolvedSlot == null) {
                 BindAliasPlusClient.LOGGER.warn(
-                    "[SwitchSlot]Invalid arguments:args pattern not expected"
+                    "[SwitchSlot]Invalid arguments: '{}' is not a valid number or variable",
+                    strings[0]
                 );
                 return this;
             }
-        } catch (NumberFormatException e) {
+            slots[0] = resolvedSlot - 1;
+        } else if (strings.length == 2) {
+            Integer resolvedSlot0 = VarAlias.resolveValue(strings[0]);
+            Integer resolvedSlot1 = VarAlias.resolveValue(strings[1]);
+
+            if (resolvedSlot0 == null) {
+                BindAliasPlusClient.LOGGER.warn(
+                    "[SwitchSlot]Invalid arguments: '{}' is not a valid number or variable",
+                    strings[0]
+                );
+                return this;
+            }
+            if (resolvedSlot1 == null) {
+                BindAliasPlusClient.LOGGER.warn(
+                    "[SwitchSlot]Invalid arguments: '{}' is not a valid number or variable",
+                    strings[1]
+                );
+                return this;
+            }
+
+            slots[0] = resolvedSlot0 - 1;
+            slots[1] = resolvedSlot1 - 1;
+        } else {
             BindAliasPlusClient.LOGGER.warn(
-                "[SwitchSlot]Invalid arguments: cant parse number"
+                "[SwitchSlot]Invalid arguments:args pattern not expected"
             );
             return this;
         }

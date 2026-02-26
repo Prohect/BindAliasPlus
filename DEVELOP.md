@@ -274,6 +274,15 @@ All commands are registered as **client commands**.
 - `/unbind <key>`
   - Removes from `BINDING_PLUS`
 
+- `/var <varName> <source>`
+  - Creates or updates a variable in `VarAlias.VARIABLES`
+  - Variable names cannot start with a number (validated by regex pattern)
+  - Sources:
+    - `hotbarSlot` or `selectedSlot` - reads current player hotbar slot (0-8 internal, converted to 1-9)
+    - `itemsOfSlot0` to `itemsOfSlot9` - reads item count from slot (0=offhand/slot 40, 1-9=hotbar slots 0-8)
+    - Direct integer (e.g., `5`) - stores that number
+  - Variables persist only during the current game session
+
 - `/reloadCFG`
   - Calls config loader again
 
@@ -292,8 +301,53 @@ All commands are registered as **client commands**.
   - `bind <key> <definition>`
   - `bindByAliasName <key> <aliasName>`
   - `unbind <key>`
+  - `var <varName> <source>`
 - Lines can optionally begin with `/` (it will be stripped).
 - Blank lines and `#...` comments are ignored.
+
+---
+
+## Variable system (internals)
+
+The variable system allows storing and retrieving integer values during gameplay.
+
+### Storage
+
+- `VarAlias.VARIABLES`: `Map<String, Integer>`
+  - Global static storage for all variables
+  - Keys are variable names (validated to not start with numbers)
+  - Values are integers (typically 1-41 for slot numbers)
+
+### Resolution
+
+- `VarAlias.resolveValue(String input)`:
+  - Try parsing as direct integer first
+  - If that fails, look up in `VARIABLES` map
+  - Returns `Integer` or `null` if not found
+- Used by `SlotAlias` and `SwapSlotAlias` to support both numbers and variable names
+
+### Variable sources
+
+When creating variables via `var\name\source`:
+- `hotbarSlot` / `selectedSlot` - reads `PlayerInventory.getSelectedSlot()` (adds 1 to convert from 0-8 to 1-9)
+- `itemsOfSlot0` to `itemsOfSlot9` - reads item stack count from slots:
+  - `itemsOfSlot0` - offhand (inventory index 40)
+  - `itemsOfSlot1` to `itemsOfSlot9` - hotbar (inventory indices 0-8)
+  - Returns 0 if slot is empty
+  - Uses `ItemStack.getCount()` to get item count
+- Direct integer - stores that value as-is
+
+### Validation
+
+- Variable names are validated with regex: `^[0-9].*` (must NOT match)
+- This prevents conflicts with numeric slot arguments
+- Invalid names are rejected with error log
+
+### Integration
+
+Builtins that support variables:
+- `SlotAlias` - accepts variable names for hotbar slots (1-9)
+- `SwapSlotAlias` - accepts variable names for both slot arguments
 
 ---
 
