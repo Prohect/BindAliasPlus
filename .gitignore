@@ -42,3 +42,6 @@ replay_*.log
 
 # temp
 temp/
+
+# custom
+.zed/
