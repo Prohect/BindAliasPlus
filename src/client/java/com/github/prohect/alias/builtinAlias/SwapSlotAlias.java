@@ -3,21 +3,22 @@ package com.github.prohect.alias.builtinAlias;
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
+import com.github.prohect.util.McScreenHelper;
 import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
-import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
+import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.Slot;
 
 public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
 
@@ -44,8 +45,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             return this;
         }
         int selectedSlot = inventory.getSelectedSlot();
-        ClientPacketListener networkHandler =
-            minecraftClient.getConnection();
+        ClientPacketListener networkHandler = minecraftClient.getConnection();
         if (networkHandler == null) {
             BindAliasPlusClient.LOGGER.warn(
                 "[SwitchSlot]network handler is null"
@@ -109,9 +109,9 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             return this;
         }
 
-        Screen currentScreen = minecraftClient.gui.screen();
-        boolean creativeInventory =
-            currentScreen instanceof CreativeModeInventoryScreen;
+        Screen currentScreen = McScreenHelper.getCurrentScreen(minecraftClient);
+        boolean creativeInventory = currentScreen instanceof
+            CreativeModeInventoryScreen;
         boolean inInventory =
             currentScreen instanceof InventoryScreen || creativeInventory;
         if (creativeInventory) currentScreen.onClose();
@@ -147,8 +147,12 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                         ? new InventoryScreen(player)
                         : (InventoryScreen) currentScreen
                     : new InventoryScreen(player);
-                if (!inInventory) minecraftClient.gui.setScreen(inventoryScreen);
-                if (creativeInventory) minecraftClient.gui.setScreen(
+                if (!inInventory) McScreenHelper.setScreen(
+                    minecraftClient,
+                    inventoryScreen
+                );
+                if (creativeInventory) McScreenHelper.setScreen(
+                    minecraftClient,
                     inventoryScreen
                 );
                 try {
@@ -264,9 +268,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
         ClientPacketListener networkHandler,
         int ratherOffhand
     ) {
-        networkHandler.send(
-            new ServerboundSetCarriedItemPacket(ratherOffhand)
-        );
+        networkHandler.send(new ServerboundSetCarriedItemPacket(ratherOffhand));
         networkHandler.send(
             new ServerboundPlayerActionPacket(
                 ServerboundPlayerActionPacket.Action.SWAP_ITEM_WITH_OFFHAND,
@@ -278,10 +280,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
 
     private static Slot getSlot(InventoryScreen inventoryScreen, int index) {
         for (Slot slot : inventoryScreen.menu.slots) {
-            if (
-                slot.index == index &&
-                slot.container instanceof Inventory
-            ) {
+            if (slot.index == index && slot.container instanceof Inventory) {
                 return slot;
             }
         }

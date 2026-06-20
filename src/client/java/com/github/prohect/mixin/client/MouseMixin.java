@@ -5,6 +5,7 @@ import com.github.prohect.KeyPressed;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 import com.github.prohect.alias.builtinAlias.LockAlias;
+import com.github.prohect.util.McScreenHelper;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
@@ -36,7 +37,7 @@ public class MouseMixin {
             button.button()
         );
         if (minecraftClient.player != null) {
-            Screen sc = minecraftClient.gui.screen();
+            Screen sc = McScreenHelper.getCurrentScreen(minecraftClient);
             if (
                 sc instanceof ChatScreen ||
                 sc instanceof CommandBlockEditScreen ||
