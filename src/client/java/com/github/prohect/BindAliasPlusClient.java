@@ -1,13 +1,14 @@
 package com.github.prohect;
 
 import static com.github.prohect.BindAliasPlus.MOD_ID;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.AliasWithoutArgs;
 import com.github.prohect.alias.UserAlias;
 import com.github.prohect.alias.builtinAlias.*;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -23,9 +24,8 @@ import java.util.concurrent.CompletableFuture;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         .resolve(MOD_ID + ".cfg");
 
     public static final ArrayDeque<KeyPressed> KEY_QUEUE = new ArrayDeque<>();
-    public static final Map<InputUtil.Key, KeyBindingPlus> BINDING_PLUS =
+    public static final Map<InputConstants.Key, KeyBindingPlus> BINDING_PLUS =
         new HashMap<>();
 
     public static final Logger LOGGER = LoggerFactory.getLogger(
@@ -233,7 +233,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                                 context
                                                     .getSource()
                                                     .sendFeedback(
-                                                        Text.literal(
+                                                        Component.literal(
                                                             "Alias " +
                                                                 name +
                                                                 " = " +
@@ -248,7 +248,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                                 context
                                                     .getSource()
                                                     .sendFeedback(
-                                                        Text.literal(
+                                                        Component.literal(
                                                             "Can't replace builtinAlias " +
                                                                 name
                                                         )
@@ -298,7 +298,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                                 context
                                                     .getSource()
                                                     .sendFeedback(
-                                                        Text.literal(
+                                                        Component.literal(
                                                             "§aBound key " +
                                                                 keyName +
                                                                 " to alias " +
@@ -313,7 +313,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                                 context
                                                     .getSource()
                                                     .sendFeedback(
-                                                        Text.literal(
+                                                        Component.literal(
                                                             "§cAlias " +
                                                                 aliasName +
                                                                 " does not exist!"
@@ -327,7 +327,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                                 context
                                                     .getSource()
                                                     .sendFeedback(
-                                                        Text.literal(
+                                                        Component.literal(
                                                             "§cUnknown key: " +
                                                                 keyName
                                                         )
@@ -373,7 +373,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                                 context
                                                     .getSource()
                                                     .sendFeedback(
-                                                        Text.literal(
+                                                        Component.literal(
                                                             "§aBound key " +
                                                                 keyName +
                                                                 " to alias " +
@@ -388,7 +388,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                                 context
                                                     .getSource()
                                                     .sendFeedback(
-                                                        Text.literal(
+                                                        Component.literal(
                                                             "§cUnknown key: " +
                                                                 keyName
                                                         )
@@ -401,7 +401,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                                 context
                                                     .getSource()
                                                     .sendFeedback(
-                                                        Text.literal(
+                                                        Component.literal(
                                                             "bind " +
                                                                 keyName +
                                                                 " = " +
@@ -435,7 +435,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                             context
                                                 .getSource()
                                                 .sendFeedback(
-                                                    Text.literal(
+                                                    Component.literal(
                                                         "§cUnknown key: " +
                                                             keyName
                                                     )
@@ -448,7 +448,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                             context
                                                 .getSource()
                                                 .sendFeedback(
-                                                    Text.literal(
+                                                    Component.literal(
                                                         "§cUnbind key: " +
                                                             keyName
                                                     )
@@ -468,9 +468,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
             (dispatcher, registryAccess) ->
                 dispatcher.register(
                     literal("reloadCFG").executes(context -> {
-                        if (
-                            MinecraftClient.getInstance().player == null
-                        ) return 0;
+                        if (Minecraft.getInstance().player == null) return 0;
                         loadCFG();
                         return 1;
                     })
@@ -481,15 +479,13 @@ public class BindAliasPlusClient implements ClientModInitializer {
             (dispatcher, registryAccess) ->
                 dispatcher.register(
                     literal("unloadCFGAliases").executes(context -> {
-                        if (
-                            MinecraftClient.getInstance().player == null
-                        ) return 0;
+                        if (Minecraft.getInstance().player == null) return 0;
                         new UnloadCFGAliasesAlias().run("");
                         if (!silentMode) {
                             context
                                 .getSource()
                                 .sendFeedback(
-                                    Text.literal(
+                                    Component.literal(
                                         "§aUnloaded all autoloaded aliases"
                                     )
                                 );
@@ -503,15 +499,13 @@ public class BindAliasPlusClient implements ClientModInitializer {
             (dispatcher, registryAccess) ->
                 dispatcher.register(
                     literal("unloadCFGBinds").executes(context -> {
-                        if (
-                            MinecraftClient.getInstance().player == null
-                        ) return 0;
+                        if (Minecraft.getInstance().player == null) return 0;
                         new UnloadCFGBindsAlias().run("");
                         if (!silentMode) {
                             context
                                 .getSource()
                                 .sendFeedback(
-                                    Text.literal(
+                                    Component.literal(
                                         "§aUnloaded all autoloaded keybindings"
                                     )
                                 );
@@ -525,15 +519,13 @@ public class BindAliasPlusClient implements ClientModInitializer {
             (dispatcher, registryAccess) ->
                 dispatcher.register(
                     literal("unloadCFGVars").executes(context -> {
-                        if (
-                            MinecraftClient.getInstance().player == null
-                        ) return 0;
+                        if (Minecraft.getInstance().player == null) return 0;
                         new UnloadCFGVarsAlias().run("");
                         if (!silentMode) {
                             context
                                 .getSource()
                                 .sendFeedback(
-                                    Text.literal(
+                                    Component.literal(
                                         "§aUnloaded all autoloaded variables"
                                     )
                                 );
@@ -547,15 +539,13 @@ public class BindAliasPlusClient implements ClientModInitializer {
             (dispatcher, registryAccess) ->
                 dispatcher.register(
                     literal("unloadCFGAll").executes(context -> {
-                        if (
-                            MinecraftClient.getInstance().player == null
-                        ) return 0;
+                        if (Minecraft.getInstance().player == null) return 0;
                         new UnloadCFGAllAlias().run("");
                         if (!silentMode) {
                             context
                                 .getSource()
                                 .sendFeedback(
-                                    Text.literal(
+                                    Component.literal(
                                         "§aUnloaded all autoloaded aliases, keybindings, and variables"
                                     )
                                 );
@@ -682,22 +672,22 @@ public class BindAliasPlusClient implements ClientModInitializer {
         // Check if variable was successfully created
         if (VarAlias.VARIABLES.containsKey(varName)) {
             if (!silentMode) {
-                MinecraftClient.getInstance().player.sendMessage(
-                    Text.literal(
+                Minecraft.getInstance().player.sendSystemMessage(
+                    Component.literal(
                         "Variable '" +
                             varName +
                             "' set to " +
                             VarAlias.VARIABLES.get(varName)
-                    ),
-                    false
+                    )
                 );
             }
             return 1;
         } else {
             if (!silentMode) {
-                MinecraftClient.getInstance().player.sendMessage(
-                    Text.literal("§cFailed to set variable '" + varName + "'"),
-                    false
+                Minecraft.getInstance().player.sendSystemMessage(
+                    Component.literal(
+                        "§cFailed to set variable '" + varName + "'"
+                    )
                 );
             }
             return 0;
@@ -705,7 +695,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
     }
 
     private int commandUnbindExecute(String keyName) {
-        InputUtil.Key key = parseKey(keyName);
+        InputConstants.Key key = parseKey(keyName);
         if (key == null) return 0;
         BINDING_PLUS.remove(key);
         return 1;
@@ -735,7 +725,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
             CHARACTERS.charAt(rng.nextInt(CHARACTERS.length()))
         );
 
-        InputUtil.Key key = parseKey(keyName);
+        InputConstants.Key key = parseKey(keyName);
         if (key == null) return 2;
 
         Alias.aliasesWithoutArgs_fromBindCommand.put(
@@ -818,7 +808,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
             flag0 = flag || aliasName.startsWith("-");
         }
 
-        InputUtil.Key key = parseKey(keyName);
+        InputConstants.Key key = parseKey(keyName);
         if (key == null) return 4;
 
         String aliasNameFinal = flag1 ? aliasName : aliasName.substring(1);
@@ -882,31 +872,29 @@ public class BindAliasPlusClient implements ClientModInitializer {
         Alias.aliasesWithoutArgs.keySet().forEach(alias -> {
             if (alias.startsWith(currentToken)) finalBuilder.suggest(
                 alias,
-                Text.literal("alias without args")
+                Component.literal("alias without args")
             );
         });
         Alias.aliasesWithArgs.keySet().forEach(alias -> {
             if (alias.startsWith(currentToken)) finalBuilder.suggest(
                 alias,
-                Text.literal("alias with args")
+                Component.literal("alias with args")
             );
         });
 
         return builder.buildFuture();
     }
 
-    private InputUtil.Key parseKey(String name) {
-        InputUtil.Key key = null;
+    private InputConstants.Key parseKey(String name) {
+        InputConstants.Key key = null;
         try {
-            key = InputUtil.fromTranslationKey(
-                "key.keyboard." + name.toLowerCase()
-            );
+            key = InputConstants.getKey("key.keyboard." + name.toLowerCase());
         } catch (Exception ignored) {}
         if (key == null) {
             if (name.toLowerCase().startsWith("mouse")) {
                 try {
                     int button = Integer.parseInt(name.substring(5));
-                    return InputUtil.Type.MOUSE.createFromCode(button - 1);
+                    return InputConstants.Type.MOUSE.getOrCreate(button - 1);
                 } catch (Exception e) {
                     BindAliasPlusClient.LOGGER.warn(
                         "Invalid key definition: {}",

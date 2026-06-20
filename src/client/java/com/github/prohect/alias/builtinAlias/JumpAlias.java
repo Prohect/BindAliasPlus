@@ -1,17 +1,17 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.KeyMapping;
 
 public class JumpAlias extends BuiltinAliasWithBooleanArgs<JumpAlias> {
 
     @Override
     public JumpAlias run(String args) {
         parseArgs(args);
-        KeyBinding jumpKey = MinecraftClient.getInstance().options.jumpKey;
-        jumpKey.setPressed(flag);
-        if (flag) jumpKey.timesPressed++;
+        KeyMapping jumpKey = Minecraft.getInstance().options.keyJump;
+        jumpKey.setDown(flag);
+        if (flag) jumpKey.clickCount++;
         return this;
     }
 }

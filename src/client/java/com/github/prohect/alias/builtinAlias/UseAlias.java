@@ -2,8 +2,8 @@ package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.KeyMapping;
 
 public class UseAlias extends BuiltinAliasWithArgs<UseAlias> {
 
@@ -20,10 +20,10 @@ public class UseAlias extends BuiltinAliasWithArgs<UseAlias> {
                 BindAliasPlusClient.LOGGER.warn("[Use]Invalid arguments");
                 break;
         }
-        KeyBinding attackKey = MinecraftClient.getInstance().options.useKey;
-        attackKey.setPressed(flag);
+        KeyMapping attackKey = Minecraft.getInstance().options.keyUse;
+        attackKey.setDown(flag);
         if (flag) {
-            attackKey.timesPressed++;
+            attackKey.clickCount++;
         }
         return this;
     }

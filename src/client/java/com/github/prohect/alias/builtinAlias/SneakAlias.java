@@ -1,17 +1,17 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.KeyMapping;
 
 public class SneakAlias extends BuiltinAliasWithBooleanArgs<SneakAlias> {
 
     @Override
     public SneakAlias run(String args) {
         parseArgs(args);
-        KeyBinding sneakKey = MinecraftClient.getInstance().options.sneakKey;
-        sneakKey.setPressed(flag);
-        if (flag) sneakKey.timesPressed++;
+        KeyMapping sneakKey = Minecraft.getInstance().options.keyShift;
+        sneakKey.setDown(flag);
+        if (flag) sneakKey.clickCount++;
         return this;
     }
 }

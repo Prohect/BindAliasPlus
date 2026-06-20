@@ -6,7 +6,7 @@ import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithoutArgs;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.util.InputUtil;
+import com.mojang.blaze3d.platform.InputConstants;
 
 /**
  * UnloadCFGBindsAlias - Remove all keybindings that were loaded from config file
@@ -24,7 +24,7 @@ public class UnloadCFGBindsAlias
 
     @Override
     public UnloadCFGBindsAlias run(String args) {
-        List<InputUtil.Key> toRemove = new ArrayList<>();
+        List<InputConstants.Key> toRemove = new ArrayList<>();
         List<String> aliasesToRemove = new ArrayList<>();
 
         // Find all autoloaded bindings
@@ -43,7 +43,7 @@ public class UnloadCFGBindsAlias
 
         // Remove bindings
         int count = 0;
-        for (InputUtil.Key key : toRemove) {
+        for (InputConstants.Key key : toRemove) {
             BindAliasPlusClient.BINDING_PLUS.remove(key);
             count++;
         }

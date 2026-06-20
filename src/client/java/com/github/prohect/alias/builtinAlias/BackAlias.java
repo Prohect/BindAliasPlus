@@ -1,17 +1,17 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.KeyMapping;
 
 public class BackAlias extends BuiltinAliasWithBooleanArgs<BackAlias> {
 
     @Override
     public BackAlias run(String args) {
         parseArgs(args);
-        KeyBinding backKey = MinecraftClient.getInstance().options.backKey;
-        backKey.setPressed(flag);
-        if (flag) backKey.timesPressed++;
+        KeyMapping backKey = Minecraft.getInstance().options.keyDown;
+        backKey.setDown(flag);
+        if (flag) backKey.clickCount++;
         return this;
     }
 }

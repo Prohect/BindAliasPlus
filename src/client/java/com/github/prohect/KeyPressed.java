@@ -1,6 +1,6 @@
 package com.github.prohect;
 
-import net.minecraft.client.util.InputUtil;
+import com.mojang.blaze3d.platform.InputConstants;
 import org.jetbrains.annotations.NotNull;
 
-public record KeyPressed(@NotNull InputUtil.Key key, boolean pressed) {}
+public record KeyPressed(@NotNull InputConstants.Key key, boolean pressed) {}

@@ -2,10 +2,10 @@ package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
 
 public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
 
@@ -33,17 +33,17 @@ public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
             return this;
         }
 
-        /*            KeyBinding hotbarKey = MinecraftClient.getInstance().options.hotbarKeys[i - 1];
-            hotbarKey.setPressed(true);
-            hotbarKey.setPressed(false);
-            KeyBinding.onKeyPressed(hotbarKey.boundKey);*/
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        ClientPlayerEntity player = minecraftClient.player;
+        /*            KeyMapping hotbarKey = Minecraft.getInstance().options.hotbarKeys[i - 1];
+            hotbarKey.setDown(true);
+            hotbarKey.setDown(false);
+            KeyMapping.click(hotbarKey.key);*/
+        Minecraft minecraftClient = Minecraft.getInstance();
+        LocalPlayer player = minecraftClient.player;
         if (player == null) {
             BindAliasPlusClient.LOGGER.warn("[Slot]Player is null");
             return this;
         }
-        PlayerInventory inventory = player.getInventory();
+        Inventory inventory = player.getInventory();
         if (inventory == null) {
             BindAliasPlusClient.LOGGER.warn("[Slot]Inventory is null");
             return this;
@@ -51,8 +51,8 @@ public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
         inventory.setSelectedSlot(i - 1);
         try {
             minecraftClient
-                .getNetworkHandler()
-                .sendPacket(new UpdateSelectedSlotC2SPacket(i - 1));
+                .getConnection()
+                .send(new ServerboundSetCarriedItemPacket(i - 1));
         } catch (Exception e) {
             BindAliasPlusClient.LOGGER.error(
                 "[Slot]Failed to update selected slot.",
