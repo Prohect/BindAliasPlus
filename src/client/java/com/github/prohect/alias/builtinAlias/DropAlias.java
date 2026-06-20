@@ -1,8 +1,8 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Hand;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.InteractionHand;
 
 public class DropAlias extends BuiltinAliasWithBooleanArgs<DropAlias> {
 
@@ -12,10 +12,10 @@ public class DropAlias extends BuiltinAliasWithBooleanArgs<DropAlias> {
     @Override
     public DropAlias run(String args) {
         parseArgs(args);
-        MinecraftClient that = MinecraftClient.getInstance();
+        Minecraft that = Minecraft.getInstance();
         if (that.player == null) return this;
-        if (!that.player.isSpectator() && that.player.dropSelectedItem(flag)) {
-            that.player.swingHand(Hand.MAIN_HAND);
+        if (!that.player.isSpectator() && that.player.drop(flag)) {
+            that.player.swing(InteractionHand.MAIN_HAND);
         }
         return this;
     }

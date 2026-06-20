@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
+import net.minecraft.client.KeyMapping;
+import com.mojang.blaze3d.platform.InputConstants;
 
 /**
  * Builtin alias to temporarily lock a game action, preventing the user's
@@ -40,11 +40,11 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
      * We use a unique code to avoid colliding with {@link InputUtil#UNKNOWN_KEY}
      * which is shared by all unbound vanilla key bindings.
      */
-    private static final InputUtil.Key LOCK_PLACEHOLDER =
-        InputUtil.Type.KEYSYM.createFromCode(Integer.MIN_VALUE);
+    private static final InputConstants.Key LOCK_PLACEHOLDER =
+        InputConstants.Type.KEYSYM.getOrCreate(Integer.MIN_VALUE);
 
     // Maps action type -> original saved bound key
-    private static final Map<String, InputUtil.Key> savedBoundKeys =
+    private static final Map<String, InputConstants.Key> savedBoundKeys =
         new HashMap<>();
 
     /** Maps action type -> list of alias name patterns that directly trigger it */
@@ -79,7 +79,7 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
      * Physical keys currently locked. Mixins check this set to also block
      * keys registered in {@code BINDING_PLUS} during lock.
      */
-    public static final Set<InputUtil.Key> LOCKED_PHYSICAL_KEYS =
+    public static final Set<InputConstants.Key> LOCKED_PHYSICAL_KEYS =
         new HashSet<>();
 
     @Override
@@ -98,7 +98,7 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         String actionType = parts[0];
         boolean lock = "1".equals(parts[1]);
 
-        KeyBinding keyBinding = getKeyBindingForAction(actionType);
+        KeyMapping keyBinding = getKeyBindingForAction(actionType);
         if (keyBinding == null) {
             BindAliasPlusClient.LOGGER.warn(
                 "[Lock]Unknown action type: {}",
@@ -110,21 +110,21 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         if (lock) {
             if (!savedBoundKeys.containsKey(actionType)) {
                 // Save and replace vanilla bound key
-                InputUtil.Key originalKey = keyBinding.boundKey;
+                InputConstants.Key originalKey = keyBinding.key;
                 savedBoundKeys.put(actionType, originalKey);
                 LOCKED_PHYSICAL_KEYS.add(originalKey);
-                keyBinding.boundKey = LOCK_PLACEHOLDER;
-                KeyBinding.updateKeysByCode();
+                keyBinding.key = LOCK_PLACEHOLDER;
+                KeyMapping.resetMapping();
 
                 // Also lock any mod-bound keys whose aliases target this action
                 lockModBoundKeys(actionType);
             }
         } else {
-            InputUtil.Key savedKey = savedBoundKeys.remove(actionType);
+            InputConstants.Key savedKey = savedBoundKeys.remove(actionType);
             if (savedKey != null) {
                 LOCKED_PHYSICAL_KEYS.remove(savedKey);
-                keyBinding.boundKey = savedKey;
-                KeyBinding.updateKeysByCode();
+                keyBinding.key = savedKey;
+                KeyMapping.resetMapping();
 
                 // Remove mod-bound keys for this action
                 unlockModBoundKeys(actionType);
@@ -167,7 +167,7 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         List<String> patterns = ACTION_ALIAS_PATTERNS.get(actionType);
         if (patterns == null) return;
 
-        Set<InputUtil.Key> keysToRemove = new HashSet<>();
+        Set<InputConstants.Key> keysToRemove = new HashSet<>();
         BindAliasPlusClient.BINDING_PLUS.forEach((key, binding) -> {
             if (
                 aliasTargetsLockedAction(
@@ -184,7 +184,7 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         });
 
         // Only remove keys that aren't still needed by another active lock
-        for (InputUtil.Key key : keysToRemove) {
+        for (InputConstants.Key key : keysToRemove) {
             boolean stillNeeded = false;
             for (String otherAction : savedBoundKeys.keySet()) {
                 if (otherAction.equals(actionType)) continue;
@@ -251,18 +251,18 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         return false;
     }
 
-    private static KeyBinding getKeyBindingForAction(String actionType) {
-        GameOptions options = MinecraftClient.getInstance().options;
+    private static KeyMapping getKeyBindingForAction(String actionType) {
+        Options options = Minecraft.getInstance().options;
         return switch (actionType) {
-            case "attack" -> options.attackKey;
-            case "use" -> options.useKey;
-            case "forward" -> options.forwardKey;
-            case "back" -> options.backKey;
-            case "left" -> options.leftKey;
-            case "right" -> options.rightKey;
-            case "jump" -> options.jumpKey;
-            case "sneak" -> options.sneakKey;
-            case "sprint" -> options.sprintKey;
+            case "attack" -> options.keyAttack;
+            case "use" -> options.keyUse;
+            case "forward" -> options.keyUp;
+            case "back" -> options.keyDown;
+            case "left" -> options.keyLeft;
+            case "right" -> options.keyRight;
+            case "jump" -> options.keyJump;
+            case "sneak" -> options.keyShift;
+            case "sprint" -> options.keySprint;
             default -> null;
         };
     }

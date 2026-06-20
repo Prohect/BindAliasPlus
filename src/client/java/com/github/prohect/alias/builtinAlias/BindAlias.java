@@ -4,8 +4,9 @@ import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
 import java.util.regex.Pattern;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.protocol.game.ServerboundChatCommandPacket;
 
 public class BindAlias extends BuiltinAliasWithGreedyStringArgs<BindAlias> {
 
@@ -20,11 +21,11 @@ public class BindAlias extends BuiltinAliasWithGreedyStringArgs<BindAlias> {
                     String.valueOf(Alias.divider4AliasDefinition)
                 )
                 .trim();
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
             BindAliasPlusClient.LOGGER.warn("[BindAlias]player is null");
         } else {
-            player.networkHandler.sendChatCommand(line);
+            player.connection.send(new ServerboundChatCommandPacket(line));
         }
         return this;
     }

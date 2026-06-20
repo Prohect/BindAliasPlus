@@ -3,42 +3,41 @@ package com.github.prohect.mixin.client;
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.KeyPressed;
 import com.github.prohect.alias.builtinAlias.LockAlias;
-import net.minecraft.client.Keyboard;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.BookEditScreen;
-import net.minecraft.client.gui.screen.ingame.CommandBlockScreen;
-import net.minecraft.client.gui.screen.ingame.SignEditScreen;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.util.InputUtil;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyboardHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.BookEditScreen;
+import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
+import net.minecraft.client.gui.screens.inventory.SignEditScreen;
+import net.minecraft.client.input.KeyEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @SuppressWarnings("DuplicatedCode")
-@Mixin(Keyboard.class)
+@Mixin(KeyboardHandler.class)
 public class KeyBoardMixin {
 
-    @Inject(at = @At("HEAD"), method = "onKey")
+    @Inject(at = @At("HEAD"), method = "keyPress")
     private void onKey(
         long window,
         int action,
-        KeyInput input,
+        KeyEvent event,
         CallbackInfo ci
     ) {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        if (window != minecraftClient.getWindow().getHandle()) return;
-        //        BindAliasPlusClient.LOGGER.info("{}: {}", input.key(), action);
-        InputUtil.Key keyFromCode = InputUtil.Type.KEYSYM.createFromCode(
-            input.key()
-        );
+        Minecraft minecraftClient = Minecraft.getInstance();
+        if (window != minecraftClient.getWindow().handle()) return;
+        //        BindAliasPlusClient.LOGGER.info("{}: {}", event.key(), action);
+        InputConstants.Key keyFromCode =
+            InputConstants.Type.KEYSYM.getOrCreate(event.key());
         if (minecraftClient.player != null) {
-            Screen sc = minecraftClient.currentScreen;
+            Screen sc = minecraftClient.screen;
             if (
                 sc instanceof ChatScreen ||
-                sc instanceof CommandBlockScreen ||
+                sc instanceof CommandBlockEditScreen ||
                 sc instanceof SignEditScreen ||
                 sc instanceof BookEditScreen
             ) return;

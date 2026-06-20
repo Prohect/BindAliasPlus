@@ -1,8 +1,9 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.protocol.game.ServerboundChatCommandPacket;
 
 public class SendCommandAlias
     extends BuiltinAliasWithGreedyStringArgs<SendCommandAlias>
@@ -10,9 +11,9 @@ public class SendCommandAlias
 
     @Override
     public SendCommandAlias run(String args) {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return this;
-        player.networkHandler.sendChatCommand(args);
+        player.connection.send(new ServerboundChatCommandPacket(args));
         return this;
     }
 }

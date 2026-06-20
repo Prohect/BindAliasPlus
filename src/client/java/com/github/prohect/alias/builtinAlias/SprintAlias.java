@@ -1,17 +1,17 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.KeyMapping;
 
 public class SprintAlias extends BuiltinAliasWithBooleanArgs<SprintAlias> {
 
     @Override
     public SprintAlias run(String args) {
         parseArgs(args);
-        KeyBinding sprintKey = MinecraftClient.getInstance().options.sprintKey;
-        sprintKey.setPressed(flag);
-        if (flag) sprintKey.timesPressed++;
+        KeyMapping sprintKey = Minecraft.getInstance().options.keySprint;
+        sprintKey.setDown(flag);
+        if (flag) sprintKey.clickCount++;
         return this;
     }
 }

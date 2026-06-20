@@ -5,7 +5,7 @@ import com.github.prohect.KeyBindingPlus;
 import com.github.prohect.KeyPressed;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.AliasWithoutArgs;
-import net.minecraft.client.input.KeyboardInput;
+import net.minecraft.client.player.KeyboardInput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,8 +23,7 @@ public class KeyboardInputMixin {
             if (
                 (keyBindingPlus = BindAliasPlusClient.BINDING_PLUS.get(
                         keyPressed.key()
-                    )) !=
-                null
+                    )) != null
             ) {
                 AliasWithoutArgs<?> aliasWithoutArgs = keyPressed.pressed()
                     ? Alias.aliasesWithoutArgs.get(

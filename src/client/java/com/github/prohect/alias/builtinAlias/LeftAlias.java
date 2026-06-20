@@ -1,17 +1,17 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.KeyMapping;
 
 public class LeftAlias extends BuiltinAliasWithBooleanArgs<LeftAlias> {
 
     @Override
     public LeftAlias run(String args) {
         parseArgs(args);
-        KeyBinding leftKey = MinecraftClient.getInstance().options.leftKey;
-        leftKey.setPressed(flag);
-        if (flag) leftKey.timesPressed++;
+        KeyMapping leftKey = Minecraft.getInstance().options.keyLeft;
+        leftKey.setDown(flag);
+        if (flag) leftKey.clickCount++;
         return this;
     }
 }

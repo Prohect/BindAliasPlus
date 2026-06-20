@@ -4,20 +4,20 @@ import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
 import java.util.regex.Pattern;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
+import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 
 public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
 
@@ -32,20 +32,20 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
      */
     @Override
     public SwapSlotAlias run(String args) {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        ClientPlayerEntity player = minecraftClient.player;
+        Minecraft minecraftClient = Minecraft.getInstance();
+        LocalPlayer player = minecraftClient.player;
         if (player == null) {
             BindAliasPlusClient.LOGGER.warn("[switchSlot]Player is null");
             return this;
         }
-        PlayerInventory inventory = player.getInventory();
+        Inventory inventory = player.getInventory();
         if (inventory == null) {
             BindAliasPlusClient.LOGGER.warn("[switchSlot]Inventory is null");
             return this;
         }
         int selectedSlot = inventory.getSelectedSlot();
-        ClientPlayNetworkHandler networkHandler =
-            minecraftClient.getNetworkHandler();
+        ClientPacketListener networkHandler =
+            minecraftClient.getConnection();
         if (networkHandler == null) {
             BindAliasPlusClient.LOGGER.warn(
                 "[SwitchSlot]network handler is null"
@@ -109,12 +109,12 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             return this;
         }
 
-        Screen currentScreen = minecraftClient.currentScreen;
+        Screen currentScreen = minecraftClient.screen;
         boolean creativeInventory =
-            currentScreen instanceof CreativeInventoryScreen;
+            currentScreen instanceof CreativeModeInventoryScreen;
         boolean inInventory =
             currentScreen instanceof InventoryScreen || creativeInventory;
-        if (creativeInventory) currentScreen.close();
+        if (creativeInventory) currentScreen.onClose();
 
         try {
             final int offhand = 40;
@@ -138,8 +138,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                     swapSlotOffhand(networkHandler, slots[1]);
                     swapSlotOffhand(networkHandler, slots[0]);
                 }
-                networkHandler.sendPacket(
-                    new UpdateSelectedSlotC2SPacket(selectedSlot)
+                networkHandler.send(
+                    new ServerboundSetCarriedItemPacket(selectedSlot)
                 );
             } else {
                 InventoryScreen inventoryScreen = inInventory
@@ -152,8 +152,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                     inventoryScreen
                 );
                 try {
-                    ClientPlayerInteractionManager interactionManager =
-                        minecraftClient.interactionManager;
+                    MultiPlayerGameMode interactionManager =
+                        minecraftClient.gameMode;
                     if (interactionManager != null) {
                         if (hasOffHand) {
                             Slot slotRatherOffhand = getSlot(
@@ -226,7 +226,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                         "[SwitchSlot]interactionManager is null"
                     );
                 } finally {
-                    if (!inInventory) inventoryScreen.close();
+                    if (!inInventory) inventoryScreen.onClose();
                 }
             }
         } catch (Exception e) {
@@ -241,46 +241,46 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
 
     /**
      * @param slot   the slot of an inventory of a screen, chest inventory or player inventory for example
-     * @param button index of a list, could be 0,1,...,8 which means hotbars, or 40 which means hasOffHand, would be used to get a certain slot object via playerInventory.getStack(button)
+     * @param button index of a list, could be 0,1,...,8 which means hotbars, or 40 which means hasOffHand, would be used to get a certain slot object via playerInventory.getItem(button)
      *               <p>value range check inside, only 0-8 and 40 allowed
      */
     private static void clickSlot(
-        ClientPlayerInteractionManager interactionManager,
+        MultiPlayerGameMode interactionManager,
         InventoryScreen inventoryScreen,
         Slot slot,
         int button,
-        ClientPlayerEntity player
+        LocalPlayer player
     ) {
-        interactionManager.clickSlot(
-            inventoryScreen.handler.syncId,
-            slot.id,
+        interactionManager.handleContainerInput(
+            inventoryScreen.menu.containerId,
+            slot.index,
             button,
-            SlotActionType.SWAP,
+            ContainerInput.SWAP,
             player
         );
     }
 
     private static void swapSlotOffhand(
-        ClientPlayNetworkHandler networkHandler,
+        ClientPacketListener networkHandler,
         int ratherOffhand
     ) {
-        networkHandler.sendPacket(
-            new UpdateSelectedSlotC2SPacket(ratherOffhand)
+        networkHandler.send(
+            new ServerboundSetCarriedItemPacket(ratherOffhand)
         );
-        networkHandler.sendPacket(
-            new PlayerActionC2SPacket(
-                PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND,
-                BlockPos.ORIGIN,
+        networkHandler.send(
+            new ServerboundPlayerActionPacket(
+                ServerboundPlayerActionPacket.Action.SWAP_ITEM_WITH_OFFHAND,
+                BlockPos.ZERO,
                 Direction.DOWN
             )
         );
     }
 
     private static Slot getSlot(InventoryScreen inventoryScreen, int index) {
-        for (Slot slot : inventoryScreen.handler.slots) {
+        for (Slot slot : inventoryScreen.menu.slots) {
             if (
-                slot.getIndex() == index &&
-                slot.inventory instanceof PlayerInventory
+                slot.index == index &&
+                slot.container instanceof Inventory
             ) {
                 return slot;
             }

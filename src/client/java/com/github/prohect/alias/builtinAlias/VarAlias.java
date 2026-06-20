@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * VarAlias - Store and retrieve in-game variables
@@ -183,15 +183,15 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
      * Get current hotbar slot (1-9 format to match mod conventions)
      */
     private Integer getCurrentHotbarSlot() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        ClientPlayerEntity player = client.player;
+        Minecraft client = Minecraft.getInstance();
+        LocalPlayer player = client.player;
 
         if (player == null) {
             BindAliasPlusClient.LOGGER.warn("[var] Player is null");
             return null;
         }
 
-        PlayerInventory inventory = player.getInventory();
+        Inventory inventory = player.getInventory();
         if (inventory == null) {
             BindAliasPlusClient.LOGGER.warn("[var] Inventory is null");
             return null;
@@ -206,15 +206,15 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
      * 0 = offhand, 1-9 = hotbar slots
      */
     private Integer getItemCountFromSlot(String source) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        ClientPlayerEntity player = client.player;
+        Minecraft client = Minecraft.getInstance();
+        LocalPlayer player = client.player;
 
         if (player == null) {
             BindAliasPlusClient.LOGGER.warn("[var] Player is null");
             return null;
         }
 
-        PlayerInventory inventory = player.getInventory();
+        Inventory inventory = player.getInventory();
         if (inventory == null) {
             BindAliasPlusClient.LOGGER.warn("[var] Inventory is null");
             return null;
@@ -247,10 +247,10 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         ItemStack stack;
         if (slotIndex == 0) {
             // Offhand slot (internal inventory index 40)
-            stack = inventory.getStack(40);
+            stack = inventory.getItem(40);
         } else {
             // Hotbar slots (1-9 maps to inventory index 0-8)
-            stack = inventory.getStack(slotIndex - 1);
+            stack = inventory.getItem(slotIndex - 1);
         }
 
         // Return item count (0 if empty)
