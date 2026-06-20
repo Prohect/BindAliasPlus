@@ -34,7 +34,7 @@ public class KeyBoardMixin {
         InputConstants.Key keyFromCode =
             InputConstants.Type.KEYSYM.getOrCreate(event.key());
         if (minecraftClient.player != null) {
-            Screen sc = minecraftClient.screen;
+            Screen sc = minecraftClient.gui.screen();
             if (
                 sc instanceof ChatScreen ||
                 sc instanceof CommandBlockEditScreen ||

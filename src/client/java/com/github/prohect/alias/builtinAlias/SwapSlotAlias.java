@@ -109,7 +109,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             return this;
         }
 
-        Screen currentScreen = minecraftClient.screen;
+        Screen currentScreen = minecraftClient.gui.screen();
         boolean creativeInventory =
             currentScreen instanceof CreativeModeInventoryScreen;
         boolean inInventory =
@@ -147,8 +147,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                         ? new InventoryScreen(player)
                         : (InventoryScreen) currentScreen
                     : new InventoryScreen(player);
-                if (!inInventory) minecraftClient.setScreen(inventoryScreen);
-                if (creativeInventory) minecraftClient.setScreen(
+                if (!inInventory) minecraftClient.gui.setScreen(inventoryScreen);
+                if (creativeInventory) minecraftClient.gui.setScreen(
                     inventoryScreen
                 );
                 try {
