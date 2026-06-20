@@ -11,7 +11,7 @@ public class LeftAlias extends BuiltinAliasWithBooleanArgs<LeftAlias> {
         parseArgs(args);
         KeyBinding leftKey = MinecraftClient.getInstance().options.leftKey;
         leftKey.setPressed(flag);
-        if (flag) KeyBinding.onKeyPressed(leftKey.boundKey);
+        if (flag) leftKey.timesPressed++;
         return this;
     }
 }

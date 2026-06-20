@@ -11,7 +11,7 @@ public class AttackAlias extends BuiltinAliasWithBooleanArgs<AttackAlias> {
         parseArgs(args);
         KeyBinding attackKey = MinecraftClient.getInstance().options.attackKey;
         attackKey.setPressed(flag);
-        if (flag) KeyBinding.onKeyPressed(attackKey.boundKey);
+        if (flag) attackKey.timesPressed++;
         return this;
     }
 }

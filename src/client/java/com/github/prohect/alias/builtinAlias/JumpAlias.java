@@ -11,7 +11,7 @@ public class JumpAlias extends BuiltinAliasWithBooleanArgs<JumpAlias> {
         parseArgs(args);
         KeyBinding jumpKey = MinecraftClient.getInstance().options.jumpKey;
         jumpKey.setPressed(flag);
-        if (flag) KeyBinding.onKeyPressed(jumpKey.boundKey);
+        if (flag) jumpKey.timesPressed++;
         return this;
     }
 }

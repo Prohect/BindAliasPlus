@@ -14,9 +14,28 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
 
     final ArrayDeque<AliasRecord> aliases = new ArrayDeque<>();
     final String args;
+    private boolean fromAutoload = false;
 
     public UserAlias(String args) {
         this.args = args;
+    }
+
+    public UserAlias(String args, boolean fromAutoload) {
+        this.args = args;
+        this.fromAutoload = fromAutoload;
+    }
+
+    public boolean isFromAutoload() {
+        return fromAutoload;
+    }
+
+    public void setFromAutoload(boolean fromAutoload) {
+        this.fromAutoload = fromAutoload;
+    }
+
+    /** @return the raw definition string used to create this alias */
+    public String getDefinitionString() {
+        return args;
     }
 
     private void decodeArgs2Alias(String args) {

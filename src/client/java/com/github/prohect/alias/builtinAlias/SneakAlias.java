@@ -11,7 +11,7 @@ public class SneakAlias extends BuiltinAliasWithBooleanArgs<SneakAlias> {
         parseArgs(args);
         KeyBinding sneakKey = MinecraftClient.getInstance().options.sneakKey;
         sneakKey.setPressed(flag);
-        if (flag) KeyBinding.onKeyPressed(sneakKey.boundKey);
+        if (flag) sneakKey.timesPressed++;
         return this;
     }
 }
