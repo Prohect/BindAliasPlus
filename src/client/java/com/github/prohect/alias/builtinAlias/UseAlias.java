@@ -23,7 +23,7 @@ public class UseAlias extends BuiltinAliasWithArgs<UseAlias> {
         KeyBinding attackKey = MinecraftClient.getInstance().options.useKey;
         attackKey.setPressed(flag);
         if (flag) {
-            KeyBinding.onKeyPressed(attackKey.boundKey);
+            attackKey.timesPressed++;
         }
         return this;
     }

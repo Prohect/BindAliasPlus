@@ -99,6 +99,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new SayAlias().putToAliasesWithArgs("say");
         new SendCommandAlias().putToAliasesWithArgs("sendCommand");
         new SilentAlias().putToAliasesWithArgs_notSuggested("builtinSilent");
+        new LockAlias().putToAliasesWithArgs_notSuggested("builtinLock");
 
         //load builtin aliasesWithoutArgs
         new SwapHandAlias().putToAliasesWithoutArgs("swapHand");
@@ -125,6 +126,61 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new UserAlias("builtinDrop\\1").putToAliasesWithoutArgs("dropStack");
         new UserAlias("builtinSilent\\1").putToAliasesWithoutArgs("+silent");
         new UserAlias("builtinSilent\\0").putToAliasesWithoutArgs("-silent");
+        // Lock aliases (lock/unlock game actions to prevent user input interference)
+        new UserAlias("builtinLock\\attack\\1").putToAliasesWithoutArgs(
+            "+lock:attack"
+        );
+        new UserAlias("builtinLock\\attack\\0").putToAliasesWithoutArgs(
+            "-lock:attack"
+        );
+        new UserAlias("builtinLock\\use\\1").putToAliasesWithoutArgs(
+            "+lock:use"
+        );
+        new UserAlias("builtinLock\\use\\0").putToAliasesWithoutArgs(
+            "-lock:use"
+        );
+        new UserAlias("builtinLock\\forward\\1").putToAliasesWithoutArgs(
+            "+lock:forward"
+        );
+        new UserAlias("builtinLock\\forward\\0").putToAliasesWithoutArgs(
+            "-lock:forward"
+        );
+        new UserAlias("builtinLock\\back\\1").putToAliasesWithoutArgs(
+            "+lock:back"
+        );
+        new UserAlias("builtinLock\\back\\0").putToAliasesWithoutArgs(
+            "-lock:back"
+        );
+        new UserAlias("builtinLock\\left\\1").putToAliasesWithoutArgs(
+            "+lock:left"
+        );
+        new UserAlias("builtinLock\\left\\0").putToAliasesWithoutArgs(
+            "-lock:left"
+        );
+        new UserAlias("builtinLock\\right\\1").putToAliasesWithoutArgs(
+            "+lock:right"
+        );
+        new UserAlias("builtinLock\\right\\0").putToAliasesWithoutArgs(
+            "-lock:right"
+        );
+        new UserAlias("builtinLock\\jump\\1").putToAliasesWithoutArgs(
+            "+lock:jump"
+        );
+        new UserAlias("builtinLock\\jump\\0").putToAliasesWithoutArgs(
+            "-lock:jump"
+        );
+        new UserAlias("builtinLock\\sneak\\1").putToAliasesWithoutArgs(
+            "+lock:sneak"
+        );
+        new UserAlias("builtinLock\\sneak\\0").putToAliasesWithoutArgs(
+            "-lock:sneak"
+        );
+        new UserAlias("builtinLock\\sprint\\1").putToAliasesWithoutArgs(
+            "+lock:sprint"
+        );
+        new UserAlias("builtinLock\\sprint\\0").putToAliasesWithoutArgs(
+            "-lock:sprint"
+        );
 
         // load cfg
         loadCFG();
@@ -419,58 +475,47 @@ public class BindAliasPlusClient implements ClientModInitializer {
         }
         if (data == null) return;
         String cfg = new String(data);
-        cfg
-            .lines()
-            .forEach(line -> {
-                try {
-                    line = line.trim();
-                    if (line.startsWith("/")) line = line.substring(1).trim();
-                    if (!(line.isBlank() || line.startsWith("#"))) {
-                        if (line.startsWith("alias ")) {
-                            String string = line.substring("alias ".length());
-                            int i = string.indexOf(' ');
-                            String substring = string.substring(0, i);
-                            commandAliasExecute(
-                                substring,
-                                string.substring(i + 1)
-                            );
-                        } else if (line.startsWith("bind ")) {
-                            String string = line.substring("bind ".length());
-                            int i = string.indexOf(' ');
-                            String substring = string.substring(0, i);
-                            commandBindExecute(
-                                substring,
-                                string.substring(i + 1)
-                            );
-                        } else if (line.startsWith("bindByAliasName ")) {
-                            String string = line.substring(
-                                "bindByAliasName ".length()
-                            );
-                            int i = string.indexOf(' ');
-                            String substring = string.substring(0, i);
-                            commandBindByAliasNameExecute(
-                                substring,
-                                string.substring(i + 1)
-                            );
-                        } else if (line.startsWith("unbind ")) {
-                            String string = line.substring("unbind ".length());
-                            if (string.indexOf(' ') == -1) commandUnbindExecute(
-                                string
-                            );
-                        } else {
-                            BindAliasPlusClient.LOGGER.warn(
-                                "Unknown command: {}",
-                                line
-                            );
-                        }
+        cfg.lines().forEach(line -> {
+            try {
+                line = line.trim();
+                if (line.startsWith("/")) line = line.substring(1).trim();
+                if (!(line.isBlank() || line.startsWith("#"))) {
+                    if (line.startsWith("alias ")) {
+                        String string = line.substring("alias ".length());
+                        int i = string.indexOf(' ');
+                        String substring = string.substring(0, i);
+                        commandAliasExecute(substring, string.substring(i + 1));
+                    } else if (line.startsWith("bind ")) {
+                        String string = line.substring("bind ".length());
+                        int i = string.indexOf(' ');
+                        String substring = string.substring(0, i);
+                        commandBindExecute(substring, string.substring(i + 1));
+                    } else if (line.startsWith("bindByAliasName ")) {
+                        String string = line.substring(
+                            "bindByAliasName ".length()
+                        );
+                        int i = string.indexOf(' ');
+                        String substring = string.substring(0, i);
+                        commandBindByAliasNameExecute(
+                            substring,
+                            string.substring(i + 1)
+                        );
+                    } else if (line.startsWith("unbind ")) {
+                        String string = line.substring("unbind ".length());
+                        if (string.indexOf(' ') == -1) commandUnbindExecute(
+                            string
+                        );
+                    } else {
+                        BindAliasPlusClient.LOGGER.warn(
+                            "Unknown command: {}",
+                            line
+                        );
                     }
-                } catch (Exception e) {
-                    BindAliasPlusClient.LOGGER.warn(
-                        "Failed to load CFG file",
-                        e
-                    );
                 }
-            });
+            } catch (Exception e) {
+                BindAliasPlusClient.LOGGER.warn("Failed to load CFG file", e);
+            }
+        });
     }
 
     private int commandUnbindExecute(String keyName) {
@@ -610,22 +655,18 @@ public class BindAliasPlusClient implements ClientModInitializer {
         builder = builder.createOffset(builder.getStart() + n + 1);
 
         SuggestionsBuilder finalBuilder = builder;
-        Alias.aliasesWithoutArgs
-            .keySet()
-            .forEach(alias -> {
-                if (alias.startsWith(currentToken)) finalBuilder.suggest(
-                    alias,
-                    Text.literal("alias without args")
-                );
-            });
-        Alias.aliasesWithArgs
-            .keySet()
-            .forEach(alias -> {
-                if (alias.startsWith(currentToken)) finalBuilder.suggest(
-                    alias,
-                    Text.literal("alias with args")
-                );
-            });
+        Alias.aliasesWithoutArgs.keySet().forEach(alias -> {
+            if (alias.startsWith(currentToken)) finalBuilder.suggest(
+                alias,
+                Text.literal("alias without args")
+            );
+        });
+        Alias.aliasesWithArgs.keySet().forEach(alias -> {
+            if (alias.startsWith(currentToken)) finalBuilder.suggest(
+                alias,
+                Text.literal("alias with args")
+            );
+        });
 
         return builder.buildFuture();
     }

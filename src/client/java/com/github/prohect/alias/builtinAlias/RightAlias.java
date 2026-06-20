@@ -11,7 +11,7 @@ public class RightAlias extends BuiltinAliasWithBooleanArgs<RightAlias> {
         parseArgs(args);
         KeyBinding rightKey = MinecraftClient.getInstance().options.rightKey;
         rightKey.setPressed(flag);
-        if (flag) KeyBinding.onKeyPressed(rightKey.boundKey);
+        if (flag) rightKey.timesPressed++;
         return this;
     }
 }
