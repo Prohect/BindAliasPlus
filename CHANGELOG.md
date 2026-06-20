@@ -5,6 +5,16 @@ All notable changes to BindAliasPlus will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Lock Aliases** - Temporarily lock game actions to prevent user input interference during alias sequences
+  - `+lock:attack` / `-lock:attack` — lock/unlock the attack key
+  - `+lock:use` / `-lock:use` — lock/unlock the use/right-click key
+  - `+lock:forward`, `+lock:back`, `+lock:left`, `+lock:right` — lock/unlock movement keys
+  - `+lock:jump`, `+lock:sneak`, `+lock:sprint` — lock/unlock other action keys
+  - Locking temporarily saves the original key binding and sets it to an unused value, then restores on unlock
+
 ## [1.1.1] - 2025-01-26
 
 ### Added

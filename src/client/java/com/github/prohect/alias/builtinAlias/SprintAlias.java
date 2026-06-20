@@ -11,7 +11,7 @@ public class SprintAlias extends BuiltinAliasWithBooleanArgs<SprintAlias> {
         parseArgs(args);
         KeyBinding sprintKey = MinecraftClient.getInstance().options.sprintKey;
         sprintKey.setPressed(flag);
-        if (flag) KeyBinding.onKeyPressed(sprintKey.boundKey);
+        if (flag) sprintKey.timesPressed++;
         return this;
     }
 }

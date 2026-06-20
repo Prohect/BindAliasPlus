@@ -244,6 +244,7 @@ BindAliasPlus ships with built-in aliases you can call inside your alias definit
 | `unbind\key` | key | Unbind a key. (No special `;` handling needed.) | `unbind\g` |
 | `say\text` / `say\"text"` | text | Send a chat message. `;` is NOT special here (it is sent literally). Quotes only needed if text has spaces. | `say\"hello world"` |
 | `sendCommand\cmd` / `sendCommand\"cmd"` | cmd | Send a command (no leading `/`). `;` is NOT special here. Quotes only needed if command has spaces. | `sendCommand\"gamemode creative"` |
+| `lock\action\flag` | action (attack/use/forward/back/left/right/jump/sneak/sprint), flag (1=lock, 0=unlock) | Temporarily unbind a game action's key so user's physical input won't interfere with an alias sequence. | `lock\attack\1` or `lock\jump\0` |
 
 #### Slot numbering for `swapSlot`
 
@@ -274,6 +275,15 @@ These are available by default and are convenient for press/release patterns:
 | `cyclePerspective` | — | Cycle camera perspective |
 | `FPS` / `TPS` / `TPS2` | `builtinSetPerspective\0/1/2` | Set specific perspective |
 | `+silent` / `-silent` | `builtinSilent\1` / `builtinSilent\0` | Suppress/restore bind/alias feedback messages |
+| `+lock:attack` / `-lock:attack` | `builtinLock\attack\1` / `builtinLock\attack\0` | Lock/unlock attack key from user input |
+| `+lock:use` / `-lock:use` | `builtinLock\use\1` / `builtinLock\use\0` | Lock/unlock use key from user input |
+| `+lock:forward` / `-lock:forward` | `builtinLock\forward\1` / `builtinLock\forward\0` | Lock/unlock forward key from user input |
+| `+lock:back` / `-lock:back` | `builtinLock\back\1` / `builtinLock\back\0` | Lock/unlock back key from user input |
+| `+lock:left` / `-lock:left` | `builtinLock\left\1` / `builtinLock\left\0` | Lock/unlock left key from user input |
+| `+lock:right` / `-lock:right` | `builtinLock\right\1` / `builtinLock\right\0` | Lock/unlock right key from user input |
+| `+lock:jump` / `-lock:jump` | `builtinLock\jump\1` / `builtinLock\jump\0` | Lock/unlock jump key from user input |
+| `+lock:sneak` / `-lock:sneak` | `builtinLock\sneak\1` / `builtinLock\sneak\0` | Lock/unlock sneak key from user input |
+| `+lock:sprint` / `-lock:sprint` | `builtinLock\sprint\1` / `builtinLock\sprint\0` | Lock/unlock sprint key from user input |
 | `reloadCFG` | — | Reload config file |
 | `unloadCFGAliases` | — | Remove all aliases loaded from config file |
 | `unloadCFGBinds` | — | Remove all keybindings loaded from config file |
@@ -420,6 +430,31 @@ bind mouse5 fly1
 - Good for: temporary actions, charge-and-release mechanics
 
 Both patterns can use the same `+fly/-fly` aliases!
+
+### Locking input during alias sequences
+
+When an alias performs automated actions (like slot swapping, attacking, or using items), the user's physical input can interfere. The lock aliases temporarily unbind a game action's key so only the alias controls it:
+
+```
+# Define a quick attack-swap sequence that won't be broken by the user
+# accidentally clicking during the swap
+/alias quickAttack +lock:attack swapSlot\10\39 +attack wait\3 -attack swapSlot\10\39 -lock:attack
+/bind mouse4 quickAttack
+```
+
+How it works:
+1. `+lock:attack` saves the current attack key binding and sets it to an unused value
+2. The alias safely performs slot swaps and attack actions
+3. `-lock:attack` restores the original attack key binding
+4. Any physical input on the attack key during steps 2-3 is ignored
+
+You can lock multiple actions simultaneously:
+
+```
+/alias moveAndAttack +lock:forward +lock:attack +forward +attack wait\10 -attack -forward -lock:attack -lock:forward
+```
+
+Supported lock actions: `attack`, `use`, `forward`, `back`, `left`, `right`, `jump`, `sneak`, `sprint`
 
 ### Config profile management
 

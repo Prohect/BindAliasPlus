@@ -33,6 +33,11 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
         this.fromAutoload = fromAutoload;
     }
 
+    /** @return the raw definition string used to create this alias */
+    public String getDefinitionString() {
+        return args;
+    }
+
     private void decodeArgs2Alias(String args) {
         ArrayList<String> definitions = Alias.getDefinitions(args);
         for (String definition : definitions) {

@@ -11,7 +11,7 @@ public class BackAlias extends BuiltinAliasWithBooleanArgs<BackAlias> {
         parseArgs(args);
         KeyBinding backKey = MinecraftClient.getInstance().options.backKey;
         backKey.setPressed(flag);
-        if (flag) KeyBinding.onKeyPressed(backKey.boundKey);
+        if (flag) backKey.timesPressed++;
         return this;
     }
 }

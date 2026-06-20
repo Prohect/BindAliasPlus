@@ -12,7 +12,7 @@ public class ForwardAlias extends BuiltinAliasWithBooleanArgs<ForwardAlias> {
         KeyBinding forwardKey =
             MinecraftClient.getInstance().options.forwardKey;
         forwardKey.setPressed(flag);
-        if (flag) KeyBinding.onKeyPressed(forwardKey.boundKey);
+        if (flag) forwardKey.timesPressed++;
         return this;
     }
 }

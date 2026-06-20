@@ -2,6 +2,7 @@ package com.github.prohect.mixin.client;
 
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.KeyPressed;
+import com.github.prohect.alias.builtinAlias.LockAlias;
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
@@ -42,6 +43,8 @@ public class KeyBoardMixin {
                 sc instanceof BookEditScreen
             ) return;
         }
+        // Skip mod-bound keys whose action is currently locked
+        if (LockAlias.LOCKED_PHYSICAL_KEYS.contains(keyFromCode)) return;
         if (BindAliasPlusClient.BINDING_PLUS.containsKey(keyFromCode)) {
             //switch action because 0 -> release 1 -> down 2 -> pressing, and 2 is triggered constantly
             switch (action) {
