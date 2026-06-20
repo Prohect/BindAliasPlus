@@ -99,11 +99,20 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new SayAlias().putToAliasesWithArgs("say");
         new SendCommandAlias().putToAliasesWithArgs("sendCommand");
         new SilentAlias().putToAliasesWithArgs_notSuggested("builtinSilent");
+        new SetPerspectiveAlias().putToAliasesWithArgs_notSuggested(
+            "builtinSetPerspective"
+        );
+        new VarAlias().putToAliasesWithArgs("var");
         new LockAlias().putToAliasesWithArgs_notSuggested("builtinLock");
 
         //load builtin aliasesWithoutArgs
         new SwapHandAlias().putToAliasesWithoutArgs("swapHand");
+        new CyclePerspectiveAlias().putToAliasesWithoutArgs("cyclePerspective");
         new ReloadCFGAlias().putToAliasesWithoutArgs("reloadCFG");
+        new UnloadCFGAliasesAlias().putToAliasesWithoutArgs("unloadCFGAliases");
+        new UnloadCFGBindsAlias().putToAliasesWithoutArgs("unloadCFGBinds");
+        new UnloadCFGVarsAlias().putToAliasesWithoutArgs("unloadCFGVars");
+        new UnloadCFGAllAlias().putToAliasesWithoutArgs("unloadCFGAll");
         new UserAlias("builtinAttack\\1").putToAliasesWithoutArgs("+attack");
         new UserAlias("builtinAttack\\0").putToAliasesWithoutArgs("-attack");
         new UserAlias("builtinUse\\1").putToAliasesWithoutArgs("+use");
@@ -126,6 +135,15 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new UserAlias("builtinDrop\\1").putToAliasesWithoutArgs("dropStack");
         new UserAlias("builtinSilent\\1").putToAliasesWithoutArgs("+silent");
         new UserAlias("builtinSilent\\0").putToAliasesWithoutArgs("-silent");
+        new UserAlias("builtinSetPerspective\\0").putToAliasesWithoutArgs(
+            "FPS"
+        );
+        new UserAlias("builtinSetPerspective\\1").putToAliasesWithoutArgs(
+            "TPS"
+        );
+        new UserAlias("builtinSetPerspective\\2").putToAliasesWithoutArgs(
+            "TPS2"
+        );
         // Lock aliases (lock/unlock game actions to prevent user input interference)
         new UserAlias("builtinLock\\attack\\1").putToAliasesWithoutArgs(
             "+lock:attack"
@@ -458,6 +476,118 @@ public class BindAliasPlusClient implements ClientModInitializer {
                     })
                 )
         );
+        // register command unloadCFGAliases
+        ClientCommandRegistrationCallback.EVENT.register(
+            (dispatcher, registryAccess) ->
+                dispatcher.register(
+                    literal("unloadCFGAliases").executes(context -> {
+                        if (
+                            MinecraftClient.getInstance().player == null
+                        ) return 0;
+                        new UnloadCFGAliasesAlias().run("");
+                        if (!silentMode) {
+                            context
+                                .getSource()
+                                .sendFeedback(
+                                    Text.literal(
+                                        "\u00a7aUnloaded all autoloaded aliases"
+                                    )
+                                );
+                        }
+                        return 1;
+                    })
+                )
+        );
+        // register command unloadCFGBinds
+        ClientCommandRegistrationCallback.EVENT.register(
+            (dispatcher, registryAccess) ->
+                dispatcher.register(
+                    literal("unloadCFGBinds").executes(context -> {
+                        if (
+                            MinecraftClient.getInstance().player == null
+                        ) return 0;
+                        new UnloadCFGBindsAlias().run("");
+                        if (!silentMode) {
+                            context
+                                .getSource()
+                                .sendFeedback(
+                                    Text.literal(
+                                        "\u00a7aUnloaded all autoloaded keybindings"
+                                    )
+                                );
+                        }
+                        return 1;
+                    })
+                )
+        );
+        // register command unloadCFGVars
+        ClientCommandRegistrationCallback.EVENT.register(
+            (dispatcher, registryAccess) ->
+                dispatcher.register(
+                    literal("unloadCFGVars").executes(context -> {
+                        if (
+                            MinecraftClient.getInstance().player == null
+                        ) return 0;
+                        new UnloadCFGVarsAlias().run("");
+                        if (!silentMode) {
+                            context
+                                .getSource()
+                                .sendFeedback(
+                                    Text.literal(
+                                        "\u00a7aUnloaded all autoloaded variables"
+                                    )
+                                );
+                        }
+                        return 1;
+                    })
+                )
+        );
+        // register command unloadCFGAll
+        ClientCommandRegistrationCallback.EVENT.register(
+            (dispatcher, registryAccess) ->
+                dispatcher.register(
+                    literal("unloadCFGAll").executes(context -> {
+                        if (
+                            MinecraftClient.getInstance().player == null
+                        ) return 0;
+                        new UnloadCFGAllAlias().run("");
+                        if (!silentMode) {
+                            context
+                                .getSource()
+                                .sendFeedback(
+                                    Text.literal(
+                                        "\u00a7aUnloaded all autoloaded aliases, keybindings, and variables"
+                                    )
+                                );
+                        }
+                        return 1;
+                    })
+                )
+        );
+        // register command var
+        ClientCommandRegistrationCallback.EVENT.register(
+            (dispatcher, registryAccess) ->
+                dispatcher.register(
+                    literal("var").then(
+                        argument("varName", StringArgumentType.word()).then(
+                            argument(
+                                "source",
+                                StringArgumentType.word()
+                            ).executes(context -> {
+                                String varName = StringArgumentType.getString(
+                                    context,
+                                    "varName"
+                                );
+                                String source = StringArgumentType.getString(
+                                    context,
+                                    "source"
+                                );
+                                return commandVarExecute(varName, source);
+                            })
+                        )
+                    )
+                )
+        );
     }
 
     public void loadCFG() {
@@ -484,12 +614,20 @@ public class BindAliasPlusClient implements ClientModInitializer {
                         String string = line.substring("alias ".length());
                         int i = string.indexOf(' ');
                         String substring = string.substring(0, i);
-                        commandAliasExecute(substring, string.substring(i + 1));
+                        commandAliasExecute(
+                            substring,
+                            string.substring(i + 1),
+                            true
+                        );
                     } else if (line.startsWith("bind ")) {
                         String string = line.substring("bind ".length());
                         int i = string.indexOf(' ');
                         String substring = string.substring(0, i);
-                        commandBindExecute(substring, string.substring(i + 1));
+                        commandBindExecute(
+                            substring,
+                            string.substring(i + 1),
+                            true
+                        );
                     } else if (line.startsWith("bindByAliasName ")) {
                         String string = line.substring(
                             "bindByAliasName ".length()
@@ -498,13 +636,22 @@ public class BindAliasPlusClient implements ClientModInitializer {
                         String substring = string.substring(0, i);
                         commandBindByAliasNameExecute(
                             substring,
-                            string.substring(i + 1)
+                            string.substring(i + 1),
+                            true
                         );
                     } else if (line.startsWith("unbind ")) {
                         String string = line.substring("unbind ".length());
                         if (string.indexOf(' ') == -1) commandUnbindExecute(
                             string
                         );
+                    } else if (line.startsWith("var ")) {
+                        String string = line.substring("var ".length());
+                        int i = string.indexOf(' ');
+                        if (i != -1) {
+                            String varName = string.substring(0, i);
+                            String source = string.substring(i + 1);
+                            commandVarExecute(varName, source, true);
+                        }
                     } else {
                         BindAliasPlusClient.LOGGER.warn(
                             "Unknown command: {}",
@@ -518,6 +665,47 @@ public class BindAliasPlusClient implements ClientModInitializer {
         });
     }
 
+    private int commandVarExecute(String varName, String source) {
+        return commandVarExecute(varName, source, false);
+    }
+
+    private int commandVarExecute(
+        String varName,
+        String source,
+        boolean fromAutoload
+    ) {
+        new VarAlias().run(
+            varName + Alias.divider4AliasArgs + source,
+            fromAutoload
+        );
+
+        // Check if variable was successfully created
+        if (VarAlias.VARIABLES.containsKey(varName)) {
+            if (!silentMode) {
+                MinecraftClient.getInstance().player.sendMessage(
+                    Text.literal(
+                        "Variable '" +
+                            varName +
+                            "' set to " +
+                            VarAlias.VARIABLES.get(varName)
+                    ),
+                    false
+                );
+            }
+            return 1;
+        } else {
+            if (!silentMode) {
+                MinecraftClient.getInstance().player.sendMessage(
+                    Text.literal(
+                        "\u00a7cFailed to set variable '" + varName + "'"
+                    ),
+                    false
+                );
+            }
+            return 0;
+        }
+    }
+
     private int commandUnbindExecute(String keyName) {
         InputUtil.Key key = parseKey(keyName);
         if (key == null) return 0;
@@ -526,7 +714,17 @@ public class BindAliasPlusClient implements ClientModInitializer {
     }
 
     private int commandBindExecute(String keyName, String args) {
-        if (commandBindByAliasNameExecute(keyName, args) == 1) return 1;
+        return commandBindExecute(keyName, args, false);
+    }
+
+    private int commandBindExecute(
+        String keyName,
+        String args,
+        boolean fromAutoload
+    ) {
+        if (
+            commandBindByAliasNameExecute(keyName, args, fromAutoload) == 1
+        ) return 1;
         final StringBuilder aliasName = new StringBuilder();
         final StringBuilder aliasName1 = new StringBuilder();
         final String CHARACTERS =
@@ -544,26 +742,35 @@ public class BindAliasPlusClient implements ClientModInitializer {
 
         Alias.aliasesWithoutArgs_fromBindCommand.put(
             String.valueOf(aliasName),
-            new UserAlias(args)
+            new UserAlias(args, fromAutoload)
         );
         String oppositeDefinition = Alias.getOppositeDefinition(args);
         if (
             !oppositeDefinition.isBlank()
         ) Alias.aliasesWithoutArgs_fromBindCommand.put(
             String.valueOf(aliasName1),
-            new UserAlias(oppositeDefinition)
+            new UserAlias(oppositeDefinition, fromAutoload)
         );
         BINDING_PLUS.put(
             key,
             new KeyBindingPlus(
                 aliasName.toString(),
-                oppositeDefinition.isBlank() ? "" : aliasName1.toString()
+                oppositeDefinition.isBlank() ? "" : aliasName1.toString(),
+                fromAutoload
             )
         );
         return 3;
     }
 
     private int commandAliasExecute(String aliasName, String definition) {
+        return commandAliasExecute(aliasName, definition, false);
+    }
+
+    private int commandAliasExecute(
+        String aliasName,
+        String definition,
+        boolean fromAutoload
+    ) {
         if (
             Alias.aliasesWithArgs_notSuggested.containsKey(aliasName) ||
             Alias.aliasesWithArgs.containsKey(aliasName)
@@ -574,13 +781,24 @@ public class BindAliasPlusClient implements ClientModInitializer {
         if (
             aliasWithoutArgs != null && !(aliasWithoutArgs instanceof UserAlias)
         ) return 3;
-        Alias.aliasesWithoutArgs.put(aliasName, new UserAlias(definition));
+        Alias.aliasesWithoutArgs.put(
+            aliasName,
+            new UserAlias(definition, fromAutoload)
+        );
         return 1;
     }
 
     private int commandBindByAliasNameExecute(
         String keyName,
         String aliasName
+    ) {
+        return commandBindByAliasNameExecute(keyName, aliasName, false);
+    }
+
+    private int commandBindByAliasNameExecute(
+        String keyName,
+        String aliasName,
+        boolean fromAutoload
     ) {
         boolean flag0 = true; //t -> +-aliasName binding pattern
         /*t -> +aliasName or it doesn't contain +- and would be triggered when pressing down as default*/
@@ -621,8 +839,16 @@ public class BindAliasPlusClient implements ClientModInitializer {
         BINDING_PLUS.put(
             key,
             flag
-                ? new KeyBindingPlus(aliasNameFinal, aliasNameFinalExtra)
-                : new KeyBindingPlus(aliasNameFinalExtra, aliasNameFinal)
+                ? new KeyBindingPlus(
+                      aliasNameFinal,
+                      aliasNameFinalExtra,
+                      fromAutoload
+                  )
+                : new KeyBindingPlus(
+                      aliasNameFinalExtra,
+                      aliasNameFinal,
+                      fromAutoload
+                  )
         );
 
         return 1;
