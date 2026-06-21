@@ -37,6 +37,7 @@ loom {
             programArg "localhost:25566"
         }
     }
+
 }
 
 fabricApi {
