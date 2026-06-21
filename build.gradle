@@ -30,6 +30,13 @@ loom {
         }
     }
 
+    runs {
+        client {
+            vmArg "-Dbind-alias-plus.autoJoin=localhost:25566"
+            programArg "--quickPlayMultiplayer"
+            programArg "localhost:25566"
+        }
+    }
 }
 
 fabricApi {
