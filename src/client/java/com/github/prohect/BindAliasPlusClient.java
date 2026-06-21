@@ -22,6 +22,7 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
@@ -104,10 +105,11 @@ public class BindAliasPlusClient implements ClientModInitializer {
         );
         new VarAlias().putToAliasesWithArgs("var");
         new LockAlias().putToAliasesWithArgs_notSuggested("builtinLock");
+        new RunAliasAlias().putToAliasesWithArgs("runAlias");
 
         //load builtin aliasesWithoutArgs
         new SwapHandAlias().putToAliasesWithoutArgs("swapHand");
-        new CyclePerspectiveAlias().putToAliasesWithoutArgs("cyclePerspective");
+        new ShutdownAlias().putToAliasesWithoutArgs("shutdown");
         new ReloadCFGAlias().putToAliasesWithoutArgs("reloadCFG");
         new UnloadCFGAliasesAlias().putToAliasesWithoutArgs("unloadCFGAliases");
         new UnloadCFGBindsAlias().putToAliasesWithoutArgs("unloadCFGBinds");
@@ -200,8 +202,17 @@ public class BindAliasPlusClient implements ClientModInitializer {
             "-lock:sprint"
         );
 
-        // load cfg
-        loadCFG();
+        // init cfg file (create if not exists)
+        try {
+            cfgPath.toFile().createNewFile();
+        } catch (IOException e) {
+            LOGGER.error("Could not create file {}", cfgPath, e);
+        }
+
+        // register CFG autoload on world join
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) ->
+            client.execute(this::loadCFG)
+        );
 
         // register command alias
         ClientCommandRegistrationCallback.EVENT.register(
@@ -588,6 +599,32 @@ public class BindAliasPlusClient implements ClientModInitializer {
                     )
                 )
         );
+        // register command runAlias
+        ClientCommandRegistrationCallback.EVENT.register(
+            (dispatcher, registryAccess) ->
+                dispatcher.register(
+                    literal("runAlias").then(
+                        argument("aliasName", StringArgumentType.greedyString())
+                            .suggests((context, builder) -> {
+                                Alias.aliasesWithoutArgs
+                                    .keySet()
+                                    .forEach(builder::suggest);
+                                Alias.aliasesWithArgs
+                                    .keySet()
+                                    .forEach(builder::suggest);
+                                return builder.buildFuture();
+                            })
+                            .executes(context -> {
+                                String aliasName = StringArgumentType.getString(
+                                    context,
+                                    "aliasName"
+                                );
+                                new RunAliasAlias().run(aliasName);
+                                return 1;
+                            })
+                    )
+                )
+        );
     }
 
     public void loadCFG() {
@@ -652,6 +689,11 @@ public class BindAliasPlusClient implements ClientModInitializer {
                             String source = string.substring(i + 1);
                             commandVarExecute(varName, source, true);
                         }
+                    } else if (line.startsWith("runAlias ")) {
+                        String aliasName = line
+                            .substring("runAlias ".length())
+                            .trim();
+                        new RunAliasAlias().run(aliasName);
                     } else {
                         BindAliasPlusClient.LOGGER.warn(
                             "Unknown command: {}",
