@@ -16,7 +16,8 @@ public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
     @Override
     public SlotAlias run(String args) {
         try {
-            int i = Integer.parseInt(args);
+            Integer resolved = VarAlias.resolveInt(args);
+            int i = resolved != null ? resolved : Integer.parseInt(args);
             if (!(1 <= i && i <= 9)) {
                 BindAliasPlusClient.LOGGER.warn(
                     "[Slot]Invalid input! Please enter a number between 1 and 9"
