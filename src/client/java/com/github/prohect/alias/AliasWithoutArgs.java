@@ -8,4 +8,10 @@ public interface AliasWithoutArgs<
         Alias.aliasesWithoutArgs.put(key, this);
         return (T) this;
     }
+
+    @SuppressWarnings({ "UnusedReturnValue", "unchecked" })
+    default T putToAliasesWithoutArgs_notSuggested(String key) {
+        Alias.aliasesWithoutArgs_notSuggested.put(key, this);
+        return (T) this;
+    }
 }

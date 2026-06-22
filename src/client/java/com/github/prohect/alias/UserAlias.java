@@ -99,6 +99,12 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
             );
             alias =
                 alias == null
+                    ? Alias.aliasesWithoutArgs_notSuggested.get(
+                          aliasRecord.aliasName()
+                      )
+                    : alias;
+            alias =
+                alias == null
                     ? Alias.aliasesWithArgs_notSuggested.get(
                           aliasRecord.aliasName()
                       )
@@ -169,6 +175,12 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
             Alias<?> alias = Alias.aliasesWithoutArgs.get(
                 aliasRecord.aliasName()
             );
+            alias =
+                alias == null
+                    ? Alias.aliasesWithoutArgs_notSuggested.get(
+                          aliasRecord.aliasName()
+                      )
+                    : alias;
             alias =
                 alias == null
                     ? Alias.aliasesWithArgs_notSuggested.get(
