@@ -73,7 +73,6 @@ BindAliasPlus includes prebuilt aliases for common actions. They are divided int
 | `say\string`           | say a chat message.                                                                       | `say\"How old r u?"` (send a chat message that is "how old r u?")              |
 | `sendCommand\command`  | send a command.                                                                           | `sendCommand\"gamemode creative"` (send a command that is "gamemode creative") |
 | `var\varName\source`  | Store a value into a variable. Sources: `hotbarSlot`, `itemsOfSlot0-9`, `pitch`, `yaw`, or a number. | `var\mySlot\hotbarSlot` (store hotbar slot), `var\angle\pitch` (store pitch angle) |
-| `runAlias\aliasName`   | Run a named alias from another alias (safer nesting).                                     | `runAlias\myAlias` (execute myAlias)                                                |
 
 > **Numeric aliases support variable references:** `yaw`, `pitch`, `setYaw`, `setPitch`, `slot`, `swapSlot`, `wait`, and `setPerspective` all accept variable names (e.g., `yaw\myVar` or `slot\mySlot`) in place of raw numbers.
 
@@ -128,7 +127,6 @@ These are shorthand aliases that map to common `state=1` (start) and `state=0` (
 | `FPS`              | `builtinSetPerspective\0` | Switches to first-person view.                                |
 | `TPS`              | `builtinSetPerspective\1` | Switches to third-person back view.                           |
 | `TPS2`             | `builtinSetPerspective\2` | Switches to third-person front view.                          |
-| `shutdown`         | —                  | Gracefully shuts down the game (useful for auto-test configs). |
 | `reloadCFG`      | —                  | Reloads the config file (applies changes without restarting).                  |
 | `unloadCFGAliases` | —                | Removes all aliases that were loaded from the config file.                    |
 | `unloadCFGBinds`   | —                | Removes all keybindings that were loaded from the config file.                |
