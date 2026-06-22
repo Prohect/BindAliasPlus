@@ -57,11 +57,23 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
         );
         int[] slots = new int[] { 0, selectedSlot };
         try {
-            if (strings.length == 1) slots[0] =
-                Integer.parseInt(strings[0]) - 1;
-            else if (strings.length == 2) {
-                slots[0] = Integer.parseInt(strings[0]) - 1;
-                slots[1] = Integer.parseInt(strings[1]) - 1;
+            if (strings.length == 1) {
+                Integer resolved0 = VarAlias.resolveInt(strings[0]);
+                slots[0] =
+                    (resolved0 != null
+                        ? resolved0
+                        : Integer.parseInt(strings[0])) - 1;
+            } else if (strings.length == 2) {
+                Integer resolved0 = VarAlias.resolveInt(strings[0]);
+                Integer resolved1 = VarAlias.resolveInt(strings[1]);
+                slots[0] =
+                    (resolved0 != null
+                        ? resolved0
+                        : Integer.parseInt(strings[0])) - 1;
+                slots[1] =
+                    (resolved1 != null
+                        ? resolved1
+                        : Integer.parseInt(strings[1])) - 1;
             } else {
                 BindAliasPlusClient.LOGGER.warn(
                     "[SwitchSlot]Invalid arguments:args pattern not expected"
@@ -89,8 +101,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
         }
 
         Screen currentScreen = minecraftClient.currentScreen;
-        boolean creativeInventory =
-            currentScreen instanceof CreativeInventoryScreen;
+        boolean creativeInventory = currentScreen instanceof
+            CreativeInventoryScreen;
         boolean inInventory =
             currentScreen instanceof InventoryScreen || creativeInventory;
         if (creativeInventory) currentScreen.close();
