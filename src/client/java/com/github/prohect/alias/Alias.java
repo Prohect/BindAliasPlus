@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 public interface Alias<T extends Alias<T>> {
     List<Alias<?>> blackList4lockCursor = new ArrayList<>();
     HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs = new HashMap<>();
+    HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs_notSuggested =
+        new HashMap<>();
     HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs_fromBindCommand =
         new HashMap<>();
     HashMap<String, AliasWithArgs<?>> aliasesWithArgs = new HashMap<>();
