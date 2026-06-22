@@ -106,6 +106,29 @@ These are shorthand aliases that map to common `state=1` (start) and `state=0` (
 | `swapHand`  | _                  | Swaps items between main hand and offhand.                    |
 | `+silent`   | `builtinSilent\1`  | Enables silent mode (suppresses command feedback messages).   |
 | `-silent`   | `builtinSilent\0`  | Disables silent mode (re-enables command feedback messages).  |
+| `+lock:attack`  | `builtinLock\attack\1`  | Locks the attack key (prevents physical input).               |
+| `-lock:attack`  | `builtinLock\attack\0`  | Unlocks the attack key.                                       |
+| `+lock:use`     | `builtinLock\use\1`     | Locks the use/place key.                                      |
+| `-lock:use`     | `builtinLock\use\0`     | Unlocks the use/place key.                                    |
+| `+lock:forward` | `builtinLock\forward\1` | Locks the forward movement key.                               |
+| `-lock:forward` | `builtinLock\forward\0` | Unlocks the forward movement key.                             |
+| `+lock:back`    | `builtinLock\back\1`    | Locks the backward movement key.                              |
+| `-lock:back`    | `builtinLock\back\0`    | Unlocks the backward movement key.                            |
+| `+lock:left`    | `builtinLock\left\1`    | Locks the left movement key.                                  |
+| `-lock:left`    | `builtinLock\left\0`    | Unlocks the left movement key.                                |
+| `+lock:right`   | `builtinLock\right\1`   | Locks the right movement key.                                 |
+| `-lock:right`   | `builtinLock\right\0`   | Unlocks the right movement key.                               |
+| `+lock:jump`    | `builtinLock\jump\1`    | Locks the jump key.                                           |
+| `-lock:jump`    | `builtinLock\jump\0`    | Unlocks the jump key.                                         |
+| `+lock:sneak`   | `builtinLock\sneak\1`   | Locks the sneak key.                                          |
+| `-lock:sneak`   | `builtinLock\sneak\0`   | Unlocks the sneak key.                                        |
+| `+lock:sprint`  | `builtinLock\sprint\1`  | Locks the sprint key.                                         |
+| `-lock:sprint`  | `builtinLock\sprint\0`  | Unlocks the sprint key.                                       |
+| `cyclePerspective` | —                  | Cycles through camera perspectives (FPS → TPS → TPS2).       |
+| `FPS`              | `builtinSetPerspective\0` | Switches to first-person view.                                |
+| `TPS`              | `builtinSetPerspective\1` | Switches to third-person back view.                           |
+| `TPS2`             | `builtinSetPerspective\2` | Switches to third-person front view.                          |
+| `shutdown`         | —                  | Gracefully shuts down the game (useful for auto-test configs). |
 | `reloadCFG`      | —                  | Reloads the config file (applies changes without restarting).                  |
 | `unloadCFGAliases` | —                | Removes all aliases that were loaded from the config file.                    |
 | `unloadCFGBinds`   | —                | Removes all keybindings that were loaded from the config file.                |
@@ -216,7 +239,24 @@ When creating toggle binds (like fly1/fly2 scripts), you can use silent mode to 
 - **Press-and-hold** (`+alias`/`-alias` pattern): Executes on press, reverses on release (like `/bind mouse5 +fly`)
 - Silent mode only suppresses command feedback messages in chat. Error/warning logs are not affected.
 
-#### 4. Variable System
+#### 4. Lock Aliases
+
+Lock aliases temporarily block physical keyboard/mouse input for a specific action, preventing
+user interference during alias sequences (e.g., hold attack while an alias auto-swaps items).
+
+```bash
+# Lock forward movement for 20 ticks, then unlock
+/alias lockTest +lock:forward wait\20 -lock:forward
+
+# Use lock to safely hold attack while swapping
+/alias +safeAttack +lock:attack swapSlot\11 wait\1 -lock:attack
+/alias -safeAttack -attack swapSlot\11
+/bind mouse4 +safeAttack
+
+# Available lock targets: attack, use, forward, back, left, right, jump, sneak, sprint
+```
+
+#### 5. Variable System
 
 Capture and reuse in-game values to create context-aware automation:
 
