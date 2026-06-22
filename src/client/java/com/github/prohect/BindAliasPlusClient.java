@@ -105,11 +105,15 @@ public class BindAliasPlusClient implements ClientModInitializer {
         );
         new VarAlias().putToAliasesWithArgs("var");
         new LockAlias().putToAliasesWithArgs_notSuggested("builtinLock");
-        new RunAliasAlias().putToAliasesWithArgs("runAlias");
+        new RunAliasAlias().putToAliasesWithArgs_notSuggested(
+            "builtinRunAlias"
+        );
 
         //load builtin aliasesWithoutArgs
         new SwapHandAlias().putToAliasesWithoutArgs("swapHand");
-        new ShutdownAlias().putToAliasesWithoutArgs("shutdown");
+        new ShutdownAlias().putToAliasesWithoutArgs_notSuggested(
+            "builtinShutdown"
+        );
         new ReloadCFGAlias().putToAliasesWithoutArgs("reloadCFG");
         new UnloadCFGAliasesAlias().putToAliasesWithoutArgs("unloadCFGAliases");
         new UnloadCFGBindsAlias().putToAliasesWithoutArgs("unloadCFGBinds");
@@ -815,7 +819,8 @@ public class BindAliasPlusClient implements ClientModInitializer {
     ) {
         if (
             Alias.aliasesWithArgs_notSuggested.containsKey(aliasName) ||
-            Alias.aliasesWithArgs.containsKey(aliasName)
+            Alias.aliasesWithArgs.containsKey(aliasName) ||
+            Alias.aliasesWithoutArgs_notSuggested.containsKey(aliasName)
         ) return 2;
         AliasWithoutArgs<?> aliasWithoutArgs = Alias.aliasesWithoutArgs.get(
             aliasName
