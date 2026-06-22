@@ -59,19 +59,23 @@ BindAliasPlus includes prebuilt aliases for common actions. They are divided int
 | Alias                  | Description                                                                               | Example                                                                        |
 |------------------------|-------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
 | `log`                  | Logs a message to the game console (for debugging).                                       | `log\Hello World`                                                              |
-| `slot\slotNumber`      | Switches to a specific hotbar slot (1-9).                                                 | `slot\3` (switches to hotbar slot 3)                                           |
-| `swapSlot\slot1\slot2` | Swaps items between two inventory slots.                                                  | `swapSlot\10\39` (swaps inventory slot 10 with chestplate slot)                |
-| `swapSlot\slot1`       | Swaps items between the currently held hotbar slot (main hand) and the specified `slot1`. | `swapSlot\19` (swaps current hotbar slot with inventory slot 19)               |
-| `wait\ticks`           | Pauses execution for a specified number of ticks (20 ticks = 1 second).                   | `wait\20` (waits 1 second)                                                     |
-| `yaw\degrees`          | Adjusts player yaw (horizontal rotation) by a relative degree value.                      | `yaw\90` (turns 90° right)                                                     |
-| `pitch\degrees`        | Adjusts player pitch (vertical rotation) by a relative degree value.                      | `pitch\-30` (looks 30° down)                                                   |
-| `setYaw\degrees`       | Sets player yaw to an absolute degree value (0 = north, 90 = east).                       | `setYaw\180` (faces south)                                                     |
-| `setPitch\degrees`     | Sets player pitch to an absolute degree value (-90 = straight up, 90 = straight down).    | `setPitch\0` (looks straight ahead)                                            |
+| `slot\slotNumber`      | Switches to a specific hotbar slot (1-9). Accepts variable names.                         | `slot\3` (switches to hotbar slot 3), `slot\mySlot` (uses variable)           |
+| `swapSlot\slot1\slot2` | Swaps items between two inventory slots. Accepts variable names.                          | `swapSlot\10\39` (swaps inventory slot 10 with chestplate slot)                |
+| `swapSlot\slot1`       | Swaps items between the currently held hotbar slot (main hand) and the specified `slot1`. Accepts variable names. | `swapSlot\19` (swaps current hotbar slot with inventory slot 19)               |
+| `wait\ticks`           | Pauses execution for a specified number of ticks (20 ticks = 1 second). Accepts variable names. | `wait\20` (waits 1 second), `wait\myTicks` (uses variable)                     |
+| `yaw\degrees`          | Adjusts player yaw (horizontal rotation) by a relative degree value. Accepts variable names. | `yaw\90` (turns 90° right), `yaw\myVar` (uses variable)                       |
+| `pitch\degrees`        | Adjusts player pitch (vertical rotation) by a relative degree value. Accepts variable names. | `pitch\-30` (looks 30° down), `pitch\myVar` (uses variable)                   |
+| `setYaw\degrees`       | Sets player yaw to an absolute degree value (0 = north, 90 = east). Accepts variable names. | `setYaw\180` (faces south), `setYaw\myVar` (uses variable)                    |
+| `setPitch\degrees`     | Sets player pitch to an absolute degree value (-90 = straight up, 90 = straight down). Accepts variable names. | `setPitch\0` (looks straight ahead), `setPitch\myVar` (uses variable)         |
 | `alias\args`           | almost same as command alias, except u need to cover args with double quotes.             | `alias\"meow say\nya~"` (create or replace an alias)                           |
 | `bind\args`            | almost same as command bind, except u need to cover args with double quotes.              | `bind\"m meow wait\0 +fly"` (create or replace a bind)                         |
 | `unbind\keyName`       | almost same as command unbind.                                                            | `unbind\m` (unbind binds on a key)                                             |
 | `say\string`           | say a chat message.                                                                       | `say\"How old r u?"` (send a chat message that is "how old r u?")              |
 | `sendCommand\command`  | send a command.                                                                           | `sendCommand\"gamemode creative"` (send a command that is "gamemode creative") |
+| `var\varName\source`  | Store a value into a variable. Sources: `hotbarSlot`, `itemsOfSlot0-9`, `pitch`, `yaw`, or a number. | `var\mySlot\hotbarSlot` (store hotbar slot), `var\angle\pitch` (store pitch angle) |
+| `runAlias\aliasName`   | Run a named alias from another alias (safer nesting).                                     | `runAlias\myAlias` (execute myAlias)                                                |
+
+> **Numeric aliases support variable references:** `yaw`, `pitch`, `setYaw`, `setPitch`, `slot`, `swapSlot`, `wait`, and `setPerspective` all accept variable names (e.g., `yaw\myVar` or `slot\mySlot`) in place of raw numbers.
 
 #### Aliases without Arguments
 
@@ -102,7 +106,36 @@ These are shorthand aliases that map to common `state=1` (start) and `state=0` (
 | `swapHand`  | _                  | Swaps items between main hand and offhand.                    |
 | `+silent`   | `builtinSilent\1`  | Enables silent mode (suppresses command feedback messages).   |
 | `-silent`   | `builtinSilent\0`  | Disables silent mode (re-enables command feedback messages).  |
-| `reloadCFG` | —                  | Reloads the config file (applies changes without restarting). |
+| `reloadCFG`      | —                  | Reloads the config file (applies changes without restarting).                  |
+| `unloadCFGAliases` | —                | Removes all aliases that were loaded from the config file.                    |
+| `unloadCFGBinds`   | —                | Removes all keybindings that were loaded from the config file.                |
+| `unloadCFGVars`    | —                | Removes all variables that were loaded from the config file.                  |
+| `unloadCFGAll`     | —                | Removes all aliases, keybindings, and variables loaded from config.           |
+
+### Variables
+
+Variables let you capture and reuse in-game values (hotbar slot, pitch/yaw angles, item
+counts, etc.).
+
+**Sources** for `var\varName\source`:
+
+| Source          | Description                                         | Example                       |
+|-----------------|-----------------------------------------------------|-------------------------------|
+| `hotbarSlot`    | Current hotbar slot (1-9)                           | `var\mySlot\hotbarSlot`     |
+| `itemsOfSlotN`  | Item count in slot N (0=offhand, 1-9=hotbar)        | `var\count\itemsOfSlot2`   |
+| `pitch`         | Player's current pitch angle (float)                | `var\myPitch\pitch`        |
+| `yaw`           | Player's current yaw angle (float)                  | `var\myYaw\yaw`            |
+| `42` or `3.14`  | A literal number (int or float)                     | `var\backup\42`            |
+
+Variables can then be used as arguments in any numeric alias (e.g., `yaw\myVar`,
+`slot\mySlot`, `wait\myTicks`).
+
+**Variable-related commands:**
+
+| Command                        | Purpose                                            | Example                               |
+|--------------------------------|----------------------------------------------------|---------------------------------------|
+| `/var <name> <source>`         | Create or update a variable.                       | `/var mySlot hotbarSlot`              |
+| `/unloadCFGVars`               | Remove all config-loaded variables.                | `/unloadCFGVars`                      |
 
 ### Examples
 
@@ -183,6 +216,25 @@ When creating toggle binds (like fly1/fly2 scripts), you can use silent mode to 
 - **Press-and-hold** (`+alias`/`-alias` pattern): Executes on press, reverses on release (like `/bind mouse5 +fly`)
 - Silent mode only suppresses command feedback messages in chat. Error/warning logs are not affected.
 
+#### 4. Variable System
+
+Capture and reuse in-game values to create context-aware automation:
+
+```bash
+# Store current pitch/yaw into variables
+/alias saveAngles var\_yaw\yaw var\_pitch\pitch
+
+# Restore saved angles using setYaw/setPitch with variable references
+/alias restoreAngles setYaw\_yaw setPitch\_pitch
+
+# Turn 80 degrees right and look 20 degrees down, wait, then restore previous view
+/alias lookAround saveAngles yaw\80 pitch\-20 wait\15 restoreAngles wait\5
+
+# Use variables for dynamic slot swapping
+/var backupSlot hotbarSlot
+/alias quickSwap swapSlot\backupSlot swapSlot\9
+```
+
 ## Configuration
 
 - **Config File**: At `config/bind-alias-plus.cfg`. Automatically created if there is not one.
@@ -216,6 +268,14 @@ When creating toggle binds (like fly1/fly2 scripts), you can use silent mode to 
   # Option 2: Press-and-hold pattern (activates on press, reverses on release)
   # Use this when you want the action only while holding the key
   bind mouse5 +fly
+
+  # Variables - store and reuse game values
+  var backupSlot hotbarSlot
+  var arrowCount itemsOfSlot2
+
+  # Save and restore view angles
+  alias saveAngles var\_yaw\yaw var\_pitch\pitch
+  alias restoreAngles setYaw\_yaw setPitch\_pitch
   ```
 
 ## Commands Reference
@@ -227,12 +287,20 @@ When creating toggle binds (like fly1/fly2 scripts), you can use silent mode to 
 | `/bindByAliasName <key> <alias>` | Bind a key to an existing alias.                                                                                                                                                                                                                                                                                            | `/bindByAliasName mouse5 +fly`                            |
 | `/unbind <key>`                  | Remove a key binding.                                                                                                                                                                                                                                                                                                       | `/unbind mouse5`                                          |
 | `/reloadCFG`                     | Reload config from file.                                                                                                                                                                                                                                                                                                    | `/reloadCFG`                                              |
+| `/var <name> <source>`           | Create/update a variable. Sources: `hotbarSlot`, `itemsOfSlot0-9`, `pitch`, `yaw`, or a number.                                                                                                                                                                                                                             | `/var mySlot hotbarSlot`, `/var angle pitch`              |
+| `/unloadCFGAliases`              | Remove all aliases loaded from config.                                                                                                                                                                                                                                                                                      | `/unloadCFGAliases`                                       |
+| `/unloadCFGBinds`                | Remove all keybindings loaded from config.                                                                                                                                                                                                                                                                                  | `/unloadCFGBinds`                                         |
+| `/unloadCFGVars`                 | Remove all variables loaded from config.                                                                                                                                                                                                                                                                                    | `/unloadCFGVars`                                          |
+| `/unloadCFGAll`                  | Remove all aliases, binds, and variables loaded from config.                                                                                                                                                                                                                                                                | `/unloadCFGAll`                                           |
 
 ## Notes
 
 - **Compatibility**: Works with most Fabric mods; may conflict with mods that modify key handling or inventory
   mechanics.
-- **Minecraft Version**: Requires Minecraft 1.21+ (check releases for version-specific builds).
+- **Minecraft Version**: Requires Minecraft 1.21+ (Yarn mappings) or 26.x (Mojang mappings). Check the release page
+  for version-specific builds (filenames include the MC version).
+- **Variables**: Supports integer and floating-point values. Numeric aliases (`yaw`, `pitch`, `setYaw`, `setPitch`,
+  `slot`, `swapSlot`, `wait`, `setPerspective`) accept variable names in place of raw numbers.
 - **Safety**: Avoid excessive automation on servers with anti-cheat systems (some actions may be flagged).
 
 ## Contributing
