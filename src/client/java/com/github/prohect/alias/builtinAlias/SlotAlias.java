@@ -4,8 +4,8 @@ import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
+import net.minecraft.world.entity.player.Inventory;
 
 public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
 
@@ -15,7 +15,7 @@ public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
     @SuppressWarnings("DataFlowIssue")
     @Override
     public SlotAlias run(String args) {
-        Integer resolved = VarAlias.resolveValue(args);
+        Integer resolved = VarAlias.resolveInt(args);
 
         if (resolved == null) {
             BindAliasPlusClient.LOGGER.warn(

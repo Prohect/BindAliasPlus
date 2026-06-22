@@ -59,7 +59,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
         int[] slots = new int[] { 0, selectedSlot };
 
         if (strings.length == 1) {
-            Integer resolvedSlot = VarAlias.resolveValue(strings[0]);
+            Integer resolvedSlot = VarAlias.resolveInt(strings[0]);
             if (resolvedSlot == null) {
                 BindAliasPlusClient.LOGGER.warn(
                     "[SwitchSlot]Invalid arguments: '{}' is not a valid number or variable",
@@ -69,8 +69,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             }
             slots[0] = resolvedSlot - 1;
         } else if (strings.length == 2) {
-            Integer resolvedSlot0 = VarAlias.resolveValue(strings[0]);
-            Integer resolvedSlot1 = VarAlias.resolveValue(strings[1]);
+            Integer resolvedSlot0 = VarAlias.resolveInt(strings[0]);
+            Integer resolvedSlot1 = VarAlias.resolveInt(strings[1]);
 
             if (resolvedSlot0 == null) {
                 BindAliasPlusClient.LOGGER.warn(
