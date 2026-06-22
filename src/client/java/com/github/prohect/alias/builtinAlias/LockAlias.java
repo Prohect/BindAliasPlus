@@ -232,6 +232,9 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         // Indirect: look up as a UserAlias and check its definition
         AliasWithoutArgs<?> alias = Alias.aliasesWithoutArgs.get(aliasName);
         if (alias == null) {
+            alias = Alias.aliasesWithoutArgs_notSuggested.get(aliasName);
+        }
+        if (alias == null) {
             alias = Alias.aliasesWithoutArgs_fromBindCommand.get(aliasName);
         }
         if (alias instanceof UserAlias userAlias) {
