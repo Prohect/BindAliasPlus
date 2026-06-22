@@ -12,12 +12,15 @@ import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
  * <p>Usage: {@code runAlias myAlias} or {@code runAlias myAlias\some\args}
  */
 public class RunAliasAlias
-    extends BuiltinAliasWithGreedyStringArgs<RunAliasAlias> {
+    extends BuiltinAliasWithGreedyStringArgs<RunAliasAlias>
+{
 
     @Override
     public RunAliasAlias run(String args) {
         if (args == null || args.isBlank()) {
-            BindAliasPlusClient.LOGGER.warn("[runAlias] No alias name provided");
+            BindAliasPlusClient.LOGGER.warn(
+                "[runAlias] No alias name provided"
+            );
             return this;
         }
 
@@ -33,8 +36,11 @@ public class RunAliasAlias
             extraArgs = "";
         }
 
-        // Try the three alias registries
+        // Try the alias registries
         Alias<?> alias = Alias.aliasesWithoutArgs.get(aliasName);
+        if (alias == null) {
+            alias = Alias.aliasesWithoutArgs_notSuggested.get(aliasName);
+        }
         if (alias == null) {
             alias = Alias.aliasesWithArgs.get(aliasName);
         }

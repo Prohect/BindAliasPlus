@@ -66,7 +66,6 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | `say\string`           | 发送聊天消息。                                                      | `say\"How old r u?"`（发送聊天消息 "how old r u?"）                  |
 | `sendCommand\command`  | 发送命令。                                                        | `sendCommand\"gamemode creative"`（发送命令 "gamemode creative"） |
 | `var\varName\source`  | 将值存入变量。来源：`hotbarSlot`、`itemsOfSlot0-9`、`pitch`、`yaw` 或数字。 | `var\mySlot\hotbarSlot`（存储快捷栏槽位），`var\angle\pitch`（存储俯仰角） |
-| `runAlias\aliasName`   | 从另一个别名中运行命名别名（更安全的嵌套方式）。                            | `runAlias\myAlias`（执行 myAlias）                                        |
 
 > **数值别名支持变量引用：** `yaw`、`pitch`、`setYaw`、`setPitch`、`slot`、`swapSlot`、`wait` 和 `setPerspective` 均接受变量名（如 `yaw\myVar` 或 `slot\mySlot`）代替原始数字。
 
@@ -121,7 +120,6 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | `FPS`              | `builtinSetPerspective\0` | 切换到第一人称视角。                              |
 | `TPS`              | `builtinSetPerspective\1` | 切换到第三人称背面视角。                          |
 | `TPS2`             | `builtinSetPerspective\2` | 切换到第三人称正面视角。                          |
-| `shutdown`         | —                    | 优雅关闭游戏（用于自动化测试配置）。              |
 | `reloadCFG`      | —                    | 重新加载配置文件（无需重启即可应用更改）。                            |
 | `unloadCFGAliases` | —                  | 移除所有从配置文件加载的别名。                                         |
 | `unloadCFGBinds`   | —                  | 移除所有从配置文件加载的按键绑定。                                     |
