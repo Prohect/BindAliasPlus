@@ -99,6 +99,29 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | `swapHand`  | _                    | 交换主手和副手之间的物品。            |
 | `+silent`   | `builtinSilent\1`    | 启用静默模式（禁止命令反馈消息）。        |
 | `-silent`   | `builtinSilent\0`    | 禁用静默模式（重新启用命令反馈消息）。      |
+| `+lock:attack`  | `builtinLock\attack\1`  | 锁定攻击键（阻止物理输入）。                     |
+| `-lock:attack`  | `builtinLock\attack\0`  | 解锁攻击键。                                    |
+| `+lock:use`     | `builtinLock\use\1`     | 锁定使用/放置键。                                |
+| `-lock:use`     | `builtinLock\use\0`     | 解锁使用/放置键。                                |
+| `+lock:forward` | `builtinLock\forward\1` | 锁定前进键。                                     |
+| `-lock:forward` | `builtinLock\forward\0` | 解锁前进键。                                     |
+| `+lock:back`    | `builtinLock\back\1`    | 锁定后退键。                                     |
+| `-lock:back`    | `builtinLock\back\0`    | 解锁后退键。                                     |
+| `+lock:left`    | `builtinLock\left\1`    | 锁定左移键。                                     |
+| `-lock:left`    | `builtinLock\left\0`    | 解锁左移键。                                     |
+| `+lock:right`   | `builtinLock\right\1`   | 锁定右移键。                                     |
+| `-lock:right`   | `builtinLock\right\0`   | 解锁右移键。                                     |
+| `+lock:jump`    | `builtinLock\jump\1`    | 锁定跳跃键。                                     |
+| `-lock:jump`    | `builtinLock\jump\0`    | 解锁跳跃键。                                     |
+| `+lock:sneak`   | `builtinLock\sneak\1`   | 锁定潜行键。                                     |
+| `-lock:sneak`   | `builtinLock\sneak\0`   | 解锁潜行键。                                     |
+| `+lock:sprint`  | `builtinLock\sprint\1`  | 锁定疾跑键。                                     |
+| `-lock:sprint`  | `builtinLock\sprint\0`  | 解锁疾跑键。                                     |
+| `cyclePerspective` | —                    | 循环切换视角（FPS → TPS → TPS2）。                |
+| `FPS`              | `builtinSetPerspective\0` | 切换到第一人称视角。                              |
+| `TPS`              | `builtinSetPerspective\1` | 切换到第三人称背面视角。                          |
+| `TPS2`             | `builtinSetPerspective\2` | 切换到第三人称正面视角。                          |
+| `shutdown`         | —                    | 优雅关闭游戏（用于自动化测试配置）。              |
 | `reloadCFG`      | —                    | 重新加载配置文件（无需重启即可应用更改）。                            |
 | `unloadCFGAliases` | —                  | 移除所有从配置文件加载的别名。                                         |
 | `unloadCFGBinds`   | —                  | 移除所有从配置文件加载的按键绑定。                                     |
@@ -207,7 +230,24 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 - **按住模式**（`+alias`/`-alias` 模式）：按下时执行，释放时反转（如 `/bind mouse5 +fly`）
 - 静默模式只抑制聊天中的命令反馈消息。错误/警告日志不受影响。
 
-#### 4. 变量系统
+#### 4. 锁定别名
+
+锁定别名可以暂时屏蔽特定动作的物理键盘/鼠标输入，防止用户在别名序列执行期间
+产生干扰（例如，在别名自动交换物品时保持攻击）。
+
+```bash
+# 锁定前进移动 20 刻，然后解锁
+/alias lockTest +lock:forward wait\20 -lock:forward
+
+# 使用锁定安全地在交换物品时保持攻击
+/alias +safeAttack +lock:attack swapSlot\11 wait\1 -lock:attack
+/alias -safeAttack -attack swapSlot\11
+/bind mouse4 +safeAttack
+
+# 可用的锁定目标：attack、use、forward、back、left、right、jump、sneak、sprint
+```
+
+#### 5. 变量系统
 
 捕获并复用游戏内的值，实现上下文感知的自动化：
 
