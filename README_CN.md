@@ -52,19 +52,23 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | 别名                    | 描述                                                           | 示例                                                            |
 |------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
 | `log`                  | 将消息记录到游戏控制台（用于调试）。                                          | `log\Hello World`                                             |
-| `slot\slotNumber`      | 切换到特定的快捷栏槽位（1-9）。                                            | `slot\3`（切换到快捷栏槽位 3）                                         |
-| `swapSlot\slot1\slot2` | 交换两个物品栏槽位之间的物品。                                              | `swapSlot\10\39`（将物品栏槽位 10 与胸甲槽位交换）                           |
-| `swapSlot\slot1`       | 交换当前持有的快捷栏槽位（主手）与指定的 `slot1` 之间的物品。                          | `swapSlot\19`（将当前快捷栏槽位与物品栏槽位 19 交换）                           |
-| `wait\ticks`           | 暂停执行指定数量的游戏刻（20 刻 = 1 秒）。                                    | `wait\20`（等待 1 秒）                                            |
-| `yaw\degrees`          | 按相对度数值调整玩家偏航角（水平旋转）。                                         | `yaw\90`（向右转 90°）                                            |
-| `pitch\degrees`        | 按相对度数值调整玩家俯仰角（垂直旋转）。                                         | `pitch\-30`（向下看 30°）                                         |
-| `setYaw\degrees`       | 将玩家偏航角设置为绝对度数值（0 = 北，90 = 东）。                                | `setYaw\180`（面向南）                                            |
-| `setPitch\degrees`     | 将玩家俯仰角设置为绝对度数值（-90 = 垂直向上，90 = 垂直向下）。                        | `setPitch\0`（直视前方）                                           |
+| `slot\slotNumber`      | 切换到特定的快捷栏槽位（1-9）。接受变量名。                                  | `slot\3`（切换到快捷栏槽位 3），`slot\mySlot`（使用变量）                     |
+| `swapSlot\slot1\slot2` | 交换两个物品栏槽位之间的物品。接受变量名。                                    | `swapSlot\10\39`（将物品栏槽位 10 与胸甲槽位交换）                           |
+| `swapSlot\slot1`       | 交换当前持有的快捷栏槽位（主手）与指定的 `slot1` 之间的物品。接受变量名。                | `swapSlot\19`（将当前快捷栏槽位与物品栏槽位 19 交换）                           |
+| `wait\ticks`           | 暂停执行指定数量的游戏刻（20 刻 = 1 秒）。接受变量名。                          | `wait\20`（等待 1 秒），`wait\myTicks`（使用变量）                           |
+| `yaw\degrees`          | 按相对度数值调整玩家偏航角（水平旋转）。接受变量名。                              | `yaw\90`（向右转 90°），`yaw\myVar`（使用变量）                              |
+| `pitch\degrees`        | 按相对度数值调整玩家俯仰角（垂直旋转）。接受变量名。                              | `pitch\-30`（向下看 30°），`pitch\myVar`（使用变量）                         |
+| `setYaw\degrees`       | 将玩家偏航角设置为绝对度数值（0 = 北，90 = 东）。接受变量名。                     | `setYaw\180`（面向南），`setYaw\myVar`（使用变量）                          |
+| `setPitch\degrees`     | 将玩家俯仰角设置为绝对度数值（-90 = 垂直向上，90 = 垂直向下）。接受变量名。             | `setPitch\0`（直视前方），`setPitch\myVar`（使用变量）                       |
 | `alias\args`           | 几乎与命令 alias 相同，只是你需要用双引号包裹参数。                                | `alias\"meow say\nya~"`（创建或替换别名）                             |
 | `bind\args`            | 几乎与命令 bind 相同，只是你需要用双引号包裹参数。                                 | `bind\"m meow wait\0 +fly"`（创建或替换绑定）                         |
 | `unbind\keyName`       | 几乎与命令 unbind 相同。                                              | `unbind\m`（解除按键上的绑定）                                         |
 | `say\string`           | 发送聊天消息。                                                      | `say\"How old r u?"`（发送聊天消息 "how old r u?"）                  |
 | `sendCommand\command`  | 发送命令。                                                        | `sendCommand\"gamemode creative"`（发送命令 "gamemode creative"） |
+| `var\varName\source`  | 将值存入变量。来源：`hotbarSlot`、`itemsOfSlot0-9`、`pitch`、`yaw` 或数字。 | `var\mySlot\hotbarSlot`（存储快捷栏槽位），`var\angle\pitch`（存储俯仰角） |
+| `runAlias\aliasName`   | 从另一个别名中运行命名别名（更安全的嵌套方式）。                            | `runAlias\myAlias`（执行 myAlias）                                        |
+
+> **数值别名支持变量引用：** `yaw`、`pitch`、`setYaw`、`setPitch`、`slot`、`swapSlot`、`wait` 和 `setPerspective` 均接受变量名（如 `yaw\myVar` 或 `slot\mySlot`）代替原始数字。
 
 #### 不带参数的别名
 
@@ -95,7 +99,34 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | `swapHand`  | _                    | 交换主手和副手之间的物品。            |
 | `+silent`   | `builtinSilent\1`    | 启用静默模式（禁止命令反馈消息）。        |
 | `-silent`   | `builtinSilent\0`    | 禁用静默模式（重新启用命令反馈消息）。      |
-| `reloadCFG` | —                    | 重新加载配置文件（无需重启即可应用更改）。    |
+| `reloadCFG`      | —                    | 重新加载配置文件（无需重启即可应用更改）。                            |
+| `unloadCFGAliases` | —                  | 移除所有从配置文件加载的别名。                                         |
+| `unloadCFGBinds`   | —                  | 移除所有从配置文件加载的按键绑定。                                     |
+| `unloadCFGVars`    | —                  | 移除所有从配置文件加载的变量。                                         |
+| `unloadCFGAll`     | —                  | 移除所有从配置文件加载的别名、按键绑定和变量。                          |
+
+### 变量
+
+变量可以捕获并复用游戏内的值（快捷栏槽位、视角角度、物品数量等）。
+
+**来源** 用于 `var\varName\source`：
+
+| 来源              | 描述                             | 示例                           |
+|-------------------|---------------------------------|-------------------------------|
+| `hotbarSlot`      | 当前快捷栏槽位（1-9）               | `var\mySlot\hotbarSlot`     |
+| `itemsOfSlotN`    | 槽位 N 中的物品数量（0=副手，1-9=快捷栏）| `var\count\itemsOfSlot2`   |
+| `pitch`           | 玩家当前的俯仰角（浮点数）            | `var\myPitch\pitch`        |
+| `yaw`             | 玩家当前的偏航角（浮点数）            | `var\myYaw\yaw`            |
+| `42` 或 `3.14`    | 直接数值（整数或浮点数）              | `var\backup\42`            |
+
+变量可以在任何数值别名中作为参数使用（如 `yaw\myVar`、`slot\mySlot`、`wait\myTicks`）。
+
+**变量相关命令：**
+
+| 命令                            | 用途                     | 示例                                  |
+|--------------------------------|-------------------------|---------------------------------------|
+| `/var <name> <source>`         | 创建或更新变量。            | `/var mySlot hotbarSlot`              |
+| `/unloadCFGVars`               | 移除所有从配置加载的变量。    | `/unloadCFGVars`                      |
 
 ### 示例
 
@@ -176,6 +207,25 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 - **按住模式**（`+alias`/`-alias` 模式）：按下时执行，释放时反转（如 `/bind mouse5 +fly`）
 - 静默模式只抑制聊天中的命令反馈消息。错误/警告日志不受影响。
 
+#### 4. 变量系统
+
+捕获并复用游戏内的值，实现上下文感知的自动化：
+
+```bash
+# 将当前视角角度存入变量
+/alias saveAngles var\_yaw\yaw var\_pitch\pitch
+
+# 使用变量引用恢复已保存的角度
+/alias restoreAngles setYaw\_yaw setPitch\_pitch
+
+# 右转80°并下看20°，等待后恢复原视角
+/alias lookAround saveAngles yaw\80 pitch\-20 wait\15 restoreAngles wait\5
+
+# 使用变量进行动态物品栏切换
+/var backupSlot hotbarSlot
+/alias quickSwap swapSlot\backupSlot swapSlot\9
+```
+
 ## 配置
 
 - **配置文件**：位于 `config/bind-alias-plus.cfg`。如果不存在会自动创建。
@@ -208,6 +258,14 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
   # 方式 2：按住模式（按下时激活，释放时反转）
   # 当你希望动作仅在按住按键时执行时使用此方式
   bind mouse5 +fly
+
+  # 变量 - 存储和复用游戏内数值
+  var backupSlot hotbarSlot
+  var arrowCount itemsOfSlot2
+
+  # 保存和恢复视角角度
+  alias saveAngles var\_yaw\yaw var\_pitch\pitch
+  alias restoreAngles setYaw\_yaw setPitch\_pitch
   ```
 
 ## 命令参考
@@ -219,11 +277,19 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | `/bindByAliasName <key> <alias>` | 将按键绑定到现有别名。                                                                                                                         | `/bindByAliasName mouse5 +fly`                           |
 | `/unbind <key>`                  | 移除按键绑定。                                                                                                                             | `/unbind mouse5`                                         |
 | `/reloadCFG`                     | 从文件重新加载配置。                                                                                                                          | `/reloadCFG`                                             |
+| `/var <name> <source>`           | 创建/更新变量。来源：`hotbarSlot`、`itemsOfSlot0-9`、`pitch`、`yaw` 或数字。                                                                        | `/var mySlot hotbarSlot`、`/var angle pitch`             |
+| `/unloadCFGAliases`              | 移除所有从配置加载的别名。                                                                                                                       | `/unloadCFGAliases`                                      |
+| `/unloadCFGBinds`                | 移除所有从配置加载的按键绑定。                                                                                                                     | `/unloadCFGBinds`                                        |
+| `/unloadCFGVars`                 | 移除所有从配置加载的变量。                                                                                                                       | `/unloadCFGVars`                                         |
+| `/unloadCFGAll`                  | 移除所有从配置加载的别名、按键绑定和变量。                                                                                                            | `/unloadCFGAll`                                          |
 
 ## 注意事项
 
 - **兼容性**：与大多数 Fabric 模组兼容；可能与修改按键处理或物品栏机制的模组冲突。
-- **Minecraft 版本**：需要 Minecraft 1.21+（查看发布页面获取特定版本的构建）。
+- **Minecraft 版本**：需要 Minecraft 1.21+（Yarn 映射）或 26.x（Mojang 映射）。请查看发布页面获取特定版本
+  的构建文件（文件名包含 MC 版本）。
+- **变量**：支持整数和浮点数值。数值别名（`yaw`、`pitch`、`setYaw`、`setPitch`、`slot`、`swapSlot`、`wait`、
+  `setPerspective`）接受变量名代替原始数字。
 - **安全性**：避免在带有反作弊系统的服务器上过度自动化（某些动作可能会被标记）。
 
 ## 贡献
