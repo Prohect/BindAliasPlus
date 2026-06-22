@@ -1,511 +1,312 @@
 # BindAliasPlus
 
-A Fabric **client-side** mod that lets you create **aliases** (macros) and **bind them to keys/mouse buttons**, so one key press can run a full sequence of actions — similar to a “bind/alias config” workflow.
+A Minecraft Fabric client mod that allows creating custom aliases and key bindings to automate complex in-game actions
+with simple key presses.
 
 <!-- languages -->
 - 🇺🇸 [English](README.md)
 - 🇨🇳 [中文 (简体)](README_CN.md)
 
-> Client-only: servers do not need to install this mod.
+## Overview
 
----
+BindAliasPlus enhances your Minecraft gameplay by letting you define custom aliases for sequences of actions and bind
+them to keys. Whether you need to quickly swap inventory slots, automate elytra flight, or chain multiple actions (like
+using a bow or placing blocks that not even in your hotbars or second hand), this mod simplifies repetitive tasks through configurable aliases and key bindings.
+
+## Features
+
+- **Custom Aliases**: Create reusable aliases for single or multiple in-game actions (e.g., swap items, use abilities,
+  move).
+- **Key Bindings**: Bind aliases to keys, with support for separate actions on key press and release.
+- **Built-in Aliases**: Predefined aliases for common actions (e.g., `swapSlot`, `wait`, `use`, `attack`).
+- **Command System**: Intuitive commands to manage aliases and bindings (e.g., `/alias`, `/bind`, `/unbind`).
+- **Config Persistence**: Saves aliases and bindings in a config file, loaded automatically when joining servers.
+- **Chained Actions**: Combine aliases to create complex sequences (e.g., equip elytra → use firework → fly).
 
 ## Installation
 
-1. Install [Fabric Loader](https://fabricmc.net/use/) for your Minecraft version.
-2. Download the mod from Modrinth: https://modrinth.com/mod/bind-alias-plus/versions
-3. Put the `.jar` into your Minecraft `mods` folder.
-4. Launch Minecraft.
+1. Ensure you have [Fabric Loader](https://fabricmc.net/use/) installed for your Minecraft version.
+2. Download the latest `bind-alias-plus-*.*.*.jar` from
+   the [releases page](https://modrinth.com/mod/bind-alias-plus/versions).
+3. Place the JAR file in your Minecraft `mods` folder.
+4. Launch Minecraft with the Fabric loader.
+
+## Usage
+
+### Core Concepts
+
+- **Alias**: A custom or built-in action (or sequence of actions) that can be executed.
+- **Key Binding**: A link between a physical key (e.g., `mouse5`, `keyboard.g`) and an alias (or two aliases: one for
+  press, one for release).
+
+### Built-in Aliases
+
+BindAliasPlus includes prebuilt aliases for common actions. They are divided into **aliases with arguments** and *
+*aliases without arguments**.
+
+#### Aliases with Arguments
+
+*Note: Slots follow Minecraft's internal numbering:*
+
+- 1-9 → Hotbar slots
+- 10-36 → Inventory slots (10-19 = first row)
+- 37-40 → Equipment slots (37 = feet, 38 = legs, 39 = chest, 40 = head)
+- 41 → Offhand slot
+-
+- u can cover args with double quotes so that the white space inside will not be referred as split mark.
+- **RECOMMENDED for nested definitions**: When using `alias`, `bind`, `unbind`, `say`, or `sendCommand` builtin aliases inside other alias definitions, use semicolon `;` instead of space ` ` as the divider between arguments. This allows you to use normal space dividers in the nested definition without conflict. Example: `alias +testAlias bind\v;+anotherAlias alias\+yetAnotherAlias;+anotherAlias;+jump alias\+nextAlias;wait\2;+yetAnotherAlias wait\1 bind\x;+testAlias` - here semicolons separate the arguments for these builtin aliases, while spaces work normally.
+
+| Alias                  | Description                                                                               | Example                                                                        |
+|------------------------|-------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| `log`                  | Logs a message to the game console (for debugging).                                       | `log\Hello World`                                                              |
+| `slot\slotNumber`      | Switches to a specific hotbar slot (1-9). Accepts variable names.                         | `slot\3` (switches to hotbar slot 3), `slot\mySlot` (uses variable)           |
+| `swapSlot\slot1\slot2` | Swaps items between two inventory slots. Accepts variable names.                          | `swapSlot\10\39` (swaps inventory slot 10 with chestplate slot)                |
+| `swapSlot\slot1`       | Swaps items between the currently held hotbar slot (main hand) and the specified `slot1`. Accepts variable names. | `swapSlot\19` (swaps current hotbar slot with inventory slot 19)               |
+| `wait\ticks`           | Pauses execution for a specified number of ticks (20 ticks = 1 second). Accepts variable names. | `wait\20` (waits 1 second), `wait\myTicks` (uses variable)                     |
+| `yaw\degrees`          | Adjusts player yaw (horizontal rotation) by a relative degree value. Accepts variable names. | `yaw\90` (turns 90° right), `yaw\myVar` (uses variable)                       |
+| `pitch\degrees`        | Adjusts player pitch (vertical rotation) by a relative degree value. Accepts variable names. | `pitch\-30` (looks 30° down), `pitch\myVar` (uses variable)                   |
+| `setYaw\degrees`       | Sets player yaw to an absolute degree value (0 = north, 90 = east). Accepts variable names. | `setYaw\180` (faces south), `setYaw\myVar` (uses variable)                    |
+| `setPitch\degrees`     | Sets player pitch to an absolute degree value (-90 = straight up, 90 = straight down). Accepts variable names. | `setPitch\0` (looks straight ahead), `setPitch\myVar` (uses variable)         |
+| `alias\args`           | almost same as command alias, except u need to cover args with double quotes.             | `alias\"meow say\nya~"` (create or replace an alias)                           |
+| `bind\args`            | almost same as command bind, except u need to cover args with double quotes.              | `bind\"m meow wait\0 +fly"` (create or replace a bind)                         |
+| `unbind\keyName`       | almost same as command unbind.                                                            | `unbind\m` (unbind binds on a key)                                             |
+| `say\string`           | say a chat message.                                                                       | `say\"How old r u?"` (send a chat message that is "how old r u?")              |
+| `sendCommand\command`  | send a command.                                                                           | `sendCommand\"gamemode creative"` (send a command that is "gamemode creative") |
+| `var\varName\source`  | Store a value into a variable. Sources: `hotbarSlot`, `itemsOfSlot0-9`, `pitch`, `yaw`, or a number. | `var\mySlot\hotbarSlot` (store hotbar slot), `var\angle\pitch` (store pitch angle) |
+| `runAlias\aliasName`   | Run a named alias from another alias (safer nesting).                                     | `runAlias\myAlias` (execute myAlias)                                                |
+
+> **Numeric aliases support variable references:** `yaw`, `pitch`, `setYaw`, `setPitch`, `slot`, `swapSlot`, `wait`, and `setPerspective` all accept variable names (e.g., `yaw\myVar` or `slot\mySlot`) in place of raw numbers.
+
+#### Aliases without Arguments
+
+These are shorthand aliases that map to common `state=1` (start) and `state=0` (stop) actions for simpler usage:
+
+| Alias       | Equivalent To      | Description                                                   |
+|-------------|--------------------|---------------------------------------------------------------|
+| `+attack`   | `builtinAttack\1`  | Starts attacking (holds left-click).                          |
+| `-attack`   | `builtinAttack\0`  | Stops attacking (releases left-click).                        |
+| `+use`      | `builtinUse\1`     | Starts using held item (holds right-click).                   |
+| `-use`      | `builtinUse\0`     | Stops using held item (releases right-click).                 |
+| `+forward`  | `builtinForward\1` | Starts moving forward.                                        |
+| `-forward`  | `builtinForward\0` | Stops moving forward.                                         |
+| `+back`     | `builtinBack\1`    | Starts moving backward.                                       |
+| `-back`     | `builtinBack\0`    | Stops moving backward.                                        |
+| `+left`     | `builtinLeft\1`    | Starts moving left.                                           |
+| `-left`     | `builtinLeft\0`    | Stops moving left.                                            |
+| `+right`    | `builtinRight\1`   | Starts moving right.                                          |
+| `-right`    | `builtinRight\0`   | Stops moving right.                                           |
+| `+jump`     | `builtinJump\1`    | Starts jumping (holds jump key).                              |
+| `-jump`     | `builtinJump\0`    | Stops jumping (releases jump key).                            |
+| `+sneak`    | `builtinSneak\1`   | Starts sneaking (holds sneak key).                            |
+| `-sneak`    | `builtinSneak\0`   | Stops sneaking (releases sneak key).                          |
+| `+sprint`   | `builtinSprint\1`  | Starts sprinting (holds sprint key).                          |
+| `-sprint`   | `builtinSprint\0`  | Stops sprinting (releases sprint key).                        |
+| `drop`      | `builtinDrop\0`    | Drops one item from the held stack.                           |
+| `dropStack` | `builtinDrop\1`    | Drops the entire held stack.                                  |
+| `swapHand`  | _                  | Swaps items between main hand and offhand.                    |
+| `+silent`   | `builtinSilent\1`  | Enables silent mode (suppresses command feedback messages).   |
+| `-silent`   | `builtinSilent\0`  | Disables silent mode (re-enables command feedback messages).  |
+| `reloadCFG`      | —                  | Reloads the config file (applies changes without restarting).                  |
+| `unloadCFGAliases` | —                | Removes all aliases that were loaded from the config file.                    |
+| `unloadCFGBinds`   | —                | Removes all keybindings that were loaded from the config file.                |
+| `unloadCFGVars`    | —                | Removes all variables that were loaded from the config file.                  |
+| `unloadCFGAll`     | —                | Removes all aliases, keybindings, and variables loaded from config.           |
+
+### Variables
+
+Variables let you capture and reuse in-game values (hotbar slot, pitch/yaw angles, item
+counts, etc.).
+
+**Sources** for `var\varName\source`:
+
+| Source          | Description                                         | Example                       |
+|-----------------|-----------------------------------------------------|-------------------------------|
+| `hotbarSlot`    | Current hotbar slot (1-9)                           | `var\mySlot\hotbarSlot`     |
+| `itemsOfSlotN`  | Item count in slot N (0=offhand, 1-9=hotbar)        | `var\count\itemsOfSlot2`   |
+| `pitch`         | Player's current pitch angle (float)                | `var\myPitch\pitch`        |
+| `yaw`           | Player's current yaw angle (float)                  | `var\myYaw\yaw`            |
+| `42` or `3.14`  | A literal number (int or float)                     | `var\backup\42`            |
 
----
+Variables can then be used as arguments in any numeric alias (e.g., `yaw\myVar`,
+`slot\mySlot`, `wait\myTicks`).
 
-## Core idea
+**Variable-related commands:**
 
-You define an **alias** as a list of **steps**, then bind a key to run it.
+| Command                        | Purpose                                            | Example                               |
+|--------------------------------|----------------------------------------------------|---------------------------------------|
+| `/var <name> <source>`         | Create or update a variable.                       | `/var mySlot hotbarSlot`              |
+| `/unloadCFGVars`               | Remove all config-loaded variables.                | `/unloadCFGVars`                      |
 
-- Steps are separated by **spaces**.
-- A step can be:
-  - an alias with no args: `jump`
-  - an alias with args: `swapSlot\10\39` (args are separated by backslash `\`)
+### Examples
 
-You can bind keys so that:
-- on **press** it runs one alias
-- on **release** it runs another alias (typical `+something` / `-something` pattern)
+Here are practical examples to get started:
 
----
+#### 1. Elytra + Firework Automation
 
-## Syntax
+Automate elytra deployment and firework use with a single key:
 
-### A) Alias definitions are split by spaces
+```bash
+# Define alias to equip elytra to slot 39(the chestplate slot
+# put your elytra in slot 10 ( the first slot of the first row of your inventory
+/alias equipElytra swapSlot\10\39
 
-An alias definition is a sequence of steps **split by space ` `**:
+# Define alias to jump once
+/alias jump +jump wait\1 -jump
 
-- `equipElytra jump wait\1 jump swapSlot\19 +use -use`
+# Define +fly (on key press): equip elytra → jump twice to open it → use firework
+# put your firework in slot 19 ( the first slot of the second row of your inventory,
+/alias +fly equipElytra jump wait\1 jump swapSlot\19 +use -use
 
-### B) **Step arguments** are split by backslash `\`
+# Define -fly (on key release): re-equip what u equipped before
+/alias -fly equipElytra swapSlot\19
 
-If a step contains `\`, the part before the first `\` is the alias name, and the rest are its arguments:
-
-- `swapSlot\10\39` → alias name `swapSlot`, args: `10`, `39`
-- `wait\20` → alias name `wait`, args: `20`
-
-### C) Spaces inside a single **step argument**
-
-If a single **step argument** must contain spaces, wrap that argument in **double quotes**.
-
-This matters mostly for the built-ins that send chat/commands, or for nested definitions (see next section).
-
----
-
-## Nested definitions (important): `BuiltinAliasWithGreedyStringArgs` and `;`
-
-Some built-in aliases take a **greedy string** payload so you can define / bind / unbind / chat / run commands from inside another alias:
-
-- `alias`
-- `bind`
-- `unbind`
-- `say`
-- `sendCommand`
-
-### The key trick: avoid quotes by using `;`
-
-Outer parsing always splits alias steps by **spaces**.
-
-So if you write a nested payload that contains spaces, you normally need quotes to keep it as a single argument.
-
-However, for the greedy-string built-ins **you can also avoid quotes** by writing the nested payload as a single token and using **semicolon `;`** to separate pieces inside that token.
-
-Examples (both work):
-
-- With quotes (payload has spaces):
-  - `/alias makeJumpAlias alias\"jump +jump wait\1 -jump"`
-
-- Without quotes (payload is one token, use `;` as separators):
-  - `/alias makeJumpAlias alias\jump;+jump;wait\1;-jump`
-
-### How greedy-string built-ins process the payload
-
-- `alias\...`, `bind\...`, `unbind\...`:
-  - they **replace `;` with space ` `** before sending the final chat command to the game.
-  - This is what makes `/alias makeJumpAlias alias\jump;+jump;wait\1;-jump` work: it sends a chat command `/alias jump +jump wait\1 -jump` when `makeJumpAlias` is called.
-
-- `say\...` and `sendCommand\...`:
-  - they **do NOT replace `;`**.
-  - Whatever you put in their payload is sent as-is (so `;` stays as a literal character).
-
----
-
-## Commands
-
-### `/alias <name> <definition>`
-Create or replace a **user alias**.
-
-Notes:
-- You **cannot overwrite** built-in aliases.
-- User aliases run by expanding the definition into steps.
-
-Example:
-- `/alias pearl swapSlot\12 +use wait\1 -use swapSlot\12`
-
-### `/bind <key> <definition-or-aliasName>`
-Bind a key/mouse button.
-
-Behavior:
-1. If `<definition-or-aliasName>` matches an existing alias name (including `+name`/`-name` forms), it binds to that alias.
-2. Otherwise it treats it as an inline definition and creates an internal alias for the bind.
-
-Press/release behavior:
-- If your bind definition contains `+something` and/or `-something`, the mod can derive an “opposite” release side automatically from those `+/-` steps.
-
-Examples:
-- `/bind g jump`
-- `/bind g +forward wait\10 -forward`
-
-### `/bindByAliasName <key> <aliasName>`
-Bind a key directly to an existing alias name.
-
-Examples:
-- `/bindByAliasName mouse5 +fly`
-- `/bindByAliasName g jump`
-
-### `/unbind <key>`
-Remove a bind.
-
-Example:
-- `/unbind mouse5`
-
-### `/var <varName> <source>`
-Create or update a **variable** that stores an integer value.
-
-Sources:
-- `hotbarSlot` or `selectedSlot` - Current hotbar slot (1-9)
-- `itemsOfSlot0` to `itemsOfSlot9` - Item count in slot (0=offhand, 1-9=hotbar)
-- A number (1-41) - Direct integer value
-
-Variable naming rules:
-- Variable names **cannot start with a number**
-
-Examples:
-- `/var mySlot hotbarSlot` - Store current hotbar slot into variable `mySlot`
-- `/var backup 5` - Store the number 5 into variable `backup`
-- `/var arrowCount itemsOfSlot2` - Store item count from hotbar slot 2
-- `/var offhandItems itemsOfSlot0` - Store item count from offhand slot
-
-Usage in aliases:
-- Variables can be used in `slot` and `swapSlot` aliases
-- `/alias saveSlot var\mySlot\hotbarSlot` - Save current slot
-- `/alias restoreSlot slot\mySlot` - Switch to saved slot
-- `/alias swapWithSaved swapSlot\mySlot\hotbarSlot` - Swap current with saved
-- `/alias countArrows var\arrows\itemsOfSlot9` - Count items in slot 9
-
-### `/reloadCFG`
-Reload config file from disk.
-
-### `/unloadCFGAliases`
-Remove all user aliases that were loaded from the config file.
-
-Notes:
-- Only removes aliases with `fromAutoload=true` (loaded during startup)
-- Runtime-created aliases (via `/alias` command) are preserved
-- Useful for testing different configurations without restart
-
-Example:
-- `/unloadCFGAliases` - Remove all config file aliases
-
-### `/unloadCFGBinds`
-Remove all keybindings that were loaded from the config file.
-
-Notes:
-- Only removes bindings with `fromAutoload=true` (loaded during startup)
-- Runtime-created bindings (via `/bind` or `/bindByAliasName` commands) are preserved
-- Also cleans up associated internal aliases
-
-Example:
-- `/unloadCFGBinds` - Remove all config file keybindings
-
-### `/unloadCFGVars`
-Remove all variables that were loaded from the config file.
-
-Notes:
-- Only removes variables tracked in `AUTOLOADED_VARIABLES`
-- Runtime-created variables (via `/var` command) are preserved
-
-Example:
-- `/unloadCFGVars` - Remove all config file variables
-
-### `/unloadCFGAll`
-Remove all aliases, keybindings, and variables that were loaded from the config file.
-
-Notes:
-- Convenience command that calls all three unload operations
-- Preserves all runtime-created items
-- Perfect for switching between different config profiles
-
-Example:
-- `/unloadCFGAll` - Remove all config file items at once
-
----
-
-## Configuration file
-
-Path:
-- `config/bind-alias-plus.cfg`
-
-Rules:
-- One command per line
-- Leading `/` is optional
-- `#` starts a comment line
-
-Reload after editing:
-- `/reloadCFG`
-
----
-
-## Built-in aliases
-
-BindAliasPlus ships with built-in aliases you can call inside your alias definitions.
-
-### 1) Built-ins with arguments (use `\` between args)
-
-| Alias | Arguments | What it does | Example |
-|---|---:|---|---|
-| `log\text` | text | Log message to console (debug) | `log\Hello` |
-| `slot\n` | `n=1..9` or variable | Select hotbar slot (supports variables) | `slot\3` or `slot\mySlot` |
-| `swapSlot\a\b` | `a,b` (numbers or variables) | Swap two slots | `swapSlot\10\39` or `swapSlot\mySlot\5` |
-| `swapSlot\a` | `a` (number or variable) | Swap slot `a` with the **currently selected hotbar slot** | `swapSlot\19` or `swapSlot\mySlot` |
-| `var\name\source` | name, source | Store a value in a variable. Source can be `hotbarSlot`, `selectedSlot`, `itemsOfSlot0-9` (item count), or a number. Variable names cannot start with numbers. | `var\mySlot\hotbarSlot` or `var\backup\5` or `var\count\itemsOfSlot2` |
-| `wait\ticks` | ticks | Delay execution (`20 ticks = 1 second`) | `wait\20` |
-| `yaw\deg` | deg | Add to yaw (relative) | `yaw\90` |
-| `pitch\deg` | deg | Add to pitch (relative) | `pitch\-30` |
-| `setYaw\deg` | deg | Set yaw (absolute) | `setYaw\180` |
-| `setPitch\deg` | deg | Set pitch (absolute) | `setPitch\0` |
-| `alias\payload` / `alias\"payload"` | payload | Create/replace an alias. If you want to avoid quotes, you can write the payload as one token and use `;` (it will be converted to spaces). | `alias\jump;+jump;wait\1;-jump` |
-| `bind\payload` / `bind\"payload"` | payload | Bind a key. If you want to avoid quotes, write the payload as one token and use `;` (it will be converted to spaces). | `bind\mouse4;+bow` |
-| `unbind\key` | key | Unbind a key. (No special `;` handling needed.) | `unbind\g` |
-| `say\text` / `say\"text"` | text | Send a chat message. `;` is NOT special here (it is sent literally). Quotes only needed if text has spaces. | `say\"hello world"` |
-| `sendCommand\cmd` / `sendCommand\"cmd"` | cmd | Send a command (no leading `/`). `;` is NOT special here. Quotes only needed if command has spaces. | `sendCommand\"gamemode creative"` |
-| `lock\action\flag` | action (attack/use/forward/back/left/right/jump/sneak/sprint), flag (1=lock, 0=unlock) | Temporarily unbind a game action's key so user's physical input won't interfere with an alias sequence. | `lock\attack\1` or `lock\jump\0` |
-
-#### Slot numbering for `swapSlot`
-
-Slots follow Minecraft’s internal indexing in this mod’s UI docs:
-
-- `1-9` → hotbar
-- `10-36` → inventory
-- `37-40` → armor slots (37 feet … 40 head)
-- `41` → offhand
-
-### 2) Aliases without arguments (direct actions)
-
-These are available by default and are convenient for press/release patterns:
-
-| Alias | Equivalent to | What it does |
-|---|---|---|
-| `+attack` / `-attack` | `builtinAttack\1` / `builtinAttack\0` | Hold/release left-click |
-| `+use` / `-use` | `builtinUse\1` / `builtinUse\0` | Hold/release right-click |
-| `+forward` / `-forward` | `builtinForward\1` / `builtinForward\0` | Hold/release forward |
-| `+back` / `-back` | `builtinBack\1` / `builtinBack\0` | Hold/release back |
-| `+left` / `-left` | `builtinLeft\1` / `builtinLeft\0` | Hold/release left |
-| `+right` / `-right` | `builtinRight\1` / `builtinRight\0` | Hold/release right |
-| `+jump` / `-jump` | `builtinJump\1` / `builtinJump\0` | Hold/release jump |
-| `+sneak` / `-sneak` | `builtinSneak\1` / `builtinSneak\0` | Hold/release sneak |
-| `+sprint` / `-sprint` | `builtinSprint\1` / `builtinSprint\0` | Hold/release sprint |
-| `drop` / `dropStack` | `builtinDrop\0` / `builtinDrop\1` | Drop one / whole stack |
-| `swapHand` | — | Swap main-hand and offhand |
-| `cyclePerspective` | — | Cycle camera perspective |
-| `FPS` / `TPS` / `TPS2` | `builtinSetPerspective\0/1/2` | Set specific perspective |
-| `+silent` / `-silent` | `builtinSilent\1` / `builtinSilent\0` | Suppress/restore bind/alias feedback messages |
-| `+lock:attack` / `-lock:attack` | `builtinLock\attack\1` / `builtinLock\attack\0` | Lock/unlock attack key from user input |
-| `+lock:use` / `-lock:use` | `builtinLock\use\1` / `builtinLock\use\0` | Lock/unlock use key from user input |
-| `+lock:forward` / `-lock:forward` | `builtinLock\forward\1` / `builtinLock\forward\0` | Lock/unlock forward key from user input |
-| `+lock:back` / `-lock:back` | `builtinLock\back\1` / `builtinLock\back\0` | Lock/unlock back key from user input |
-| `+lock:left` / `-lock:left` | `builtinLock\left\1` / `builtinLock\left\0` | Lock/unlock left key from user input |
-| `+lock:right` / `-lock:right` | `builtinLock\right\1` / `builtinLock\right\0` | Lock/unlock right key from user input |
-| `+lock:jump` / `-lock:jump` | `builtinLock\jump\1` / `builtinLock\jump\0` | Lock/unlock jump key from user input |
-| `+lock:sneak` / `-lock:sneak` | `builtinLock\sneak\1` / `builtinLock\sneak\0` | Lock/unlock sneak key from user input |
-| `+lock:sprint` / `-lock:sprint` | `builtinLock\sprint\1` / `builtinLock\sprint\0` | Lock/unlock sprint key from user input |
-| `reloadCFG` | — | Reload config file |
-| `unloadCFGAliases` | — | Remove all aliases loaded from config file |
-| `unloadCFGBinds` | — | Remove all keybindings loaded from config file |
-| `unloadCFGVars` | — | Remove all variables loaded from config file |
-| `unloadCFGAll` | — | Remove all config file items (aliases, bindings, variables) |
-
----
-
-## Examples
-
-### Elytra + firework (press-and-hold)
-
-Put:
-- Elytra in slot `10` (inventory first row, first slot)
-- Fireworks in slot `19` (inventory second row, first slot)
-
-Then:
-
-- `/alias equipElytra swapSlot\10\39`
-- `/alias jump +jump wait\1 -jump`
-- `/alias +fly equipElytra jump wait\1 jump swapSlot\19 +use -use`
-- `/alias -fly equipElytra swapSlot\19`
-- `/bind mouse5 +fly`
-
-### Quick bow without using a hotbar slot
-
-Put your bow in slot `11`:
-
-- `/alias +bow swapSlot\11 +use`
-- `/alias -bow -use swapSlot\11`
-- `/bind mouse4 +bow`
-
-### Slot memory system using variables
-
-Save your current hotbar slot and restore it later:
-
-- `/alias saveSlot var\savedSlot\hotbarSlot`
-- `/alias restoreSlot slot\savedSlot`
-- `/bind f5 saveSlot`
-- `/bind f6 restoreSlot`
-
-Or swap between saved slot and current slot:
-
-- `/alias saveAndSwap var\backup\hotbarSlot slot\3`
-- `/alias swapBack slot\backup`
-- `/bind f7 saveAndSwap`
-- `/bind f8 swapBack`
-
-Track item counts:
-
-- `/alias checkArrows var\arrowCount\itemsOfSlot2 log\arrowCount`
-- `/alias checkOffhand var\offhandCount\itemsOfSlot0 log\offhandCount`
-- `/bind i checkArrows`
-
-Advanced: Dynamic weapon switching:
-
-```
-# Save your combat slot (e.g., slot 1 with sword)
-var combatSlot 1
-
-# Save your building slot (e.g., slot 3 with blocks)
-var buildSlot 3
-
-# Quick switch aliases
-alias toCombat slot\combatSlot
-alias toBuild slot\buildSlot
-
-# Bind to keys
-bind q toCombat
-bind e toBuild
+# Bind mouse button 5 to +fly/-fly
+/bind mouse5 +fly
 ```
 
-### Toggle bind pattern (state switcher)
+#### 2. Quick Bow Usage
 
-You can create toggle switches by rebinding a key to different aliases on each press. This is useful when you want state to persist after releasing the key (unlike press-and-hold pattern).
+Quickly swap to a bow, use it, and swap back:
+(bow won't need a hotbar anymore, also try this for Fortune and SilkTouch pickaxe or enderPearl)
 
-#### Complete elytra toggle example
+```bash
+# Define +bow (on press): swap to bow (slot 11) → start using
+/alias +bow swapSlot\11 +use
 
-Put:
-- Elytra in slot `10` (inventory first row, first slot)
-- Fireworks in slot `26` (inventory third row, first slot)
+# Define -bow (on release): stop using → swap back
+/alias -bow -use swapSlot\11
 
-Config file setup:
-
-```
-# Define reusable equipment aliases
-alias +equipElytra swapSlot\10\39
-alias -equipElytra swapSlot\10\39
-alias +holdFireworks swapSlot\26\41
-alias -holdFireworks swapSlot\26\41
-
-# Define jump helper
-alias jump +jump wait\1 -jump
-
-# Define the actual fly action
-alias +fly +equipElytra jump wait\1 jump +holdFireworks +use -use
-alias -fly -equipElytra -holdFireworks
-
-# State switcher: creates two states that toggle back and forth
-alias fly1 bind\"mouse5 fly2" +fly
-alias fly2 bind\"mouse5 fly1" -fly
-
-# Initial bind
-bind mouse5 fly1
+# Bind mouse button 4 to +bow/-bow
+/bind mouse4 +bow
 ```
 
-How it works:
-1. Press `mouse5` → executes `fly1` → rebinds `mouse5` to `fly2` → runs `+fly` (equips elytra and activates)
-2. Press `mouse5` again → executes `fly2` → rebinds `mouse5` back to `fly1` → runs `-fly` (unequips elytra)
-3. State persists even after releasing the key (this is the key difference from press-and-hold pattern)
+#### 3. Using Silent Mode to Prevent Chat Spam
 
-#### Using `+silent/-silent` to avoid chat spam
+When creating toggle binds (like fly1/fly2 scripts), you can use silent mode to suppress feedback messages and avoid cluttering the chat:
 
-When rebinding keys frequently, you'll see "Bound key..." messages. Use silent mode to suppress them:
+```bash
+# Example 1: State switcher pattern (toggles state on each key press)
+# This approach maintains state even after releasing the key
+# Using silent mode to prevent "Bound key..." messages
 
-```
-# Wrap bind commands in silent mode
-alias fly1 +silent bind\"mouse5 fly2" -silent +fly
-alias fly2 +silent bind\"mouse5 fly1" -silent -fly
-bind mouse5 fly1
-```
+# Define fly1 (state 1): enable silent, rebind mouse5 to fly2, activate elytra, disable silent
+/alias fly1 +silent bind\"mouse5 fly2" +equipElytra -silent
 
-Or keep it cleaner - the `bind` built-in is already silent by default when called from inside an alias:
+# Define fly2 (state 2): enable silent, rebind mouse5 to fly1, deactivate elytra, disable silent
+/alias fly2 +silent bind\"mouse5 fly1" -equipElytra -silent
 
-```
-# The bind commands won't spam, but +fly/-fly will show normal feedback
-alias fly1 bind\"mouse5 fly2" +fly
-alias fly2 bind\"mouse5 fly1" -fly
-bind mouse5 fly1
-```
+# Initial bind to mouse5
+/bind mouse5 fly1
 
-#### Toggle vs Press-and-hold comparison
+# Example 2: State switcher without wrapping actions in silent mode
+# The bind command itself will be silent, but +fly/-fly execute normally
+# This is cleaner when you want the state change to be silent but actions to have feedback
+/alias fly1 bind\"mouse5 fly2" +fly
+/alias fly2 bind\"mouse5 fly1" -fly
+/bind mouse5 fly1
 
-**Toggle pattern** (state switcher):
-- Use `bind mouse5 fly1` with rebinding logic
-- State persists after releasing the key
-- Press once to activate, press again to deactivate
-- Good for: toggleable modes, equipment swapping
-
-**Press-and-hold pattern**:
-- Use `bind mouse5 +fly` directly
-- Activates on press, deactivates on release
-- Must hold the key to keep active
-- Good for: temporary actions, charge-and-release mechanics
-
-Both patterns can use the same `+fly/-fly` aliases!
-
-### Locking input during alias sequences
-
-When an alias performs automated actions (like slot swapping, attacking, or using items), the user's physical input can interfere. The lock aliases temporarily unbind a game action's key so only the alias controls it:
-
-```
-# Define a quick attack-swap sequence that won't be broken by the user
-# accidentally clicking during the swap
-/alias quickAttack +lock:attack swapSlot\10\39 +attack wait\3 -attack swapSlot\10\39 -lock:attack
-/bind mouse4 quickAttack
+# Example 3: Press-and-hold pattern (different from state switcher!)
+# This approach uses +/- aliases: action on press, opposite action on release
+# Note: Using "/bind mouse5 +silent" would only enable silent mode while holding the key
+/alias quietFly +silent equipElytra jump wait\1 jump swapSlot\19 +use -use -silent
 ```
 
-How it works:
-1. `+lock:attack` saves the current attack key binding and sets it to an unused value
-2. The alias safely performs slot swaps and attack actions
-3. `-lock:attack` restores the original attack key binding
-4. Any physical input on the attack key during steps 2-3 is ignored
+**Note**: 
+- **State switcher** (`fly1`/`fly2` pattern): Toggles between two states on each key press, state persists after release
+- **Press-and-hold** (`+alias`/`-alias` pattern): Executes on press, reverses on release (like `/bind mouse5 +fly`)
+- Silent mode only suppresses command feedback messages in chat. Error/warning logs are not affected.
 
-You can lock multiple actions simultaneously:
+#### 4. Variable System
 
-```
-/alias moveAndAttack +lock:forward +lock:attack +forward +attack wait\10 -attack -forward -lock:attack -lock:forward
-```
+Capture and reuse in-game values to create context-aware automation:
 
-Supported lock actions: `attack`, `use`, `forward`, `back`, `left`, `right`, `jump`, `sneak`, `sprint`
+```bash
+# Store current pitch/yaw into variables
+/alias saveAngles var\_yaw\yaw var\_pitch\pitch
 
-### Config profile management
+# Restore saved angles using setYaw/setPitch with variable references
+/alias restoreAngles setYaw\_yaw setPitch\_pitch
 
-You can switch between different configuration "profiles" using the unload commands:
+# Turn 80 degrees right and look 20 degrees down, wait, then restore previous view
+/alias lookAround saveAngles yaw\80 pitch\-20 wait\15 restoreAngles wait\5
 
-```
-# Scenario: Testing a new config setup
-
-# 1. Start with your main config loaded automatically
-# Your config file has: aliases, bindings, variables
-
-# 2. During gameplay, create some test items
-/alias quickTest +forward wait\20 -forward
-/bind h quickTest
-/var testSlot hotbarSlot
-
-# 3. Want to try a different config? Unload the old one
-/unloadCFGAll
-
-# 4. Your test items are still there!
-# quickTest alias, h binding, and testSlot variable preserved
-
-# 5. Manually create new config items or edit config file
-/alias newAlias +jump wait\10 -jump
-/bind g newAlias
-
-# 6. Or reload from an edited config file
-/reloadCFG
-
-# 7. To remove only specific categories
-/unloadCFGAliases  # Only aliases from config
-/unloadCFGBinds    # Only bindings from config
-/unloadCFGVars     # Only variables from config
+# Use variables for dynamic slot swapping
+/var backupSlot hotbarSlot
+/alias quickSwap swapSlot\backupSlot swapSlot\9
 ```
 
-**Use cases:**
-- **Quick testing:** Try new configs without restarting Minecraft
-- **Profile switching:** Unload PvP config, load building config
-- **Safe experimentation:** Test changes, unload if bad, keep runtime items
-- **Debugging:** Isolate which config items cause issues
+## Configuration
 
----
+- **Config File**: At `config/bind-alias-plus.cfg`. Automatically created if there is not one.
+- **Auto-Load**: Aliases and bindings in the config file are loaded automatically when the mod loads.
+- **Manual Edit**: You can directly edit the config file to add/modify aliases/bindings (use the same syntax as in-game
+  commands).  
+  **Example Config Content**:
+  ```
+  # BindAliasPlus config example
+  # Define aliases for elytra equipment
+  alias +equipElytra swapSlot\10\39
+  alias -equipElytra swapSlot\10\39
+  # Define aliases for fireworks handling
+  alias +holdFireworks swapSlot\26\41
+  alias -holdFireworks swapSlot\26\41
+  # Define a simple jump action
+  alias jump +jump wait\1 -jump
+  # Define fly action sequence (on press)
+  alias +fly +equipElytra jump wait\1 jump +holdFireworks +use -use
+  # Define fly action sequence (on release)
+  alias -fly -equipElytra -holdFireworks
+  
+  # Two ways to bind the key:
+  
+  # Option 1: State switcher pattern (toggles state on each press, state persists)
+  # This is cleaner - the bind commands are silent, but +fly/-fly execute normally
+  alias fly1 bind\"mouse5 fly2" +fly
+  alias fly2 bind\"mouse5 fly1" -fly
+  bind mouse5 fly1
+  
+  # Option 2: Press-and-hold pattern (activates on press, reverses on release)
+  # Use this when you want the action only while holding the key
+  bind mouse5 +fly
 
-## Notes / limitations
+  # Variables - store and reuse game values
+  var backupSlot hotbarSlot
+  var arrowCount itemsOfSlot2
 
-- Keybind triggers are ignored while you are typing in: chat, sign editor, book editor, command block screen.
-- Automation can be suspicious on some servers (anti-cheat). Use responsibly.
-- Variables persist only during the current game session - they are cleared when you quit.
+  # Save and restore view angles
+  alias saveAngles var\_yaw\yaw var\_pitch\pitch
+  alias restoreAngles setYaw\_yaw setPitch\_pitch
+  ```
 
----
+## Commands Reference
+
+| Command                          | Purpose                                                                                                                                                                                                                                                                                                                     | Example                                                   |
+|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------|
+| `/alias <name> <definition>`     | Create a custom alias.                                                                                                                                                                                                                                                                                                      | `/alias myAlias +jump wait\1 -jump`                       |
+| `/bind <key> <definition>`       | Bind a key to a sequence of aliases by definition of this command or an existing alias.For each definition split by divide mark(things inside double quotes would still be a same block) starts with + or -, it will create an opposite alias. For the 1st eg, it also bind -forward and +back to release of keyboard key g | `/bind g +forward wait\10 -back   OR   /bind n dropStack` |
+| `/bindByAliasName <key> <alias>` | Bind a key to an existing alias.                                                                                                                                                                                                                                                                                            | `/bindByAliasName mouse5 +fly`                            |
+| `/unbind <key>`                  | Remove a key binding.                                                                                                                                                                                                                                                                                                       | `/unbind mouse5`                                          |
+| `/reloadCFG`                     | Reload config from file.                                                                                                                                                                                                                                                                                                    | `/reloadCFG`                                              |
+| `/var <name> <source>`           | Create/update a variable. Sources: `hotbarSlot`, `itemsOfSlot0-9`, `pitch`, `yaw`, or a number.                                                                                                                                                                                                                             | `/var mySlot hotbarSlot`, `/var angle pitch`              |
+| `/unloadCFGAliases`              | Remove all aliases loaded from config.                                                                                                                                                                                                                                                                                      | `/unloadCFGAliases`                                       |
+| `/unloadCFGBinds`                | Remove all keybindings loaded from config.                                                                                                                                                                                                                                                                                  | `/unloadCFGBinds`                                         |
+| `/unloadCFGVars`                 | Remove all variables loaded from config.                                                                                                                                                                                                                                                                                    | `/unloadCFGVars`                                          |
+| `/unloadCFGAll`                  | Remove all aliases, binds, and variables loaded from config.                                                                                                                                                                                                                                                                | `/unloadCFGAll`                                           |
+
+## Notes
+
+- **Compatibility**: Works with most Fabric mods; may conflict with mods that modify key handling or inventory
+  mechanics.
+- **Minecraft Version**: Requires Minecraft 1.21+ (Yarn mappings) or 26.x (Mojang mappings). Check the release page
+  for version-specific builds (filenames include the MC version).
+- **Variables**: Supports integer and floating-point values. Numeric aliases (`yaw`, `pitch`, `setYaw`, `setPitch`,
+  `slot`, `swapSlot`, `wait`, `setPerspective`) accept variable names in place of raw numbers.
+- **Safety**: Avoid excessive automation on servers with anti-cheat systems (some actions may be flagged).
+
+## Contributing
+
+Contributions are welcome! Feel free to open issues for bugs/feature requests or submit pull requests with improvements.
 
 ## License
 
-[CC0-1.0](LICENSE)
+This mod is licensed under the [Creative Commons Zero v1.0 Universal](LICENSE).
