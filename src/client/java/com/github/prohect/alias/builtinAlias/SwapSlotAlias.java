@@ -2,7 +2,7 @@ package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.Alias;
-import com.github.prohect.alias.BuiltinAliasWithArgs;
+import com.github.prohect.alias.BuiltinAliasWithIntegerArgs;
 import java.util.regex.Pattern;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -19,7 +19,7 @@ import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
+public class SwapSlotAlias extends BuiltinAliasWithIntegerArgs<SwapSlotAlias> {
 
     /**
      * @param args args typed by user.
@@ -101,8 +101,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
         }
 
         Screen currentScreen = minecraftClient.currentScreen;
-        boolean creativeInventory = currentScreen instanceof
-            CreativeInventoryScreen;
+        boolean creativeInventory =
+            currentScreen instanceof CreativeInventoryScreen;
         boolean inInventory =
             currentScreen instanceof InventoryScreen || creativeInventory;
         if (creativeInventory) currentScreen.close();

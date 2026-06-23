@@ -30,10 +30,24 @@ import net.minecraft.client.util.InputUtil;
  * <p>
  * Supported action types: attack, use, forward, back, left, right, jump, sneak, sprint
  * <p>
- * Shortcuts are registered as user aliases without args:
- * {@code +lock:attack}, {@code -lock:attack}, etc.
+ * User-facing shortcuts are {@link LockAlias_lock} ({@code +lock\attack}) and
+ * {@link LockAlias_unlock} ({@code -lock\attack}), registered as suggested
+ * aliases with args.
  */
 public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
+
+    /** Supported action types, exposed for command suggestions. */
+    public static final List<String> SUPPORTED_ACTIONS = List.of(
+        "attack",
+        "use",
+        "forward",
+        "back",
+        "left",
+        "right",
+        "jump",
+        "sneak",
+        "sprint"
+    );
 
     /**
      * A sentinel key that won't match any physical keyboard/mouse input.
@@ -52,17 +66,7 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         new HashMap<>();
 
     static {
-        for (String action : new String[] {
-            "attack",
-            "use",
-            "forward",
-            "back",
-            "left",
-            "right",
-            "jump",
-            "sneak",
-            "sprint",
-        }) {
+        for (String action : SUPPORTED_ACTIONS) {
             List<String> patterns = new ArrayList<>();
             patterns.add("+" + action);
             patterns.add("-" + action);
@@ -82,6 +86,8 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
     public static final Set<InputUtil.Key> LOCKED_PHYSICAL_KEYS =
         new HashSet<>();
 
+    // ── instance ──────────────────────────────────────────────────────
+
     @Override
     public LockAlias run(String args) {
         // args pattern: actionType\flag (e.g. "attack\1" or "attack\0")
@@ -98,40 +104,54 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         String actionType = parts[0];
         boolean lock = "1".equals(parts[1]);
 
+        if (lock) {
+            lockAction(actionType);
+        } else {
+            unlockAction(actionType);
+        }
+        return this;
+    }
+
+    // ── shared helpers used by PlusLockAlias / MinusLockAlias ─────────
+
+    static void lockAction(String actionType) {
         KeyBinding keyBinding = getKeyBindingForAction(actionType);
         if (keyBinding == null) {
             BindAliasPlusClient.LOGGER.warn(
                 "[Lock]Unknown action type: {}",
                 actionType
             );
-            return this;
+            return;
         }
-
-        if (lock) {
-            if (!savedBoundKeys.containsKey(actionType)) {
-                // Save and replace vanilla bound key
-                InputUtil.Key originalKey = keyBinding.boundKey;
-                savedBoundKeys.put(actionType, originalKey);
-                LOCKED_PHYSICAL_KEYS.add(originalKey);
-                keyBinding.boundKey = LOCK_PLACEHOLDER;
-                KeyBinding.updateKeysByCode();
-
-                // Also lock any mod-bound keys whose aliases target this action
-                lockModBoundKeys(actionType);
-            }
-        } else {
-            InputUtil.Key savedKey = savedBoundKeys.remove(actionType);
-            if (savedKey != null) {
-                LOCKED_PHYSICAL_KEYS.remove(savedKey);
-                keyBinding.boundKey = savedKey;
-                KeyBinding.updateKeysByCode();
-
-                // Remove mod-bound keys for this action
-                unlockModBoundKeys(actionType);
-            }
+        if (!savedBoundKeys.containsKey(actionType)) {
+            InputUtil.Key originalKey = keyBinding.boundKey;
+            savedBoundKeys.put(actionType, originalKey);
+            LOCKED_PHYSICAL_KEYS.add(originalKey);
+            keyBinding.boundKey = LOCK_PLACEHOLDER;
+            KeyBinding.updateKeysByCode();
+            lockModBoundKeys(actionType);
         }
-        return this;
     }
+
+    static void unlockAction(String actionType) {
+        KeyBinding keyBinding = getKeyBindingForAction(actionType);
+        if (keyBinding == null) {
+            BindAliasPlusClient.LOGGER.warn(
+                "[Lock]Unknown action type: {}",
+                actionType
+            );
+            return;
+        }
+        InputUtil.Key savedKey = savedBoundKeys.remove(actionType);
+        if (savedKey != null) {
+            LOCKED_PHYSICAL_KEYS.remove(savedKey);
+            keyBinding.boundKey = savedKey;
+            KeyBinding.updateKeysByCode();
+            unlockModBoundKeys(actionType);
+        }
+    }
+
+    // ── mod-bound-key helpers ──────────────────────────────────────────
 
     /**
      * Scan {@code BINDING_PLUS} for keys whose bound aliases (directly or
@@ -183,7 +203,6 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
             }
         });
 
-        // Only remove keys that aren't still needed by another active lock
         for (InputUtil.Key key : keysToRemove) {
             boolean stillNeeded = false;
             for (String otherAction : savedBoundKeys.keySet()) {
@@ -198,9 +217,9 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
                 if (
                     binding != null &&
                     (aliasTargetsLockedAction(
-                            binding.aliasNameOnKeyPressed(),
-                            otherPatterns
-                        ) ||
+                        binding.aliasNameOnKeyPressed(),
+                        otherPatterns
+                    ) ||
                         aliasTargetsLockedAction(
                             binding.aliasNameOnKeyReleased(),
                             otherPatterns
@@ -238,16 +257,29 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
             alias = Alias.aliasesWithoutArgs_fromBindCommand.get(aliasName);
         }
         if (alias instanceof UserAlias userAlias) {
-            // Check if the alias definition contains any locked pattern
-            // (split by definition divider to match whole tokens)
             String def = userAlias.getDefinitionString();
             for (String token : def.split(
                 Pattern.quote(String.valueOf(Alias.divider4AliasDefinition))
             )) {
-                // The token may have args (e.g. "builtinAttack\1")
-                String aliasPart = token.split(
+                String[] tokenParts = token.split(
                     Pattern.quote(String.valueOf(Alias.divider4AliasArgs))
-                )[0];
+                );
+                String aliasPart = tokenParts[0];
+
+                // Handle +lock\<action> / -lock\<action> — check the concrete action
+                if (
+                    ("+lock".equals(aliasPart) || "-lock".equals(aliasPart)) &&
+                    tokenParts.length >= 2
+                ) {
+                    String lockActionName = tokenParts[1];
+                    for (String pattern : patterns) {
+                        String barePattern =
+                            pattern.startsWith("+") || pattern.startsWith("-")
+                                ? pattern.substring(1)
+                                : pattern;
+                        if (barePattern.equals(lockActionName)) return true;
+                    }
+                }
                 if (patterns.contains(aliasPart)) return true;
             }
         }

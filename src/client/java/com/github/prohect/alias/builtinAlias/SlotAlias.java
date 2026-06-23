@@ -1,13 +1,13 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasPlusClient;
-import com.github.prohect.alias.BuiltinAliasWithArgs;
+import com.github.prohect.alias.BuiltinAliasWithIntegerArgs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 
-public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
+public class SlotAlias extends BuiltinAliasWithIntegerArgs<SlotAlias> {
 
     /**
      * @param args from 1-9
