@@ -155,8 +155,8 @@ public class BindAliasPlusClient implements ClientModInitializer {
         );
         // Lock aliases (lock/unlock game actions to prevent user input interference)
         // +lock\<action> / -lock\<action> — compact arg-based form with suggestions
-        new PlusLockAlias().putToAliasesWithArgs("+lock");
-        new MinusLockAlias().putToAliasesWithArgs("-lock");
+        new LockAlias_OnLock().putToAliasesWithArgs("+lock");
+        new LockAlias_Unlock().putToAliasesWithArgs("-lock");
 
         // init cfg file (create if not exists)
         try {

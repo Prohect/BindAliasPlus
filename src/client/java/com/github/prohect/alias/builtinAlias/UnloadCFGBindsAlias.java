@@ -1,7 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasPlusClient;
-import com.github.prohect.KeyBindingPlus;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithoutArgs;
 import java.util.ArrayList;
@@ -20,7 +19,8 @@ import net.minecraft.client.util.InputUtil;
  * Also cleans up associated aliases from aliasesWithoutArgs_fromBindCommand.
  */
 public class UnloadCFGBindsAlias
-    extends BuiltinAliasWithoutArgs<UnloadCFGBindsAlias> {
+    extends BuiltinAliasWithoutArgs<UnloadCFGBindsAlias>
+{
 
     @Override
     public UnloadCFGBindsAlias run(String args) {

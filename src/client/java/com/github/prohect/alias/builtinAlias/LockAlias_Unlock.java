@@ -9,12 +9,12 @@ import com.github.prohect.alias.BuiltinAliasWithArgs;
  * offers action-type suggestions after {@code -lock\}.
  *
  * @see LockAlias
- * @see PlusLockAlias
+ * @see LockAlias_OnLock
  */
-public class MinusLockAlias extends BuiltinAliasWithArgs<MinusLockAlias> {
+public class LockAlias_Unlock extends BuiltinAliasWithArgs<LockAlias_Unlock> {
 
     @Override
-    public MinusLockAlias run(String actionType) {
+    public LockAlias_Unlock run(String actionType) {
         LockAlias.unlockAction(actionType);
         return this;
     }

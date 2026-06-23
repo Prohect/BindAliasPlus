@@ -30,8 +30,8 @@ import net.minecraft.client.util.InputUtil;
  * <p>
  * Supported action types: attack, use, forward, back, left, right, jump, sneak, sprint
  * <p>
- * User-facing shortcuts are {@link LockAlias_lock} ({@code +lock\attack}) and
- * {@link LockAlias_unlock} ({@code -lock\attack}), registered as suggested
+ * User-facing shortcuts are {@link LockAlias_OnLock} ({@code +lock\attack}) and
+ * {@link LockAlias_Unlock} ({@code -lock\attack}), registered as suggested
  * aliases with args.
  */
 public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
@@ -112,7 +112,7 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         return this;
     }
 
-    // ── shared helpers used by PlusLockAlias / MinusLockAlias ─────────
+    // ── shared helpers used by PlusLockAlias / UnlockAlias ─────────
 
     static void lockAction(String actionType) {
         KeyBinding keyBinding = getKeyBindingForAction(actionType);
