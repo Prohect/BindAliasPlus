@@ -25,7 +25,7 @@ public class UnbindAlias extends BuiltinAliasWithGreedyStringArgs<UnbindAlias> {
         if (player == null) BindAliasPlusClient.LOGGER.warn(
             "[UnbindAlias]player is null"
         );
-        else player.connection.send(new ServerboundChatCommandPacket(line));
+        else player.connection.sendCommand(line);
         return this;
     }
 }

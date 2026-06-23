@@ -25,7 +25,7 @@ public class BindAlias extends BuiltinAliasWithGreedyStringArgs<BindAlias> {
         if (player == null) {
             BindAliasPlusClient.LOGGER.warn("[BindAlias]player is null");
         } else {
-            player.connection.send(new ServerboundChatCommandPacket(line));
+            player.connection.sendCommand(line);
         }
         return this;
     }
