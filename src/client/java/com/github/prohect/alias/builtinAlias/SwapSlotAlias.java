@@ -280,7 +280,10 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
 
     private static Slot getSlot(InventoryScreen inventoryScreen, int index) {
         for (Slot slot : inventoryScreen.menu.slots) {
-            if (slot.index == index && slot.container instanceof Inventory) {
+            if (
+                slot.getContainerSlot() == index &&
+                slot.container instanceof Inventory
+            ) {
                 return slot;
             }
         }
