@@ -1,12 +1,11 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasPlusClient;
-import com.github.prohect.KeyBindingPlus;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithoutArgs;
+import com.mojang.blaze3d.platform.InputConstants;
 import java.util.ArrayList;
 import java.util.List;
-import com.mojang.blaze3d.platform.InputConstants;
 
 /**
  * UnloadCFGBindsAlias - Remove all keybindings that were loaded from config file
@@ -20,7 +19,8 @@ import com.mojang.blaze3d.platform.InputConstants;
  * Also cleans up associated aliases from aliasesWithoutArgs_fromBindCommand.
  */
 public class UnloadCFGBindsAlias
-    extends BuiltinAliasWithoutArgs<UnloadCFGBindsAlias> {
+    extends BuiltinAliasWithoutArgs<UnloadCFGBindsAlias>
+{
 
     @Override
     public UnloadCFGBindsAlias run(String args) {
