@@ -6,7 +6,6 @@ import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
 import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.protocol.game.ServerboundChatCommandPacket;
 
 public class BindAlias extends BuiltinAliasWithGreedyStringArgs<BindAlias> {
 
