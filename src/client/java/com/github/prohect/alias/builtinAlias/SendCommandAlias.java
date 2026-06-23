@@ -13,7 +13,7 @@ public class SendCommandAlias
     public SendCommandAlias run(String args) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return this;
-        player.connection.send(new ServerboundChatCommandPacket(args));
+        player.connection.sendCommand(args);
         return this;
     }
 }
