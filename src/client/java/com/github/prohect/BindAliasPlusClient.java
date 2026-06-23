@@ -5,7 +5,10 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 import com.github.prohect.alias.Alias;
+import com.github.prohect.alias.AliasWithArgs;
 import com.github.prohect.alias.AliasWithoutArgs;
+import com.github.prohect.alias.BuiltinAliasWithDoubleArgs;
+import com.github.prohect.alias.BuiltinAliasWithIntegerArgs;
 import com.github.prohect.alias.UserAlias;
 import com.github.prohect.alias.builtinAlias.*;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -152,60 +155,9 @@ public class BindAliasPlusClient implements ClientModInitializer {
             "TPS2"
         );
         // Lock aliases (lock/unlock game actions to prevent user input interference)
-        new UserAlias("builtinLock\\attack\\1").putToAliasesWithoutArgs(
-            "+lock:attack"
-        );
-        new UserAlias("builtinLock\\attack\\0").putToAliasesWithoutArgs(
-            "-lock:attack"
-        );
-        new UserAlias("builtinLock\\use\\1").putToAliasesWithoutArgs(
-            "+lock:use"
-        );
-        new UserAlias("builtinLock\\use\\0").putToAliasesWithoutArgs(
-            "-lock:use"
-        );
-        new UserAlias("builtinLock\\forward\\1").putToAliasesWithoutArgs(
-            "+lock:forward"
-        );
-        new UserAlias("builtinLock\\forward\\0").putToAliasesWithoutArgs(
-            "-lock:forward"
-        );
-        new UserAlias("builtinLock\\back\\1").putToAliasesWithoutArgs(
-            "+lock:back"
-        );
-        new UserAlias("builtinLock\\back\\0").putToAliasesWithoutArgs(
-            "-lock:back"
-        );
-        new UserAlias("builtinLock\\left\\1").putToAliasesWithoutArgs(
-            "+lock:left"
-        );
-        new UserAlias("builtinLock\\left\\0").putToAliasesWithoutArgs(
-            "-lock:left"
-        );
-        new UserAlias("builtinLock\\right\\1").putToAliasesWithoutArgs(
-            "+lock:right"
-        );
-        new UserAlias("builtinLock\\right\\0").putToAliasesWithoutArgs(
-            "-lock:right"
-        );
-        new UserAlias("builtinLock\\jump\\1").putToAliasesWithoutArgs(
-            "+lock:jump"
-        );
-        new UserAlias("builtinLock\\jump\\0").putToAliasesWithoutArgs(
-            "-lock:jump"
-        );
-        new UserAlias("builtinLock\\sneak\\1").putToAliasesWithoutArgs(
-            "+lock:sneak"
-        );
-        new UserAlias("builtinLock\\sneak\\0").putToAliasesWithoutArgs(
-            "-lock:sneak"
-        );
-        new UserAlias("builtinLock\\sprint\\1").putToAliasesWithoutArgs(
-            "+lock:sprint"
-        );
-        new UserAlias("builtinLock\\sprint\\0").putToAliasesWithoutArgs(
-            "-lock:sprint"
-        );
+        // +lock\<action> / -lock\<action> — compact arg-based form with suggestions
+        new LockAlias_OnLock().putToAliasesWithArgs("+lock");
+        new LockAlias_Unlock().putToAliasesWithArgs("-lock");
 
         // init cfg file (create if not exists)
         try {
@@ -843,7 +795,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         AliasWithoutArgs<?> alias = Alias.aliasesWithoutArgs.get(aliasName);
         if (alias == null) {
             flag1 = false;
-            if ((aliasName.startsWith("+")) || aliasName.startsWith("-")) {
+            if (aliasName.startsWith("+") || aliasName.startsWith("-")) {
                 alias = Alias.aliasesWithoutArgs.get(aliasName.substring(1));
                 if (alias == null) return 2;
                 else if (aliasName.startsWith("-")) flag = false;
@@ -861,10 +813,12 @@ public class BindAliasPlusClient implements ClientModInitializer {
 
         String aliasNameFinal = flag1 ? aliasName : aliasName.substring(1);
         String aliasNameFinalExtra = flag
-            ? (flag1 ? "-" + aliasNameFinal.substring(1) : "-" + aliasNameFinal)
-            : (flag1
-                  ? "+" + aliasNameFinal.substring(1)
-                  : "+" + aliasNameFinal);
+            ? flag1
+                ? "-" + aliasNameFinal.substring(1)
+                : "-" + aliasNameFinal
+            : flag1
+              ? "+" + aliasNameFinal.substring(1)
+              : "+" + aliasNameFinal;
         if (flag0) {
             AliasWithoutArgs<?> aliasWithoutArgs = Alias.aliasesWithoutArgs.get(
                 aliasNameFinalExtra
@@ -890,9 +844,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         return 1;
     }
 
-    private static CompletableFuture<
-        Suggestions
-    > getSuggestions4aliasDefinitionCompletableFuture(
+    private static CompletableFuture<Suggestions> getSuggestions4aliasDefinitionCompletableFuture(
         SuggestionsBuilder builder
     ) {
         String soFar = builder.getRemaining();
@@ -911,7 +863,41 @@ public class BindAliasPlusClient implements ClientModInitializer {
         if (
             n <
             a /* it's under an arg's args, don't need to provide alias keyName suggests*/
-        ) return builder.buildFuture();
+        ) {
+            // Provide arg value suggestions for aliases that support them
+            String aliasName = soFar.substring(n + 1, a);
+            String partialArg = soFar.substring(a + 1);
+            if ("+lock".equals(aliasName) || "-lock".equals(aliasName)) {
+                builder = builder.createOffset(builder.getStart() + a + 1);
+                SuggestionsBuilder finalBuilder2 = builder;
+                LockAlias.SUPPORTED_ACTIONS.forEach(action -> {
+                    if (action.startsWith(partialArg)) finalBuilder2.suggest(
+                        action
+                    );
+                });
+            }
+            // Suggest variable names for aliases that accept numeric args
+            AliasWithArgs<?> varAlias = Alias.aliasesWithArgs.get(aliasName);
+            if (varAlias != null) {
+                boolean intOnly =
+                    varAlias instanceof BuiltinAliasWithIntegerArgs;
+                boolean doubleOk =
+                    varAlias instanceof BuiltinAliasWithDoubleArgs;
+                if (intOnly || doubleOk) {
+                    builder = builder.createOffset(builder.getStart() + a + 1);
+                    SuggestionsBuilder finalBuilder2 = builder;
+                    VarAlias.VARIABLES.forEach((varName, value) -> {
+                        if (!varName.startsWith(partialArg)) return;
+                        if (intOnly && !(value instanceof Integer)) return;
+                        finalBuilder2.suggest(
+                            varName,
+                            Component.literal("var = " + value)
+                        );
+                    });
+                }
+            }
+            return builder.buildFuture();
+        }
         String currentToken = soFar.substring(n + 1);
 
         builder = builder.createOffset(builder.getStart() + n + 1);
