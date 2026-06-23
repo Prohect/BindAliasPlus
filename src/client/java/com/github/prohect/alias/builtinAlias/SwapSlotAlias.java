@@ -110,8 +110,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
         }
 
         Screen currentScreen = McScreenHelper.getCurrentScreen(minecraftClient);
-        boolean creativeInventory = currentScreen instanceof
-            CreativeModeInventoryScreen;
+        boolean creativeInventory =
+            currentScreen instanceof CreativeModeInventoryScreen;
         boolean inInventory =
             currentScreen instanceof InventoryScreen || creativeInventory;
         if (creativeInventory) currentScreen.onClose();
