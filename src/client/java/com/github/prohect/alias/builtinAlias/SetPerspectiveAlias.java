@@ -10,6 +10,10 @@ public class SetPerspectiveAlias
     extends BuiltinAliasWithIntegerArgs<SetPerspectiveAlias>
 {
 
+    public SetPerspectiveAlias() {
+        super("builtinSetPerspective");
+    }
+
     /**
      * @param args 0 = FIRST_PERSON, 1 = THIRD_PERSON_BACK, 2 = THIRD_PERSON_FRONT
      */

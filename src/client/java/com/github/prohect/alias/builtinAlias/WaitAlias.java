@@ -6,6 +6,10 @@ import java.util.ArrayList;
 
 public class WaitAlias extends BuiltinAliasWithIntegerArgs<WaitAlias> {
 
+    public WaitAlias() {
+        super("wait");
+    }
+
     public static final ArrayList<WaitAliasRecord> tasksWaiting =
         new ArrayList<>();
 

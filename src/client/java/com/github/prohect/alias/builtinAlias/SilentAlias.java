@@ -10,6 +10,10 @@ import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
  */
 public class SilentAlias extends BuiltinAliasWithBooleanArgs<SilentAlias> {
 
+    public SilentAlias() {
+        super("builtinSilent");
+    }
+
     @Override
     public SilentAlias run(String args) {
         parseArgs(args);

@@ -6,6 +6,10 @@ import net.minecraft.world.InteractionHand;
 
 public class DropAlias extends BuiltinAliasWithBooleanArgs<DropAlias> {
 
+    public DropAlias() {
+        super("builtinDrop");
+    }
+
     /**
      * @param args if args is "1", drop the whole stack, if args is "0", drop a single one
      */

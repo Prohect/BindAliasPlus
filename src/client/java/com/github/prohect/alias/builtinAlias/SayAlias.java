@@ -6,6 +6,10 @@ import net.minecraft.client.player.LocalPlayer;
 
 public class SayAlias extends BuiltinAliasWithGreedyStringArgs<SayAlias> {
 
+    public SayAlias() {
+        super("say");
+    }
+
     @Override
     public SayAlias run(String args) {
         LocalPlayer player = Minecraft.getInstance().player;

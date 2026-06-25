@@ -34,6 +34,10 @@ import net.minecraft.world.item.ItemStack;
  */
 public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
 
+    public VarAlias() {
+        super("var");
+    }
+
     // Global variable storage
     public static final Map<String, Number> VARIABLES = new HashMap<>();
 

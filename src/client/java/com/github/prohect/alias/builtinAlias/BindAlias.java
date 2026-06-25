@@ -9,6 +9,10 @@ import net.minecraft.client.player.LocalPlayer;
 
 public class BindAlias extends BuiltinAliasWithGreedyStringArgs<BindAlias> {
 
+    public BindAlias() {
+        super("bind");
+    }
+
     @Override
     public BindAlias run(String args) {
         String line =

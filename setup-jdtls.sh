@@ -11,7 +11,7 @@ cd "$SCRIPT_DIR"
 BRANCH="$(git branch --show-current)"
 echo "=== Branch: $BRANCH ==="
 
-SRC_DIR="mc-sources/$BRANCH"
+SRC_DIR="mc-decompile-sources/$BRANCH"
 
 # Step 1: Generate decompiled Minecraft sources (if not already done)
 echo "[1/5] Generating Minecraft sources..."

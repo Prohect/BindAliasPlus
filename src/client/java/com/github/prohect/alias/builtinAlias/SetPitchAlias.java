@@ -7,6 +7,10 @@ import net.minecraft.client.player.LocalPlayer;
 
 public class SetPitchAlias extends BuiltinAliasWithDoubleArgs<SetPitchAlias> {
 
+    public SetPitchAlias() {
+        super("setPitch");
+    }
+
     @Override
     public SetPitchAlias run(String args) {
         parseArgs(args);

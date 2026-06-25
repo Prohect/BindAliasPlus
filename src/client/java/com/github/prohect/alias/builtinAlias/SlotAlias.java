@@ -9,6 +9,10 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
 
+    public SlotAlias() {
+        super("slot");
+    }
+
     /**
      * @param args from 1-9, or a variable name that resolves to 1-9
      */
