@@ -1,10 +1,14 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 
 public class JumpAlias extends BuiltinAliasWithBooleanArgs<JumpAlias> {
+
+    public JumpAlias() {
+        super("builtinJump");
+    }
 
     @Override
     public JumpAlias run(String args) {

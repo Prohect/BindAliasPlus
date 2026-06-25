@@ -7,7 +7,6 @@ import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 import com.github.prohect.alias.builtinAlias.LockAlias;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.BookEditScreen;
@@ -20,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @SuppressWarnings("DuplicatedCode")
-@Mixin(MouseHandler.class)
+@Mixin(net.minecraft.client.MouseHandler.class)
 public class MouseMixin {
 
     @Inject(at = @At("HEAD"), method = "onButton")
@@ -75,9 +74,35 @@ public class MouseMixin {
             (aliasName, aliasWithArgs) -> {
                 if (
                     aliasWithArgs instanceof
-                        BuiltinAliasWithBooleanArgs<
-                            ?
-                        > builtinAliasWithBooleanArgs
+                        BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs
+                ) if (
+                    builtinAliasWithBooleanArgs.flag &&
+                    !Alias.blackList4lockCursor.contains(
+                        builtinAliasWithBooleanArgs
+                    )
+                ) builtinAliasWithBooleanArgs.run("1");
+            }
+        );
+        Alias.aliasesWithArgs.forEach((aliasName, aliasWithArgs) -> {
+            if (
+                aliasWithArgs instanceof
+                    BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs
+            ) if (
+                builtinAliasWithBooleanArgs.flag &&
+                !Alias.blackList4lockCursor.contains(
+                    builtinAliasWithBooleanArgs
+                )
+            ) builtinAliasWithBooleanArgs.run("1");
+        });
+    }
+
+    @Inject(at = @At("RETURN"), method = "releaseMouse")
+    private void releaseMouse(CallbackInfo ci) {
+        Alias.aliasesWithArgs_notSuggested.forEach(
+            (aliasName, aliasWithArgs) -> {
+                if (
+                    aliasWithArgs instanceof
+                        BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs
                 ) if (
                     builtinAliasWithBooleanArgs.flag &&
                     !Alias.blackList4lockCursor.contains(

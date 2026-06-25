@@ -22,6 +22,10 @@ import com.mojang.blaze3d.platform.InputConstants;
 public class UnloadCFGBindsAlias
     extends BuiltinAliasWithoutArgs<UnloadCFGBindsAlias> {
 
+    public UnloadCFGBindsAlias() {
+        super("unloadCFGBinds");
+    }
+
     @Override
     public UnloadCFGBindsAlias run(String args) {
         List<InputConstants.Key> toRemove = new ArrayList<>();

@@ -1,10 +1,14 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 
 public class BackAlias extends BuiltinAliasWithBooleanArgs<BackAlias> {
+
+    public BackAlias() {
+        super("builtinBack");
+    }
 
     @Override
     public BackAlias run(String args) {

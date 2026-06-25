@@ -17,7 +17,12 @@ import java.util.List;
  * Runtime-created aliases (via /alias command) are not affected.
  */
 public class UnloadCFGAliasesAlias
-    extends BuiltinAliasWithoutArgs<UnloadCFGAliasesAlias> {
+    extends BuiltinAliasWithoutArgs<UnloadCFGAliasesAlias>
+{
+
+    public UnloadCFGAliasesAlias() {
+        super("unloadCFGAliases");
+    }
 
     @Override
     public UnloadCFGAliasesAlias run(String args) {

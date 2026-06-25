@@ -9,6 +9,10 @@ import net.minecraft.client.player.LocalPlayer;
 
 public class AliasAlias extends BuiltinAliasWithGreedyStringArgs<AliasAlias> {
 
+    public AliasAlias() {
+        super("alias");
+    }
+
     /**
      * <p>#command#</p>
      * <p>alias </p>

@@ -3,3 +3,4 @@ accessWidener v2 official
 accessible field net/minecraft/client/KeyMapping key Lcom/mojang/blaze3d/platform/InputConstants$Key;
 accessible field net/minecraft/client/KeyMapping clickCount I
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen menu Lnet/minecraft/world/inventory/AbstractContainerMenu;
+accessible method net/minecraft/client/MouseHandler onButton (JLnet/minecraft/client/input/MouseButtonInfo;I)V

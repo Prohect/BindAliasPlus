@@ -4,11 +4,15 @@ import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.BuiltinAliasWithoutArgs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 
 public class SwapHandAlias extends BuiltinAliasWithoutArgs<SwapHandAlias> {
+
+    public SwapHandAlias() {
+        super("swapHand");
+    }
 
     @Override
     public SwapHandAlias run(String args) {

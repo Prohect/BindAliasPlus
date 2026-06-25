@@ -10,6 +10,10 @@ public class CyclePerspectiveAlias
     extends BuiltinAliasWithoutArgs<CyclePerspectiveAlias>
 {
 
+    public CyclePerspectiveAlias() {
+        super("cyclePerspective");
+    }
+
     @Override
     public CyclePerspectiveAlias run(String args) {
         Minecraft minecraftClient = Minecraft.getInstance();

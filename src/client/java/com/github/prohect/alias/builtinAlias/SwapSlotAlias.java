@@ -21,6 +21,10 @@ import net.minecraft.world.inventory.Slot;
 
 public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
 
+    public SwapSlotAlias() {
+        super("swapSlot");
+    }
+
     /**
      * @param args args typed by user.
      *             pattern: slot1 slot2, or slot1, spilt by white space,
