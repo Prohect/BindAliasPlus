@@ -54,7 +54,7 @@ BindAliasPlus includes prebuilt aliases for common actions. They are divided int
 - 41 → Offhand slot
 -
 - u can cover args with double quotes so that the white space inside will not be referred as split mark.
-- **RECOMMENDED for nested definitions**: When using `alias`, `bind`, `unbind`, `say`, or `sendCommand` builtin aliases inside other alias definitions, use semicolon `;` instead of space ` ` as the divider between arguments. This allows you to use normal space dividers in the nested definition without conflict. Example: `alias +testAlias bind\v;+anotherAlias alias\+yetAnotherAlias;+anotherAlias;+jump alias\+nextAlias;wait\2;+yetAnotherAlias wait\1 bind\x;+testAlias` - here semicolons separate the arguments for these builtin aliases, while spaces work normally.
+- **RECOMMENDED for nested definitions**: When using `alias`, `bind`, `unbind`, `say`, `sendCommand`, or `localSay` builtin aliases inside other alias definitions, use semicolon `;` instead of space ` ` as the divider between arguments. This allows you to use normal space dividers in the nested definition without conflict. Example: `alias +testAlias bind\v;+anotherAlias alias\+yetAnotherAlias;+anotherAlias;+jump alias\+nextAlias;wait\2;+yetAnotherAlias wait\1 bind\x;+testAlias` - here semicolons separate the arguments for these builtin aliases, while spaces work normally.
 
 | Alias                  | Description                                                                               | Example                                                                        |
 |------------------------|-------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
@@ -71,6 +71,7 @@ BindAliasPlus includes prebuilt aliases for common actions. They are divided int
 | `bind\args`            | almost same as command bind, except u need to cover args with double quotes.              | `bind\"m meow wait\0 +fly"` (create or replace a bind)                         |
 | `unbind\keyName`       | almost same as command unbind.                                                            | `unbind\m` (unbind binds on a key)                                             |
 | `say\string`           | say a chat message.                                                                       | `say\"How old r u?"` (send a chat message that is "how old r u?")              |
+| `localSay\string`      | display a chat message on the local client only, without sending to the server. Useful for testing, notifications, and debug output. | `localSay\"Debug: slot is \(mySlot)"` (local-only message) |
 | `sendCommand\command`  | send a command.                                                                           | `sendCommand\"gamemode creative"` (send a command that is "gamemode creative") |
 | `var\varName\source`  | Store a value into a variable. Sources: `hotbarSlot`, `itemsOfSlot0-9`, `pitch`, `yaw`, or a number. | `var\mySlot\hotbarSlot` (store hotbar slot), `var\angle\pitch` (store pitch angle) |
 
@@ -105,8 +106,8 @@ These are shorthand aliases that map to common `state=1` (start) and `state=0` (
 | `swapHand`  | _                  | Swaps items between main hand and offhand.                    |
 | `+silent`   | `builtinSilent\1`  | Enables silent mode (suppresses command feedback messages).   |
 | `-silent`   | `builtinSilent\0`  | Disables silent mode (re-enables command feedback messages).  |
-| `+lock\<action>` | `builtinLock\<action>\1` | Locks a game action key. `<action>` can be: `attack`, `use`, `forward`, `back`, `left`, `right`, `jump`, `sneak`, `sprint`. |
-| `-lock\<action>` | `builtinLock\<action>\0` | Unlocks a previously locked game action. |
+| `+lockKey\<target>` | `builtinLock\<target>\1` | Locks a game key or custom alias. Use `gameKey:attack`, `gameKey:forward`, etc. for vanilla keys, or an alias name for custom aliases. |
+| `-lockKey\<target>` | `builtinLock\<target>\0` | Unlocks a previously locked game key or custom alias. |
 | `cyclePerspective` | —                  | Cycles through camera perspectives (FPS → TPS → TPS2).       |
 | `FPS`              | `builtinSetPerspective\0` | Switches to first-person view.                                |
 | `TPS`              | `builtinSetPerspective\1` | Switches to third-person back view.                           |
