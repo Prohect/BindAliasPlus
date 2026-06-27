@@ -23,6 +23,7 @@ public interface Alias<T extends Alias<T>> {
     public static AtomicBoolean isUnderTextInputScreen = new AtomicBoolean(
         false
     );
+    public static AtomicBoolean isUnderAnyScreen = new AtomicBoolean(false);
 
     /**
      * ignore blocks covered by double quotes
