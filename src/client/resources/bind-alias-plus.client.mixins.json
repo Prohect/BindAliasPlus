@@ -3,6 +3,7 @@
   "package": "com.github.prohect.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "GuiMixin",
     "KeyboardInputMixin",
     "KeyBoardMixin",
     "KeyMappingMixin",
