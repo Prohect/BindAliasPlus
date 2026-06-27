@@ -11,6 +11,10 @@ import net.minecraft.client.MinecraftClient;
  */
 public class ShutdownAlias extends BuiltinAliasWithoutArgs<ShutdownAlias> {
 
+    public ShutdownAlias() {
+        super("builtinShutdown");
+    }
+
     @Override
     public ShutdownAlias run(String args) {
         BindAliasPlusClient.LOGGER.info("[shutdown] Shutting down...");

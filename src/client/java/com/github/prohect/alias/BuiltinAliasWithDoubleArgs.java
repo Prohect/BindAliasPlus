@@ -1,10 +1,13 @@
 package com.github.prohect.alias;
 
 import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.alias.builtinAlias.VarAlias;
 
-public abstract class BuiltinAliasWithDoubleArgs<
-    T extends BuiltinAliasWithDoubleArgs<T>
-> extends BuiltinAliasWithArgs<T> {
+public abstract class BuiltinAliasWithDoubleArgs<T extends BuiltinAliasWithDoubleArgs<T>> extends BuiltinAliasWithArgs<T> {
+
+    protected BuiltinAliasWithDoubleArgs(String builtinAliasName) {
+        super(builtinAliasName);
+    }
 
     public double flag;
 
@@ -13,10 +16,16 @@ public abstract class BuiltinAliasWithDoubleArgs<
      */
     public void parseArgs(String args) {
         double flag = 0;
-        try {
-            flag = Double.parseDouble(args);
-        } catch (NumberFormatException e) {
-            BindAliasPlusClient.LOGGER.error(e.getMessage(), e);
+        // Try variable resolution first, fall back to direct parse
+        Double resolved = VarAlias.resolveDouble(args);
+        if (resolved != null) {
+            flag = resolved;
+        } else {
+            try {
+                flag = Double.parseDouble(args);
+            } catch (NumberFormatException e) {
+                BindAliasPlusClient.LOGGER.error(e.getMessage(), e);
+            }
         }
         this.flag = flag;
     }

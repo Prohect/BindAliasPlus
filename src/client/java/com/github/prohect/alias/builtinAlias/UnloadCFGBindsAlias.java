@@ -20,7 +20,12 @@ import net.minecraft.client.util.InputUtil;
  * Also cleans up associated aliases from aliasesWithoutArgs_fromBindCommand.
  */
 public class UnloadCFGBindsAlias
-    extends BuiltinAliasWithoutArgs<UnloadCFGBindsAlias> {
+    extends BuiltinAliasWithoutArgs<UnloadCFGBindsAlias>
+{
+
+    public UnloadCFGBindsAlias() {
+        super("unloadCFGBinds");
+    }
 
     @Override
     public UnloadCFGBindsAlias run(String args) {

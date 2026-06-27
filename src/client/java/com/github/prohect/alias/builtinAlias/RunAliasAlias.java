@@ -15,6 +15,10 @@ public class RunAliasAlias
     extends BuiltinAliasWithGreedyStringArgs<RunAliasAlias>
 {
 
+    public RunAliasAlias() {
+        super("builtinRunAlias");
+    }
+
     @Override
     public RunAliasAlias run(String args) {
         if (args == null || args.isBlank()) {

@@ -13,6 +13,10 @@ import com.github.prohect.alias.BuiltinAliasWithArgs;
  */
 public class LockAlias_OnLock extends BuiltinAliasWithArgs<LockAlias_OnLock> {
 
+    public LockAlias_OnLock() {
+        super("+lock");
+    }
+
     @Override
     public LockAlias_OnLock run(String actionType) {
         LockAlias.lockAction(actionType);

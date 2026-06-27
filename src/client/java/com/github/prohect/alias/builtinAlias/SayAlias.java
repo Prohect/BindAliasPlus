@@ -6,6 +6,10 @@ import net.minecraft.client.network.ClientPlayerEntity;
 
 public class SayAlias extends BuiltinAliasWithGreedyStringArgs<SayAlias> {
 
+    public SayAlias() {
+        super("say");
+    }
+
     @Override
     public SayAlias run(String args) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
