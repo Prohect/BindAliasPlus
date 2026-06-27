@@ -878,13 +878,18 @@ public class BindAliasPlusClient implements ClientModInitializer {
             // Provide arg value suggestions for aliases that support them
             String aliasName = soFar.substring(n + 1, a);
             String partialArg = soFar.substring(a + 1);
-            if ("+lock".equals(aliasName) || "-lock".equals(aliasName)) {
+            if ("+lockKey".equals(aliasName) || "-lockKey".equals(aliasName)) {
                 builder = builder.createOffset(builder.getStart() + a + 1);
                 SuggestionsBuilder finalBuilder2 = builder;
                 LockAlias.SUPPORTED_ACTIONS.forEach(action -> {
                     if (action.startsWith(partialArg)) finalBuilder2.suggest(
                         action
                     );
+                });
+                Alias.aliasesWithoutArgs.forEach((name, a2) -> {
+                    if (
+                        name.startsWith(partialArg) && a2 instanceof UserAlias
+                    ) finalBuilder2.suggest(name);
                 });
             }
             // Suggest variable names for aliases that accept numeric args

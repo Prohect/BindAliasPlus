@@ -3,10 +3,7 @@ package com.github.prohect.alias.builtinAlias;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
 
 /**
- * User-facing unlock alias — {@code -lock\attack} unlocks the attack key, etc.
- * <p>
- * Registered in the suggested aliases-with-args map so command completion
- * offers action-type suggestions after {@code -lock\}.
+ * User-facing unlock-key alias — inverse of {@link LockAlias_OnLock}.
  *
  * @see LockAlias
  * @see LockAlias_OnLock
@@ -14,7 +11,7 @@ import com.github.prohect.alias.BuiltinAliasWithArgs;
 public class LockAlias_Unlock extends BuiltinAliasWithArgs<LockAlias_Unlock> {
 
     public LockAlias_Unlock() {
-        super("-lock");
+        super("-lockKey");
     }
 
     @Override
