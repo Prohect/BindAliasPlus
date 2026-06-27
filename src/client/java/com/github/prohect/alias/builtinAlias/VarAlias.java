@@ -34,6 +34,10 @@ import net.minecraft.item.ItemStack;
  */
 public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
 
+    public VarAlias() {
+        super("var");
+    }
+
     // Global variable storage
     public static final Map<String, Number> VARIABLES = new HashMap<>();
 
@@ -214,8 +218,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
             return null;
         }
 
-        // selectedSlot returns 0-8, we add 1 to match the mod's 1-9 convention
-        return inventory.selectedSlot + 1;
+        // getSelectedSlot returns 0-8, we add 1 to match the mod's 1-9 convention
+        return inventory.getSelectedSlot() + 1;
     }
 
     /**
@@ -272,6 +276,36 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
 
         // Return item count (0 if empty)
         return stack.isEmpty() ? 0 : stack.getCount();
+    }
+
+    /**
+     * Get current player pitch angle
+     */
+    private Double getPlayerPitch() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        ClientPlayerEntity player = client.player;
+
+        if (player == null) {
+            BindAliasPlusClient.LOGGER.warn("[var] Player is null");
+            return null;
+        }
+
+        return (double) player.getPitch();
+    }
+
+    /**
+     * Get current player yaw angle
+     */
+    private Double getPlayerYaw() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        ClientPlayerEntity player = client.player;
+
+        if (player == null) {
+            BindAliasPlusClient.LOGGER.warn("[var] Player is null");
+            return null;
+        }
+
+        return (double) player.getYaw();
     }
 
     /**
@@ -338,35 +372,5 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
             return false;
         }
         return VARIABLES.containsKey(input.trim());
-    }
-
-    /**
-     * Get current player pitch angle
-     */
-    private Double getPlayerPitch() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        ClientPlayerEntity player = client.player;
-
-        if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("[var] Player is null");
-            return null;
-        }
-
-        return (double) player.getPitch();
-    }
-
-    /**
-     * Get current player yaw angle
-     */
-    private Double getPlayerYaw() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        ClientPlayerEntity player = client.player;
-
-        if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("[var] Player is null");
-            return null;
-        }
-
-        return (double) player.getYaw();
     }
 }

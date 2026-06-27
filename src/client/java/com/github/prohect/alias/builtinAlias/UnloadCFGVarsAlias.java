@@ -15,7 +15,12 @@ import java.util.List;
  * Runtime-created variables (via /var command) are not affected.
  */
 public class UnloadCFGVarsAlias
-    extends BuiltinAliasWithoutArgs<UnloadCFGVarsAlias> {
+    extends BuiltinAliasWithoutArgs<UnloadCFGVarsAlias>
+{
+
+    public UnloadCFGVarsAlias() {
+        super("unloadCFGVars");
+    }
 
     @Override
     public UnloadCFGVarsAlias run(String args) {

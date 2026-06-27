@@ -10,6 +10,10 @@ import net.minecraft.util.math.Direction;
 
 public class SwapHandAlias extends BuiltinAliasWithoutArgs<SwapHandAlias> {
 
+    public SwapHandAlias() {
+        super("swapHand");
+    }
+
     @Override
     public SwapHandAlias run(String args) {
         /*        KeyBinding key = MinecraftClient.getInstance().options.swapHandsKey;

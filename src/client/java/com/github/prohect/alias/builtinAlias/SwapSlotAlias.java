@@ -2,7 +2,7 @@ package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.Alias;
-import com.github.prohect.alias.BuiltinAliasWithIntegerArgs;
+import com.github.prohect.alias.BuiltinAliasWithArgs;
 import java.util.regex.Pattern;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -19,7 +19,11 @@ import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-public class SwapSlotAlias extends BuiltinAliasWithIntegerArgs<SwapSlotAlias> {
+public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
+
+    public SwapSlotAlias() {
+        super("swapSlot");
+    }
 
     /**
      * @param args args typed by user.
@@ -28,6 +32,7 @@ public class SwapSlotAlias extends BuiltinAliasWithIntegerArgs<SwapSlotAlias> {
      *             10-36 means slots inside inventory,
      *             37-40 means equipments, 37 is feet, 40 is head
      *             41 means the second hand,
+     *             Also supports variable names (e.g., mySlot) created with var alias
      */
     @Override
     public SwapSlotAlias run(String args) {
@@ -42,7 +47,7 @@ public class SwapSlotAlias extends BuiltinAliasWithIntegerArgs<SwapSlotAlias> {
             BindAliasPlusClient.LOGGER.warn("[switchSlot]Inventory is null");
             return this;
         }
-        int selectedSlot = inventory.selectedSlot;
+        int selectedSlot = inventory.getSelectedSlot();
         ClientPlayNetworkHandler networkHandler =
             minecraftClient.getNetworkHandler();
         if (networkHandler == null) {
@@ -56,33 +61,41 @@ public class SwapSlotAlias extends BuiltinAliasWithIntegerArgs<SwapSlotAlias> {
             Pattern.quote(String.valueOf(Alias.divider4AliasArgs))
         );
         int[] slots = new int[] { 0, selectedSlot };
-        try {
-            if (strings.length == 1) {
-                Integer resolved0 = VarAlias.resolveInt(strings[0]);
-                slots[0] =
-                    (resolved0 != null
-                        ? resolved0
-                        : Integer.parseInt(strings[0])) - 1;
-            } else if (strings.length == 2) {
-                Integer resolved0 = VarAlias.resolveInt(strings[0]);
-                Integer resolved1 = VarAlias.resolveInt(strings[1]);
-                slots[0] =
-                    (resolved0 != null
-                        ? resolved0
-                        : Integer.parseInt(strings[0])) - 1;
-                slots[1] =
-                    (resolved1 != null
-                        ? resolved1
-                        : Integer.parseInt(strings[1])) - 1;
-            } else {
+
+        if (strings.length == 1) {
+            Integer resolvedSlot = VarAlias.resolveInt(strings[0]);
+            if (resolvedSlot == null) {
                 BindAliasPlusClient.LOGGER.warn(
-                    "[SwitchSlot]Invalid arguments:args pattern not expected"
+                    "[SwitchSlot]Invalid arguments: '{}' is not a valid number or variable",
+                    strings[0]
                 );
                 return this;
             }
-        } catch (NumberFormatException e) {
+            slots[0] = resolvedSlot - 1;
+        } else if (strings.length == 2) {
+            Integer resolvedSlot0 = VarAlias.resolveInt(strings[0]);
+            Integer resolvedSlot1 = VarAlias.resolveInt(strings[1]);
+
+            if (resolvedSlot0 == null) {
+                BindAliasPlusClient.LOGGER.warn(
+                    "[SwitchSlot]Invalid arguments: '{}' is not a valid number or variable",
+                    strings[0]
+                );
+                return this;
+            }
+            if (resolvedSlot1 == null) {
+                BindAliasPlusClient.LOGGER.warn(
+                    "[SwitchSlot]Invalid arguments: '{}' is not a valid number or variable",
+                    strings[1]
+                );
+                return this;
+            }
+
+            slots[0] = resolvedSlot0 - 1;
+            slots[1] = resolvedSlot1 - 1;
+        } else {
             BindAliasPlusClient.LOGGER.warn(
-                "[SwitchSlot]Invalid arguments: cant parse number"
+                "[SwitchSlot]Invalid arguments:args pattern not expected"
             );
             return this;
         }

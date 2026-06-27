@@ -7,6 +7,10 @@ import net.minecraft.client.network.ClientPlayerEntity;
 
 public class PitchAlias extends BuiltinAliasWithDoubleArgs<PitchAlias> {
 
+    public PitchAlias() {
+        super("pitch");
+    }
+
     @Override
     public PitchAlias run(String args) {
         parseArgs(args);

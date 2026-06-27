@@ -158,7 +158,20 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                     );
                     return this;
                 }
-                default -> alias.run(aliasRecord.args());
+                default -> {
+                    if (
+                        alias instanceof BuiltinAliasWithArgs &&
+                        Alias.blackList4Screen.contains(alias)
+                    ) {
+                        if (!Alias.isUnderAnyScreen.get()) {
+                            alias.run(aliasRecord.args());
+                            continue;
+                        }
+                        if (aliasRecord.args().equals("0")) {
+                            alias.run(aliasRecord.args());
+                        }
+                    } else alias.run(aliasRecord.args());
+                }
             }
         }
         return this;
@@ -279,7 +292,20 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                     );
                     return;
                 }
-                default -> alias.run(aliasRecord.args());
+                default -> {
+                    if (
+                        alias instanceof BuiltinAliasWithArgs &&
+                        Alias.blackList4Screen.contains(alias)
+                    ) {
+                        if (!Alias.isUnderAnyScreen.get()) {
+                            alias.run(aliasRecord.args());
+                            continue;
+                        }
+                        if (aliasRecord.args().equals("0")) {
+                            alias.run(aliasRecord.args());
+                        }
+                    } else alias.run(aliasRecord.args());
+                }
             }
         }
     }

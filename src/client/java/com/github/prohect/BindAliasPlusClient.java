@@ -77,51 +77,50 @@ public class BindAliasPlusClient implements ClientModInitializer {
         //load builtin alias
 
         //load builtin aliasesWithArgs
-        new AttackAlias().putToAliasesWithArgs_notSuggested("builtinAttack");
-        new UseAlias().putToAliasesWithArgs_notSuggested("builtinUse");
-        new ForwardAlias().putToAliasesWithArgs_notSuggested("builtinForward");
-        new BackAlias().putToAliasesWithArgs_notSuggested("builtinBack");
-        new LeftAlias().putToAliasesWithArgs_notSuggested("builtinLeft");
-        new RightAlias().putToAliasesWithArgs_notSuggested("builtinRight");
-        new JumpAlias().putToAliasesWithArgs_notSuggested("builtinJump");
-        new SneakAlias().putToAliasesWithArgs_notSuggested("builtinSneak");
-        new SprintAlias().putToAliasesWithArgs_notSuggested("builtinSprint");
+        new AttackAlias()
+            .putToAliasesWithArgs_notSuggested()
+            .addToScreenBlackList();
+        new UseAlias()
+            .putToAliasesWithArgs_notSuggested()
+            .addToScreenBlackList();
+        new ForwardAlias().putToAliasesWithArgs_notSuggested();
+        new BackAlias().putToAliasesWithArgs_notSuggested();
+        new LeftAlias().putToAliasesWithArgs_notSuggested();
+        new RightAlias().putToAliasesWithArgs_notSuggested();
+        new JumpAlias().putToAliasesWithArgs_notSuggested();
+        new SneakAlias().putToAliasesWithArgs_notSuggested();
+        new SprintAlias().putToAliasesWithArgs_notSuggested();
         new DropAlias()
-            .putToAliasesWithArgs_notSuggested("builtinDrop")
+            .putToAliasesWithArgs_notSuggested()
             .addToLockCursorBlackList();
-        new LogAlias().putToAliasesWithArgs("log");
-        new SlotAlias().putToAliasesWithArgs("slot");
-        new SwapSlotAlias().putToAliasesWithArgs("swapSlot");
-        new WaitAlias().putToAliasesWithArgs("wait");
-        new YawAlias().putToAliasesWithArgs("yaw");
-        new PitchAlias().putToAliasesWithArgs("pitch");
-        new SetYawAlias().putToAliasesWithArgs("setYaw");
-        new SetPitchAlias().putToAliasesWithArgs("setPitch");
-        new AliasAlias().putToAliasesWithArgs("alias");
-        new BindAlias().putToAliasesWithArgs("bind");
-        new UnbindAlias().putToAliasesWithArgs("unbind");
-        new SayAlias().putToAliasesWithArgs("say");
-        new SendCommandAlias().putToAliasesWithArgs("sendCommand");
-        new SilentAlias().putToAliasesWithArgs_notSuggested("builtinSilent");
-        new SetPerspectiveAlias().putToAliasesWithArgs_notSuggested(
-            "builtinSetPerspective"
-        );
-        new VarAlias().putToAliasesWithArgs("var");
-        new LockAlias().putToAliasesWithArgs_notSuggested("builtinLock");
-        new RunAliasAlias().putToAliasesWithArgs_notSuggested(
-            "builtinRunAlias"
-        );
+        new LogAlias().putToAliasesWithArgs();
+        new SlotAlias().putToAliasesWithArgs();
+        new SwapSlotAlias().putToAliasesWithArgs();
+        new WaitAlias().putToAliasesWithArgs();
+        new YawAlias().putToAliasesWithArgs();
+        new PitchAlias().putToAliasesWithArgs();
+        new SetYawAlias().putToAliasesWithArgs();
+        new SetPitchAlias().putToAliasesWithArgs();
+        new AliasAlias().putToAliasesWithArgs();
+        new BindAlias().putToAliasesWithArgs();
+        new UnbindAlias().putToAliasesWithArgs();
+        new SayAlias().putToAliasesWithArgs();
+        new SendCommandAlias().putToAliasesWithArgs();
+        new SilentAlias().putToAliasesWithArgs_notSuggested();
+        new SetPerspectiveAlias().putToAliasesWithArgs_notSuggested();
+        new VarAlias().putToAliasesWithArgs();
+        new LockAlias().putToAliasesWithArgs_notSuggested();
+        new RunAliasAlias().putToAliasesWithArgs_notSuggested();
 
         //load builtin aliasesWithoutArgs
-        new SwapHandAlias().putToAliasesWithoutArgs("swapHand");
-        new ShutdownAlias().putToAliasesWithoutArgs_notSuggested(
-            "builtinShutdown"
-        );
-        new ReloadCFGAlias().putToAliasesWithoutArgs("reloadCFG");
-        new UnloadCFGAliasesAlias().putToAliasesWithoutArgs("unloadCFGAliases");
-        new UnloadCFGBindsAlias().putToAliasesWithoutArgs("unloadCFGBinds");
-        new UnloadCFGVarsAlias().putToAliasesWithoutArgs("unloadCFGVars");
-        new UnloadCFGAllAlias().putToAliasesWithoutArgs("unloadCFGAll");
+        new CyclePerspectiveAlias().putToAliasesWithoutArgs();
+        new SwapHandAlias().putToAliasesWithoutArgs();
+        new ShutdownAlias().putToAliasesWithoutArgs_notSuggested();
+        new ReloadCFGAlias().putToAliasesWithoutArgs();
+        new UnloadCFGAliasesAlias().putToAliasesWithoutArgs();
+        new UnloadCFGBindsAlias().putToAliasesWithoutArgs();
+        new UnloadCFGVarsAlias().putToAliasesWithoutArgs();
+        new UnloadCFGAllAlias().putToAliasesWithoutArgs();
         new UserAlias("builtinAttack\\1").putToAliasesWithoutArgs("+attack");
         new UserAlias("builtinAttack\\0").putToAliasesWithoutArgs("-attack");
         new UserAlias("builtinUse\\1").putToAliasesWithoutArgs("+use");
@@ -155,8 +154,8 @@ public class BindAliasPlusClient implements ClientModInitializer {
         );
         // Lock aliases (lock/unlock game actions to prevent user input interference)
         // +lock\<action> / -lock\<action> — compact arg-based form with suggestions
-        new LockAlias_OnLock().putToAliasesWithArgs("+lock");
-        new LockAlias_Unlock().putToAliasesWithArgs("-lock");
+        new LockAlias_OnLock().putToAliasesWithArgs();
+        new LockAlias_Unlock().putToAliasesWithArgs();
 
         // init cfg file (create if not exists)
         try {

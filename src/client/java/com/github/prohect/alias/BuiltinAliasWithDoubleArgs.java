@@ -3,9 +3,11 @@ package com.github.prohect.alias;
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.builtinAlias.VarAlias;
 
-public abstract class BuiltinAliasWithDoubleArgs<
-    T extends BuiltinAliasWithDoubleArgs<T>
-> extends BuiltinAliasWithArgs<T> {
+public abstract class BuiltinAliasWithDoubleArgs<T extends BuiltinAliasWithDoubleArgs<T>> extends BuiltinAliasWithArgs<T> {
+
+    protected BuiltinAliasWithDoubleArgs(String builtinAliasName) {
+        super(builtinAliasName);
+    }
 
     public double flag;
 
