@@ -158,10 +158,6 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 /alias +fastAttack swapSlot\varFastAttack wait\1 +attack
 /alias -fastAttack -attack swapSlot\varFastAttack
 
-# 通过递归别名实现自动连点
-/alias +autoClick +silent +use alias\"autoClick_ +use wait\0 builtinRunAlias\autoClick_ -use" wait\3 builtinRunAlias\autoClick_ -silent
-/alias -autoClick +silent -use alias\autoClick_;autoClick_ -silent
-
 # 移动按键绑定
 /bind w +forward
 /bind a +left
@@ -171,7 +167,7 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 /bind left.shift +sneak
 /bind left.control +sprint
 /bind mouse1 +attack
-/bind mouse2 +autoClick
+/bind mouse2 +use
 /bind mouse5 +fly
 
 # 基于变量的快速使用绑定（用 /var varFastUse N 更改槽位）
