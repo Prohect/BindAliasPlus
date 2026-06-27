@@ -138,27 +138,21 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 这是一个真实的配置文件 (`config/bind-alias-plus.cfg`)，展示了所有核心功能的实际用法：
 
 ```cfg
-# 变量 — 跨别名复用数值
 /var offHand 41
-/var varFastUse 19
-/var varFastAttack 29
-
-# 简单的跳跃宏
 /alias jumpOnce +jump wait\0 -jump
+## 36->elytra; 27->firework
+/alias +fly swapSlot\36\39 jumpOnce wait\0 jumpOnce swapSlot\27\41 +use -use TPS
+/alias -fly swapSlot\36\39 swapSlot\27\41 wait\2 FPS
+/alias +fastUse_Var swapSlot\varFastUse\offHand +use
+/alias -fastUse_Var -use swapSlot\varFastUse\offHand
+/alias +fastAttack_Var swapSlot\varFastAttack wait\1 +attack
+/alias -fastAttack_Var -attack swapSlot\varFastAttack
+alias +autoClick2 +silent +use alias\"autoClick2_ +use wait\0 builtinRunAlias\autoClick2_ -use" wait\3 builtinRunAlias\autoClick2_ -silent
+alias -autoClick2 +silent -use alias\autoClick2_;autoClick2_ -silent
 
-# 鞘翅飞行 + 烟花（槽位 36=鞘翅，27=烟花）
-/alias +fly swapSlot\36\39 jumpOnce wait\0 jumpOnce swapSlot\27\offHand +use -use TPS
-/alias -fly swapSlot\36\39 swapSlot\27\offHand wait\2 FPS
+# alias fly_on +silent bind\"mouse5 fly_off" -silent +fly
+# alias fly_off +silent bind\"mouse5 fly_on" -silent -fly
 
-# 快速使用 — 将物品换到副手，使用，换回
-/alias +fastUse swapSlot\varFastUse\offHand +use
-/alias -fastUse -use swapSlot\varFastUse\offHand
-
-# 快速攻击 — 切换武器，攻击，换回
-/alias +fastAttack swapSlot\varFastAttack wait\1 +attack
-/alias -fastAttack -attack swapSlot\varFastAttack
-
-# 移动按键绑定
 /bind w +forward
 /bind a +left
 /bind s +back
@@ -167,12 +161,14 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 /bind left.shift +sneak
 /bind left.control +sprint
 /bind mouse1 +attack
-/bind mouse2 +use
+/bind mouse2 +autoClick2
 /bind mouse5 +fly
-
-# 基于变量的快速使用绑定（用 /var varFastUse N 更改槽位）
-/bind mouse4 +fastUse
-/bind n +fastAttack
+## water; powder_snow; food; ender_pearl; bow;... 3 fast use slots
+/bind mouse4 var\varFastUse\19 +fastUse_Var
+/bind b var\varFastUse\20 +fastUse_Var
+/bind v var\varFastUse\28 +fastUse_Var
+## fortune_pickaxe 1 fast mine slot
+/bind n var\varFastAttack\29 +fastAttack_Var
 ```
 
 ## 配置
