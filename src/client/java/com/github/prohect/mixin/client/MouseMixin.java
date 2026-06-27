@@ -7,7 +7,6 @@ import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 import com.github.prohect.alias.builtinAlias.LockAlias;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
-import net.minecraft.client.input.MouseInput;
 import net.minecraft.client.util.InputUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,13 +20,14 @@ public class MouseMixin {
     @Inject(at = @At("HEAD"), method = "onMouseButton")
     private void onMouseButton(
         long window,
-        MouseInput input,
+        int button,
         int action,
+        int mods,
         CallbackInfo ci
     ) {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         if (window != minecraftClient.getWindow().getHandle()) return;
-        InputUtil.Key key = InputUtil.Type.MOUSE.createFromCode(input.button());
+        InputUtil.Key key = InputUtil.Type.MOUSE.createFromCode(button);
         if (Alias.isUnderTextInputScreen.get()) return;
         // Skip mod-bound keys whose action is currently locked
         if (LockAlias.LOCKED_PHYSICAL_KEYS.contains(key)) return;
