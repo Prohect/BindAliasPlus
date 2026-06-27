@@ -147,27 +147,19 @@ Variables can then be used as arguments in any numeric alias (e.g., `yaw\myVar`,
 Here's a real-world config file (`config/bind-alias-plus.cfg`) showing the key features in one place:
 
 ```cfg
-# Variables — reuse values across aliases
 /var offHand 41
-/var varFastUse 19
-/var varFastAttack 29
-
-# Simple jump macro
 /alias jumpOnce +jump wait\0 -jump
+## 36->elytra; 27->firework
+/alias +fly swapSlot\36\39 jumpOnce wait\0 jumpOnce swapSlot\27\41 +use -use TPS
+/alias -fly swapSlot\36\39 swapSlot\27\41 wait\2 FPS
+/alias +fastUse_Var swapSlot\varFastUse\offHand +use
+/alias -fastUse_Var -use swapSlot\varFastUse\offHand
+/alias +fastAttack_Var swapSlot\varFastAttack wait\1 +attack
+/alias -fastAttack_Var -attack swapSlot\varFastAttack
 
-# Fly with elytra + firework (slot 36=elytra, 27=firework)
-/alias +fly swapSlot\36\39 jumpOnce wait\0 jumpOnce swapSlot\27\offHand +use -use TPS
-/alias -fly swapSlot\36\39 swapSlot\27\offHand wait\2 FPS
+# alias fly_on +silent bind\"mouse5 fly_off" -silent +fly
+# alias fly_off +silent bind\"mouse5 fly_on" -silent -fly
 
-# Fast use — swap item to offhand, use, swap back
-/alias +fastUse swapSlot\varFastUse\offHand +use
-/alias -fastUse -use swapSlot\varFastUse\offHand
-
-# Fast attack — swap weapon, attack, swap back
-/alias +fastAttack swapSlot\varFastAttack wait\1 +attack
-/alias -fastAttack -attack swapSlot\varFastAttack
-
-# Movement binds
 /bind w +forward
 /bind a +left
 /bind s +back
@@ -178,10 +170,12 @@ Here's a real-world config file (`config/bind-alias-plus.cfg`) showing the key f
 /bind mouse1 +attack
 /bind mouse2 +use
 /bind mouse5 +fly
-
-# Variable-driven fast-use binds (change slot with /var varFastUse N)
-/bind mouse4 +fastUse
-/bind n +fastAttack
+## water; powder_snow; food; ender_pearl; bow;... 3 fast use slots
+/bind mouse4 var\varFastUse\19 +fastUse_Var
+/bind b var\varFastUse\20 +fastUse_Var
+/bind v var\varFastUse\28 +fastUse_Var
+## fortune_pickaxe 1 fast mine slot
+/bind n var\varFastAttack\29 +fastAttack_Var
 ```
 
 ## Configuration
