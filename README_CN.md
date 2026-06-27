@@ -147,8 +147,6 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 /alias -fastUse_Var -use swapSlot\varFastUse\offHand
 /alias +fastAttack_Var swapSlot\varFastAttack wait\1 +attack
 /alias -fastAttack_Var -attack swapSlot\varFastAttack
-alias +autoClick2 +silent +use alias\"autoClick2_ +use wait\0 builtinRunAlias\autoClick2_ -use" wait\3 builtinRunAlias\autoClick2_ -silent
-alias -autoClick2 +silent -use alias\autoClick2_;autoClick2_ -silent
 
 # alias fly_on +silent bind\"mouse5 fly_off" -silent +fly
 # alias fly_off +silent bind\"mouse5 fly_on" -silent -fly
@@ -161,7 +159,7 @@ alias -autoClick2 +silent -use alias\autoClick2_;autoClick2_ -silent
 /bind left.shift +sneak
 /bind left.control +sprint
 /bind mouse1 +attack
-/bind mouse2 +autoClick2
+/bind mouse2 +use
 /bind mouse5 +fly
 ## water; powder_snow; food; ender_pearl; bow;... 3 fast use slots
 /bind mouse4 var\varFastUse\19 +fastUse_Var
