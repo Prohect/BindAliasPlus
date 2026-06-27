@@ -167,10 +167,6 @@ Here's a real-world config file (`config/bind-alias-plus.cfg`) showing the key f
 /alias +fastAttack swapSlot\varFastAttack wait\1 +attack
 /alias -fastAttack -attack swapSlot\varFastAttack
 
-# Auto-click via recursive alias
-/alias +autoClick +silent +use alias\"autoClick_ +use wait\0 builtinRunAlias\autoClick_ -use" wait\3 builtinRunAlias\autoClick_ -silent
-/alias -autoClick +silent -use alias\autoClick_;autoClick_ -silent
-
 # Movement binds
 /bind w +forward
 /bind a +left
@@ -180,7 +176,7 @@ Here's a real-world config file (`config/bind-alias-plus.cfg`) showing the key f
 /bind left.shift +sneak
 /bind left.control +sprint
 /bind mouse1 +attack
-/bind mouse2 +autoClick
+/bind mouse2 +use
 /bind mouse5 +fly
 
 # Variable-driven fast-use binds (change slot with /var varFastUse N)
