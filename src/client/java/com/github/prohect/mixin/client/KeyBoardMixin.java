@@ -5,7 +5,6 @@ import com.github.prohect.KeyPressed;
 import com.github.prohect.alias.builtinAlias.LockAlias;
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.util.InputUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,16 +18,16 @@ public class KeyBoardMixin {
     @Inject(at = @At("HEAD"), method = "onKey")
     private void onKey(
         long window,
+        int key,
+        int scancode,
         int action,
-        KeyInput input,
+        int modifiers,
         CallbackInfo ci
     ) {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         if (window != minecraftClient.getWindow().getHandle()) return;
-        //        BindAliasPlusClient.LOGGER.info("{}: {}", input.key(), action);
-        InputUtil.Key keyFromCode = InputUtil.Type.KEYSYM.createFromCode(
-            input.key()
-        );
+        //        BindAliasPlusClient.LOGGER.info("{}: {}", key, action);
+        InputUtil.Key keyFromCode = InputUtil.Type.KEYSYM.createFromCode(key);
         // Skip mod-bound keys whose action is currently locked
         if (LockAlias.LOCKED_PHYSICAL_KEYS.contains(keyFromCode)) return;
         if (BindAliasPlusClient.BINDING_PLUS.containsKey(keyFromCode)) {
