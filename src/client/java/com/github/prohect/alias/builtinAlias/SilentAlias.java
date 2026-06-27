@@ -17,6 +17,7 @@ public class SilentAlias extends BuiltinAliasWithBooleanArgs<SilentAlias> {
     @Override
     public SilentAlias run(String args) {
         parseArgs(args);
+        // this is not a game operation, so we don't need to cancel press events from text input screen
         BindAliasPlusClient.silentMode = flag;
         return this;
     }
