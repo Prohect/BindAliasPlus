@@ -146,6 +146,9 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                     new UpdateSelectedSlotC2SPacket(selectedSlot)
                 );
             } else {
+                // avoid close previous screen, which might cause unexpected behavior
+                if (Alias.isUnderAnyScreen.get() && !inInventory) return this;
+                // the inventory screen will be opened/closed automatically in following codes
                 InventoryScreen inventoryScreen = inInventory
                     ? creativeInventory
                         ? new InventoryScreen(player)
