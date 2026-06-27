@@ -105,6 +105,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new BindAlias().putToAliasesWithArgs();
         new UnbindAlias().putToAliasesWithArgs();
         new SayAlias().putToAliasesWithArgs();
+        new LocalSayAlias().putToAliasesWithArgs();
         new SendCommandAlias().putToAliasesWithArgs();
         new SilentAlias().putToAliasesWithArgs_notSuggested();
         new SetPerspectiveAlias().putToAliasesWithArgs_notSuggested();
