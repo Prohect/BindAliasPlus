@@ -133,162 +133,58 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | `/var <name> <source>`         | 创建或更新变量。            | `/var mySlot hotbarSlot`              |
 | `/unloadCFGVars`               | 移除所有从配置加载的变量。    | `/unloadCFGVars`                      |
 
-### 示例
+### 示例配置
 
-以下是一些实用示例帮助你入门：
+这是一个真实的配置文件 (`config/bind-alias-plus.cfg`)，展示了所有核心功能的实际用法：
 
-#### 1. 鞘翅 + 烟花自动化
+```cfg
+# 变量 — 跨别名复用数值
+/var offHand 41
+/var varFastUse 19
+/var varFastAttack 29
 
-使用单个按键自动化鞘翅部署和烟花使用：
+# 简单的跳跃宏
+/alias jumpOnce +jump wait\0 -jump
 
-```bash
-# 定义别名以将鞘翅装备到槽位 39（胸甲槽位）
-# 将你的鞘翅放在槽位 10（物品栏第一行的第一个槽位）
-/alias equipElytra swapSlot\10\39
+# 鞘翅飞行 + 烟花（槽位 36=鞘翅，27=烟花）
+/alias +fly swapSlot\36\39 jumpOnce wait\0 jumpOnce swapSlot\27\offHand +use -use TPS
+/alias -fly swapSlot\36\39 swapSlot\27\offHand wait\2 FPS
 
-# 定义别名以跳跃一次
-/alias jump +jump wait\1 -jump
+# 快速使用 — 将物品换到副手，使用，换回
+/alias +fastUse swapSlot\varFastUse\offHand +use
+/alias -fastUse -use swapSlot\varFastUse\offHand
 
-# 定义 +fly（按键按下时）：装备鞘翅 → 跳跃两次以打开它 → 使用烟花
-# 将你的烟花放在槽位 19（物品栏第二行的第一个槽位）
-/alias +fly equipElytra jump wait\1 jump swapSlot\19 +use -use
+# 快速攻击 — 切换武器，攻击，换回
+/alias +fastAttack swapSlot\varFastAttack wait\1 +attack
+/alias -fastAttack -attack swapSlot\varFastAttack
 
-# 定义 -fly（按键释放时）：重新装备之前装备的物品
-/alias -fly equipElytra swapSlot\19
+# 通过递归别名实现自动连点
+/alias +autoClick +silent +use alias\"autoClick_ +use wait\0 builtinRunAlias\autoClick_ -use" wait\3 builtinRunAlias\autoClick_ -silent
+/alias -autoClick +silent -use alias\autoClick_;autoClick_ -silent
 
-# 将鼠标按钮 5 绑定到 +fly/-fly
+# 移动按键绑定
+/bind w +forward
+/bind a +left
+/bind s +back
+/bind d +right
+/bind space +jump
+/bind left.shift +sneak
+/bind left.control +sprint
+/bind mouse1 +attack
+/bind mouse2 +autoClick
 /bind mouse5 +fly
-```
 
-#### 2. 快速使用弓
-
-快速切换到弓、使用它，然后切换回来：
-（弓不再需要占用快捷栏，对于时运和精准采集镐或末影珍珠也可以尝试这个方法）
-
-```bash
-# 定义 +bow（按下时）：切换到弓（槽位 11） → 开始使用
-/alias +bow swapSlot\11 +use
-
-# 定义 -bow（释放时）：停止使用 → 切换回来
-/alias -bow -use swapSlot\11
-
-# 将鼠标按钮 4 绑定到 +bow/-bow
-/bind mouse4 +bow
-```
-
-#### 3. 使用静默模式防止聊天刷屏
-
-创建切换绑定（如 fly1/fly2 脚本）时，你可以使用静默模式来抑制反馈消息，避免聊天栏被刷屏：
-
-```bash
-# 示例 1：状态切换模式（每次按键切换状态）
-# 这种方法在释放按键后仍保持状态
-# 使用静默模式防止 "Bound key..." 消息
-
-# 定义 fly1（状态 1）：启用静默，将 mouse5 重新绑定到 fly2，激活鞘翅，禁用静默
-/alias fly1 +silent bind\"mouse5 fly2" +equipElytra -silent
-
-# 定义 fly2（状态 2）：启用静默，将 mouse5 重新绑定到 fly1，停用鞘翅，禁用静默
-/alias fly2 +silent bind\"mouse5 fly1" -equipElytra -silent
-
-# 初始绑定到 mouse5
-/bind mouse5 fly1
-
-# 示例 2：不将动作包裹在静默模式中的状态切换
-# bind 命令本身会是静默的，但 +fly/-fly 正常执行
-# 当你希望状态改变是静默的但动作有反馈时，这样更简洁
-/alias fly1 bind\"mouse5 fly2" +fly
-/alias fly2 bind\"mouse5 fly1" -fly
-/bind mouse5 fly1
-
-# 示例 3：按住模式（不同于状态切换！）
-# 这种方法使用 +/- 别名：按下时执行动作，释放时执行相反动作
-# 注意：使用 "/bind mouse5 +silent" 只会在按住按键时启用静默模式
-/alias quietFly +silent equipElytra jump wait\1 jump swapSlot\19 +use -use -silent
-```
-
-**注意**：
-- **状态切换**（`fly1`/`fly2` 模式）：每次按键切换两种状态，释放后状态保持
-- **按住模式**（`+alias`/`-alias` 模式）：按下时执行，释放时反转（如 `/bind mouse5 +fly`）
-- 静默模式只抑制聊天中的命令反馈消息。错误/警告日志不受影响。
-
-#### 4. 锁定别名
-
-锁定别名可以暂时屏蔽特定动作的物理键盘/鼠标输入，防止用户在别名序列执行期间
-产生干扰（例如，在别名自动交换物品时保持攻击）。
-
-```bash
-# 锁定前进移动 20 刻，然后解锁
-/alias lockTest +lock\forward wait\20 -lock\forward
-
-# 使用锁定安全地在交换物品时保持攻击
-/alias +safeAttack +lock\attack swapSlot\11 wait\1 -lock\attack
-/alias -safeAttack -attack swapSlot\11
-/bind mouse4 +safeAttack
-
-# 可用的锁定目标：attack、use、forward、back、left、right、jump、sneak、sprint
-```
-
-#### 5. 变量系统
-
-捕获并复用游戏内的值，实现上下文感知的自动化：
-
-```bash
-# 将当前视角角度存入变量
-/alias saveAngles var\_yaw\yaw var\_pitch\pitch
-
-# 使用变量引用恢复已保存的角度
-/alias restoreAngles setYaw\_yaw setPitch\_pitch
-
-# 右转80°并下看20°，等待后恢复原视角
-/alias lookAround saveAngles yaw\80 pitch\-20 wait\15 restoreAngles wait\5
-
-# 使用变量进行动态物品栏切换
-/var backupSlot hotbarSlot
-/alias quickSwap swapSlot\backupSlot swapSlot\9
+# 基于变量的快速使用绑定（用 /var varFastUse N 更改槽位）
+/bind mouse4 +fastUse
+/bind n +fastAttack
 ```
 
 ## 配置
 
 - **配置文件**：位于 `config/bind-alias-plus.cfg`。如果不存在会自动创建。
 - **自动加载**：配置文件中的别名和绑定在模组加载时自动加载。
-- **手动编辑**：你可以直接编辑配置文件来添加/修改别名/绑定（使用与游戏内命令相同的语法）。  
-  **配置文件内容示例**：
-  ```
-  # BindAliasPlus 配置示例
-  # 定义鞘翅装备的别名
-  alias +equipElytra swapSlot\10\39
-  alias -equipElytra swapSlot\10\39
-  # 定义烟花处理的别名
-  alias +holdFireworks swapSlot\26\41
-  alias -holdFireworks swapSlot\26\41
-  # 定义简单的跳跃动作
-  alias jump +jump wait\1 -jump
-  # 定义飞行动作序列（按下时）
-  alias +fly +equipElytra jump wait\1 jump +holdFireworks +use -use
-  # 定义飞行动作序列（释放时）
-  alias -fly -equipElytra -holdFireworks
-  
-  # 两种绑定按键的方式：
-  
-  # 方式 1：状态切换模式（每次按下切换状态，状态持续保持）
-  # 这样更简洁 - bind 命令是静默的，但 +fly/-fly 正常执行
-  alias fly1 bind\"mouse5 fly2" +fly
-  alias fly2 bind\"mouse5 fly1" -fly
-  bind mouse5 fly1
-  
-  # 方式 2：按住模式（按下时激活，释放时反转）
-  # 当你希望动作仅在按住按键时执行时使用此方式
-  bind mouse5 +fly
-
-  # 变量 - 存储和复用游戏内数值
-  var backupSlot hotbarSlot
-  var arrowCount itemsOfSlot2
-
-  # 保存和恢复视角角度
-  alias saveAngles var\_yaw\yaw var\_pitch\pitch
-  alias restoreAngles setYaw\_yaw setPitch\_pitch
-  ```
+- **手动编辑**：你可以直接编辑配置文件来添加/修改别名/绑定（使用与游戏内命令相同的语法）。
+  参见上方[示例配置](#示例配置)部分了解完整的真实配置。
 
 ## 命令参考
 

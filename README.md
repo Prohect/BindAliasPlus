@@ -142,119 +142,50 @@ Variables can then be used as arguments in any numeric alias (e.g., `yaw\myVar`,
 | `/var <name> <source>`         | Create or update a variable.                       | `/var mySlot hotbarSlot`              |
 | `/unloadCFGVars`               | Remove all config-loaded variables.                | `/unloadCFGVars`                      |
 
-### Examples
+### Example Config
 
-Here are practical examples to get started:
+Here's a real-world config file (`config/bind-alias-plus.cfg`) showing the key features in one place:
 
-#### 1. Elytra + Firework Automation
+```cfg
+# Variables — reuse values across aliases
+/var offHand 41
+/var varFastUse 19
+/var varFastAttack 29
 
-Automate elytra deployment and firework use with a single key:
+# Simple jump macro
+/alias jumpOnce +jump wait\0 -jump
 
-```bash
-# Define alias to equip elytra to slot 39(the chestplate slot
-# put your elytra in slot 10 ( the first slot of the first row of your inventory
-/alias equipElytra swapSlot\10\39
+# Fly with elytra + firework (slot 36=elytra, 27=firework)
+/alias +fly swapSlot\36\39 jumpOnce wait\0 jumpOnce swapSlot\27\offHand +use -use TPS
+/alias -fly swapSlot\36\39 swapSlot\27\offHand wait\2 FPS
 
-# Define alias to jump once
-/alias jump +jump wait\1 -jump
+# Fast use — swap item to offhand, use, swap back
+/alias +fastUse swapSlot\varFastUse\offHand +use
+/alias -fastUse -use swapSlot\varFastUse\offHand
 
-# Define +fly (on key press): equip elytra → jump twice to open it → use firework
-# put your firework in slot 19 ( the first slot of the second row of your inventory,
-/alias +fly equipElytra jump wait\1 jump swapSlot\19 +use -use
+# Fast attack — swap weapon, attack, swap back
+/alias +fastAttack swapSlot\varFastAttack wait\1 +attack
+/alias -fastAttack -attack swapSlot\varFastAttack
 
-# Define -fly (on key release): re-equip what u equipped before
-/alias -fly equipElytra swapSlot\19
+# Auto-click via recursive alias
+/alias +autoClick +silent +use alias\"autoClick_ +use wait\0 builtinRunAlias\autoClick_ -use" wait\3 builtinRunAlias\autoClick_ -silent
+/alias -autoClick +silent -use alias\autoClick_;autoClick_ -silent
 
-# Bind mouse button 5 to +fly/-fly
+# Movement binds
+/bind w +forward
+/bind a +left
+/bind s +back
+/bind d +right
+/bind space +jump
+/bind left.shift +sneak
+/bind left.control +sprint
+/bind mouse1 +attack
+/bind mouse2 +autoClick
 /bind mouse5 +fly
-```
 
-#### 2. Quick Bow Usage
-
-Quickly swap to a bow, use it, and swap back:
-(bow won't need a hotbar anymore, also try this for Fortune and SilkTouch pickaxe or enderPearl)
-
-```bash
-# Define +bow (on press): swap to bow (slot 11) → start using
-/alias +bow swapSlot\11 +use
-
-# Define -bow (on release): stop using → swap back
-/alias -bow -use swapSlot\11
-
-# Bind mouse button 4 to +bow/-bow
-/bind mouse4 +bow
-```
-
-#### 3. Using Silent Mode to Prevent Chat Spam
-
-When creating toggle binds (like fly1/fly2 scripts), you can use silent mode to suppress feedback messages and avoid cluttering the chat:
-
-```bash
-# Example 1: State switcher pattern (toggles state on each key press)
-# This approach maintains state even after releasing the key
-# Using silent mode to prevent "Bound key..." messages
-
-# Define fly1 (state 1): enable silent, rebind mouse5 to fly2, activate elytra, disable silent
-/alias fly1 +silent bind\"mouse5 fly2" +equipElytra -silent
-
-# Define fly2 (state 2): enable silent, rebind mouse5 to fly1, deactivate elytra, disable silent
-/alias fly2 +silent bind\"mouse5 fly1" -equipElytra -silent
-
-# Initial bind to mouse5
-/bind mouse5 fly1
-
-# Example 2: State switcher without wrapping actions in silent mode
-# The bind command itself will be silent, but +fly/-fly execute normally
-# This is cleaner when you want the state change to be silent but actions to have feedback
-/alias fly1 bind\"mouse5 fly2" +fly
-/alias fly2 bind\"mouse5 fly1" -fly
-/bind mouse5 fly1
-
-# Example 3: Press-and-hold pattern (different from state switcher!)
-# This approach uses +/- aliases: action on press, opposite action on release
-# Note: Using "/bind mouse5 +silent" would only enable silent mode while holding the key
-/alias quietFly +silent equipElytra jump wait\1 jump swapSlot\19 +use -use -silent
-```
-
-**Note**: 
-- **State switcher** (`fly1`/`fly2` pattern): Toggles between two states on each key press, state persists after release
-- **Press-and-hold** (`+alias`/`-alias` pattern): Executes on press, reverses on release (like `/bind mouse5 +fly`)
-- Silent mode only suppresses command feedback messages in chat. Error/warning logs are not affected.
-
-#### 4. Lock Aliases
-
-Lock aliases temporarily block physical keyboard/mouse input for a specific action, preventing
-user interference during alias sequences (e.g., hold attack while an alias auto-swaps items).
-
-```bash
-# Lock forward movement for 20 ticks, then unlock
-/alias lockTest +lock\forward wait\20 -lock\forward
-
-# Use lock to safely hold attack while swapping
-/alias +safeAttack +lock\attack swapSlot\11 wait\1 -lock\attack
-/alias -safeAttack -attack swapSlot\11
-/bind mouse4 +safeAttack
-
-# Available lock targets: attack, use, forward, back, left, right, jump, sneak, sprint
-```
-
-#### 5. Variable System
-
-Capture and reuse in-game values to create context-aware automation:
-
-```bash
-# Store current pitch/yaw into variables
-/alias saveAngles var\_yaw\yaw var\_pitch\pitch
-
-# Restore saved angles using setYaw/setPitch with variable references
-/alias restoreAngles setYaw\_yaw setPitch\_pitch
-
-# Turn 80 degrees right and look 20 degrees down, wait, then restore previous view
-/alias lookAround saveAngles yaw\80 pitch\-20 wait\15 restoreAngles wait\5
-
-# Use variables for dynamic slot swapping
-/var backupSlot hotbarSlot
-/alias quickSwap swapSlot\backupSlot swapSlot\9
+# Variable-driven fast-use binds (change slot with /var varFastUse N)
+/bind mouse4 +fastUse
+/bind n +fastAttack
 ```
 
 ## Configuration
@@ -262,43 +193,7 @@ Capture and reuse in-game values to create context-aware automation:
 - **Config File**: At `config/bind-alias-plus.cfg`. Automatically created if there is not one.
 - **Auto-Load**: Aliases and bindings in the config file are loaded automatically when the mod loads.
 - **Manual Edit**: You can directly edit the config file to add/modify aliases/bindings (use the same syntax as in-game
-  commands).  
-  **Example Config Content**:
-  ```
-  # BindAliasPlus config example
-  # Define aliases for elytra equipment
-  alias +equipElytra swapSlot\10\39
-  alias -equipElytra swapSlot\10\39
-  # Define aliases for fireworks handling
-  alias +holdFireworks swapSlot\26\41
-  alias -holdFireworks swapSlot\26\41
-  # Define a simple jump action
-  alias jump +jump wait\1 -jump
-  # Define fly action sequence (on press)
-  alias +fly +equipElytra jump wait\1 jump +holdFireworks +use -use
-  # Define fly action sequence (on release)
-  alias -fly -equipElytra -holdFireworks
-  
-  # Two ways to bind the key:
-  
-  # Option 1: State switcher pattern (toggles state on each press, state persists)
-  # This is cleaner - the bind commands are silent, but +fly/-fly execute normally
-  alias fly1 bind\"mouse5 fly2" +fly
-  alias fly2 bind\"mouse5 fly1" -fly
-  bind mouse5 fly1
-  
-  # Option 2: Press-and-hold pattern (activates on press, reverses on release)
-  # Use this when you want the action only while holding the key
-  bind mouse5 +fly
-
-  # Variables - store and reuse game values
-  var backupSlot hotbarSlot
-  var arrowCount itemsOfSlot2
-
-  # Save and restore view angles
-  alias saveAngles var\_yaw\yaw var\_pitch\pitch
-  alias restoreAngles setYaw\_yaw setPitch\_pitch
-  ```
+  commands).  See the [Example Config](#example-config) section above for a complete real-world config.
 
 ## Commands Reference
 
