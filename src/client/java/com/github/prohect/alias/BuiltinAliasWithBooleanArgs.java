@@ -2,6 +2,10 @@ package com.github.prohect.alias;
 
 import com.github.prohect.BindAliasPlusClient;
 
+/**
+ * consider whether you need to cancle the press event from text input screen
+ * consider whether you need to call reapplyToGameKeyMapping after game's releaseAll method
+ */
 public abstract class BuiltinAliasWithBooleanArgs<T extends BuiltinAliasWithBooleanArgs<T>> extends BuiltinAliasWithArgs<T> {
 
     protected BuiltinAliasWithBooleanArgs(String builtinAliasName) {
@@ -26,5 +30,11 @@ public abstract class BuiltinAliasWithBooleanArgs<T extends BuiltinAliasWithBool
                 break;
         }
         this.flag = flag;
+    }
+
+    public void reapplyToGameKeyMapping() {
+        if (this.flag) {
+            this.run("1");
+        }
     }
 }

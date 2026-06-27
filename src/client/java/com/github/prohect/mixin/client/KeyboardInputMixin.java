@@ -5,6 +5,13 @@ import com.github.prohect.KeyBindingPlus;
 import com.github.prohect.KeyPressed;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.AliasWithoutArgs;
+import com.github.prohect.util.McScreenHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.BookEditScreen;
+import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
+import net.minecraft.client.gui.screens.inventory.SignEditScreen;
 import net.minecraft.client.player.KeyboardInput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,13 +24,24 @@ public class KeyboardInputMixin {
     @Inject(at = @At("HEAD"), method = "tick")
     private static void tick(CallbackInfo info) {
         KeyPressed keyPressed;
+        Minecraft minecraftClient = Minecraft.getInstance();
+        Screen sc = null;
+        if (minecraftClient.player != null) {
+            sc = McScreenHelper.getCurrentScreen(minecraftClient);
+        }
+        if (sc != null) Alias.isUnderTextInputScreen.set(
+            sc instanceof ChatScreen ||
+                sc instanceof CommandBlockEditScreen ||
+                sc instanceof SignEditScreen ||
+                sc instanceof BookEditScreen
+        );
         while ((keyPressed = BindAliasPlusClient.KEY_QUEUE.poll()) != null) {
             // should only be aliasWithoutArgs, so the args would be an empty string
             KeyBindingPlus keyBindingPlus;
             if (
                 (keyBindingPlus = BindAliasPlusClient.BINDING_PLUS.get(
-                        keyPressed.key()
-                    )) != null
+                    keyPressed.key()
+                )) != null
             ) {
                 AliasWithoutArgs<?> aliasWithoutArgs = keyPressed.pressed()
                     ? Alias.aliasesWithoutArgs.get(
@@ -34,13 +52,13 @@ public class KeyboardInputMixin {
                       );
                 aliasWithoutArgs =
                     aliasWithoutArgs == null
-                        ? (keyPressed.pressed()
-                              ? Alias.aliasesWithoutArgs_fromBindCommand.get(
-                                    keyBindingPlus.aliasNameOnKeyPressed()
-                                )
-                              : Alias.aliasesWithoutArgs_fromBindCommand.get(
-                                    keyBindingPlus.aliasNameOnKeyReleased()
-                                ))
+                        ? keyPressed.pressed()
+                            ? Alias.aliasesWithoutArgs_fromBindCommand.get(
+                                  keyBindingPlus.aliasNameOnKeyPressed()
+                              )
+                            : Alias.aliasesWithoutArgs_fromBindCommand.get(
+                                  keyBindingPlus.aliasNameOnKeyReleased()
+                              )
                         : aliasWithoutArgs;
                 if (aliasWithoutArgs != null) aliasWithoutArgs.run("");
             }

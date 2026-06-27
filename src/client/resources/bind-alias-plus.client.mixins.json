@@ -5,6 +5,7 @@
   "client": [
     "KeyboardInputMixin",
     "KeyBoardMixin",
+    "KeyMappingMixin",
     "MinecraftClientMixin",
     "MouseMixin"
   ],

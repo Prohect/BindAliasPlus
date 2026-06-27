@@ -3,15 +3,9 @@ package com.github.prohect.mixin.client;
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.KeyPressed;
 import com.github.prohect.alias.builtinAlias.LockAlias;
-import com.github.prohect.util.McScreenHelper;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.ChatScreen;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.BookEditScreen;
-import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
-import net.minecraft.client.gui.screens.inventory.SignEditScreen;
 import net.minecraft.client.input.KeyEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,21 +23,10 @@ public class KeyBoardMixin {
         KeyEvent event,
         CallbackInfo ci
     ) {
-        Minecraft minecraftClient = Minecraft.getInstance();
-        if (window != minecraftClient.getWindow().handle()) return;
-        //        BindAliasPlusClient.LOGGER.info("{}: {}", event.key(), action);
+        if (window != Minecraft.getInstance().getWindow().handle()) return;
         InputConstants.Key keyFromCode = InputConstants.Type.KEYSYM.getOrCreate(
             event.key()
         );
-        if (minecraftClient.player != null) {
-            Screen sc = McScreenHelper.getCurrentScreen(minecraftClient);
-            if (
-                sc instanceof ChatScreen ||
-                sc instanceof CommandBlockEditScreen ||
-                sc instanceof SignEditScreen ||
-                sc instanceof BookEditScreen
-            ) return;
-        }
         // Skip mod-bound keys whose action is currently locked
         if (LockAlias.LOCKED_PHYSICAL_KEYS.contains(keyFromCode)) return;
         if (BindAliasPlusClient.BINDING_PLUS.containsKey(keyFromCode)) {

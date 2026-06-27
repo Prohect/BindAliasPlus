@@ -96,32 +96,4 @@ public class MouseMixin {
             ) builtinAliasWithBooleanArgs.run("1");
         });
     }
-
-    @Inject(at = @At("RETURN"), method = "releaseMouse")
-    private void releaseMouse(CallbackInfo ci) {
-        Alias.aliasesWithArgs_notSuggested.forEach(
-            (aliasName, aliasWithArgs) -> {
-                if (
-                    aliasWithArgs instanceof
-                        BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs
-                ) if (
-                    builtinAliasWithBooleanArgs.flag &&
-                    !Alias.blackList4lockCursor.contains(
-                        builtinAliasWithBooleanArgs
-                    )
-                ) builtinAliasWithBooleanArgs.run("1");
-            }
-        );
-        Alias.aliasesWithArgs.forEach((aliasName, aliasWithArgs) -> {
-            if (
-                aliasWithArgs instanceof
-                    BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs
-            ) if (
-                builtinAliasWithBooleanArgs.flag &&
-                !Alias.blackList4lockCursor.contains(
-                    builtinAliasWithBooleanArgs
-                )
-            ) builtinAliasWithBooleanArgs.run("1");
-        });
-    }
 }
