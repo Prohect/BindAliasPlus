@@ -3,10 +3,12 @@ package com.github.prohect.alias.builtinAlias;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
 
 /**
- * User-facing lock alias — {@code +lock\attack} locks the attack key, etc.
+ * User-facing lock-key alias.
  * <p>
- * Registered in the suggested aliases-with-args map so command completion
- * offers action-type suggestions after {@code +lock\}.
+ * {@code +lockKey\gameKey:attack} — locks a vanilla game key.
+ * {@code +lockKey\myAlias} — locks physical keys bound to a custom UserAlias.
+ * <p>
+ * Command completion suggests both {@code gameKey:*} actions and UserAlias names.
  *
  * @see LockAlias
  * @see LockAlias_Unlock
@@ -14,7 +16,7 @@ import com.github.prohect.alias.BuiltinAliasWithArgs;
 public class LockAlias_OnLock extends BuiltinAliasWithArgs<LockAlias_OnLock> {
 
     public LockAlias_OnLock() {
-        super("+lock");
+        super("+lockKey");
     }
 
     @Override

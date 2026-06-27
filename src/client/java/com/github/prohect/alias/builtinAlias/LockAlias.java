@@ -19,8 +19,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 
 /**
- * Builtin alias to temporarily lock a game action, preventing the user's
- * physical key/mouse input from interfering with an alias sequence.
+ * Builtin alias to temporarily lock a game key or custom alias,
+ * preventing the user's physical key/mouse input from interfering
+ * with an alias sequence.
  * <p>
  * Usage: {@code builtinLock\actionType\flag}
  * <ul>
@@ -28,11 +29,12 @@ import net.minecraft.client.Options;
  *   <li>{@code builtinLock\attack\0} — unlock the attack key</li>
  * </ul>
  * <p>
- * Supported action types: attack, use, forward, back, left, right, jump, sneak, sprint
+ * Supported game-key types (use {@code gameKey:} prefix for suggestions):
+ * attack, use, forward, back, left, right, jump, sneak, sprint
  * <p>
- * User-facing shortcuts are {@link LockAlias_OnLock} ({@code +lock\attack}) and
- * {@link LockAlias_Unlock} ({@code -lock\attack}), registered as suggested
- * aliases with args.
+ * User-facing shortcuts are {@link LockAlias_OnLock} ({@code +lockKey\gameKey:attack})
+ * and {@link LockAlias_Unlock} ({@code -lockKey\gameKey:attack}).
+ * To lock a custom UserAlias, use {@code +lockKey\myAlias}.
  */
 public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
 
@@ -40,18 +42,20 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         super("builtinLock");
     }
 
-    /** Supported action types, exposed for command suggestions. */
+    /** Supported game-key action types, prefixed for command suggestions. */
     public static final List<String> SUPPORTED_ACTIONS = List.of(
-        "attack",
-        "use",
-        "forward",
-        "back",
-        "left",
-        "right",
-        "jump",
-        "sneak",
-        "sprint"
+        "gameKey:attack",
+        "gameKey:use",
+        "gameKey:forward",
+        "gameKey:back",
+        "gameKey:left",
+        "gameKey:right",
+        "gameKey:jump",
+        "gameKey:sneak",
+        "gameKey:sprint"
     );
+
+    private static final String GAMEKEY_PREFIX = "gameKey:";
 
     /**
      * A sentinel key that won't match any physical keyboard/mouse input.
@@ -69,15 +73,18 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
 
     static {
         for (String action : SUPPORTED_ACTIONS) {
+            String bare = action.startsWith(GAMEKEY_PREFIX)
+                ? action.substring(GAMEKEY_PREFIX.length())
+                : action;
             List<String> patterns = new ArrayList<>();
-            patterns.add("+" + action);
-            patterns.add("-" + action);
+            patterns.add("+" + bare);
+            patterns.add("-" + bare);
             patterns.add(
                 "builtin" +
-                    action.substring(0, 1).toUpperCase() +
-                    action.substring(1)
+                    bare.substring(0, 1).toUpperCase() +
+                    bare.substring(1)
             );
-            ACTION_ALIAS_PATTERNS.put(action, patterns);
+            ACTION_ALIAS_PATTERNS.put(bare, patterns);
         }
     }
 
@@ -87,6 +94,68 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
      */
     public static final Set<InputConstants.Key> LOCKED_PHYSICAL_KEYS =
         new HashSet<>();
+
+    /**
+     * Tracks which physical keys are locked for which alias name.
+     * Used by the alias-lock feature so unlock can remove the right keys.
+     */
+    private static final Map<
+        String,
+        Set<InputConstants.Key>
+    > LOCKED_ALIAS_KEYS = new HashMap<>();
+
+    // ── alias-name-based locking (lockAlias / unlockAlias) ───────────────
+
+    /**
+     * Lock all physical keys bound to the given alias name.
+     * The alias can still be triggered via {@code runAlias}.
+     */
+    static void lockAliasByName(String aliasName) {
+        if (LOCKED_ALIAS_KEYS.containsKey(aliasName)) return; // already locked
+        Set<InputConstants.Key> keys = new HashSet<>();
+        BindAliasPlusClient.BINDING_PLUS.forEach((key, binding) -> {
+            if (
+                aliasName.equals(binding.aliasNameOnKeyPressed()) ||
+                aliasName.equals(binding.aliasNameOnKeyReleased())
+            ) {
+                keys.add(key);
+            }
+        });
+        if (keys.isEmpty()) {
+            BindAliasPlusClient.LOGGER.warn(
+                "[Lock]No keys bound to alias: {}",
+                aliasName
+            );
+            return;
+        }
+        LOCKED_PHYSICAL_KEYS.addAll(keys);
+        LOCKED_ALIAS_KEYS.put(aliasName, keys);
+        BindAliasPlusClient.LOGGER.info(
+            "[Lock]Locked alias '{}' — {} key(s) blocked",
+            aliasName,
+            keys.size()
+        );
+    }
+
+    /**
+     * Unlock physical keys previously locked for the given alias name.
+     */
+    static void unlockAliasByName(String aliasName) {
+        Set<InputConstants.Key> keys = LOCKED_ALIAS_KEYS.remove(aliasName);
+        if (keys == null) {
+            BindAliasPlusClient.LOGGER.warn(
+                "[Lock]Alias not locked: {}",
+                aliasName
+            );
+            return;
+        }
+        LOCKED_PHYSICAL_KEYS.removeAll(keys);
+        BindAliasPlusClient.LOGGER.info(
+            "[Lock]Unlocked alias '{}' — {} key(s) restored",
+            aliasName,
+            keys.size()
+        );
+    }
 
     // ── instance ──────────────────────────────────────────────────────
 
@@ -118,10 +187,8 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
     static void lockAction(String actionType) {
         KeyMapping keyBinding = getKeyBindingForAction(actionType);
         if (keyBinding == null) {
-            BindAliasPlusClient.LOGGER.warn(
-                "[Lock]Unknown action type: {}",
-                actionType
-            );
+            // Not a vanilla action — try locking by alias name
+            lockAliasByName(actionType);
             return;
         }
         if (!savedBoundKeys.containsKey(actionType)) {
@@ -137,10 +204,8 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
     static void unlockAction(String actionType) {
         KeyMapping keyBinding = getKeyBindingForAction(actionType);
         if (keyBinding == null) {
-            BindAliasPlusClient.LOGGER.warn(
-                "[Lock]Unknown action type: {}",
-                actionType
-            );
+            // Not a vanilla action — try unlocking by alias name
+            unlockAliasByName(actionType);
             return;
         }
         InputConstants.Key savedKey = savedBoundKeys.remove(actionType);
@@ -248,9 +313,10 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
                 );
                 String aliasPart = tokenParts[0];
 
-                // Handle +lock\<action> / -lock\<action> — check the concrete action
+                // Handle +lockKey\<action> / -lockKey\<action> — check the concrete action
                 if (
-                    ("+lock".equals(aliasPart) || "-lock".equals(aliasPart)) &&
+                    ("+lockKey".equals(aliasPart) ||
+                        "-lockKey".equals(aliasPart)) &&
                     tokenParts.length >= 2
                 ) {
                     String lockActionName = tokenParts[1];
@@ -270,7 +336,10 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
 
     private static KeyMapping getKeyBindingForAction(String actionType) {
         Options options = Minecraft.getInstance().options;
-        return switch (actionType) {
+        String bare = actionType.startsWith(GAMEKEY_PREFIX)
+            ? actionType.substring(GAMEKEY_PREFIX.length())
+            : actionType;
+        return switch (bare) {
             case "attack" -> options.keyAttack;
             case "use" -> options.keyUse;
             case "forward" -> options.keyUp;
