@@ -36,6 +36,10 @@ import net.minecraft.client.util.InputUtil;
  */
 public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
 
+    public LockAlias() {
+        super("builtinLock");
+    }
+
     /** Supported action types, exposed for command suggestions. */
     public static final List<String> SUPPORTED_ACTIONS = List.of(
         "attack",

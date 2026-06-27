@@ -9,13 +9,17 @@ import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 
 public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
 
+    public SlotAlias() {
+        super("slot");
+    }
+
     /**
      * @param args from 1-9, or a variable name that resolves to 1-9
      */
     @SuppressWarnings("DataFlowIssue")
     @Override
     public SlotAlias run(String args) {
-        Integer resolved = VarAlias.resolveValue(args);
+        Integer resolved = VarAlias.resolveInt(args);
 
         if (resolved == null) {
             BindAliasPlusClient.LOGGER.warn(

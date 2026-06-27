@@ -7,6 +7,10 @@ import net.minecraft.client.option.KeyBinding;
 
 public class UseAlias extends BuiltinAliasWithArgs<UseAlias> {
 
+    public UseAlias() {
+        super("builtinUse");
+    }
+
     @Override
     public UseAlias run(String args) {
         boolean flag = false;
@@ -20,10 +24,10 @@ public class UseAlias extends BuiltinAliasWithArgs<UseAlias> {
                 BindAliasPlusClient.LOGGER.warn("[Use]Invalid arguments");
                 break;
         }
-        KeyBinding attackKey = MinecraftClient.getInstance().options.useKey;
-        attackKey.setPressed(flag);
+        KeyBinding useKey = MinecraftClient.getInstance().options.useKey;
+        useKey.setPressed(flag);
         if (flag) {
-            attackKey.timesPressed++;
+            useKey.timesPressed++;
         }
         return this;
     }

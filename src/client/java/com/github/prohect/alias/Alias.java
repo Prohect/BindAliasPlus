@@ -3,10 +3,12 @@ package com.github.prohect.alias;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.jetbrains.annotations.NotNull;
 
 public interface Alias<T extends Alias<T>> {
     List<Alias<?>> blackList4lockCursor = new ArrayList<>();
+    List<Alias<?>> blackList4Screen = new ArrayList<>();
     HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs = new HashMap<>();
     HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs_notSuggested =
         new HashMap<>();
@@ -17,6 +19,11 @@ public interface Alias<T extends Alias<T>> {
         new HashMap<>();
     char divider4AliasDefinition = ' ';
     char divider4AliasArgs = '\\';
+
+    public static AtomicBoolean isUnderTextInputScreen = new AtomicBoolean(
+        false
+    );
+    public static AtomicBoolean isUnderAnyScreen = new AtomicBoolean(false);
 
     /**
      * ignore blocks covered by double quotes
@@ -103,6 +110,12 @@ public interface Alias<T extends Alias<T>> {
     @SuppressWarnings({ "unchecked", "UnusedReturnValue" })
     default T addToLockCursorBlackList() {
         blackList4lockCursor.add(this);
+        return (T) this;
+    }
+
+    @SuppressWarnings({ "unchecked", "UnusedReturnValue" })
+    default T addToScreenBlackList() {
+        blackList4Screen.add(this);
         return (T) this;
     }
 }

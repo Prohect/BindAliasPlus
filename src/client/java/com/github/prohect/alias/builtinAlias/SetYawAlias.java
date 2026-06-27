@@ -7,6 +7,10 @@ import net.minecraft.client.network.ClientPlayerEntity;
 
 public class SetYawAlias extends BuiltinAliasWithDoubleArgs<SetYawAlias> {
 
+    public SetYawAlias() {
+        super("setYaw");
+    }
+
     @Override
     public SetYawAlias run(String args) {
         parseArgs(args);

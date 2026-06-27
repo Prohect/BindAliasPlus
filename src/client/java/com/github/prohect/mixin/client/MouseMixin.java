@@ -7,11 +7,6 @@ import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 import com.github.prohect.alias.builtinAlias.LockAlias;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.BookEditScreen;
-import net.minecraft.client.gui.screen.ingame.CommandBlockScreen;
-import net.minecraft.client.gui.screen.ingame.SignEditScreen;
 import net.minecraft.client.input.MouseInput;
 import net.minecraft.client.util.InputUtil;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,15 +28,7 @@ public class MouseMixin {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         if (window != minecraftClient.getWindow().getHandle()) return;
         InputUtil.Key key = InputUtil.Type.MOUSE.createFromCode(input.button());
-        if (minecraftClient.player != null) {
-            Screen sc = minecraftClient.currentScreen;
-            if (
-                sc instanceof ChatScreen ||
-                sc instanceof CommandBlockScreen ||
-                sc instanceof SignEditScreen ||
-                sc instanceof BookEditScreen
-            ) return;
-        }
+        if (Alias.isUnderTextInputScreen.get()) return;
         // Skip mod-bound keys whose action is currently locked
         if (LockAlias.LOCKED_PHYSICAL_KEYS.contains(key)) return;
         if (BindAliasPlusClient.BINDING_PLUS.containsKey(key)) {
@@ -73,9 +60,7 @@ public class MouseMixin {
             (aliasName, aliasWithArgs) -> {
                 if (
                     aliasWithArgs instanceof
-                        BuiltinAliasWithBooleanArgs<
-                            ?
-                        > builtinAliasWithBooleanArgs
+                        BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs
                 ) if (
                     builtinAliasWithBooleanArgs.flag &&
                     !Alias.blackList4lockCursor.contains(
