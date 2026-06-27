@@ -2,7 +2,6 @@ package com.github.prohect.mixin.client;
 
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.KeyPressed;
-import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.builtinAlias.LockAlias;
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
@@ -30,7 +29,6 @@ public class KeyBoardMixin {
         InputUtil.Key keyFromCode = InputUtil.Type.KEYSYM.createFromCode(
             input.key()
         );
-        if (Alias.isUnderTextInputScreen.get()) return;
         // Skip mod-bound keys whose action is currently locked
         if (LockAlias.LOCKED_PHYSICAL_KEYS.contains(keyFromCode)) return;
         if (BindAliasPlusClient.BINDING_PLUS.containsKey(keyFromCode)) {
