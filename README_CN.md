@@ -47,7 +47,7 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 - 41 → 副手槽位
 -
 - 你可以用双引号包裹参数,这样其中的空格就不会被视为分隔符。
-- **推荐用于嵌套定义**: 在其他别名定义内使用 `alias`、`bind`、`unbind`、`say` 或 `sendCommand` 内置别名时,使用分号 `;` 而不是空格 ` ` 作为参数之间的分隔符。这样你就可以在嵌套定义中使用正常的空格分隔符而不会产生冲突。示例: `alias +testAlias bind\v;+anotherAlias alias\+yetAnotherAlias;+anotherAlias;+jump alias\+nextAlias;wait\2;+yetAnotherAlias wait\1 bind\x;+testAlias` - 这里分号分隔这些内置别名的参数,而引号内的空格正常工作。
+- **推荐用于嵌套定义**: 在其他别名定义内使用 `alias`、`bind`、`unbind`、`say`、`sendCommand` 或 `localSay` 内置别名时,使用分号 `;` 而不是空格 ` ` 作为参数之间的分隔符。这样你就可以在嵌套定义中使用正常的空格分隔符而不会产生冲突。示例: `alias +testAlias bind\v;+anotherAlias alias\+yetAnotherAlias;+anotherAlias;+jump alias\+nextAlias;wait\2;+yetAnotherAlias wait\1 bind\x;+testAlias` - 这里分号分隔这些内置别名的参数,而引号内的空格正常工作。
 
 | 别名                    | 描述                                                           | 示例                                                            |
 |------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
@@ -64,6 +64,7 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | `bind\args`            | 几乎与命令 bind 相同，只是你需要用双引号包裹参数。                                 | `bind\"m meow wait\0 +fly"`（创建或替换绑定）                         |
 | `unbind\keyName`       | 几乎与命令 unbind 相同。                                              | `unbind\m`（解除按键上的绑定）                                         |
 | `say\string`           | 发送聊天消息。                                                      | `say\"How old r u?"`（发送聊天消息 "how old r u?"）                  |
+| `localSay\string`      | 仅在本地客户端显示聊天消息，不发送到服务器。适用于测试、通知和调试输出。        | `localSay\"Debug: slot is \(mySlot)"`（仅本地显示的消息）            |
 | `sendCommand\command`  | 发送命令。                                                        | `sendCommand\"gamemode creative"`（发送命令 "gamemode creative"） |
 | `var\varName\source`  | 将值存入变量。来源：`hotbarSlot`、`itemsOfSlot0-9`、`pitch`、`yaw` 或数字。 | `var\mySlot\hotbarSlot`（存储快捷栏槽位），`var\angle\pitch`（存储俯仰角） |
 
@@ -98,8 +99,8 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | `swapHand`  | _                    | 交换主手和副手之间的物品。            |
 | `+silent`   | `builtinSilent\1`    | 启用静默模式（禁止命令反馈消息）。        |
 | `-silent`   | `builtinSilent\0`    | 禁用静默模式（重新启用命令反馈消息）。      |
-| `+lock\<action>` | `builtinLock\<action>\1` | 锁定游戏操作键。`<action>` 可选：`attack`、`use`、`forward`、`back`、`left`、`right`、`jump`、`sneak`、`sprint`。 |
-| `-lock\<action>` | `builtinLock\<action>\0` | 解锁之前锁定的游戏操作。 |
+| `+lockKey\<target>` | `builtinLock\<target>\1` | 锁定游戏按键或自定义别名。对原版按键使用 `gameKey:attack`、`gameKey:forward` 等格式，或直接使用别名名称。 |
+| `-lockKey\<target>` | `builtinLock\<target>\0` | 解锁之前锁定的游戏按键或自定义别名。 |
 | `cyclePerspective` | —                    | 循环切换视角（FPS → TPS → TPS2）。                |
 | `FPS`              | `builtinSetPerspective\0` | 切换到第一人称视角。                              |
 | `TPS`              | `builtinSetPerspective\1` | 切换到第三人称背面视角。                          |
