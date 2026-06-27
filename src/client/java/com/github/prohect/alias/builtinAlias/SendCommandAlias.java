@@ -8,6 +8,10 @@ public class SendCommandAlias
     extends BuiltinAliasWithGreedyStringArgs<SendCommandAlias>
 {
 
+    public SendCommandAlias() {
+        super("sendCommand");
+    }
+
     @Override
     public SendCommandAlias run(String args) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;

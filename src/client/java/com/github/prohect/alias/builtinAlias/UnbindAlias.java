@@ -9,6 +9,10 @@ import net.minecraft.client.network.ClientPlayerEntity;
 
 public class UnbindAlias extends BuiltinAliasWithGreedyStringArgs<UnbindAlias> {
 
+    public UnbindAlias() {
+        super("unbind");
+    }
+
     @Override
     public UnbindAlias run(String args) {
         String line =
