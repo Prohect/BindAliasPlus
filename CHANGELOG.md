@@ -2,6 +2,58 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.2.8] - 2026-06-29
+
+### Added
+- **Immediate reapply after `releaseAll`** — `SneakAlias` (and any
+  `BuiltinAliasWithBooleanArgs` that opts in) now reapplies its key state
+  instantly when the game calls `KeyBinding.unpressAll()`, preventing a
+  1-tick gap that could cause the player to fall when opening inventory
+  while sneaking on a ledge.
+
+### Fixed
+- **Lock alias GL error** — `LockAlias` no longer uses `Integer.MIN_VALUE`
+  as the placeholder key code, which was outside GLFW's valid range and
+  spammed `GLFW_INVALID_VALUE (65539): Invalid key -2147483648` to the
+  render log.  Now uses `InputUtil.UNKNOWN_KEY` (GLFW_KEY_UNKNOWN = -1)
+  which is handled gracefully by both GLFW and Minecraft.
+
+### Changed
+- **Proxy settings** moved from project `gradle.properties` to
+  `~/.gradle/gradle.properties` so they are not committed to the repository.
+
+---
+
+## [1.2.7] - 2026-06-27
+
+### Changed
+- **Lock aliases renamed** — `+lock`/`-lock` → `+lockKey`/`-lockKey` for clarity.
+- **Action suggestions prefixed** — vanilla game keys now suggested as
+  `gameKey:attack`, `gameKey:forward`, etc. to avoid naming conflicts
+  with custom UserAliases.
+
+### Added
+- **Custom alias locking** — `+lockKey\myAlias` now locks all physical
+  keys bound to any UserAlias, preventing keyboard/mouse input from
+  triggering it while still allowing `/runAlias` to invoke it.
+- `+lockKey`/`-lockKey` unified: if the argument is a known `gameKey:*`
+  action, it locks the vanilla key; otherwise it locks by alias name.
+
+---
+
+## [1.2.6] - 2026-06-27
+
+### Added
+- `localSay` alias — displays chat message on the local client only,
+  without sending it to the server.  Useful for testing, notifications,
+  and debug output.
+
+### Fixed
+- `SwapSlotAlias`: guard against opening the inventory screen when
+  another screen is already active, preventing unexpected behavior.
+
+---
+
 ## [1.2.5] - 2026-06-27
 
 ### Screen state tracking
