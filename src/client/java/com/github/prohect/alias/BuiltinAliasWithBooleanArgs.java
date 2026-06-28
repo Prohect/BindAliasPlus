@@ -8,6 +8,10 @@ import com.github.prohect.BindAliasPlusClient;
  */
 public abstract class BuiltinAliasWithBooleanArgs<T extends BuiltinAliasWithBooleanArgs<T>> extends BuiltinAliasWithArgs<T> {
 
+    public static final java.util.List<
+        BuiltinAliasWithBooleanArgs<?>
+    > reapplyImmediatelyAfterReleaseAll = new java.util.ArrayList<>();
+
     protected BuiltinAliasWithBooleanArgs(String builtinAliasName) {
         super(builtinAliasName);
     }
@@ -36,5 +40,11 @@ public abstract class BuiltinAliasWithBooleanArgs<T extends BuiltinAliasWithBool
         if (this.flag) {
             this.run("1");
         }
+    }
+
+    @SuppressWarnings({ "unchecked", "UnusedReturnValue" })
+    public T addToReapplyImmediatelyAfterReleaseAll() {
+        reapplyImmediatelyAfterReleaseAll.add(this);
+        return (T) this;
     }
 }
