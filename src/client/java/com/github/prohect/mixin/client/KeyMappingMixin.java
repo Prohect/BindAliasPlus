@@ -24,13 +24,23 @@ public class KeyMappingMixin {
                     !Alias.blackList4lockCursor.contains(
                         builtinAliasWithBooleanArgs
                     )
-                ) WaitAlias.tasksWaiting.add(
-                    new WaitAliasRecord(
-                        1,
-                        builtinAliasWithBooleanArgs.builtinAliasName,
-                        true
-                    )
-                );
+                ) {
+                    if (
+                        BuiltinAliasWithBooleanArgs.reapplyImmediatelyAfterReleaseAll.contains(
+                            builtinAliasWithBooleanArgs
+                        )
+                    ) {
+                        builtinAliasWithBooleanArgs.reapplyToGameKeyMapping();
+                    } else {
+                        WaitAlias.tasksWaiting.add(
+                            new WaitAliasRecord(
+                                1,
+                                builtinAliasWithBooleanArgs.builtinAliasName,
+                                true
+                            )
+                        );
+                    }
+                }
             }
         );
         Alias.aliasesWithArgs.forEach((aliasName, aliasWithArgs) -> {
@@ -42,13 +52,23 @@ public class KeyMappingMixin {
                 !Alias.blackList4lockCursor.contains(
                     builtinAliasWithBooleanArgs
                 )
-            ) WaitAlias.tasksWaiting.add(
-                new WaitAliasRecord(
-                    1,
-                    builtinAliasWithBooleanArgs.builtinAliasName,
-                    true
-                )
-            );
+            ) {
+                if (
+                    BuiltinAliasWithBooleanArgs.reapplyImmediatelyAfterReleaseAll.contains(
+                        builtinAliasWithBooleanArgs
+                    )
+                ) {
+                    builtinAliasWithBooleanArgs.reapplyToGameKeyMapping();
+                } else {
+                    WaitAlias.tasksWaiting.add(
+                        new WaitAliasRecord(
+                            1,
+                            builtinAliasWithBooleanArgs.builtinAliasName,
+                            true
+                        )
+                    );
+                }
+            }
         });
     }
 }
