@@ -107,6 +107,22 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
     // ── alias-name-based locking ─────────────────────────────────────────
 
     /**
+     * Restore all locked game keys and clear all lock state.
+     * Called on server disconnect to prevent stale key bindings.
+     */
+    public static void clearAllLocks() {
+        for (String actionType : new HashSet<>(savedBoundKeys.keySet())) {
+            unlockAction(actionType);
+        }
+        for (String aliasName : new HashSet<>(LOCKED_ALIAS_KEYS.keySet())) {
+            unlockAliasByName(aliasName);
+        }
+        LOCKED_PHYSICAL_KEYS.clear();
+        savedBoundKeys.clear();
+        LOCKED_ALIAS_KEYS.clear();
+    }
+
+    /**
      * Lock all physical keys bound to the given alias name.
      * The alias can still be triggered via {@code runAlias}.
      */
