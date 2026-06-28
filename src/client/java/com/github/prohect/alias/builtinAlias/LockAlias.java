@@ -59,11 +59,11 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
 
     /**
      * A sentinel key that won't match any physical keyboard/mouse input.
-     * We use a unique code to avoid colliding with {@link InputUtil#UNKNOWN_KEY}
-     * which is shared by all unbound vanilla key bindings.
+     * Uses {@link InputUtil#UNKNOWN_KEY} (GLFW_KEY_UNKNOWN = -1) which
+     * GLFW handles gracefully (no "Invalid key" error) and Minecraft
+     * already skips in {@code updatePressedStates()}.
      */
-    private static final InputUtil.Key LOCK_PLACEHOLDER =
-        InputUtil.Type.KEYSYM.createFromCode(Integer.MIN_VALUE);
+    private static final InputUtil.Key LOCK_PLACEHOLDER = InputUtil.UNKNOWN_KEY;
 
     // Maps action type -> original saved bound key
     private static final Map<String, InputUtil.Key> savedBoundKeys =
