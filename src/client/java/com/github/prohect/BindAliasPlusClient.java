@@ -170,6 +170,15 @@ public class BindAliasPlusClient implements ClientModInitializer {
             client.execute(this::loadCFG)
         );
 
+        // clear mod state on disconnect (restore locked keys, etc.)
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) ->
+            client.execute(() -> {
+                LockAlias.clearAllLocks();
+                KEY_QUEUE.clear();
+                silentMode = false;
+            })
+        );
+
         // register command alias
         ClientCommandRegistrationCallback.EVENT.register(
             (dispatcher, registryAccess) ->
