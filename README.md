@@ -74,6 +74,8 @@ BindAliasPlus includes prebuilt aliases for common actions. They are divided int
 | `localSay\string`      | display a chat message on the local client only, without sending to the server. Useful for testing, notifications, and debug output. | `localSay\"Debug: slot is \(mySlot)"` (local-only message) |
 | `sendCommand\command`  | send a command.                                                                           | `sendCommand\"gamemode creative"` (send a command that is "gamemode creative") |
 | `var\varName\source`  | Store a value into a variable. Sources: `hotbarSlot`, `itemsOfSlot0-9`, `pitch`, `yaw`, or a number. | `var\mySlot\hotbarSlot` (store hotbar slot), `var\angle\pitch` (store pitch angle) |
+| `reapply\action`       | Manually re-assert a held-down boolean alias (attack, use, forward, back, left, right, jump, sneak, sprint, drop, openInventory). Useful at the end of a UserAlias after screen transitions. | `reapply\forward` (re-presses forward key if held)                                |
+| `openInventory\state`  | Opens (1) or closes (0) the inventory screen.                                            | `openInventory\1` (opens inventory), `openInventory\0` (closes inventory)         |
 
 > **Numeric aliases support variable references:** `yaw`, `pitch`, `setYaw`, `setPitch`, `slot`, `swapSlot`, `wait`, and `setPerspective` all accept variable names (e.g., `yaw\myVar` or `slot\mySlot`) in place of raw numbers.
 
@@ -101,9 +103,12 @@ These are shorthand aliases that map to common `state=1` (start) and `state=0` (
 | `-sneak`    | `builtinSneak\0`   | Stops sneaking (releases sneak key).                          |
 | `+sprint`   | `builtinSprint\1`  | Starts sprinting (holds sprint key).                          |
 | `-sprint`   | `builtinSprint\0`  | Stops sprinting (releases sprint key).                        |
-| `drop`      | `builtinDrop\0`    | Drops one item from the held stack.                           |
-| `dropStack` | `builtinDrop\1`    | Drops the entire held stack.                                  |
-| `swapHand`  | _                  | Swaps items between main hand and offhand.                    |
+| `+drop`     | `builtinDrop\1`    | Presses the drop key (drops one item; drops full stack when combined with sprint/sneak). |
+| `-drop`     | `builtinDrop\0`    | Release drop key.                                              |
+| `+openInventory` | `builtinOpenInventory\1` | Opens the inventory screen.                              |
+| `-openInventory` | `builtinOpenInventory\0` | Closes the inventory screen (if open).                   |
+| `pickItem`  | —                   | Triggers vanilla pick-block on the targeted block/entity.     |
+| `swapHand`  | _                   | Swaps items between main hand and offhand.                    |
 | `+silent`   | `builtinSilent\1`  | Enables silent mode (suppresses command feedback messages).   |
 | `-silent`   | `builtinSilent\0`  | Disables silent mode (re-enables command feedback messages).  |
 | `+lockKey\<target>` | `builtinLock\<target>\1` | Locks a game key or custom alias. Use `gameKey:attack`, `gameKey:forward`, etc. for vanilla keys, or an alias name for custom aliases. |
@@ -191,7 +196,7 @@ Here's a real-world config file (`config/bind-alias-plus.cfg`) showing the key f
 | Command                          | Purpose                                                                                                                                                                                                                                                                                                                     | Example                                                   |
 |----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------|
 | `/alias <name> <definition>`     | Create a custom alias.                                                                                                                                                                                                                                                                                                      | `/alias myAlias +jump wait\1 -jump`                       |
-| `/bind <key> <definition>`       | Bind a key to a sequence of aliases by definition of this command or an existing alias.For each definition split by divide mark(things inside double quotes would still be a same block) starts with + or -, it will create an opposite alias. For the 1st eg, it also bind -forward and +back to release of keyboard key g | `/bind g +forward wait\10 -back   OR   /bind n dropStack` |
+| `/bind <key> <definition>`       | Bind a key to a sequence of aliases by definition of this command or an existing alias.For each definition split by divide mark(things inside double quotes would still be a same block) starts with + or -, it will create an opposite alias. For the 1st eg, it also bind -forward and +back to release of keyboard key g | `/bind g +forward wait\10 -back   OR   /bind n +drop` |
 | `/bindByAliasName <key> <alias>` | Bind a key to an existing alias.                                                                                                                                                                                                                                                                                            | `/bindByAliasName mouse5 +fly`                            |
 | `/unbind <key>`                  | Remove a key binding.                                                                                                                                                                                                                                                                                                       | `/unbind mouse5`                                          |
 | `/reloadCFG`                     | Reload config from file.                                                                                                                                                                                                                                                                                                    | `/reloadCFG`                                              |
