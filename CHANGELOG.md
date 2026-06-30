@@ -2,7 +2,7 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
-## [1.2.8] - 2026-06-29
+## [1.3.0] - 2026-06-30
 
 ### Added
 - **`reapply` alias** — new `reapply\action` builtin to manually re-assert a
@@ -22,6 +22,17 @@ All notable changes to BindAliasPlus will be documented in this file.
 - **`KeyMappingMixin`** — the automatic reapply-after-`releaseAll` mixin
   is removed. Use the explicit `reapply\action` alias instead for more
   predictable behavior.
+
+---
+
+## [1.2.8] - 2026-06-29
+
+### Added
+- **Immediate reapply after `releaseAll`** — `SneakAlias` (and any
+  `BuiltinAliasWithBooleanArgs` that opts in) now reapplies its key state
+  instantly when the game calls `KeyBinding.unpressAll()`, preventing a
+  1-tick gap that could cause the player to fall when opening inventory
+  while sneaking on a ledge.
 
 ### Fixed
 - **Lock alias GL error** — `LockAlias` no longer uses `Integer.MIN_VALUE`
