@@ -6,7 +6,6 @@
     "GuiMixin",
     "KeyboardInputMixin",
     "KeyBoardMixin",
-    "KeyMappingMixin",
     "MinecraftClientMixin",
     "MouseMixin"
   ],

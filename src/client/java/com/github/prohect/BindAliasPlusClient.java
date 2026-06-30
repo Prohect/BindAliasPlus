@@ -92,10 +92,12 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new VarAlias().putToAliasesWithArgs();
         new LockAlias().putToAliasesWithArgs_notSuggested();
         new RunAliasAlias().putToAliasesWithArgs_notSuggested();
+        new OpenInventoryAlias().putToAliasesWithArgs_notSuggested();
 
         //load builtin aliasesWithoutArgs
         new CyclePerspectiveAlias().putToAliasesWithoutArgs();
         new SwapHandAlias().putToAliasesWithoutArgs();
+        new PickItemAlias().putToAliasesWithoutArgs();
         new ShutdownAlias().putToAliasesWithoutArgs_notSuggested();
         new ReloadCFGAlias().putToAliasesWithoutArgs();
         new UnloadCFGAliasesAlias().putToAliasesWithoutArgs();
@@ -120,8 +122,10 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new UserAlias("builtinSneak\\0").putToAliasesWithoutArgs("-sneak");
         new UserAlias("builtinSprint\\1").putToAliasesWithoutArgs("+sprint");
         new UserAlias("builtinSprint\\0").putToAliasesWithoutArgs("-sprint");
-        new UserAlias("builtinDrop\\0").putToAliasesWithoutArgs("drop");
-        new UserAlias("builtinDrop\\1").putToAliasesWithoutArgs("dropStack");
+        new UserAlias("builtinDrop\\1").putToAliasesWithoutArgs("+drop");
+        new UserAlias("builtinDrop\\0").putToAliasesWithoutArgs("-drop");
+        new UserAlias("builtinOpenInventory\\1").putToAliasesWithoutArgs("+openInventory");
+        new UserAlias("builtinOpenInventory\\0").putToAliasesWithoutArgs("-openInventory");
         new UserAlias("builtinSilent\\1").putToAliasesWithoutArgs("+silent");
         new UserAlias("builtinSilent\\0").putToAliasesWithoutArgs("-silent");
         new UserAlias("builtinSetPerspective\\0").putToAliasesWithoutArgs(
@@ -137,6 +141,8 @@ public class BindAliasPlusClient implements ClientModInitializer {
         // +lock\<action> / -lock\<action> — compact arg-based form with suggestions
         new LockAlias_OnLock().putToAliasesWithArgs();
         new LockAlias_Unlock().putToAliasesWithArgs();
+        // Reapply alias — manually re-assert a held-down boolean alias
+        new ReapplyAlias().putToAliasesWithArgs();
 
         // init cfg file (create if not exists)
         try {
@@ -560,6 +566,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
                     )
                 )
         );
+
     }
 
     public void loadCFG() {
@@ -867,6 +874,15 @@ public class BindAliasPlusClient implements ClientModInitializer {
                     if (
                         name.startsWith(partialArg) && a2 instanceof UserAlias
                     ) finalBuilder2.suggest(name);
+                });
+            }
+            if ("reapply".equals(aliasName)) {
+                builder = builder.createOffset(builder.getStart() + a + 1);
+                SuggestionsBuilder finalBuilder2 = builder;
+                ReapplyAlias.SUPPORTED_ACTIONS.forEach(action -> {
+                    if (action.startsWith(partialArg)) finalBuilder2.suggest(
+                        action
+                    );
                 });
             }
             // Suggest variable names for aliases that accept numeric args

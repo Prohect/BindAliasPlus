@@ -67,6 +67,8 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | `localSay\string`      | 仅在本地客户端显示聊天消息，不发送到服务器。适用于测试、通知和调试输出。        | `localSay\"Debug: slot is \(mySlot)"`（仅本地显示的消息）            |
 | `sendCommand\command`  | 发送命令。                                                        | `sendCommand\"gamemode creative"`（发送命令 "gamemode creative"） |
 | `var\varName\source`  | 将值存入变量。来源：`hotbarSlot`、`itemsOfSlot0-9`、`pitch`、`yaw` 或数字。 | `var\mySlot\hotbarSlot`（存储快捷栏槽位），`var\angle\pitch`（存储俯仰角） |
+| `reapply\action`       | 手动重新激活一个按住状态的布尔别名（attack, use, forward, back, left, right, jump, sneak, sprint, drop, openInventory）。适合在 UserAlias 末尾用于界面切换后恢复按键状态。 | `reapply\forward`（如果处于按住状态则重新按下前进键）                                |
+| `openInventory\state`  | 打开（1）或关闭（0）物品栏界面。                                            | `openInventory\1`（打开物品栏），`openInventory\0`（关闭物品栏）         |
 
 > **数值别名支持变量引用：** `yaw`、`pitch`、`setYaw`、`setPitch`、`slot`、`swapSlot`、`wait` 和 `setPerspective` 均接受变量名（如 `yaw\myVar` 或 `slot\mySlot`）代替原始数字。
 
@@ -94,8 +96,11 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | `-sneak`    | `builtinSneak\0`     | 停止潜行（释放潜行键）。             |
 | `+sprint`   | `builtinSprint\1`    | 开始疾跑（按住疾跑键）。             |
 | `-sprint`   | `builtinSprint\0`    | 停止疾跑（释放疾跑键）。             |
-| `drop`      | `builtinDrop\0`      | 从持有的堆叠中丢弃一个物品。           |
-| `dropStack` | `builtinDrop\1`      | 丢弃整个持有的堆叠。               |
+| `+drop`     | `builtinDrop\1`    | 按下丢弃键（丢弃一个物品，与疾跑/潜行键组合可丢弃整组）。              |
+| `-drop`     | `builtinDrop\0`    | 释放丢弃键。                                                  |
+| `+openInventory` | `builtinOpenInventory\1` | 打开物品栏界面。                              |
+| `-openInventory` | `builtinOpenInventory\0` | 关闭物品栏界面（如果已打开）。                   |
+| `pickItem`  | —                   | 对瞄准的方块/实体触发原版的选取方块功能。     |
 | `swapHand`  | _                    | 交换主手和副手之间的物品。            |
 | `+silent`   | `builtinSilent\1`    | 启用静默模式（禁止命令反馈消息）。        |
 | `-silent`   | `builtinSilent\0`    | 禁用静默模式（重新启用命令反馈消息）。      |
@@ -182,7 +187,7 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | 命令                               | 用途                                                                                                                                  | 示例                                                       |
 |----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
 | `/alias <name> <definition>`     | 创建自定义别名。                                                                                                                            | `/alias myAlias +jump wait\1 -jump`                      |
-| `/bind <key> <definition>`       | 将按键绑定到此命令定义的别名序列或现有别名。对于通过分隔符分割的每个定义（双引号内的内容仍为同一块），如果以 + 或 - 开头，它将创建一个相反的别名。例如第一个例子，它还将 -forward 和 +back 绑定到键盘键 g 的释放 | `/bind g +forward wait\10 -back   或   /bind n dropStack` |
+| `/bind <key> <definition>`       | 将按键绑定到此命令定义的别名序列或现有别名。对于通过分隔符分割的每个定义（双引号内的内容仍为同一块），如果以 + 或 - 开头，它将创建一个相反的别名。例如第一个例子，它还将 -forward 和 +back 绑定到键盘键 g 的释放 | `/bind g +forward wait\10 -back   或   /bind n +drop` |
 | `/bindByAliasName <key> <alias>` | 将按键绑定到现有别名。                                                                                                                         | `/bindByAliasName mouse5 +fly`                           |
 | `/unbind <key>`                  | 移除按键绑定。                                                                                                                             | `/unbind mouse5`                                         |
 | `/reloadCFG`                     | 从文件重新加载配置。                                                                                                                          | `/reloadCFG`                                             |

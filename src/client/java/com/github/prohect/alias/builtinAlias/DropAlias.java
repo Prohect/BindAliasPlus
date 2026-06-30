@@ -2,8 +2,8 @@ package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.InteractionHand;
 
 public class DropAlias extends BuiltinAliasWithBooleanArgs<DropAlias> {
 
@@ -12,18 +12,17 @@ public class DropAlias extends BuiltinAliasWithBooleanArgs<DropAlias> {
     }
 
     /**
-     * @param args if args is "1", drop the whole stack, if args is "0", drop a single one
+     * @param args 1 to press the drop key (drops one item or full stack
+     *             with control held), 0 to release
      */
     @Override
     public DropAlias run(String args) {
         parseArgs(args);
-        // cancle press event from text input screen
+        // cancel press event from text input screen
         if (Alias.isUnderTextInputScreen.get() && flag) return this;
-        Minecraft that = Minecraft.getInstance();
-        if (that.player == null) return this;
-        if (!that.player.isSpectator() && that.player.drop(flag)) {
-            that.player.swing(InteractionHand.MAIN_HAND);
-        }
+        KeyMapping dropKey = Minecraft.getInstance().options.keyDrop;
+        dropKey.setDown(flag);
+        if (flag) dropKey.clickCount++;
         return this;
     }
 }
