@@ -12,7 +12,6 @@ BRANCH="$(git branch --show-current)"
 echo "=== Branch: $BRANCH ==="
 
 SRC_DIR="mc-decompile-sources/$BRANCH"
-MC_VERSION=$(grep "^minecraft_version=" gradle.properties | cut -d= -f2)
 
 # Step 1: Generate decompiled Minecraft sources (if not already cached)
 if [ -d "$SRC_DIR" ] && [ "$(find "$SRC_DIR" -name '*.java' 2>/dev/null | wc -l)" -gt 0 ]; then
@@ -34,6 +33,7 @@ sed -i '/gradleprojectnature/d' .project
 sed -i '/<buildCommand>/{:a;N;/<\/buildCommand>/!ba;/gradleprojectbuilder/d}' .project
 
 # Step 4: Extract MC source jars to mc-decompile-sources/ for agent browsing
+#         Extracts only the JARs that .classpath references (avoids stale Loom generations).
 #         (JDTLS uses the -sources.jar directly via .classpath — more reliable)
 if [ -d "$SRC_DIR" ] && [ "$(find "$SRC_DIR" -name '*.java' | wc -l)" -gt 0 ]; then
     echo "[4/4] Sources already cached: $SRC_DIR ($(find "$SRC_DIR" -name '*.java' | wc -l) files)"
@@ -41,7 +41,7 @@ else
     echo "[4/4] Extracting Minecraft sources → $SRC_DIR ..."
     rm -rf "$SRC_DIR"
     mkdir -p "$SRC_DIR"
-    find .gradle/loom-cache/minecraftMaven -name "*-sources.jar" -path "*${MC_VERSION}*" | while read srcjar; do
+    grep -o 'sourcepath="[^"]*loom-cache[^"]*-sources\.jar"' .classpath | sed 's/sourcepath="//;s/"$//' | sort -u | while read srcjar; do
         echo "  extracting: $srcjar"
         unzip -o -q "$srcjar" -d "$SRC_DIR"/
     done
