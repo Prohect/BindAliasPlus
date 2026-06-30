@@ -1,3 +1,5 @@
+> ⚠️ **此分支已弃用。** 请使用 [`1.21_1.21.8`](https://github.com/Prohect/BindAliasPlus/tree/1.21_1.21.8) — 它覆盖了 MC 1.21.0–1.21.8 的单一构建。
+
 # BindAliasPlus
 
 一个 Minecraft Fabric 客户端模组,允许创建自定义别名和按键绑定,通过简单的按键操作来自动化复杂的游戏内动作。
