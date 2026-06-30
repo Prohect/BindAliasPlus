@@ -218,8 +218,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
             return null;
         }
 
-        // getSelectedSlot returns 0-8, we add 1 to match the mod's 1-9 convention
-        return inventory.getSelectedSlot() + 1;
+        // selectedSlot is 0-8, we add 1 to match the mod's 1-9 convention
+        return inventory.selectedSlot + 1;
     }
 
     /**
