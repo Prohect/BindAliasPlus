@@ -12,6 +12,7 @@ BRANCH="$(git branch --show-current)"
 echo "=== Branch: $BRANCH ==="
 
 SRC_DIR="mc-decompile-sources/$BRANCH"
+MC_VERSION=$(grep "^minecraft_version=" gradle.properties | cut -d= -f2)
 
 # Step 1: Generate decompiled Minecraft sources (if not already cached)
 if [ -d "$SRC_DIR" ] && [ "$(find "$SRC_DIR" -name '*.java' 2>/dev/null | wc -l)" -gt 0 ]; then
@@ -40,7 +41,7 @@ else
     echo "[4/4] Extracting Minecraft sources → $SRC_DIR ..."
     rm -rf "$SRC_DIR"
     mkdir -p "$SRC_DIR"
-    find .gradle/loom-cache/minecraftMaven -name "*-sources.jar" | while read srcjar; do
+    find .gradle/loom-cache/minecraftMaven -name "*-sources.jar" -path "*${MC_VERSION}*" | while read srcjar; do
         echo "  extracting: $srcjar"
         unzip -o -q "$srcjar" -d "$SRC_DIR"/
     done
