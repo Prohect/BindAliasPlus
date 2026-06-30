@@ -2,6 +2,29 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.3.0] - 2026-06-30
+
+### Added
+- **`reapply` alias** — new `reapply\action` builtin to manually re-assert a
+  held-down boolean alias at the end of a UserAlias sequence (e.g., after
+  a screen transition).
+- **`pickItem` alias** — triggers vanilla pick-block behavior via key mapping.
+- **`openInventory` alias** — opens/closes the inventory screen via
+  `+openInventory`/`-openInventory` (boolean alias pattern).
+
+### Changed
+- **`drop`/`dropStack` → `+drop`/`-drop`** — drop alias now uses the
+  vanilla key-mapping system (`KeyMapping.setDown`) instead of directly
+  calling `player.drop()`. Renamed to follow the `+`/`-` press/release
+  convention used by other boolean aliases.
+
+### Removed
+- **`KeyMappingMixin`** — the automatic reapply-after-`releaseAll` mixin
+  is removed. Use the explicit `reapply\action` alias instead for more
+  predictable behavior.
+
+---
+
 ## [1.2.8] - 2026-06-29
 
 ### Added
