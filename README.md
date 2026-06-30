@@ -1,3 +1,5 @@
+> ⚠️ **This branch is deprecated.** Use [`1.21_1.21.8`](https://github.com/Prohect/BindAliasPlus/tree/1.21_1.21.8) instead — it covers MC 1.21.0–1.21.8 in a single build.
+
 # BindAliasPlus
 
 A Minecraft Fabric client mod that allows creating custom aliases and key bindings to automate complex in-game actions
