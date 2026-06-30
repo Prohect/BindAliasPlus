@@ -103,7 +103,7 @@ These are shorthand aliases that map to common `state=1` (start) and `state=0` (
 | `-sneak`    | `builtinSneak\0`   | Stops sneaking (releases sneak key).                          |
 | `+sprint`   | `builtinSprint\1`  | Starts sprinting (holds sprint key).                          |
 | `-sprint`   | `builtinSprint\0`  | Stops sprinting (releases sprint key).                        |
-| `+drop`     | `builtinDrop\1`    | Presses the drop key (drops one item; drops full stack when combined with sprint/sneak). |
+| `+drop`     | `builtinDrop\1`    | Presses the drop key (drops one item; drops full stack when combined with  keyboard control key). |
 | `-drop`     | `builtinDrop\0`    | Release drop key.                                              |
 | `+openInventory` | `builtinOpenInventory\1` | Opens the inventory screen.                              |
 | `-openInventory` | `builtinOpenInventory\0` | Closes the inventory screen (if open).                   |
