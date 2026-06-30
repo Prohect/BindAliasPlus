@@ -144,17 +144,17 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new UserAlias("builtinSprint\\0").putToAliasesWithoutArgs("-sprint");
         new UserAlias("builtinDrop\\1").putToAliasesWithoutArgs("+drop");
         new UserAlias("builtinDrop\\0").putToAliasesWithoutArgs("-drop");
-        new UserAlias("builtinOpenInventory\1").putToAliasesWithoutArgs("+openInventory");
-        new UserAlias("builtinOpenInventory\0").putToAliasesWithoutArgs("-openInventory");
-        new UserAlias("builtinSilent\1").putToAliasesWithoutArgs("+silent");
-        new UserAlias("builtinSilent\0").putToAliasesWithoutArgs("-silent");
-        new UserAlias("builtinSetPerspective\0").putToAliasesWithoutArgs(
+        new UserAlias("builtinOpenInventory\\1").putToAliasesWithoutArgs("+openInventory");
+        new UserAlias("builtinOpenInventory\\0").putToAliasesWithoutArgs("-openInventory");
+        new UserAlias("builtinSilent\\1").putToAliasesWithoutArgs("+silent");
+        new UserAlias("builtinSilent\\0").putToAliasesWithoutArgs("-silent");
+        new UserAlias("builtinSetPerspective\\0").putToAliasesWithoutArgs(
             "FPS"
         );
-        new UserAlias("builtinSetPerspective\1").putToAliasesWithoutArgs(
+        new UserAlias("builtinSetPerspective\\1").putToAliasesWithoutArgs(
             "TPS"
         );
-        new UserAlias("builtinSetPerspective\2").putToAliasesWithoutArgs(
+        new UserAlias("builtinSetPerspective\\2").putToAliasesWithoutArgs(
             "TPS2"
         );
         // Lock aliases (lock/unlock game actions to prevent user input interference)
