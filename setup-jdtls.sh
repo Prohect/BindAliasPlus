@@ -54,4 +54,4 @@ else
 fi
 
 echo ""
-echo "Done. Restart Zed (lsp: restart) to pick up changes."
+echo "Done."
