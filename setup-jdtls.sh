@@ -1,6 +1,6 @@
 #!/bin/bash
 # setup-jdtls.sh — Prepare JDTLS with navigable Minecraft sources for the current branch
-# Run once per branch. Sources are cached in mc-sources/<branch>/ for fast switching.
+# Run once per branch. Sources are cached in mc-decompile-sources/<branch>/ for fast switching.
 
 set -e
 
@@ -11,7 +11,7 @@ cd "$SCRIPT_DIR"
 BRANCH="$(git branch --show-current)"
 echo "=== Branch: $BRANCH ==="
 
-SRC_DIR="mc-sources/$BRANCH"
+SRC_DIR="mc-decompile-sources/$BRANCH"
 
 # Step 1: Generate decompiled Minecraft sources (if not already cached)
 if [ -d "$SRC_DIR" ] && [ "$(find "$SRC_DIR" -name '*.java' 2>/dev/null | wc -l)" -gt 0 ]; then
@@ -55,7 +55,7 @@ fi
 # Step 5: Point classpath sourcepath to the branch-specific extracted directory
 echo "[5/5] Updating source paths..."
 sed -i 's|sourcepath="[^"]*\.gradle/loom-cache/minecraftMaven/[^"]*-sources\.jar"|sourcepath="'"$WIN_DIR"'/'"$SRC_DIR"'"|g' .classpath
-sed -i 's|sourcepath="[^"]*mc-sources[^"]*"|sourcepath="'"$WIN_DIR"'/"'"$SRC_DIR"'"|g' .classpath
+sed -i 's|sourcepath="[^"]*mc-decompile-sources[^"]*"|sourcepath="'"$WIN_DIR"'/'"$SRC_DIR"'"|g' .classpath
 
 echo ""
 echo "Done. Restart Zed (lsp: restart) to pick up changes."
