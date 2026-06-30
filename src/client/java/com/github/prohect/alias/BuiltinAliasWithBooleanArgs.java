@@ -3,14 +3,9 @@ package com.github.prohect.alias;
 import com.github.prohect.BindAliasPlusClient;
 
 /**
- * consider whether you need to cancle the press event from text input screen
- * consider whether you need to call reapplyToGameKeyMapping after game's releaseAll method
+ * consider whether you need to cancel the press event from text input screen
  */
 public abstract class BuiltinAliasWithBooleanArgs<T extends BuiltinAliasWithBooleanArgs<T>> extends BuiltinAliasWithArgs<T> {
-
-    public static final java.util.List<
-        BuiltinAliasWithBooleanArgs<?>
-    > reapplyImmediatelyAfterReleaseAll = new java.util.ArrayList<>();
 
     protected BuiltinAliasWithBooleanArgs(String builtinAliasName) {
         super(builtinAliasName);
@@ -42,9 +37,4 @@ public abstract class BuiltinAliasWithBooleanArgs<T extends BuiltinAliasWithBool
         }
     }
 
-    @SuppressWarnings({ "unchecked", "UnusedReturnValue" })
-    public T addToReapplyImmediatelyAfterReleaseAll() {
-        reapplyImmediatelyAfterReleaseAll.add(this);
-        return (T) this;
-    }
 }

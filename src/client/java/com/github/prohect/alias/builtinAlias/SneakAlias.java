@@ -9,7 +9,6 @@ public class SneakAlias extends BuiltinAliasWithBooleanArgs<SneakAlias> {
 
     public SneakAlias() {
         super("builtinSneak");
-        addToReapplyImmediatelyAfterReleaseAll();
     }
 
     @Override
