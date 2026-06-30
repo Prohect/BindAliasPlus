@@ -5,6 +5,7 @@ import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 import com.github.prohect.util.McScreenHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 
 public class OpenInventoryAlias
@@ -34,7 +35,7 @@ public class OpenInventoryAlias
         } else {
             if (Alias.isUnderAnyScreen.get()) {
                 Screen currentScreen = McScreenHelper.getCurrentScreen(mc);
-                if (currentScreen instanceof InventoryScreen) {
+                if (currentScreen instanceof InventoryScreen || currentScreen instanceof CreativeModeInventoryScreen) {
                     currentScreen.onClose();
                 }
             }
