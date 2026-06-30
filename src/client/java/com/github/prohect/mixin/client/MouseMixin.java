@@ -63,11 +63,10 @@ public class MouseMixin {
                     aliasWithArgs instanceof
                         BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs
                 ) if (
-                    builtinAliasWithBooleanArgs.flag &&
                     !Alias.blackList4lockCursor.contains(
                         builtinAliasWithBooleanArgs
                     )
-                ) builtinAliasWithBooleanArgs.run("1");
+                ) builtinAliasWithBooleanArgs.reapplyToGameKeyMapping();
             }
         );
         Alias.aliasesWithArgs.forEach((aliasName, aliasWithArgs) -> {
@@ -75,11 +74,10 @@ public class MouseMixin {
                 aliasWithArgs instanceof
                     BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs
             ) if (
-                builtinAliasWithBooleanArgs.flag &&
                 !Alias.blackList4lockCursor.contains(
                     builtinAliasWithBooleanArgs
                 )
-            ) builtinAliasWithBooleanArgs.run("1");
+            ) builtinAliasWithBooleanArgs.reapplyToGameKeyMapping();
         });
     }
 }
