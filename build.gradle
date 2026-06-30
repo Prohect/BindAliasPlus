@@ -23,6 +23,13 @@ loom {
     accessWidenerPath = file("src/client/resources/bind-alias-plus-client.accesswidener")
     splitEnvironmentSourceSets()
 
+    runs {
+        testClient {
+            client()
+            programArgs "--quickPlaySingleplayer", "Test_26_1_1"
+        }
+    }
+
     mods {
         "bind-alias-plus" {
             sourceSet sourceSets.main
