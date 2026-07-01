@@ -4,7 +4,6 @@ import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 import com.github.prohect.util.McScreenHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 
 public class OpenInventoryAlias
@@ -32,12 +31,7 @@ public class OpenInventoryAlias
                 McScreenHelper.setScreen(mc, new InventoryScreen(mc.player));
             }
         } else {
-            if (Alias.isUnderAnyScreen()) {
-                Screen currentScreen = Alias.getCurrentScreen();
-                if (Alias.isInInventoryScreen() || Alias.isInCreativeInventoryScreen()) {
-                    currentScreen.onClose();
-                }
-            }
+            if (Alias.isInContainerScreen()) Alias.getCurrentScreen().onClose();
         }
         return this;
     }
