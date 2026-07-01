@@ -15,7 +15,7 @@ public class ForwardAlias extends BuiltinAliasWithBooleanArgs<ForwardAlias> {
     public ForwardAlias run(String args) {
         parseArgs(args);
         // cancle press event from text input screen
-        if (Alias.isUnderTextInputScreen.get() && flag) return this;
+        if (Alias.isUnderTextInputScreen() && flag) return this;
         KeyMapping forwardKey = Minecraft.getInstance().options.keyUp;
         forwardKey.setDown(flag);
         if (flag) forwardKey.clickCount++;

@@ -15,7 +15,7 @@ public class JumpAlias extends BuiltinAliasWithBooleanArgs<JumpAlias> {
     public JumpAlias run(String args) {
         parseArgs(args);
         // cancle press event from text input screen
-        if (Alias.isUnderTextInputScreen.get() && flag) return this;
+        if (Alias.isUnderTextInputScreen() && flag) return this;
         KeyMapping jumpKey = Minecraft.getInstance().options.keyJump;
         jumpKey.setDown(flag);
         if (flag) jumpKey.clickCount++;

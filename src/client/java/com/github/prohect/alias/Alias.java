@@ -3,11 +3,17 @@ package com.github.prohect.alias;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.BookEditScreen;
+import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.gui.screens.inventory.SignEditScreen;
 import org.jetbrains.annotations.NotNull;
 
 public interface Alias<T extends Alias<T>> {
-    List<Alias<?>> blackList4lockCursor = new ArrayList<>();
     List<Alias<?>> blackList4Screen = new ArrayList<>();
     HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs = new HashMap<>();
     HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs_notSuggested =
@@ -19,11 +25,6 @@ public interface Alias<T extends Alias<T>> {
         new HashMap<>();
     char divider4AliasDefinition = ' ';
     char divider4AliasArgs = '\\';
-
-    public static AtomicBoolean isUnderTextInputScreen = new AtomicBoolean(
-        false
-    );
-    public static AtomicBoolean isUnderAnyScreen = new AtomicBoolean(false);
 
     /**
      * ignore blocks covered by double quotes
@@ -108,14 +109,38 @@ public interface Alias<T extends Alias<T>> {
     T run(String args);
 
     @SuppressWarnings({ "unchecked", "UnusedReturnValue" })
-    default T addToLockCursorBlackList() {
-        blackList4lockCursor.add(this);
-        return (T) this;
-    }
-
-    @SuppressWarnings({ "unchecked", "UnusedReturnValue" })
     default T addToScreenBlackList() {
         blackList4Screen.add(this);
         return (T) this;
+    }
+
+    // ---- Screen-type helpers (backed by BindAliasPlusClient.currentScreen) ----
+
+    static Screen getCurrentScreen() {
+        return com.github.prohect.BindAliasPlusClient.currentScreen;
+    }
+
+    static boolean isUnderTextInputScreen() {
+        Screen s = getCurrentScreen();
+        return s instanceof ChatScreen
+            || s instanceof CommandBlockEditScreen
+            || s instanceof SignEditScreen
+            || s instanceof BookEditScreen;
+    }
+
+    static boolean isUnderAnyScreen() {
+        return getCurrentScreen() != null;
+    }
+
+    static boolean isInContainerScreen() {
+        return getCurrentScreen() instanceof AbstractContainerScreen;
+    }
+
+    static boolean isInInventoryScreen() {
+        return getCurrentScreen() instanceof InventoryScreen;
+    }
+
+    static boolean isInCreativeInventoryScreen() {
+        return getCurrentScreen() instanceof CreativeModeInventoryScreen;
     }
 }

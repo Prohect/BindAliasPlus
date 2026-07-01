@@ -4,3 +4,5 @@ accessible field net/minecraft/client/KeyMapping key Lcom/mojang/blaze3d/platfor
 accessible field net/minecraft/client/KeyMapping clickCount I
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen menu Lnet/minecraft/world/inventory/AbstractContainerMenu;
 accessible method net/minecraft/client/MouseHandler onButton (JLnet/minecraft/client/input/MouseButtonInfo;I)V
+accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen hoveredSlot Lnet/minecraft/world/inventory/Slot;
+accessible method net/minecraft/client/gui/screens/inventory/AbstractContainerScreen slotClicked (Lnet/minecraft/world/inventory/Slot;IILnet/minecraft/world/inventory/ContainerInput;)V

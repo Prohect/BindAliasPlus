@@ -1,5 +1,7 @@
 package com.github.prohect.mixin.client;
 
+import com.github.prohect.alias.AliasWithArgs;
+import com.github.prohect.alias.builtinAlias.DropAlias;
 import com.github.prohect.alias.builtinAlias.WaitAlias;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,6 +19,14 @@ public class MinecraftClientMixin {
             for (int i = 0; i < size; i++) {
                 size -= WaitAlias.tasksWaiting.get(i).tick();
             }
+        }
+
+        // Drive continuous drop while the drop-key alias is held
+        // (container screens via slotClicked, 3D game via clickCount).
+        AliasWithArgs<?> raw = com.github.prohect.alias.Alias
+            .aliasesWithArgs_notSuggested.get("builtinDrop");
+        if (raw instanceof DropAlias dropAlias) {
+            dropAlias.tickDrop();
         }
     }
 }
