@@ -6,7 +6,6 @@ import com.github.prohect.alias.BuiltinAliasWithArgs;
 import java.util.regex.Pattern;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -47,7 +46,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             BindAliasPlusClient.LOGGER.warn("[switchSlot]Inventory is null");
             return this;
         }
-        int selectedSlot = inventory.selectedSlot;
+        int selectedSlot = inventory.getSelectedSlot();
         ClientPlayNetworkHandler networkHandler =
             minecraftClient.getNetworkHandler();
         if (networkHandler == null) {
@@ -113,9 +112,9 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             return this;
         }
 
-        Screen currentScreen = minecraftClient.currentScreen;
-        boolean creativeInventory =
-            currentScreen instanceof CreativeInventoryScreen;
+        Screen currentScreen = Alias.getCurrentScreen();
+        boolean creativeInventory = Alias.isInCreativeInventoryScreen();
+
         boolean inInventory =
             currentScreen instanceof InventoryScreen || creativeInventory;
         if (creativeInventory) currentScreen.close();
@@ -147,7 +146,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                 );
             } else {
                 // avoid close previous screen, which might cause unexpected behavior
-                if (Alias.isUnderAnyScreen.get() && !inInventory) return this;
+                if (Alias.isUnderAnyScreen() && !inInventory) return this;
                 // the inventory screen will be opened/closed automatically in following codes
                 InventoryScreen inventoryScreen = inInventory
                     ? creativeInventory

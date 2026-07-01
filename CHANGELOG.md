@@ -2,6 +2,29 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+n## [1.3.1] - 2026-07-01
+
+### Added
+- **Continuous container drop** — `+drop` now continuously drops items in
+  inventory/container screens while held.
+- **Continuous 3D-game drop** — held `+drop` continuously drops in the
+  3D game via tick-driven `timesPressed` increments.
+- **Initial delay before continuous drops** (3 ticks) to match the OS
+  key-repeat gap, preventing accidental double-drops from quick taps.
+- **Cached screen reference** — `BindAliasPlusClient.currentScreen` updated
+  by `GuiMixin` on every screen change, replacing reflection calls.
+- **Screen-type helper methods** on `Alias`.
+
+### Removed
+- **`lockCursorBlackList`** — removed entirely.
+- **`AtomicBoolean isUnderTextInputScreen` / `isUnderAnyScreen`** — replaced
+  with static methods derived from the cached screen reference.
+
+### Changed
+- **`GuiMixin` simplified** to a single line.
+- **Access widener** extended with `HandledScreen.focusedSlot` and
+  `onMouseClick()` for container drop support.
+
 ## [1.3.0] - 2026-06-30
 
 ### Added

@@ -28,7 +28,7 @@ public class MouseMixin {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         if (window != minecraftClient.getWindow().getHandle()) return;
         InputUtil.Key key = InputUtil.Type.MOUSE.createFromCode(button);
-        if (Alias.isUnderTextInputScreen.get()) return;
+        if (Alias.isUnderTextInputScreen()) return;
         // Skip mod-bound keys whose action is currently locked
         if (LockAlias.LOCKED_PHYSICAL_KEYS.contains(key)) return;
         if (BindAliasPlusClient.BINDING_PLUS.containsKey(key)) {
@@ -61,10 +61,6 @@ public class MouseMixin {
                 if (
                     aliasWithArgs instanceof
                         BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs
-                ) if (
-                    !Alias.blackList4lockCursor.contains(
-                        builtinAliasWithBooleanArgs
-                    )
                 ) builtinAliasWithBooleanArgs.reapplyToGameKeyMapping();
             }
         );
@@ -72,10 +68,6 @@ public class MouseMixin {
             if (
                 aliasWithArgs instanceof
                     BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs
-            ) if (
-                !Alias.blackList4lockCursor.contains(
-                    builtinAliasWithBooleanArgs
-                )
             ) builtinAliasWithBooleanArgs.reapplyToGameKeyMapping();
         });
     }
