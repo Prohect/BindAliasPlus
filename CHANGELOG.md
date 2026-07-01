@@ -2,6 +2,35 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.3.1] - 2026-07-01
+
+### Added
+- **Continuous container drop** — `+drop` now continuously drops items in
+  inventory/container screens while held (matching vanilla GLFW
+  key-repeat → `keyPressed` → `slotClicked` behavior).
+- **Continuous 3D-game drop** — held `+drop` continuously drops in the
+  3D game via tick-driven `clickCount` increments.
+- **Initial delay before continuous drops** (3 ticks) to match the OS
+  key-repeat gap vanilla relies on, preventing accidental double-drops
+  from quick taps.
+- **Cached screen reference** — `BindAliasPlusClient.currentScreen` is
+  now updated by `GuiMixin` on every screen change, replacing expensive
+  `McScreenHelper.getCurrentScreen()` reflection calls everywhere.
+- **Screen-type helper methods** on `Alias` — `isUnderTextInputScreen()`,
+  `isUnderAnyScreen()`, `isInContainerScreen()`, `isInInventoryScreen()`,
+  `isInCreativeInventoryScreen()`.
+
+### Removed
+- **`lockCursorBlackList`** — removed entirely (only contained `dropAlias`;
+  `DropAlias.reapplyToGameKeyMapping()` override handles the concern now).
+- **`AtomicBoolean isUnderTextInputScreen` / `isUnderAnyScreen`** — replaced
+  with static methods derived from the cached screen reference.
+
+### Changed
+- **`GuiMixin` simplified** to a single line (`BindAliasPlusClient.currentScreen = screen`).
+- **Access widener** extended with `AbstractContainerScreen.hoveredSlot`
+  and `slotClicked()` for container drop support.
+
 ## [1.3.0] - 2026-06-30
 
 ### Added
