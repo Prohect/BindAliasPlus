@@ -6,7 +6,6 @@ import com.github.prohect.alias.BuiltinAliasWithArgs;
 import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -112,11 +111,11 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             return this;
         }
 
-        Screen currentScreen = minecraftClient.screen;
+        Screen currentScreen = Alias.getCurrentScreen();
         boolean creativeInventory =
-            currentScreen instanceof CreativeModeInventoryScreen;
+            Alias.isInCreativeInventoryScreen();
         boolean inInventory =
-            currentScreen instanceof InventoryScreen || creativeInventory;
+            Alias.isInInventoryScreen() || creativeInventory;
         if (creativeInventory) currentScreen.onClose();
 
         try {
@@ -146,7 +145,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                 );
             } else {
                 // avoid close previous screen, which might cause unexpected behavior
-                if (Alias.isUnderAnyScreen.get() && !inInventory) return this;
+                if (Alias.isUnderAnyScreen() && !inInventory) return this;
                 // the inventory screen will be opened/closed automatically in following codes
                 InventoryScreen inventoryScreen = inInventory
                     ? creativeInventory

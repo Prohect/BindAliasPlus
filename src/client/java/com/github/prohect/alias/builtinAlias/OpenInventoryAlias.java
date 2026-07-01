@@ -5,7 +5,6 @@ import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 import com.github.prohect.util.McScreenHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 
 public class OpenInventoryAlias
@@ -24,18 +23,18 @@ public class OpenInventoryAlias
     public OpenInventoryAlias run(String args) {
         parseArgs(args);
         // cancel open event from text input screen
-        if (Alias.isUnderTextInputScreen.get() && flag) return this;
+        if (Alias.isUnderTextInputScreen() && flag) return this;
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return this;
         if (flag) {
-            if (!Alias.isUnderAnyScreen.get()) {
+            if (!Alias.isUnderAnyScreen()) {
                 mc.player.sendOpenInventory();
                 McScreenHelper.setScreen(mc, new InventoryScreen(mc.player));
             }
         } else {
-            if (Alias.isUnderAnyScreen.get()) {
-                Screen currentScreen = McScreenHelper.getCurrentScreen(mc);
-                if (currentScreen instanceof InventoryScreen || currentScreen instanceof CreativeModeInventoryScreen) {
+            if (Alias.isUnderAnyScreen()) {
+                Screen currentScreen = Alias.getCurrentScreen();
+                if (Alias.isInInventoryScreen() || Alias.isInCreativeInventoryScreen()) {
                     currentScreen.onClose();
                 }
             }

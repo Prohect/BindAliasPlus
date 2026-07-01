@@ -15,7 +15,7 @@ public class SneakAlias extends BuiltinAliasWithBooleanArgs<SneakAlias> {
     public SneakAlias run(String args) {
         parseArgs(args);
         // cancle press event from text input screen
-        if (Alias.isUnderTextInputScreen.get() && flag) return this;
+        if (Alias.isUnderTextInputScreen() && flag) return this;
         KeyMapping sneakKey = Minecraft.getInstance().options.keyShift;
         sneakKey.setDown(flag);
         if (flag) sneakKey.clickCount++;

@@ -163,7 +163,7 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                         alias instanceof BuiltinAliasWithArgs &&
                         Alias.blackList4Screen.contains(alias)
                     ) {
-                        if (!Alias.isUnderAnyScreen.get()) {
+                        if (!Alias.isUnderAnyScreen()) {
                             alias.run(aliasRecord.args());
                             continue;
                         }
@@ -297,7 +297,7 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                         alias instanceof BuiltinAliasWithArgs &&
                         Alias.blackList4Screen.contains(alias)
                     ) {
-                        if (!Alias.isUnderAnyScreen.get()) {
+                        if (!Alias.isUnderAnyScreen()) {
                             alias.run(aliasRecord.args());
                             continue;
                         }

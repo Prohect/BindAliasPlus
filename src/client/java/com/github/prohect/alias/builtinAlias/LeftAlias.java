@@ -15,7 +15,7 @@ public class LeftAlias extends BuiltinAliasWithBooleanArgs<LeftAlias> {
     public LeftAlias run(String args) {
         parseArgs(args);
         // cancle press event from text input screen
-        if (Alias.isUnderTextInputScreen.get() && flag) return this;
+        if (Alias.isUnderTextInputScreen() && flag) return this;
         KeyMapping leftKey = Minecraft.getInstance().options.keyLeft;
         leftKey.setDown(flag);
         if (flag) leftKey.clickCount++;

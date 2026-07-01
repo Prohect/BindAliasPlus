@@ -29,6 +29,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,9 @@ public class BindAliasPlusClient implements ClientModInitializer {
     // Silent mode flag - when true, suppresses feedback messages in chat
     public static boolean silentMode = false;
 
+    /** Cached current screen — updated by {@code GuiMixin} on every screen change. */
+    public static Screen currentScreen = null;
+
     @Override
     public void onInitializeClient() {
         //load builtin alias
@@ -71,8 +75,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new SneakAlias().putToAliasesWithArgs_notSuggested();
         new SprintAlias().putToAliasesWithArgs_notSuggested();
         new DropAlias()
-            .putToAliasesWithArgs_notSuggested()
-            .addToLockCursorBlackList();
+            .putToAliasesWithArgs_notSuggested();
         new LogAlias().putToAliasesWithArgs();
         new SlotAlias().putToAliasesWithArgs();
         new SwapSlotAlias().putToAliasesWithArgs();
