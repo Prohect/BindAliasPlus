@@ -2,7 +2,7 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
-- Fixed -openInventory only close inventory or creative mode inventory
+- Fixed `-openInventory` only close inventory or creative mode inventory
 
 ## [1.3.1] - 2026-07-01
 
