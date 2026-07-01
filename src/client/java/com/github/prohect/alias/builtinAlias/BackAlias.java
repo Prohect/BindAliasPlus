@@ -15,7 +15,7 @@ public class BackAlias extends BuiltinAliasWithBooleanArgs<BackAlias> {
     public BackAlias run(String args) {
         parseArgs(args);
         // cancle press event from text input screen
-        if (Alias.isUnderTextInputScreen.get() && flag) return this;
+        if (Alias.isUnderTextInputScreen() && flag) return this;
         KeyBinding backKey = MinecraftClient.getInstance().options.backKey;
         backKey.setPressed(flag);
         if (flag) backKey.timesPressed++;
