@@ -3,7 +3,6 @@ package com.github.prohect.alias.builtinAlias;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 
 public class OpenInventoryAlias
@@ -30,12 +29,7 @@ public class OpenInventoryAlias
                 mc.setScreen(new InventoryScreen(mc.player));
             }
         } else {
-            if (Alias.isUnderAnyScreen()) {
-                Screen currentScreen = Alias.getCurrentScreen();
-                if (Alias.isInInventoryScreen() || Alias.isInCreativeInventoryScreen()) {
-                    currentScreen.close();
-                }
-            }
+            if (Alias.isInContainerScreen()) Alias.getCurrentScreen().close();
         }
         return this;
     }
