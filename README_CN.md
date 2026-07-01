@@ -96,7 +96,7 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | `-sneak`    | `builtinSneak\0`     | 停止潜行（释放潜行键）。             |
 | `+sprint`   | `builtinSprint\1`    | 开始疾跑（按住疾跑键）。             |
 | `-sprint`   | `builtinSprint\0`    | 停止疾跑（释放疾跑键）。             |
-| `+drop`     | `builtinDrop\1`    | 按下丢弃键（丢弃一个物品，与键盘的ctrl组合可丢弃整组）。              |
+| `+drop`     | `builtinDrop\1`    | 按下丢弃键。**按住可持续丢弃**物品，在3D游戏和容器/物品栏界面中均可使用（与原版一致，有初始连发延迟）。与键盘ctrl组合可丢弃整组。              |
 | `-drop`     | `builtinDrop\0`    | 释放丢弃键。                                                  |
 | `+openInventory` | `builtinOpenInventory\1` | 打开物品栏界面。                              |
 | `-openInventory` | `builtinOpenInventory\0` | 关闭物品栏界面（如果已打开）。                   |
