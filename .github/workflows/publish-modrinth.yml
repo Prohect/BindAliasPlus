@@ -5,19 +5,29 @@ on:
     types: [published]
 
 jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      jars: ${{ steps.set-matrix.outputs.jars }}
+    steps:
+      - name: Download release assets
+        run: |
+          gh release download "${{ github.ref_name }}" --repo "${{ github.repository }}" --dir assets --pattern '*.jar'
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Build JAR list
+        id: set-matrix
+        run: |
+          jars="$(ls assets/*.jar | jq -R -s -c 'split("\n") | map(select(length > 0))')"
+          echo "jars=$jars" >> "$GITHUB_OUTPUT"
+
   publish:
+    needs: matrix
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - pattern: assets/*+mc26.2.jar
-            game-version: "26.2"
-          - pattern: assets/*+mc26.1.1.jar
-            game-version: "26.1.1"
-          - pattern: assets/*+mc1.21.11.jar
-            game-version: "1.21.11"
-          - pattern: assets/*+mc1.21.8.jar
-            game-version: "1.21.8"
+        jar: ${{ fromJSON(needs.matrix.outputs.jars) }}
     steps:
       - name: Download release assets
         run: |
@@ -30,6 +40,5 @@ jobs:
         with:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           modrinth-id: bind-alias-plus
-          files: ${{ matrix.pattern }}
+          files: ${{ matrix.jar }}
           loaders: fabric
-          game-versions: ${{ matrix.game-version }}
