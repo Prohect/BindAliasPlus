@@ -9,6 +9,7 @@ README_CN.md
 # sync config itself
 .git_active_branches
 .git_sync_across_active_branches
+scripts/post-checkout
 scripts/sync-post-commit
 
 # repo config
