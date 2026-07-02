@@ -42,3 +42,4 @@ jobs:
           modrinth-id: bind-alias-plus
           files: ${{ matrix.jar }}
           loaders: fabric
+
