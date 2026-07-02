@@ -1,0 +1,13 @@
+#!/bin/bash
+# Auto-run setup-jdtls.sh when switching branches.
+# Type 1 = branch checkout, type 0 = file checkout (skip).
+
+PREV_HEAD=$1
+NEW_HEAD=$2
+CHECKOUT_TYPE=$3
+
+if [ "$CHECKOUT_TYPE" = "1" ]; then
+    echo ""
+    echo "=== Branch switch → running setup-jdtls.sh ==="
+    bash setup-jdtls.sh
+fi
