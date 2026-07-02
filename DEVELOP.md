@@ -12,7 +12,7 @@
 
 2. Install the sync hook:
 
-   **test1**
+   **test2**
 
    **Windows (cmd / PowerShell):**
 
