@@ -37,18 +37,15 @@ git fetch --all
 ln -f scripts/sync-post-commit .git/hooks/post-commit
 ln -f scripts/post-checkout    .git/hooks/post-checkout
 
-# 3. Build
+# 3. Build (gradlew auto-downloads Gradle, Fabric Loom, and dependencies)
 ./gradlew build
-
-# 4. Run the test client
-./gradlew runTestClient
 ```
 
-> **Requires:** JDK 25, Fabric Loader. The project uses Gradle with the
-> [Fabric Loom](https://fabricmc.net/wiki/documentation:fabric_loom) plugin.
+> **Requires:** JDK 25 and an internet connection. `gradlew` handles everything
+> else --- Gradle, Fabric Loader, Minecraft, and all dependencies are downloaded
+> automatically on first build.
 >
-> If you cloned with `--single-branch` the hooks exit silently — no errors.
-> On Windows (cmd / PowerShell), use `copy` instead of `ln`.
+> If you cloned with `--single-branch` the hooks exit silently --- no errors.
 
 ---
 
@@ -296,30 +293,13 @@ Runs [`setup-jdtls.sh`](setup-jdtls.sh) automatically when switching branches:
 Both hooks are tracked in `scripts/`. Hard-link them into `.git/hooks/` (so
 updating the tracked file updates the hook in-place):
 
-**Linux / macOS:**
-
 ```bash
 ln -f scripts/sync-post-commit .git/hooks/post-commit
 ln -f scripts/post-checkout    .git/hooks/post-checkout
 ```
 
-**Windows (MSYS2 / Git Bash):**
-
-```bash
-ln -f scripts/sync-post-commit .git/hooks/post-commit
-ln -f scripts/post-checkout    .git/hooks/post-checkout
-```
-
-**Windows (cmd / PowerShell — copy instead, re-copy after pulls):**
-
-```cmd
-copy scripts\sync-post-commit .git\hooks\post-commit
-copy scripts\post-checkout    .git\hooks\post-checkout
-```
-
-> On Windows, hard links work natively in MSYS2/Git Bash. If you use cmd or
-> PowerShell, `copy` is the fallback — just remember to re-copy after pulling
-> updates to `scripts/`.
+> Hard links work on all platforms (Linux, macOS, Windows). If you cloned with
+> `--single-branch` the hooks exit silently --- no errors.
 
 ---
 
