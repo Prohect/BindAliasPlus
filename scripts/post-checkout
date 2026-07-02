@@ -1,6 +1,22 @@
 #!/bin/bash
-# Auto-run setup-jdtls.sh when switching branches.
-# Type 1 = branch checkout, type 0 = file checkout (skip).
+# =============================================================================
+# post-checkout hook --- run setup-jdtls.sh when switching branches.
+#
+# This hook keeps your IDE (Eclipse / JDTLS) in sync with the current branch.
+# Each branch targets a different Minecraft version, so the decompiled sources
+# and Eclipse .classpath/.project must be regenerated after a branch switch.
+#
+# Git passes three arguments to post-checkout:
+#   $1 - previous HEAD (commit before checkout)
+#   $2 - new HEAD (commit after checkout)
+#   $3 - checkout type:  1 = branch switch,  0 = file checkout
+#
+# We only run on branch switches (type 1). File checkouts (type 0) are
+# irrelevant --- no MC version changed, no rebuild needed.
+#
+# To install:
+#   cp scripts/post-checkout .git/hooks/post-checkout
+# =============================================================================
 
 PREV_HEAD=$1
 NEW_HEAD=$2
@@ -8,6 +24,8 @@ CHECKOUT_TYPE=$3
 
 if [ "$CHECKOUT_TYPE" = "1" ]; then
     echo ""
-    echo "=== Branch switch → running setup-jdtls.sh ==="
+    echo "=== Branch switch detected, running setup-jdtls.sh ==="
+    echo "    from: $PREV_HEAD"
+    echo "    to:   $NEW_HEAD"
     bash setup-jdtls.sh
 fi
