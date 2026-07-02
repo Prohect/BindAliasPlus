@@ -20,5 +20,4 @@ jobs:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           modrinth-id: bind-alias-plus
           files: assets/*.jar
-          files-primary: assets/*.jar
           loaders: fabric
