@@ -6,7 +6,7 @@ documentation, config files, and everything in between.
 ## Table of Contents
 
 - [Quick Start](#quick-start)
-- [Repository Structure](#repository-structure)
+- [What's in the Repository](#whats-in-the-repository)
 - [Source Code Contributions](#source-code-contributions)
   - [Branch Strategy](#branch-strategy)
   - [Build & Test](#build--test)
@@ -14,7 +14,7 @@ documentation, config files, and everything in between.
   - [Multi-Version Compatibility](#multi-version-compatibility)
 - [Non-Source Contributions](#non-source-contributions)
   - [Documentation](#documentation)
-  - [Config Files](#config-files)
+  - [Config & Tooling](#config--tooling)
   - [CI / Workflows](#ci--workflows)
 - [Git Hooks](#git-hooks)
   - [post-commit: Cross-Branch Sync](#post-commit-cross-branch-sync)
@@ -33,8 +33,9 @@ git clone https://github.com/Prohect/BindAliasPlus
 cd BindAliasPlus
 git fetch --all
 
-# 2. Install the sync hook (see Git Hooks below)
-cp scripts/sync-post-commit .git/hooks/post-commit
+# 2. Install both git hooks (hard-link from scripts/)
+ln -f scripts/sync-post-commit .git/hooks/post-commit
+ln -f scripts/post-checkout    .git/hooks/post-checkout
 
 # 3. Build
 ./gradlew build
@@ -45,37 +46,65 @@ cp scripts/sync-post-commit .git/hooks/post-commit
 
 > **Requires:** JDK 25, Fabric Loader. The project uses Gradle with the
 > [Fabric Loom](https://fabricmc.net/wiki/documentation:fabric_loom) plugin.
+>
+> If you cloned with `--single-branch` the hooks exit silently — no errors.
+> On Windows (cmd / PowerShell), use `copy` instead of `ln`.
 
 ---
 
-## Repository Structure
+## What's in the Repository
+
+Everything tracked by git, organized by role:
+
+### Build (produces the mod JAR)
 
 ```
-BindAliasPlus/
-├── src/
-│   ├── client/java/        # Client-side mod code (mixins, aliases, keybindings)
-│   │   └── com/github/prohect/
-│   │       ├── alias/              # Alias base classes
-│   │       ├── alias/builtinAlias/ # Built-in alias implementations
-│   │       ├── mixin/client/       # Mixins
-│   │       └── util/               # Utilities
-│   ├── client/resources/   # Client resources (access widener, fabric.mod.json)
-│   ├── main/java/          # Main entrypoint (shared across environments)
-│   └── main/resources/     # Main resources
-├── scripts/
-│   └── sync-post-commit    # Git hook script (copy to .git/hooks/post-commit)
-├── .github/workflows/      # CI (build + Modrinth publish)
-├── .git_active_branches    # Branches that receive automatic syncs
-├── .git_sync_across_active_branches  # File patterns to auto-sync
-├── build.gradle            # Build configuration
-├── gradle.properties       # Mod version, MC version, dependency versions
-├── formatter.xml           # Eclipse/VS Code Java formatter config (GoogleStyle)
-├── CHANGELOG.md            # Release changelog
-├── DEVELOP.md              # Development setup (detailed)
-├── CLAUDE.md               # Agent instructions (internal)
-├── README.md / README_CN.md
-└── LICENSE                 # CC0-1.0
+src/
+├── client/java/              # Client-side mod code (65 files)
+│   └── com/github/prohect/
+│       ├── alias/            # Alias base classes
+│       ├── alias/builtinAlias/ # Built-in alias implementations
+│       ├── mixin/client/     # Mixins
+│       └── util/             # Utilities
+├── client/resources/         # Access widener, mixin config
+├── main/java/                # Main entrypoint
+└── main/resources/           # fabric.mod.json, mixin config, icon
+
+build.gradle                   # Build script
+settings.gradle                # Gradle settings
+gradle.properties              # MC version, mod version, dependencies
+gradlew / gradlew.bat          # Gradle wrapper scripts
+gradle/wrapper/                # Gradle wrapper JAR + properties
 ```
+
+### Non-build (docs, config, CI, tooling)
+
+```
+CHANGELOG.md                   # Release changelog
+CLAUDE.md                      # Agent instructions (internal)
+CONTRIBUTE.md                  # This file
+DEVELOP.md                     # Development setup guide
+README.md                      # English user guide
+README_CN.md                   # Chinese user guide
+LICENSE                        # CC0-1.0
+
+.gitattributes                 # Line-ending rules
+.gitignore                     # Exclude patterns
+.git_active_branches           # Branches receiving auto-syncs
+.git_sync_across_active_branches # File patterns to auto-sync
+
+.github/workflows/build.yml           # CI: build on push/PR
+.github/workflows/publish-modrinth.yml # CI: publish to Modrinth on release
+
+formatter.xml                  # Eclipse/VS Code Java formatter (GoogleStyle)
+setup-jdtls.sh                 # JDTLS / Eclipse project setup script
+scripts/sync-post-commit       # post-commit hook: cross-branch sync
+scripts/post-checkout          # post-checkout hook: run setup-jdtls.sh
+```
+
+> All non-build files are **auto-synced** across active branches on commit
+> (see `.git_sync_across_active_branches` for the exact list). You only need
+> to commit them once on your working branch.
 
 ---
 
@@ -96,55 +125,38 @@ styles:
 **Which branch to target:**
 
 - **New features / bug fixes** — start on the **newest Mojang-mappings branch**
-  (`26.1.2_26.2`). The [post-commit hook](#post-commit-cross-branch-sync) will
-  automatically mirror your changes to the other active branches for
-  non-version-specific files.
-- **Version-specific fixes** — target the affected branch directly. For example,
-  a 1.21.8-only issue goes to `1.21_1.21.8`.
-
-> When in doubt, work on the newest branch and let the sync hook propagate
-> changes. If a change doesn't apply cleanly to another branch, you'll need to
-> handle conflicts manually.
+  (`26.1.2_26.2`). Version-specific source files (`src/`) are **not** auto-synced,
+  so you'll need to cherry-pick or manually port to each target branch.
+- **Version-specific fixes** — target the affected branch directly.
 
 ### Build & Test
 
 ```bash
-# Full build (compile + test + JAR)
-./gradlew build
-
-# Launch the test client (loads a singleplayer world for manual testing)
-./gradlew runTestClient
-
-# Generate decompiled Minecraft sources (needed for IDE setup)
-./gradlew genSources
-
-# Generate Eclipse project files (needed for JDTLS / Eclipse-based editors)
-./gradlew eclipse
+./gradlew build          # Full build (compile + JAR)
+./gradlew runTestClient  # Launch test client (singleplayer world)
+./gradlew genSources     # Decompile Minecraft sources (needed for IDE)
+./gradlew eclipse        # Generate Eclipse .classpath / .project
 ```
 
-The test client runs with `--quickPlaySingleplayer Test_26_2` (branch-specific).
-After a crash, the auto-loaded config file detects the crash and reports it.
+The test client auto-loads a config that detects crashes.
 
-**Before committing:** at minimum, run `./gradlew build` to confirm compilation
-passes. For functional changes, also run `./gradlew runTestClient` and verify
-the behavior in-game.
+**Before committing:** at minimum `./gradlew build` must pass. For functional
+changes, also run `./gradlew runTestClient` and verify in-game.
 
 ### Code Style
 
-This project uses **Google Java Style**. The formatter config is in
-[`formatter.xml`](formatter.xml) (Eclipse format, compatible with VS Code
+**Google Java Style** via [`formatter.xml`](formatter.xml) (Eclipse format,
+compatible with the VS Code
 [Java extension](https://marketplace.visualstudio.com/items?itemName=redhat.java)
 and Eclipse JDT).
 
 - Indentation: spaces (not tabs)
-- Line endings: LF for `.java` / `.sh`, CRLF for `.bat`
-- Use `@formatter:off` / `@formatter:on` sparingly where auto-formatting
-  produces poor results
+- Line endings: LF for `.java` / `.sh`, CRLF for `.bat` (enforced by `.gitattributes`)
+- Use `@formatter:off` / `@formatter:on` sparingly
 
 ### Multi-Version Compatibility
 
-Since the codebase spans Mojang and Yarn mappings, be aware of these naming
-differences:
+The codebase spans Mojang and Yarn mappings. Key naming differences:
 
 | Mojang (26.x)                           | Yarn (1.21.x)                                                    |
 | --------------------------------------- | ---------------------------------------------------------------- |
@@ -159,9 +171,8 @@ differences:
 | `KeyEvent` / `MouseButtonInfo`          | `KeyInput` / `MouseInput` (1.21.9+), `int...` (1.21.8)           |
 | accesswidener namespace `official`      | accesswidener namespace `named`                                  |
 
-> When syncing a change across branches, verify that mappings are correct for
-> each target. The `mc-decompile-sources/` directory (per-branch) is available
-> for reference — see [CLAUDE.md](CLAUDE.md) for usage.
+> Decompiled sources per branch live in `mc-decompile-sources/<branch>/`
+> (generated by `setup-jdtls.sh`). See [CLAUDE.md](CLAUDE.md) for usage.
 
 ---
 
@@ -169,130 +180,146 @@ differences:
 
 ### Documentation
 
-Documentation files live at the repository root:
+All docs live at the repository root:
 
-| File            | Audience     | Purpose                              |
-| --------------- | ------------ | ------------------------------------ |
-| `README.md`     | Users        | English user guide                   |
-| `README_CN.md`  | Users        | Simplified Chinese user guide        |
-| `DEVELOP.md`    | Contributors | Development setup guide              |
-| `CONTRIBUTE.md` | Contributors | This file — contribution guide       |
-| `CHANGELOG.md`  | Users        | Release changelog (per version)      |
-| `CLAUDE.md`     | Internal/AI  | Agent instructions (not user-facing) |
+| File            | Audience     | Purpose                       |
+| --------------- | ------------ | ----------------------------- |
+| `README.md`     | Users        | English user guide            |
+| `README_CN.md`  | Users        | Simplified Chinese user guide |
+| `DEVELOP.md`    | Contributors | Development setup guide       |
+| `CONTRIBUTE.md` | Contributors | This file                     |
+| `CHANGELOG.md`  | Users        | Release changelog             |
+| `CLAUDE.md`     | Internal/AI  | Agent instructions            |
 
 **Guidelines:**
 
-- Keep `README.md` and `README_CN.md` in sync — changes to one should be
-  mirrored to the other.
-- `CHANGELOG.md` entries follow [Keep a Changelog](https://keepachangelog.com/)
-  conventions: `Added`, `Changed`, `Fixed`, `Removed`.
-- Documentation files are **auto-synced** across all active branches (see
-  `.git_sync_across_active_branches`). You only need to commit documentation
-  changes once on your working branch.
+- Keep `README.md` and `README_CN.md` in sync — changes to one should mirror
+  the other.
+- `CHANGELOG.md` follows [Keep a Changelog](https://keepachangelog.com/):
+  `Added`, `Changed`, `Fixed`, `Removed`.
+- All docs are auto-synced — commit once, the hook propagates to every branch.
 
-### Config Files
+### Config & Tooling
 
-Non-code config files that anyone can contribute to:
+Non-build config and tooling files:
 
-| File                               | Purpose                                      |
-| ---------------------------------- | -------------------------------------------- |
-| `.git_active_branches`             | List of branches receiving auto-syncs        |
-| `.git_sync_across_active_branches` | File patterns to auto-sync after each commit |
-| `.gitattributes`                   | Line-ending rules for cross-platform dev     |
-| `.gitignore`                       | Files excluded from version control          |
-| `formatter.xml`                    | Eclipse/VS Code Java formatter settings      |
-| `.github/workflows/*.yml`          | CI/CD workflows                              |
+| File                               | Purpose                               |
+| ---------------------------------- | ------------------------------------- |
+| `.git_active_branches`             | Target branches for auto-sync         |
+| `.git_sync_across_active_branches` | File patterns to auto-sync            |
+| `.gitattributes`                   | Line-ending rules                     |
+| `.gitignore`                       | Exclude patterns                      |
+| `formatter.xml`                    | Java formatter settings (GoogleStyle) |
+| `setup-jdtls.sh`                   | JDTLS / Eclipse project setup         |
+| `scripts/sync-post-commit`         | post-commit hook script               |
+| `scripts/post-checkout`            | post-checkout hook script             |
 
-> All of these (except `.gitignore`) are **auto-synced** files. A change to any
-> of them in one branch propagates to all active branches automatically.
+> All of these are auto-synced. A change to any of them in one branch
+> propagates to all active branches automatically.
 
 ### CI / Workflows
 
-- **`build.yml`** — runs on every push and PR. Builds the project with JDK 25
-  and uploads artifacts.
-- **`publish-modrinth.yml`** — triggered by GitHub Releases. Downloads JARs
-  from the release and publishes them to Modrinth via `mc-publish`.
+| Workflow               | Trigger        | What it does                          |
+| ---------------------- | -------------- | ------------------------------------- |
+| `build.yml`            | push, PR       | Builds with JDK 25, uploads artifacts |
+| `publish-modrinth.yml` | GitHub Release | Publishes JARs to Modrinth            |
 
-Changes to CI workflows are auto-synced across branches.
+CI workflows are auto-synced.
 
 ---
 
 ## Git Hooks
 
-This repository uses two git hooks.
+This repository uses two git hooks, both tracked in `scripts/`.
 
 ### post-commit: Cross-Branch Sync
 
-The most important hook. After every commit, it checks if any changed files
-match the patterns in `.git_sync_across_active_branches`. If so, it creates
-equivalent commits on every branch listed in `.git_active_branches` (skipping
-the source branch).
+After every commit, checks if any changed files match the patterns in
+`.git_sync_across_active_branches`. If so, creates equivalent commits on every
+branch listed in `.git_active_branches` (skipping the source branch).
 
 **How it works:**
 
-1. Reads `.git_active_branches` → list of target branches
-2. Reads `.git_sync_across_active_branches` → list of file patterns to sync
-3. Gets the list of changed files from the commit (`git diff-tree`)
-4. For each changed file that matches a sync pattern, copies the blob to each
-   target branch via `git read-tree` + `git write-tree` + `git commit-tree`
-5. The synced commit message appends `source: <short-sha>` so you can trace the
-   origin
+1. Reads `.git_active_branches` → target branches
+2. Reads `.git_sync_across_active_branches` → file patterns to sync
+3. Gets changed files from the commit (`git diff-tree`)
+4. For each matching file, copies the blob to each target branch via
+   `git read-tree` + `git write-tree` + `git commit-tree`
+5. Synced commits append `source: <short-sha>` so you can trace the origin
 
-**Currently synced files** (as defined in `.git_sync_across_active_branches`):
+**Complete list of synced files** (from `.git_sync_across_active_branches`):
 
-- `CHANGELOG.md`, `CLAUDE.md`, `CONTRIBUTE.md`, `DEVELOP.md`, `README.md`, `README_CN.md`
-- `.git_active_branches`, `.git_sync_across_active_branches`
-- `scripts/post-checkout`, `scripts/sync-post-commit`
-- `.gitignore`
-- `.github/workflows/*.yml`
+```
+# docs
+CHANGELOG.md
+CLAUDE.md
+CONTRIBUTE.md
+DEVELOP.md
+README.md
+README_CN.md
 
-> Files not in this list (e.g., Java source in `src/`) are **not** auto-synced.
-> Version-specific source changes must be cherry-picked manually.
+# sync config itself
+.git_active_branches
+.git_sync_across_active_branches
+scripts/post-checkout
+scripts/sync-post-commit
+
+# repo config
+.gitattributes
+.gitignore
+
+# IDE / editor
+formatter.xml
+setup-jdtls.sh
+
+# CI
+.github/workflows/*.yml
+```
+
+> Source files under `src/` are **not** auto-synced — they contain
+> version-specific code. Port those manually.
 
 ### post-checkout: JDTLS Setup
 
-Automatically runs [`setup-jdtls.sh`](setup-jdtls.sh) when switching branches.
-The hook script lives at [`scripts/post-checkout`](scripts/post-checkout).
+Runs [`setup-jdtls.sh`](setup-jdtls.sh) automatically when switching branches:
 
-This hook:
-
-1. Generates decompiled Minecraft sources (via `./gradlew genSources`)
-2. Generates Eclipse `.classpath` / `.project` (via `./gradlew eclipse`)
+1. Generates decompiled Minecraft sources (`./gradlew genSources`)
+2. Generates Eclipse `.classpath` / `.project` (`./gradlew eclipse`)
 3. Strips Buildship references from the Eclipse config
-4. Extracts Minecraft source JARs to `mc-decompile-sources/<branch>/` for
-   agent-assisted browsing
+4. Extracts MC source JARs to `mc-decompile-sources/<branch>/` for browsing
 
 > If you don't use Eclipse or JDTLS, this hook is harmless — it just runs a
 > build step on branch switch.
 
 ### Installing the Hooks
 
-Both hooks are tracked in `scripts/`. Install by linking or copying into
-`.git/hooks/`:
+Both hooks are tracked in `scripts/`. Hard-link them into `.git/hooks/` (so
+updating the tracked file updates the hook in-place):
 
 **Linux / macOS:**
 
 ```bash
-ln -sfr scripts/sync-post-commit .git/hooks/post-commit
-ln -sfr scripts/post-checkout    .git/hooks/post-checkout
+ln -f scripts/sync-post-commit .git/hooks/post-commit
+ln -f scripts/post-checkout    .git/hooks/post-checkout
 ```
 
 **Windows (MSYS2 / Git Bash):**
 
 ```bash
-MSYS=winsymlinks:nativestrict ln -sfr scripts/sync-post-commit .git/hooks/post-commit
-MSYS=winsymlinks:nativestrict ln -sfr scripts/post-checkout    .git/hooks/post-checkout
+ln -f scripts/sync-post-commit .git/hooks/post-commit
+ln -f scripts/post-checkout    .git/hooks/post-checkout
 ```
 
-**Windows (cmd / PowerShell, copy instead of link):**
+**Windows (cmd / PowerShell — copy instead, re-copy after pulls):**
 
 ```cmd
-copy scripts/sync-post-commit .git/hooks/post-commit
-copy scripts/post-checkout    .git/hooks/post-checkout
+copy scripts\sync-post-commit .git\hooks\post-commit
+copy scripts\post-checkout    .git\hooks\post-checkout
 ```
 
-> If you cloned with `--single-branch` or the config files are missing, the
-> hooks exit silently --- no errors.
+> On Windows, hard links work natively in MSYS2/Git Bash. If you use cmd or
+> PowerShell, `copy` is the fallback — just remember to re-copy after pulling
+> updates to `scripts/`.
 
 ---
 
@@ -335,7 +362,6 @@ For reference, the release process is:
 ## Questions?
 
 - **Bug reports / feature requests:** [GitHub Issues](https://github.com/Prohect/BindAliasPlus/issues)
-- **Discussion:** [GitHub Discussions](https://github.com/Prohect/BindAliasPlus/discussions) (if enabled)
 - **Mod page:** [Modrinth](https://modrinth.com/mod/bind-alias-plus)
 
 Thank you for contributing to BindAliasPlus!
