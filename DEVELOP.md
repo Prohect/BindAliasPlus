@@ -10,28 +10,29 @@
    git fetch --all
    ```
 
-2. Install the sync hooks:
+2. Install the sync hook:
 
-   **Ignore this**
+   **Windows (Git Bash / MSYS2):**
+
+   ```bash
+   ln scripts/sync-post-commit .git/hooks/post-commit
+   ```
+
+   **Windows (cmd / PowerShell):**
+
+   ```cmd
+   copy scripts\sync-post-commit .git\hooks\post-commit
+   ```
 
    **Linux / macOS:**
 
    ```bash
    cp scripts/sync-post-commit .git/hooks/post-commit && chmod +x .git/hooks/post-commit
-   cp scripts/sync-post-commit .git/hooks/post-rewrite && chmod +x .git/hooks/post-rewrite
    ```
 
-   After this, every commit (or amend/rebase) that touches a synced file (see `.git_sync_across_active_branches`) is automatically mirrored to all active branches (`.git_active_branches`).
+   After this, every commit that touches a synced file (see `.git_sync_across_active_branches`) is automatically mirrored to all active branches (`.git_active_branches`).
 
-3. If you cloned with `--single-branch` or the config files are missing, the hooks exit silently — no errors.
-
-## Force-push edge case
-
-After a force-push on one branch, the sync commits on other branches may be ahead of the rewritten history. If you rewrite and force-push a branch, verify all branches are in sync or re-trigger the hook with a trivial commit:
-
-```bash
-git commit --allow-empty -m "chore: re-trigger sync"
-```
+3. If you cloned with `--single-branch` or the config files are missing, the hook exits silently — no errors.
 
 ## Active Branches
 
