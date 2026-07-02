@@ -26,8 +26,8 @@ Functional correctness must be confirmed by the user.
 | Branch | MC | Mappings | Key differences |
 |---|---|---|---|
 | `26.1.2_26.2` | 26.2 | Mojang | `GuiMixin` → `Gui.class` |
-| `26.1_26.1.1` | 26.1.x | Mojang | `GuiMixin` → `Minecraft.class` |
-| `1.21.9_1.21.11` | 1.21.9+ | Yarn | `KeyInput`/`MouseInput`, `isCtrlPressed()` |
+| `26.1_26.1.1` | 26.1.1 | Mojang | `GuiMixin` → `Minecraft.class` |
+| `1.21.9_1.21.11` | 1.21.11 | Yarn | `KeyInput`/`MouseInput`, `isCtrlPressed()` |
 | `1.21_1.21.8` | 1.21.8 | Yarn | `int` params, `Screen.hasControlDown()`, `selectedSlot` AW |
 
 ## per-branch mapping (Mojang → Yarn)
