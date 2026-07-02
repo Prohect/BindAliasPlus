@@ -113,10 +113,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
         }
 
         Screen currentScreen = Alias.getCurrentScreen();
-        boolean creativeInventory =
-            Alias.isInCreativeInventoryScreen();
-        boolean inInventory =
-            Alias.isInInventoryScreen() || creativeInventory;
+        boolean creativeInventory = Alias.isInCreativeInventoryScreen();
+        boolean inInventory = Alias.isInInventoryScreen() || creativeInventory;
         if (creativeInventory) currentScreen.onClose();
 
         try {

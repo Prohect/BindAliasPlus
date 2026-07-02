@@ -122,10 +122,12 @@ public interface Alias<T extends Alias<T>> {
 
     static boolean isUnderTextInputScreen() {
         Screen s = getCurrentScreen();
-        return s instanceof ChatScreen
-            || s instanceof CommandBlockEditScreen
-            || s instanceof SignEditScreen
-            || s instanceof BookEditScreen;
+        return (
+            s instanceof ChatScreen ||
+            s instanceof CommandBlockEditScreen ||
+            s instanceof SignEditScreen ||
+            s instanceof BookEditScreen
+        );
     }
 
     static boolean isUnderAnyScreen() {
