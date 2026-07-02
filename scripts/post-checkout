@@ -1,13 +1,19 @@
 #!/bin/bash
-# Auto-run setup-jdtls.sh when switching branches.
-# Type 1 = branch checkout, type 0 = file checkout (skip).
+# =============================================================================
+# post-checkout hook: keep LSP/IDE in sync with the current branch
+#
+# To install:  cp scripts/post-checkout .git/hooks/post-checkout
+# =============================================================================
 
 PREV_HEAD=$1
 NEW_HEAD=$2
+# checkout type:  1 = branch switch,  0 = file checkout
 CHECKOUT_TYPE=$3
 
 if [ "$CHECKOUT_TYPE" = "1" ]; then
     echo ""
-    echo "=== Branch switch → running setup-jdtls.sh ==="
+    echo "=== Branch switch detected, running setup-jdtls.sh ==="
+    echo "    from: $PREV_HEAD"
+    echo "    to:   $NEW_HEAD"
     bash setup-jdtls.sh
 fi
