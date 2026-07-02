@@ -213,3 +213,4 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 ## 许可证
 
 此模组基于 [Creative Commons Zero v1.0 Universal](LICENSE) 许可。
+

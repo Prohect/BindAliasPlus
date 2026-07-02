@@ -267,3 +267,4 @@ All notable changes to BindAliasPlus will be documented in this file.
 ## License
 
 [CC0-1.0](LICENSE)
+

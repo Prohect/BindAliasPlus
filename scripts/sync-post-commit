@@ -87,3 +87,4 @@ for target in "${branches[@]}"; do
     echo "  synced → $target"
   fi
 done
+
