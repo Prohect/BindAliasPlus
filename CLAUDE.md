@@ -16,7 +16,7 @@ Functional correctness must be confirmed by the user.
 
 1. **Develop** → build + runTestClient → **Confirm by User** → commit
 2. **Sync** → manual merge files not in `.git_sync_across_active_branches` → build + runTestClient per branch.
-3. **⏸ STOP** — wait for user confirmation before bumping
+3. **STOP** — wait for user confirmation before bumping
 4. **Bump** → `mod_version` in `gradle.properties` + CHANGELOG → commit
 5. **Collect** → build each branch, copy JAR to `release/`
 6. **Verify** → `unzip -p <jar> fabric.mod.json`
