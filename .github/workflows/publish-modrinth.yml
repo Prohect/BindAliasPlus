@@ -8,24 +8,16 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: 25
-          distribution: temurin
-
-      - name: Build
+      - name: Download release assets
         run: |
-          chmod +x gradlew
-          ./gradlew build --no-daemon
+          gh release download "${{ github.ref_name }}" --repo "${{ github.repository }}" --dir assets --pattern '*.jar'
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Publish to Modrinth
         uses: Kir-Antipov/mc-publish@v3
         with:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           modrinth-id: bind-alias-plus
-          files: build/libs/!(*-@(dev|sources|javadoc)).jar
+          files: assets/*.jar
           loaders: fabric
