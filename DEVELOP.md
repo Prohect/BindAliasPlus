@@ -12,12 +12,7 @@
 
 2. Install the sync hooks:
 
-   **Windows (cmd / PowerShell):**
-
-   ```cmd
-   copy scripts\sync-post-commit .git\hooks\post-commit
-   copy scripts\sync-post-commit .git\hooks\post-rewrite
-   ```
+   **Ignore this**
 
    **Linux / macOS:**
 
