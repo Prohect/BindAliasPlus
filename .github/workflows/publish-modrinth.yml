@@ -7,6 +7,17 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - pattern: assets/*+mc26.2.jar
+            game-version: "26.2"
+          - pattern: assets/*+mc26.1.1.jar
+            game-version: "26.1.1"
+          - pattern: assets/*+mc1.21.11.jar
+            game-version: "1.21.11"
+          - pattern: assets/*+mc1.21.8.jar
+            game-version: "1.21.8"
     steps:
       - name: Download release assets
         run: |
@@ -14,26 +25,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: Extract game versions from JAR filenames
-        id: versions
-        run: |
-          versions=""
-          for jar in assets/*.jar; do
-            v="$(basename "$jar" .jar | sed 's/.*+mc//')"
-            versions="${versions}${v}\n"
-          done
-          versions="$(printf '%b' "$versions" | sort -t. -k1,1nr -k2,2nr -k3,3nr | uniq)"
-          echo "Detected game versions:"
-          echo "$versions"
-          echo 'versions<<EOF' >> "$GITHUB_OUTPUT"
-          echo "$versions" >> "$GITHUB_OUTPUT"
-          echo 'EOF' >> "$GITHUB_OUTPUT"
-
       - name: Publish to Modrinth
         uses: Kir-Antipov/mc-publish@v3
         with:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           modrinth-id: bind-alias-plus
-          files: assets/*.jar
+          files: ${{ matrix.pattern }}
           loaders: fabric
-          game-versions: ${{ steps.versions.outputs.versions }}
+          game-versions: ${{ matrix.game-version }}
