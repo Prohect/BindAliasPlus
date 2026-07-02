@@ -33,9 +33,9 @@ git clone https://github.com/Prohect/BindAliasPlus
 cd BindAliasPlus
 git fetch --all
 
-# 2. Install both git hooks (hard-link from scripts/)
-ln -f scripts/sync-post-commit .git/hooks/post-commit
-ln -f scripts/post-checkout    .git/hooks/post-checkout
+# 2. Install both git hooks
+cp scripts/sync-post-commit .git/hooks/post-commit
+cp scripts/post-checkout    .git/hooks/post-checkout
 
 # 3. Build (gradlew auto-downloads Gradle, Fabric Loom, and dependencies)
 ./gradlew build
@@ -290,16 +290,15 @@ Runs [`setup-jdtls.sh`](setup-jdtls.sh) automatically when switching branches:
 
 ### Installing the Hooks
 
-Both hooks are tracked in `scripts/`. Hard-link them into `.git/hooks/` (so
-updating the tracked file updates the hook in-place):
+Both hooks are tracked in `scripts/`. Copy them into `.git/hooks/`:
 
 ```bash
-ln -f scripts/sync-post-commit .git/hooks/post-commit
-ln -f scripts/post-checkout    .git/hooks/post-checkout
+cp scripts/sync-post-commit .git/hooks/post-commit
+cp scripts/post-checkout    .git/hooks/post-checkout
 ```
 
-> Hard links work on all platforms (Linux, macOS, Windows). If you cloned with
-> `--single-branch` the hooks exit silently --- no errors.
+> Works on all platforms. If you cloned with `--single-branch` the hooks exit
+> silently --- no errors. Re-copy after pulling updates to `scripts/`.
 
 ---
 
