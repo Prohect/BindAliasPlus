@@ -22,9 +22,8 @@ public class KeyboardInputMixin {
             KeyBindingPlus keyBindingPlus;
             if (
                 (keyBindingPlus = BindAliasPlusClient.BINDING_PLUS.get(
-                        keyPressed.key()
-                    )) !=
-                null
+                    keyPressed.key()
+                )) != null
             ) {
                 AliasWithoutArgs<?> aliasWithoutArgs = keyPressed.pressed()
                     ? Alias.aliasesWithoutArgs.get(
@@ -35,13 +34,13 @@ public class KeyboardInputMixin {
                       );
                 aliasWithoutArgs =
                     aliasWithoutArgs == null
-                        ? (keyPressed.pressed()
-                              ? Alias.aliasesWithoutArgs_fromBindCommand.get(
-                                    keyBindingPlus.aliasNameOnKeyPressed()
-                                )
-                              : Alias.aliasesWithoutArgs_fromBindCommand.get(
-                                    keyBindingPlus.aliasNameOnKeyReleased()
-                                ))
+                        ? keyPressed.pressed()
+                            ? Alias.aliasesWithoutArgs_fromBindCommand.get(
+                                  keyBindingPlus.aliasNameOnKeyPressed()
+                              )
+                            : Alias.aliasesWithoutArgs_fromBindCommand.get(
+                                  keyBindingPlus.aliasNameOnKeyReleased()
+                              )
                         : aliasWithoutArgs;
                 if (aliasWithoutArgs != null) aliasWithoutArgs.run("");
             }

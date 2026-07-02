@@ -37,7 +37,10 @@ public class DropAlias extends BuiltinAliasWithBooleanArgs<DropAlias> {
                 if (focusedSlot != null && focusedSlot.hasStack()) {
                     int button = Screen.hasControlDown() ? 1 : 0;
                     handledScreen.onMouseClick(
-                        focusedSlot, focusedSlot.id, button, SlotActionType.THROW
+                        focusedSlot,
+                        focusedSlot.id,
+                        button,
+                        SlotActionType.THROW
                     );
                 }
                 return this;
@@ -75,7 +78,10 @@ public class DropAlias extends BuiltinAliasWithBooleanArgs<DropAlias> {
             if (focusedSlot != null && focusedSlot.hasStack()) {
                 int button = Screen.hasControlDown() ? 1 : 0;
                 handledScreen.onMouseClick(
-                    focusedSlot, focusedSlot.id, button, SlotActionType.THROW
+                    focusedSlot,
+                    focusedSlot.id,
+                    button,
+                    SlotActionType.THROW
                 );
             }
         } else if (screen == null) {
