@@ -46,8 +46,3 @@ Functional correctness must be confirmed by the user.
 | `KeyboardHandler` / `MouseHandler`      | `Keyboard` / `Mouse`                                             |
 | `KeyEvent` / `MouseButtonInfo`          | `KeyInput` / `MouseInput` (1.21.9+), `int...` (1.21.8)           |
 | accesswidener namespace `official`      | accesswidener namespace `named`                                  |
-
-## sync hook
-
-Active on all branches via `.git_active_branches` + `.git_sync_across_active_branches`.
-Install on fresh clone: `cp .git-sync-post-commit-hook .git/hooks/post-commit && chmod +x .git/hooks/post-commit`
