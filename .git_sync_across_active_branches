@@ -1,0 +1,16 @@
+# docs
+CHANGELOG.md
+CLAUDE.md
+README.md
+README_CN.md
+
+# sync config itself
+.git_active_branches
+.git_sync_across_active_branches
+
+# repo config
+.gitignore
+
+# CI
+.github/workflows/*.yml
+# hook: post-commit
