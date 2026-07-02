@@ -12,11 +12,25 @@
 
 2. Install the sync hook:
 
+   **Windows (Git Bash / MSYS2):**
+
    ```bash
    ln scripts/sync-post-commit .git/hooks/post-commit
    ```
 
-   This hardlinks the tracked hook into `.git/hooks/`. After this, every commit that touches a synced file (see `.git_sync_across_active_branches`) is automatically mirrored to all active branches (`.git_active_branches`).
+   **Windows (cmd / PowerShell):**
+
+   ```cmd
+   copy scripts\sync-post-commit .git\hooks\post-commit
+   ```
+
+   **Linux / macOS:**
+
+   ```bash
+   cp scripts/sync-post-commit .git/hooks/post-commit && chmod +x .git/hooks/post-commit
+   ```
+
+   After this, every commit that touches a synced file (see `.git_sync_across_active_branches`) is automatically mirrored to all active branches (`.git_active_branches`).
 
 3. If you cloned with `--single-branch` or the config files are missing, the hook exits silently — no errors.
 
