@@ -1,50 +1,41 @@
 # gradle
-
 .gradle/
+bin/
 build/
-out/
-classes/
+
+# zed
+.zed/
 
 # eclipse
-
 *.launch
+.project
 
 # idea
-
 .idea/
 *.iml
 *.ipr
 *.iws
 
 # vscode
-
+.classpath
 .settings/
 .vscode/
-bin/
-.classpath
-.project
 
 # macos
-
 *.DS_Store
+# do not commit decompiled sources, that's against the EULA of Minecraft
+minecraft-decompiled-sources/
 
-# fabric
-
-
-# java
-
-hs_err_*.log
-replay_*.log
-*.hprof
-*.jfr
-*.txt
-
-# temp
-temp/
+# all under run/ except run/config/bind-alias-plus.cfg, test purpose
+run/*
+!run/config/
+run/config/*
+!run/config/bind-alias-plus.cfg
 
 # custom
-.zed/
-TODO.md
-
-release/
-
+# please add your custom gitignored files/directories to .git/info/exclude
+#
+# if you find that there are common files/directories introduced by the build system,
+# the platform, the IDE, or any other tool that are often generated, yet not needed
+# for a minimal build or have their own usage for other remote repository developers,
+# please make a pull request to add them to .gitignore
