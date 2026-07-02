@@ -14,10 +14,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: Publish to Modrinth
+      - name: Publish each JAR to Modrinth
         uses: Kir-Antipov/mc-publish@v3
         with:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           modrinth-id: bind-alias-plus
           files: assets/*.jar
+          files-primary: assets/*.jar
           loaders: fabric
