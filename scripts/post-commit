@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# post-commit hook: sync configured files across active branches
+# post-commit hook:  sync configured files across active branches.
 #
 # To install:  ln scripts/sync-post-commit .git/hooks/post-commit
 # =============================================================================
