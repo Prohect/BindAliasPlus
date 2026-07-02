@@ -12,13 +12,6 @@
 
 2. Install the sync hooks:
 
-   **Windows (Git Bash / MSYS2):**
-
-   ```bash
-   ln scripts/sync-post-commit .git/hooks/post-commit
-   ln scripts/sync-post-commit .git/hooks/post-rewrite
-   ```
-
    **Windows (cmd / PowerShell):**
 
    ```cmd
