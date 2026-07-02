@@ -22,3 +22,6 @@ setup-jdtls.sh
 
 # CI
 .github/workflows/*.yml
+
+# test cfg
+run/config/bind-alias-plus.cfg
