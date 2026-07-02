@@ -1,6 +1,6 @@
-# active sync branches (see CLAUDE.md)
+# active branches
+# scope for .git_sync_across_active_branches
 26.1.2_26.2
 26.1_26.1.1
 1.21.9_1.21.11
 1.21_1.21.8
-
