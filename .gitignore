@@ -44,5 +44,6 @@ temp/
 
 # custom
 .zed/
+TODO.md
 
 release/
