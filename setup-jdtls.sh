@@ -1,6 +1,6 @@
 #!/bin/bash
 # setup-jdtls.sh — Prepare JDTLS for the current branch
-# Sources extracted to mc-decompile-sources/<branch>/ for agent browsing.
+# Sources extracted to minecraft-decompiled-sources/<branch>/ for agent browsing.
 # JDTLS uses loom-cache -sources.jar directly (more reliable than directory sourcepath).
 
 set -e
@@ -55,4 +55,3 @@ fi
 
 echo ""
 echo "Done."
-
