@@ -65,9 +65,7 @@ public class ReapplyAlias extends BuiltinAliasWithArgs<ReapplyAlias> {
         if (alias == null) {
             alias = Alias.aliasesWithArgs_notSuggested.get(builtinName);
         }
-        if (
-            alias instanceof BuiltinAliasWithBooleanArgs<?> b && b.flag
-        ) {
+        if (alias instanceof BuiltinAliasWithBooleanArgs<?> b && b.flag) {
             b.reapplyToGameKeyMapping();
         } else {
             BindAliasPlusClient.LOGGER.warn(

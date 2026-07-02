@@ -37,7 +37,10 @@ public class DropAlias extends BuiltinAliasWithBooleanArgs<DropAlias> {
                 if (hoveredSlot != null && hoveredSlot.hasItem()) {
                     int button = mc.hasControlDown() ? 1 : 0;
                     containerScreen.slotClicked(
-                        hoveredSlot, hoveredSlot.index, button, ContainerInput.THROW
+                        hoveredSlot,
+                        hoveredSlot.index,
+                        button,
+                        ContainerInput.THROW
                     );
                 }
                 return this;
@@ -76,7 +79,10 @@ public class DropAlias extends BuiltinAliasWithBooleanArgs<DropAlias> {
             if (hoveredSlot != null && hoveredSlot.hasItem()) {
                 int button = mc.hasControlDown() ? 1 : 0;
                 containerScreen.slotClicked(
-                    hoveredSlot, hoveredSlot.index, button, ContainerInput.THROW
+                    hoveredSlot,
+                    hoveredSlot.index,
+                    button,
+                    ContainerInput.THROW
                 );
             }
         } else if (screen == null) {

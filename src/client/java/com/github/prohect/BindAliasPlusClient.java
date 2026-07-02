@@ -74,8 +74,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new JumpAlias().putToAliasesWithArgs_notSuggested();
         new SneakAlias().putToAliasesWithArgs_notSuggested();
         new SprintAlias().putToAliasesWithArgs_notSuggested();
-        new DropAlias()
-            .putToAliasesWithArgs_notSuggested();
+        new DropAlias().putToAliasesWithArgs_notSuggested();
         new LogAlias().putToAliasesWithArgs();
         new SlotAlias().putToAliasesWithArgs();
         new SwapSlotAlias().putToAliasesWithArgs();
@@ -127,8 +126,12 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new UserAlias("builtinSprint\\0").putToAliasesWithoutArgs("-sprint");
         new UserAlias("builtinDrop\\1").putToAliasesWithoutArgs("+drop");
         new UserAlias("builtinDrop\\0").putToAliasesWithoutArgs("-drop");
-        new UserAlias("builtinOpenInventory\\1").putToAliasesWithoutArgs("+openInventory");
-        new UserAlias("builtinOpenInventory\\0").putToAliasesWithoutArgs("-openInventory");
+        new UserAlias("builtinOpenInventory\\1").putToAliasesWithoutArgs(
+            "+openInventory"
+        );
+        new UserAlias("builtinOpenInventory\\0").putToAliasesWithoutArgs(
+            "-openInventory"
+        );
         new UserAlias("builtinSilent\\1").putToAliasesWithoutArgs("+silent");
         new UserAlias("builtinSilent\\0").putToAliasesWithoutArgs("-silent");
         new UserAlias("builtinSetPerspective\\0").putToAliasesWithoutArgs(
@@ -569,7 +572,6 @@ public class BindAliasPlusClient implements ClientModInitializer {
                     )
                 )
         );
-
     }
 
     public void loadCFG() {
