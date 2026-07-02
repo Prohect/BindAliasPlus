@@ -51,3 +51,4 @@
 | `KeyboardHandler` / `MouseHandler`      | `Keyboard` / `Mouse`                                             |
 | `KeyEvent` / `MouseButtonInfo`          | `KeyInput` / `MouseInput` (1.21.9+), `int...` (1.21.8)           |
 | accesswidener namespace `official`      | accesswidener namespace `named`                                  |
+
