@@ -1,22 +1,21 @@
-BindAliasPlus\mc-decompile-sources is in .git\info\exclude,
+BindAliasPlus\minecraft-decompiled-sources is in .gitignore,
 search inside:
 
 ```bash
-cd mc-decompile-sources/<branch>/ && grep <args>
+cd minecraft-decompiled-sources/<branch>/ && grep <args>
 # cd to a more specific path if you understand the file tree structure
 ```
 
 ## test by gradle runTestClient
 
-Harness the autoLoaded cfg file for automatic crash detection.
-Add test aliases for new/changed code paths — agent's call.
+Harness the autoLoaded(loaded at `net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.JOIN`) cfg(`run/config/bind-alias-plus.cfg` via `com.github.prohect.BindAliasPlusClient.loadCFG()`) for automatic crash/error detection.
+Add test aliases for new code paths.
 Functional correctness must be confirmed by the user.
 
 ## release workflow
 
-1. **Develop** → build + runTestClient → commit
-2. **Sync** → automatic via post-commit hook (`.git_active_branches` + `.git_sync_across_active_branches`).
-   Manual fallback: cherry-pick to each active branch → build + runTestClient per branch.
+1. **Develop** → build + runTestClient → **Confirm by User** → commit
+2. **Sync** → manual merge files not in `.git_sync_across_active_branches` → build + runTestClient per branch.
 3. **⏸ STOP** — wait for user confirmation before bumping
 4. **Bump** → `mod_version` in `gradle.properties` + CHANGELOG → commit
 5. **Collect** → build each branch, copy JAR to `release/`
@@ -46,4 +45,3 @@ Functional correctness must be confirmed by the user.
 | `KeyboardHandler` / `MouseHandler`      | `Keyboard` / `Mouse`                                             |
 | `KeyEvent` / `MouseButtonInfo`          | `KeyInput` / `MouseInput` (1.21.9+), `int...` (1.21.8)           |
 | accesswidener namespace `official`      | accesswidener namespace `named`                                  |
-
