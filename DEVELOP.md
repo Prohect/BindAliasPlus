@@ -12,6 +12,8 @@
 
 2. Install the sync hook:
 
+   **test**
+
    **Windows (cmd / PowerShell):**
 
    ```cmd
