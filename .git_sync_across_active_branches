@@ -9,8 +9,7 @@ README_CN.md
 # sync config itself
 .git_active_branches
 .git_sync_across_active_branches
-scripts/post-checkout
-scripts/sync-post-commit
+scripts/*
 
 # repo config
 .gitattributes
@@ -18,6 +17,7 @@ scripts/sync-post-commit
 
 # IDE / editor
 formatter.xml
+setup-jdtls.sh
 
 # CI
 .github/workflows/*.yml
