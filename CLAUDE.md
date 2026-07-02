@@ -23,12 +23,12 @@ Functional correctness must be confirmed by the user.
 
 ## active branches
 
-| Branch | MC | Mappings | Key differences |
-|---|---|---|---|
-| `26.1.2_26.2` | 26.2 | Mojang | `GuiMixin` → `Gui.class` |
-| `26.1_26.1.1` | 26.1.1 | Mojang | `GuiMixin` → `Minecraft.class` |
-| `1.21.9_1.21.11` | 1.21.11 | Yarn | `KeyInput`/`MouseInput`, `isCtrlPressed()` |
-| `1.21_1.21.8` | 1.21.8 | Yarn | `int` params, `Screen.hasControlDown()`, `selectedSlot` AW |
+| Branch | MC | Mappings |
+|---|---|---|
+| `26.1.2_26.2` | 26.2 | Mojang |
+| `26.1_26.1.1` | 26.1.1 | Mojang |
+| `1.21.9_1.21.11` | 1.21.11 | Yarn |
+| `1.21_1.21.8` | 1.21.8 | Yarn |
 
 ## per-branch mapping (Mojang → Yarn)
 
