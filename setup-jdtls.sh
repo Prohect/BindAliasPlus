@@ -11,7 +11,7 @@ cd "$SCRIPT_DIR"
 BRANCH="$(git branch --show-current)"
 echo "=== Branch: $BRANCH ==="
 
-SRC_DIR="mc-decompile-sources/$BRANCH"
+SRC_DIR="minecraft-decompiled-sources/$BRANCH"
 
 # Step 1: Generate decompiled Minecraft sources (if not already cached)
 if [ -d "$SRC_DIR" ] && [ "$(find "$SRC_DIR" -name '*.java' 2>/dev/null | wc -l)" -gt 0 ]; then
@@ -32,7 +32,7 @@ sed -i '/gradleclasspathcontainer/d' .classpath
 sed -i '/gradleprojectnature/d' .project
 sed -i '/<buildCommand>/{:a;N;/<\/buildCommand>/!ba;/gradleprojectbuilder/d}' .project
 
-# Step 4: Extract MC source jars to mc-decompile-sources/ for agent browsing
+# Step 4: Extract MC source jars to minecraft-decompiled-sources/ for agent browsing
 #         Extracts only the JARs that .classpath references (avoids stale Loom generations).
 #         (JDTLS uses the -sources.jar directly via .classpath — more reliable)
 if [ -d "$SRC_DIR" ] && [ "$(find "$SRC_DIR" -name '*.java' | wc -l)" -gt 0 ]; then
