@@ -1,11 +1,16 @@
 #!/bin/bash
 # post-commit hook: sync configured files across active branches
-# Copy to .git/hooks/post-commit and chmod +x to activate
+# To install:  ln scripts/sync-post-commit .git/hooks/post-commit
 set -u
 
 BRANCHES_FILE=".git_active_branches"
 PATTERNS_FILE=".git_sync_across_active_branches"
 
+# --- gracefully handle missing config (single-branch clone, new dev) ---
+[ -f "$BRANCHES_FILE" ] || exit 0
+[ -f "$PATTERNS_FILE" ] || exit 0
+
+# --- helpers ---
 read_lines() {
   local file="$1"; local -n arr="$2"; arr=()
   while IFS= read -r line || [[ -n "$line" ]]; do
@@ -32,9 +37,14 @@ expand_globs() {
   done
 }
 
+# --- load config ---
 read_lines "$BRANCHES_FILE" branches
 read_lines "$PATTERNS_FILE" patterns
 
+[ ${#branches[@]} -gt 0 ] || exit 0
+[ ${#patterns[@]} -gt 0 ] || exit 0
+
+# --- detect synced files from this commit ---
 changed=$(git diff-tree --no-commit-id --name-only -r HEAD)
 synced=()
 for f in $changed; do
@@ -43,17 +53,20 @@ done
 
 [ ${#synced[@]} -eq 0 ] && exit 0
 
+# --- expand globs (MUST run before touching GIT_INDEX_FILE) ---
 expanded=()
 while IFS= read -r f; do expanded+=("$f"); done < <(expand_globs "${synced[@]}")
 
 SOURCE=$(git rev-parse --abbrev-ref HEAD)
 SOURCE_SHA=$(git rev-parse --short HEAD)
 
+# --- mirror source commit message ---
 MSG=$(git log -1 --format='%B' HEAD)
 MSG="${MSG}
 
 source: ${SOURCE_SHA}"
 
+# --- sync to each target ---
 for target in "${branches[@]}"; do
   [ "$target" = "$SOURCE" ] && continue
 
