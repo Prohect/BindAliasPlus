@@ -1,6 +1,7 @@
 # docs
 CHANGELOG.md
 CLAUDE.md
+CONTRIBUTE.md
 DEVELOP.md
 README.md
 README_CN.md
@@ -11,7 +12,12 @@ README_CN.md
 scripts/sync-post-commit
 
 # repo config
+.gitattributes
 .gitignore
+
+# IDE / editor
+formatter.xml
+setup-jdtls.sh
 
 # CI
 .github/workflows/*.yml
