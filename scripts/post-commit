@@ -80,6 +80,12 @@ for target in "${branches[@]}"; do
   git ls-tree HEAD --format='%(objectmode) %(objectname) 0%x09%(path)' -- "${expanded[@]}" \
     | git update-index --index-info 2>/dev/null || true
 
+  # Remove synced files that were deleted in the source commit
+  for f in "${expanded[@]}"; do
+    git cat-file -e "HEAD:$f" 2>/dev/null && continue
+    git rm --cached --quiet -- "$f" 2>/dev/null || true
+  done
+
   new_tree=$(git write-tree)
   old_tree=$(git rev-parse "$target^{tree}")
   unset GIT_INDEX_FILE; rm -f "$tmpidx"
