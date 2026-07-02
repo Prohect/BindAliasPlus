@@ -20,8 +20,10 @@ public class MinecraftClientMixin {
         }
 
         // Drive continuous drop while the drop-key alias is held
-        AliasWithArgs<?> raw = com.github.prohect.alias.Alias
-            .aliasesWithArgs_notSuggested.get("builtinDrop");
+        AliasWithArgs<?> raw =
+            com.github.prohect.alias.Alias.aliasesWithArgs_notSuggested.get(
+                "builtinDrop"
+            );
         if (raw instanceof DropAlias dropAlias) {
             dropAlias.tickDrop();
         }
