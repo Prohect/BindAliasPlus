@@ -242,7 +242,7 @@ the source branch).
 
 - `CHANGELOG.md`, `CLAUDE.md`, `CONTRIBUTE.md`, `DEVELOP.md`, `README.md`, `README_CN.md`
 - `.git_active_branches`, `.git_sync_across_active_branches`
-- `scripts/sync-post-commit`
+- `scripts/post-checkout`, `scripts/sync-post-commit`
 - `.gitignore`
 - `.github/workflows/*.yml`
 
@@ -252,7 +252,9 @@ the source branch).
 ### post-checkout: JDTLS Setup
 
 Automatically runs [`setup-jdtls.sh`](setup-jdtls.sh) when switching branches.
-This script:
+The hook script lives at [`scripts/post-checkout`](scripts/post-checkout).
+
+This hook:
 
 1. Generates decompiled Minecraft sources (via `./gradlew genSources`)
 2. Generates Eclipse `.classpath` / `.project` (via `./gradlew eclipse`)
@@ -265,38 +267,32 @@ This script:
 
 ### Installing the Hooks
 
-**Windows (cmd / PowerShell):**
-
-```cmd
-copy scripts\sync-post-commit .git\hooks\post-commit
-```
+Both hooks are tracked in `scripts/`. Install by linking or copying into
+`.git/hooks/`:
 
 **Linux / macOS:**
 
 ```bash
-cp scripts/sync-post-commit .git/hooks/post-commit && chmod +x .git/hooks/post-commit
+ln -sfr scripts/sync-post-commit .git/hooks/post-commit
+ln -sfr scripts/post-checkout    .git/hooks/post-checkout
 ```
 
-The `post-checkout` hook is custom and not distributed in `scripts/`. To
-install it (optional, for JDTLS users):
+**Windows (MSYS2 / Git Bash):**
 
 ```bash
-cat > .git/hooks/post-checkout << 'EOF'
-#!/bin/bash
-PREV_HEAD=$1
-NEW_HEAD=$2
-CHECKOUT_TYPE=$3
-if [ "$CHECKOUT_TYPE" = "1" ]; then
-    echo ""
-    echo "=== Branch switch → running setup-jdtls.sh ==="
-    bash setup-jdtls.sh
-fi
-EOF
-chmod +x .git/hooks/post-checkout
+MSYS=winsymlinks:nativestrict ln -sfr scripts/sync-post-commit .git/hooks/post-commit
+MSYS=winsymlinks:nativestrict ln -sfr scripts/post-checkout    .git/hooks/post-checkout
+```
+
+**Windows (cmd / PowerShell, copy instead of link):**
+
+```cmd
+copy scripts/sync-post-commit .git/hooks/post-commit
+copy scripts/post-checkout    .git/hooks/post-checkout
 ```
 
 > If you cloned with `--single-branch` or the config files are missing, the
-> hooks exit silently — no errors.
+> hooks exit silently --- no errors.
 
 ---
 
