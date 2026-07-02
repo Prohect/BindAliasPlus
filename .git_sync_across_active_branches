@@ -13,4 +13,3 @@ README_CN.md
 
 # CI
 .github/workflows/*.yml
-# hook: post-commit
