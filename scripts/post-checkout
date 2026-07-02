@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# post-checkout hook: keep LSP/IDE in sync with the current branch
+# post-checkout hook:  keep LSP/IDE in sync with the current branch
 #
 # To install:  cp scripts/post-checkout .git/hooks/post-checkout
 # =============================================================================
