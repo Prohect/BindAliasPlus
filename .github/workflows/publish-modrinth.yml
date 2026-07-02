@@ -14,10 +14,26 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: Publish each JAR to Modrinth
+      - name: Extract game versions from JAR filenames
+        id: versions
+        run: |
+          versions=""
+          for jar in assets/*.jar; do
+            v="$(basename "$jar" .jar | sed 's/.*+mc//')"
+            versions="${versions}${v}\n"
+          done
+          versions="$(printf '%b' "$versions" | sort -t. -k1,1nr -k2,2nr -k3,3nr | uniq)"
+          echo "Detected game versions:"
+          echo "$versions"
+          echo 'versions<<EOF' >> "$GITHUB_OUTPUT"
+          echo "$versions" >> "$GITHUB_OUTPUT"
+          echo 'EOF' >> "$GITHUB_OUTPUT"
+
+      - name: Publish to Modrinth
         uses: Kir-Antipov/mc-publish@v3
         with:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           modrinth-id: bind-alias-plus
           files: assets/*.jar
           loaders: fabric
+          game-versions: ${{ steps.versions.outputs.versions }}
