@@ -1,72 +1,196 @@
 #!/bin/bash
 
-# Generate Java src code outline using javap (reads compiled .class files).
+# Generate doc scaffolding from compiled .class files via javap.
+# Creates docs/en-US/<source-path>/<File>.java/ with stubs for every item.
 # Requires: JDK (javap), a built project (class files under bin/).
-# Usage: bash ./scripts/generate_outline.sh > README_src_outline.md
+# Usage: bash ./scripts/generate_outline.sh
 
-echo "# Src Outline, **READ this by MULTIPLE calls if it's too large being outlined by first call**"
-echo ""
+set -e
 
-# Map class files back to source files
-# bin/<module>/<pkg-path>/Foo.class → src/<module>/java/<pkg-path>/Foo.java
+DOCROOT="docs/en-US"
+COMMIT_SHA=$(git --no-pager log -1 --format="%H" 2>/dev/null || echo "unknown")
+FOOTER="*Documented for Commit: [${COMMIT_SHA}](https://github.com/Prohect/BindAliasPlus/tree/${COMMIT_SHA})*"
+
 find bin -name "*.class" | sort | while read classfile; do
-    # Extract module from class path: bin/client/... or bin/main/...
     module="${classfile#bin/}"
     module="${module%%/*}"
 
-    # Get the package path (everything after bin/<module>/)
     pkgpath="${classfile#bin/$module/}"
     pkgpath="${pkgpath%.class}.java"
 
     srcpath="src/$module/java/$pkgpath"
+    [ -f "$srcpath" ] || continue
 
-    if [ ! -f "$srcpath" ]; then
-        continue
+    docdir="$DOCROOT/$srcpath"
+    docdir="${docdir%.java}.java"
+    mkdir -p "$docdir"
+
+    class_name=$(basename "$srcpath" .java)
+
+    # Check for explicit static { } block in source (not just field initializers)
+    if grep -qP '^\s*static\s*\{' "$srcpath" 2>/dev/null; then
+        has_static_block=1
+    else
+        has_static_block=0
     fi
 
-    echo "## $srcpath"
+    # --- README.md ---
+    cat > "$docdir/README.md" << EOF
+# $class_name
 
-    javap -p "$classfile" 2>/dev/null | awk '
+## Fields
+
+| Name | Type | Description |
+|------|------|-------------|
+
+## Methods
+
+| Name | Signature | Description |
+|------|-----------|-------------|
+
+## See Also
+
+| Item | Description |
+|------|-------------|
+
+$FOOTER
+EOF
+
+    # --- Parse javap output for per-item stubs ---
+    javap -p "$classfile" 2>/dev/null | awk \
+        -v docdir="$docdir" \
+        -v footer="$FOOTER" \
+        -v srcpath="$srcpath" \
+        -v class_name="$class_name" \
+        -v has_static_block="$has_static_block" '
     BEGIN { in_class = 0 }
 
     /^Compiled from/ { next }
 
-    # Class/interface/enum/record header (unindented, starts with lowercase letter)
+    # Class header line (unindented)
     /^[a-z]/ {
         in_class = 1
-        sub(/ *\{ *\r?$/, "")
-        print "- " $0
+        line = $0
+        sub(/ *\{ *\r?$/, "", line)
+
+        f = docdir "/" class_name ".md"
+        print "# " class_name " (" srcpath ")" > f
+        print "" >> f
+        print "## Syntax" >> f
+        print "" >> f
+        print "```java" >> f
+        print line >> f
+        print "```" >> f
+        print "" >> f
+        print "## Static Initializer" >> f
+        print "" >> f
+        if (has_static_block == "1")
+            print "_See [static-init](static-init.md)._" >> f
+        else
+            print "_None._" >> f
+        print "" >> f
+        print "## Remarks" >> f
+        print "" >> f
+        print "## See Also" >> f
+        print "" >> f
+        print "| Item | Description |" >> f
+        print "|------|-------------|" >> f
+        print "" >> f
+        print footer >> f
+        close(f)
         next
     }
 
     !in_class { next }
 
-    # Skip synthetic lambda / access bridges
     /lambda\$|access\$/ { next }
 
-    # Static initializer
+    # Static initializer — only stub if source has explicit block
     /static *\{ *\};/ {
-        print "  - static {}"
+        if (has_static_block == "1") {
+            f = docdir "/static-init.md"
+            print "# static-init (" srcpath ")" > f
+            print "" >> f
+            print "## Remarks" >> f
+            print "" >> f
+            print "Executed once when the class is loaded. See source for content." >> f
+            print "" >> f
+            print footer >> f
+            close(f)
+        }
         next
     }
 
-    # Closing brace
     /^\}/ { in_class = 0; next }
 
-    # Has ( → method or constructor
+    # Method or constructor
     /\(/ {
-        sub(/;\r?$/, "")
-        gsub(/^[ \t]+/, "")
-        print "  - " $0
+        line = $0
+        sub(/;\r?$/, "", line)
+        gsub(/^[ \t]+/, "", line)
+
+        if (match(line, /\(/)) {
+            before = substr(line, 1, RSTART - 1)
+            n = split(before, parts, /[ \t]+/)
+            name = parts[n]
+            sub(/<.*/, "", name)
+        } else { next }
+
+        if (name ~ /\./ || name == class_name) next
+
+        f = docdir "/" name ".md"
+        print "# " name " method (" srcpath ")" > f
+        print "" >> f
+        print "## Syntax" >> f
+        print "" >> f
+        print "```java" >> f
+        print line >> f
+        print "```" >> f
+        print "" >> f
+        print "## Parameters" >> f
+        print "" >> f
+        print "| Name | Type | Description |" >> f
+        print "|------|------|-------------|" >> f
+        print "" >> f
+        print "## Remarks" >> f
+        print "" >> f
+        print "## See Also" >> f
+        print "" >> f
+        print "| Item | Description |" >> f
+        print "|------|-------------|" >> f
+        print "" >> f
+        print footer >> f
+        close(f)
         next
     }
 
-    # Field: type name;  pattern
+    # Field (public/protected only)
     /[A-Za-z0-9_<>\[\],.? ]+ [A-Za-z_][A-Za-z0-9_]*;/ {
-        sub(/;\r?$/, "")
-        gsub(/^[ \t]+/, "")
-        print "  - " $0
+        line = $0
+        sub(/;\r?$/, "", line)
+        gsub(/^[ \t]+/, "", line)
+
+        n = split(line, parts, /[ \t]+/)
+        fname = parts[n]
+
+        if (line ~ /^(public |protected )/) {
+            f = docdir "/" fname ".md"
+            print "# " fname " field (" srcpath ")" > f
+            print "" >> f
+            print "## Syntax" >> f
+            print "" >> f
+            print "```java" >> f
+            print line >> f
+            print "```" >> f
+            print "" >> f
+            print "## Remarks" >> f
+            print "" >> f
+            print footer >> f
+            close(f)
+        }
     }
     '
-    echo ""
+
 done
+
+echo "Done. Doc scaffolding created under $DOCROOT/"
