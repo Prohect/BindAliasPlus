@@ -2,6 +2,14 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.3.3] - 2026-07-03
+
+### Added
+
+- **`toggleinventory` alias** — toggles the player inventory open/closed.
+  Opens the inventory screen if no screen is active; closes any container
+  screen (chest, furnace, etc.) if one is open.
+
 ## [1.3.2] - 2026-07-02
 
 ### Fixed
@@ -267,4 +275,3 @@ All notable changes to BindAliasPlus will be documented in this file.
 ## License
 
 [CC0-1.0](LICENSE)
-
