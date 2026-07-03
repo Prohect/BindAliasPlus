@@ -2,6 +2,14 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.3.4] - 2026-07-03
+
+### Fixed
+
+- **Text input guards** — `swapHand`, `use`, and `pickItem` aliases now
+  cancel when the player is typing in chat, signs, books, or command
+  blocks, preventing accidental game actions while typing.
+
 ## [1.3.3] - 2026-07-03
 
 ### Added
