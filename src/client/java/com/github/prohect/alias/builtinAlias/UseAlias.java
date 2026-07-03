@@ -1,6 +1,7 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -24,6 +25,8 @@ public class UseAlias extends BuiltinAliasWithArgs<UseAlias> {
                 BindAliasPlusClient.LOGGER.warn("[Use]Invalid arguments");
                 break;
         }
+        // cancel press event from text input screen
+        if (Alias.isUnderTextInputScreen() && flag) return this;
         KeyMapping attackKey = Minecraft.getInstance().options.keyUse;
         attackKey.setDown(flag);
         if (flag) {
