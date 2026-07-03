@@ -117,6 +117,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new CyclePerspectiveAlias().putToAliasesWithoutArgs();
         new SwapHandAlias().putToAliasesWithoutArgs();
         new PickItemAlias().putToAliasesWithoutArgs();
+        new ToggleInventoryAlias().putToAliasesWithoutArgs();
         new ShutdownAlias().putToAliasesWithoutArgs_notSuggested();
         new ReloadCFGAlias().putToAliasesWithoutArgs();
         new UnloadCFGAliasesAlias().putToAliasesWithoutArgs();
