@@ -2,8 +2,10 @@
 
 # Generate doc scaffolding from compiled .class files via javap.
 # Creates docs/en-US/<source-path>/<File>.java/ with stubs for every item.
+# Never overwrites existing files.
+# Creates overview README.md in any directory with >=2 children.
 # Requires: JDK (javap), a built project (class files under bin/).
-# Usage: bash ./scripts/generate_outline.sh
+# Usage: bash ./scripts/generate_docs.sh
 
 set -e
 
@@ -11,6 +13,14 @@ DOCROOT="docs/en-US"
 COMMIT_SHA=$(git --no-pager log -1 --format="%H" 2>/dev/null || echo "unknown")
 FOOTER="*Documented for Commit: [${COMMIT_SHA}](https://github.com/Prohect/BindAliasPlus/tree/${COMMIT_SHA})*"
 
+write_if_missing() {
+    local target="$1"
+    if [ ! -f "$target" ]; then
+        cat > "$target"
+    fi
+}
+
+# --- Pass 1: source file doc stubs ---
 find bin -name "*.class" | sort | while read classfile; do
     module="${classfile#bin/}"
     module="${module%%/*}"
@@ -27,7 +37,6 @@ find bin -name "*.class" | sort | while read classfile; do
 
     class_name=$(basename "$srcpath" .java)
 
-    # Check for explicit static { } block in source (not just field initializers)
     if grep -qP '^\s*static\s*\{' "$srcpath" 2>/dev/null; then
         has_static_block=1
     else
@@ -35,7 +44,7 @@ find bin -name "*.class" | sort | while read classfile; do
     fi
 
     # --- README.md ---
-    cat > "$docdir/README.md" << EOF
+    write_if_missing "$docdir/README.md" << EOF
 # $class_name
 
 ## Fields
@@ -56,7 +65,7 @@ find bin -name "*.class" | sort | while read classfile; do
 $FOOTER
 EOF
 
-    # --- Parse javap output for per-item stubs ---
+    # --- Per-item stubs ---
     javap -p "$classfile" 2>/dev/null | awk \
         -v docdir="$docdir" \
         -v footer="$FOOTER" \
@@ -67,53 +76,34 @@ EOF
 
     /^Compiled from/ { next }
 
-    # Class header line (unindented)
     /^[a-z]/ {
         in_class = 1
         line = $0
         sub(/ *\{ *\r?$/, "", line)
 
         f = docdir "/" class_name ".md"
-        print "# " class_name " (" srcpath ")" > f
-        print "" >> f
-        print "## Syntax" >> f
-        print "" >> f
-        print "```java" >> f
-        print line >> f
-        print "```" >> f
-        print "" >> f
-        print "## Static Initializer" >> f
-        print "" >> f
-        if (has_static_block == "1")
-            print "_See [static-init](static-init.md)._" >> f
-        else
-            print "_None._" >> f
-        print "" >> f
-        print "## Remarks" >> f
-        print "" >> f
-        print "## See Also" >> f
-        print "" >> f
-        print "| Item | Description |" >> f
-        print "|------|-------------|" >> f
-        print "" >> f
-        print footer >> f
-        close(f)
-        next
-    }
-
-    !in_class { next }
-
-    /lambda\$|access\$/ { next }
-
-    # Static initializer — only stub if source has explicit block
-    /static *\{ *\};/ {
-        if (has_static_block == "1") {
-            f = docdir "/static-init.md"
-            print "# static-init (" srcpath ")" > f
+        if (system("test -f \"" f "\"") != 0) {
+            print "# " class_name " (" srcpath ")" > f
+            print "" >> f
+            print "## Syntax" >> f
+            print "" >> f
+            print "```java" >> f
+            print line >> f
+            print "```" >> f
+            print "" >> f
+            print "## Static Initializer" >> f
+            print "" >> f
+            if (has_static_block == "1")
+                print "_See [static-init](static-init.md)._" >> f
+            else
+                print "_None._" >> f
             print "" >> f
             print "## Remarks" >> f
             print "" >> f
-            print "Executed once when the class is loaded. See source for content." >> f
+            print "## See Also" >> f
+            print "" >> f
+            print "| Item | Description |" >> f
+            print "|------|-------------|" >> f
             print "" >> f
             print footer >> f
             close(f)
@@ -121,9 +111,28 @@ EOF
         next
     }
 
+    !in_class { next }
+    /lambda\$|access\$/ { next }
+
+    /static *\{ *\};/ {
+        if (has_static_block == "1") {
+            f = docdir "/static-init.md"
+            if (system("test -f \"" f "\"") != 0) {
+                print "# static-init (" srcpath ")" > f
+                print "" >> f
+                print "## Remarks" >> f
+                print "" >> f
+                print "Executed once when the class is loaded. See source for content." >> f
+                print "" >> f
+                print footer >> f
+                close(f)
+            }
+        }
+        next
+    }
+
     /^\}/ { in_class = 0; next }
 
-    # Method or constructor
     /\(/ {
         line = $0
         sub(/;\r?$/, "", line)
@@ -139,32 +148,33 @@ EOF
         if (name ~ /\./ || name == class_name) next
 
         f = docdir "/" name ".md"
-        print "# " name " method (" srcpath ")" > f
-        print "" >> f
-        print "## Syntax" >> f
-        print "" >> f
-        print "```java" >> f
-        print line >> f
-        print "```" >> f
-        print "" >> f
-        print "## Parameters" >> f
-        print "" >> f
-        print "| Name | Type | Description |" >> f
-        print "|------|------|-------------|" >> f
-        print "" >> f
-        print "## Remarks" >> f
-        print "" >> f
-        print "## See Also" >> f
-        print "" >> f
-        print "| Item | Description |" >> f
-        print "|------|-------------|" >> f
-        print "" >> f
-        print footer >> f
-        close(f)
+        if (system("test -f \"" f "\"") != 0) {
+            print "# " name " method (" srcpath ")" > f
+            print "" >> f
+            print "## Syntax" >> f
+            print "" >> f
+            print "```java" >> f
+            print line >> f
+            print "```" >> f
+            print "" >> f
+            print "## Parameters" >> f
+            print "" >> f
+            print "| Name | Type | Description |" >> f
+            print "|------|------|-------------|" >> f
+            print "" >> f
+            print "## Remarks" >> f
+            print "" >> f
+            print "## See Also" >> f
+            print "" >> f
+            print "| Item | Description |" >> f
+            print "|------|-------------|" >> f
+            print "" >> f
+            print footer >> f
+            close(f)
+        }
         next
     }
 
-    # Field (public/protected only)
     /[A-Za-z0-9_<>\[\],.? ]+ [A-Za-z_][A-Za-z0-9_]*;/ {
         line = $0
         sub(/;\r?$/, "", line)
@@ -175,22 +185,57 @@ EOF
 
         if (line ~ /^(public |protected )/) {
             f = docdir "/" fname ".md"
-            print "# " fname " field (" srcpath ")" > f
-            print "" >> f
-            print "## Syntax" >> f
-            print "" >> f
-            print "```java" >> f
-            print line >> f
-            print "```" >> f
-            print "" >> f
-            print "## Remarks" >> f
-            print "" >> f
-            print footer >> f
-            close(f)
+            if (system("test -f \"" f "\"") != 0) {
+                print "# " fname " field (" srcpath ")" > f
+                print "" >> f
+                print "## Syntax" >> f
+                print "" >> f
+                print "```java" >> f
+                print line >> f
+                print "```" >> f
+                print "" >> f
+                print "## Remarks" >> f
+                print "" >> f
+                print footer >> f
+                close(f)
+            }
         }
     }
     '
 
 done
 
-echo "Done. Doc scaffolding created under $DOCROOT/"
+# --- Pass 2: overview README.md for parent dirs with >=2 children ---
+find "$DOCROOT" -type d | sort -r | while read dir; do
+    child_dirs=$(find "$dir" -maxdepth 1 -type d -not -path "$dir" | sort)
+    count=$(echo "$child_dirs" | grep -c '' 2>/dev/null || echo 0)
+
+    [ "$count" -ge 2 ] || continue
+    echo "$dir" | grep -q '\.java$' && continue
+
+    overview="$dir/README.md"
+    [ -f "$overview" ] && continue
+
+    dirname=$(basename "$dir")
+    {
+        echo "# $dirname"
+        echo ""
+        echo "## Contents"
+        echo ""
+        echo "| Name | Description |"
+        echo "|------|-------------|"
+        echo "$child_dirs" | while read child; do
+            child_name=$(basename "$child")
+            if [ -d "$child" ] && [ -f "$child/README.md" ]; then
+                echo "| [$child_name]($child_name/README.md) | |"
+            elif [ -d "$child" ]; then
+                echo "| $child_name/ | |"
+            fi
+        done
+        echo ""
+        echo "$FOOTER"
+    } > "$overview"
+    echo "  overview: $overview"
+done
+
+echo "Done. Doc scaffolding under $DOCROOT/"
