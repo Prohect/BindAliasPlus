@@ -37,7 +37,20 @@ Relative links between doc directories mirror the relative path between source f
 [Baz](../../other/Baz.java/Baz.md)
 ```
 
-## Schema for overview (`README.md`)
+## Parent directory overviews
+
+Any directory with 2 or more children gets a `README.md` listing its contents — descriptions, recommended reading order, and bold entry points. These form a navigable tree from the top-level `src/` down to each leaf package.
+
+```
+docs/en-US/src/README.md          ← links to client/ and main/
+  client/.../prohect/README.md    ← links to alias/, mixin/, entry points
+    alias/README.md               ← links to interfaces, base classes, builtinAlias/
+      builtinAlias/README.md      ← links to all alias implementations
+```
+
+Each overview tells the reader: what lives here, what to read first, and how the pieces connect.
+
+## Schema for source file overview (`<File>.java/README.md`)
 
 | Section               | Description           |
 | --------------------- | --------------------- |
