@@ -1,6 +1,7 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithoutArgs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -20,6 +21,7 @@ public class SwapHandAlias extends BuiltinAliasWithoutArgs<SwapHandAlias> {
         key.setPressed(true);
         key.setPressed(false);
         KeyBinding.onKeyPressed(key.boundKey);*/
+        if (Alias.isUnderTextInputScreen()) return this;
         ClientPlayNetworkHandler networkHandler =
             MinecraftClient.getInstance().getNetworkHandler();
         if (networkHandler == null) {
