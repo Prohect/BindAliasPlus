@@ -24,7 +24,7 @@ public abstract class BuiltinAliasWithIntegerArgs<T extends BuiltinAliasWithInte
             try {
                 flag = Integer.parseInt(args);
             } catch (NumberFormatException e) {
-                BindAliasPlusClient.LOGGER.error(e.getMessage(), e);
+                BindAliasPlusClient.LOGGER.error("{}{}", BindAliasPlusClient.tickPrefix(), e.getMessage(), e);
             }
         }
         this.flag = flag;

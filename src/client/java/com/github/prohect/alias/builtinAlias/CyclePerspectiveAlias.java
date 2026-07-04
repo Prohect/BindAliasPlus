@@ -21,7 +21,7 @@ public class CyclePerspectiveAlias
 
         if (options == null) {
             BindAliasPlusClient.LOGGER.warn(
-                "[CyclePerspective]Options is null"
+                "{}[CyclePerspective]Options is null", BindAliasPlusClient.tickPrefix()
             );
             return this;
         }

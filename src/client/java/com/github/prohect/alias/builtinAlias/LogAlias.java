@@ -11,7 +11,7 @@ public class LogAlias extends BuiltinAliasWithArgs<LogAlias> {
 
     @Override
     public LogAlias run(String args) {
-        BindAliasPlusClient.LOGGER.info(args);
+        BindAliasPlusClient.LOGGER.info("{}{}", BindAliasPlusClient.tickPrefix(), args);
         return this;
     }
 }

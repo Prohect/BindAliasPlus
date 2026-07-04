@@ -19,7 +19,7 @@ public class WaitAlias extends BuiltinAliasWithIntegerArgs<WaitAlias> {
         parseArgs(args);
         if (flag > 0) tasksWaiting.add(new WaitAliasRecord(flag, "", false));
         else BindAliasPlusClient.LOGGER.error(
-            "Invalid arguments: ticks of waitAlias could only be positive integers."
+            "{}Invalid arguments: ticks of waitAlias could only be positive integers.", BindAliasPlusClient.tickPrefix()
         );
         return this;
     }
@@ -30,7 +30,7 @@ public class WaitAlias extends BuiltinAliasWithIntegerArgs<WaitAlias> {
             new WaitAliasRecord(flag, definition, false)
         );
         else BindAliasPlusClient.LOGGER.error(
-            "Invalid arguments:ticks not expected"
+            "{}Invalid arguments:ticks not expected", BindAliasPlusClient.tickPrefix()
         );
         return this;
     }

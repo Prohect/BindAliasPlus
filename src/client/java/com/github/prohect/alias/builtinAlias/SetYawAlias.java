@@ -17,7 +17,7 @@ public class SetYawAlias extends BuiltinAliasWithDoubleArgs<SetYawAlias> {
         Minecraft minecraftClient = Minecraft.getInstance();
         LocalPlayer player = minecraftClient.player;
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("[setYaw]Player is null");
+            BindAliasPlusClient.LOGGER.warn("{}[setYaw]Player is null", BindAliasPlusClient.tickPrefix());
             return this;
         }
         player.setYRot((float) flag);
