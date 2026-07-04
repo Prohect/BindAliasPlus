@@ -75,7 +75,8 @@ public class UnloadCFGAllAlias
 
         if (!originalSilentMode) {
             BindAliasPlusClient.LOGGER.info(
-                "[unloadCFGAll] Removed {} alias(es), {} keybinding(s), {} variable(s)",
+                "{}[unloadCFGAll] Removed {} alias(es), {} keybinding(s), {} variable(s)",
+                BindAliasPlusClient.tickPrefix(),
                 totalAliases,
                 totalBinds,
                 totalVars

@@ -46,7 +46,8 @@ public class UnloadCFGAliasesAlias
 
         if (!BindAliasPlusClient.silentMode) {
             BindAliasPlusClient.LOGGER.info(
-                "[unloadCFGAliases] Removed {} autoloaded alias(es)",
+                "{}[unloadCFGAliases] Removed {} autoloaded alias(es)",
+                BindAliasPlusClient.tickPrefix(),
                 count
             );
         }

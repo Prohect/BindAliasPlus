@@ -23,7 +23,8 @@ public class RunAliasAlias
     public RunAliasAlias run(String args) {
         if (args == null || args.isBlank()) {
             BindAliasPlusClient.LOGGER.warn(
-                "[runAlias] No alias name provided"
+                "{}[runAlias] No alias name provided",
+                BindAliasPlusClient.tickPrefix()
             );
             return this;
         }
@@ -56,7 +57,8 @@ public class RunAliasAlias
             alias.run(extraArgs);
         } else {
             BindAliasPlusClient.LOGGER.warn(
-                "[runAlias] Unknown alias: {}",
+                "{}[runAlias] Unknown alias: {}",
+                BindAliasPlusClient.tickPrefix(),
                 aliasName
             );
         }

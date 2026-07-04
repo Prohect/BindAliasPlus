@@ -45,7 +45,8 @@ public class ReapplyAlias extends BuiltinAliasWithArgs<ReapplyAlias> {
     public ReapplyAlias run(String args) {
         if (args == null || args.isBlank()) {
             BindAliasPlusClient.LOGGER.warn(
-                "[reapply] No action name provided"
+                "{}[reapply] No action name provided",
+                BindAliasPlusClient.tickPrefix()
             );
             return this;
         }
@@ -69,7 +70,8 @@ public class ReapplyAlias extends BuiltinAliasWithArgs<ReapplyAlias> {
             b.reapplyToGameKeyMapping();
         } else {
             BindAliasPlusClient.LOGGER.warn(
-                "[reapply] '{}' -> '{}' not found or not held",
+                "{}[reapply] '{}' -> '{}' not found or not held",
+                BindAliasPlusClient.tickPrefix(),
                 args,
                 builtinName
             );

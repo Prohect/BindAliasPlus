@@ -139,7 +139,8 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         });
         if (keys.isEmpty()) {
             BindAliasPlusClient.LOGGER.warn(
-                "[Lock]No keys bound to alias: {}",
+                "{}[Lock]No keys bound to alias: {}",
+                BindAliasPlusClient.tickPrefix(),
                 aliasName
             );
             return;
@@ -147,7 +148,8 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         LOCKED_PHYSICAL_KEYS.addAll(keys);
         LOCKED_ALIAS_KEYS.put(aliasName, keys);
         BindAliasPlusClient.LOGGER.info(
-            "[Lock]Locked alias '{}' — {} key(s) blocked",
+            "{}[Lock]Locked alias '{}' — {} key(s) blocked",
+            BindAliasPlusClient.tickPrefix(),
             aliasName,
             keys.size()
         );
@@ -160,14 +162,16 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         Set<InputUtil.Key> keys = LOCKED_ALIAS_KEYS.remove(aliasName);
         if (keys == null) {
             BindAliasPlusClient.LOGGER.warn(
-                "[Lock]Alias not locked: {}",
+                "{}[Lock]Alias not locked: {}",
+                BindAliasPlusClient.tickPrefix(),
                 aliasName
             );
             return;
         }
         LOCKED_PHYSICAL_KEYS.removeAll(keys);
         BindAliasPlusClient.LOGGER.info(
-            "[Lock]Unlocked alias '{}' — {} key(s) restored",
+            "{}[Lock]Unlocked alias '{}' — {} key(s) restored",
+            BindAliasPlusClient.tickPrefix(),
             aliasName,
             keys.size()
         );
@@ -183,7 +187,8 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         );
         if (parts.length != 2) {
             BindAliasPlusClient.LOGGER.warn(
-                "[Lock]Invalid arguments: {}",
+                "{}[Lock]Invalid arguments: {}",
+                BindAliasPlusClient.tickPrefix(),
                 args
             );
             return this;
