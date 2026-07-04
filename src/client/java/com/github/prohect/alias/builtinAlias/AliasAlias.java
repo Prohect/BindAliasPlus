@@ -36,7 +36,7 @@ public class AliasAlias extends BuiltinAliasWithGreedyStringArgs<AliasAlias> {
                 .trim();
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("[AliasAlias]player is null");
+            BindAliasPlusClient.LOGGER.warn("{}[AliasAlias]player is null", BindAliasPlusClient.tickPrefix());
         } else {
             player.networkHandler.sendChatCommand(line);
         }

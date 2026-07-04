@@ -24,7 +24,7 @@ public abstract class BuiltinAliasWithDoubleArgs<T extends BuiltinAliasWithDoubl
             try {
                 flag = Double.parseDouble(args);
             } catch (NumberFormatException e) {
-                BindAliasPlusClient.LOGGER.error(e.getMessage(), e);
+                BindAliasPlusClient.LOGGER.error("{}{}", BindAliasPlusClient.tickPrefix(), e.getMessage(), e);
             }
         }
         this.flag = flag;

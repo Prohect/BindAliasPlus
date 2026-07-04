@@ -59,7 +59,8 @@ public class UnloadCFGBindsAlias
 
         if (!BindAliasPlusClient.silentMode) {
             BindAliasPlusClient.LOGGER.info(
-                "[unloadCFGBinds] Removed {} autoloaded keybinding(s)",
+                "{}[unloadCFGBinds] Removed {} autoloaded keybinding(s)",
+                BindAliasPlusClient.tickPrefix(),
                 count
             );
         }

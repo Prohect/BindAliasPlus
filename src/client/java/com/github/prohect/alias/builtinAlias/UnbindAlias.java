@@ -26,7 +26,8 @@ public class UnbindAlias extends BuiltinAliasWithGreedyStringArgs<UnbindAlias> {
                 .trim();
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) BindAliasPlusClient.LOGGER.warn(
-            "[UnbindAlias]player is null"
+            "{}[UnbindAlias]player is null",
+            BindAliasPlusClient.tickPrefix()
         );
         else player.networkHandler.sendChatCommand(line);
         return this;

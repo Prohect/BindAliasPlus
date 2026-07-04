@@ -38,12 +38,12 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         ClientPlayerEntity player = minecraftClient.player;
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("[switchSlot]Player is null");
+            BindAliasPlusClient.LOGGER.warn("{}[switchSlot]Player is null", BindAliasPlusClient.tickPrefix());
             return this;
         }
         PlayerInventory inventory = player.getInventory();
         if (inventory == null) {
-            BindAliasPlusClient.LOGGER.warn("[switchSlot]Inventory is null");
+            BindAliasPlusClient.LOGGER.warn("{}[switchSlot]Inventory is null", BindAliasPlusClient.tickPrefix());
             return this;
         }
         int selectedSlot = inventory.getSelectedSlot();
@@ -51,7 +51,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             minecraftClient.getNetworkHandler();
         if (networkHandler == null) {
             BindAliasPlusClient.LOGGER.warn(
-                "[SwitchSlot]network handler is null"
+                "{}[SwitchSlot]network handler is null",
+                BindAliasPlusClient.tickPrefix()
             );
             return this;
         }
@@ -65,7 +66,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             Integer resolvedSlot = VarAlias.resolveInt(strings[0]);
             if (resolvedSlot == null) {
                 BindAliasPlusClient.LOGGER.warn(
-                    "[SwitchSlot]Invalid arguments: '{}' is not a valid number or variable",
+                    "{}[SwitchSlot]Invalid arguments: '{}' is not a valid number or variable",
+                    BindAliasPlusClient.tickPrefix(),
                     strings[0]
                 );
                 return this;
@@ -77,14 +79,16 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
 
             if (resolvedSlot0 == null) {
                 BindAliasPlusClient.LOGGER.warn(
-                    "[SwitchSlot]Invalid arguments: '{}' is not a valid number or variable",
+                    "{}[SwitchSlot]Invalid arguments: '{}' is not a valid number or variable",
+                    BindAliasPlusClient.tickPrefix(),
                     strings[0]
                 );
                 return this;
             }
             if (resolvedSlot1 == null) {
                 BindAliasPlusClient.LOGGER.warn(
-                    "[SwitchSlot]Invalid arguments: '{}' is not a valid number or variable",
+                    "{}[SwitchSlot]Invalid arguments: '{}' is not a valid number or variable",
+                    BindAliasPlusClient.tickPrefix(),
                     strings[1]
                 );
                 return this;
@@ -94,7 +98,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             slots[1] = resolvedSlot1 - 1;
         } else {
             BindAliasPlusClient.LOGGER.warn(
-                "[SwitchSlot]Invalid arguments:args pattern not expected"
+                "{}[SwitchSlot]Invalid arguments:args pattern not expected",
+                BindAliasPlusClient.tickPrefix()
             );
             return this;
         }
@@ -107,7 +112,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             slots[0] == slots[1]
         ) {
             BindAliasPlusClient.LOGGER.warn(
-                "[SwitchSlot]Invalid arguments: slot index out of bounds, or slot index1 equals to slot index2"
+                "{}[SwitchSlot]Invalid arguments: slot index out of bounds, or slot index1 equals to slot index2",
+                BindAliasPlusClient.tickPrefix()
             );
             return this;
         }
@@ -174,7 +180,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                                 player
                             );
                             else BindAliasPlusClient.LOGGER.warn(
-                                "[switchSlot]Slot {} is null",
+                                "{}[switchSlot]Slot {} is null",
+                                BindAliasPlusClient.tickPrefix(),
                                 ratherOffhand
                             );
                         } else if (hasHotbar) {
@@ -190,7 +197,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                                 player
                             );
                             else BindAliasPlusClient.LOGGER.warn(
-                                "[switchSlot]Slot {} is nul",
+                                "{}[switchSlot]Slot {} is null",
+                                BindAliasPlusClient.tickPrefix(),
                                 ratherHotbar
                             );
                         } else {
@@ -220,16 +228,19 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                                         player
                                     );
                                 } else BindAliasPlusClient.LOGGER.warn(
-                                    "[SwitchSlot]slot1 {} is null",
+                                    "{}[SwitchSlot]slot1 {} is null",
+                                    BindAliasPlusClient.tickPrefix(),
                                     slots[1]
                                 );
                             } else BindAliasPlusClient.LOGGER.warn(
-                                "[SwitchSlot]slot0 {} is null",
+                                "{}[SwitchSlot]slot0 {} is null",
+                                BindAliasPlusClient.tickPrefix(),
                                 slots[0]
                             );
                         }
                     } else BindAliasPlusClient.LOGGER.warn(
-                        "[SwitchSlot]interactionManager is null"
+                        "{}[SwitchSlot]interactionManager is null",
+                        BindAliasPlusClient.tickPrefix()
                     );
                 } finally {
                     if (!inInventory) inventoryScreen.close();
@@ -237,7 +248,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             }
         } catch (Exception e) {
             BindAliasPlusClient.LOGGER.error(
-                "[SwitchSlot]Failed to swap slots.",
+                "{}[SwitchSlot]Failed to swap slots.",
+                BindAliasPlusClient.tickPrefix(),
                 e
             );
         }

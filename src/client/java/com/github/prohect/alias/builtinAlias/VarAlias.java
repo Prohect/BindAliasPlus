@@ -56,7 +56,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
 
         if (argsList.size() < 2) {
             BindAliasPlusClient.LOGGER.error(
-                "[var] Invalid arguments: expected varName and source. Usage: var\\varName\\source"
+                "{}[var] Invalid arguments: expected varName and source. Usage: var\\varName\\source",
+                BindAliasPlusClient.tickPrefix()
             );
             return this;
         }
@@ -67,7 +68,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         // Validate variable name
         if (!isValidVarName(varName)) {
             BindAliasPlusClient.LOGGER.error(
-                "[var] Invalid variable name '{}': variable names cannot start with a number",
+                "{}[var] Invalid variable name '{}': variable names cannot start with a number",
+                BindAliasPlusClient.tickPrefix(),
                 varName
             );
             return this;
@@ -77,7 +79,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         Number value = getValueFromSource(source);
         if (value == null) {
             BindAliasPlusClient.LOGGER.error(
-                "[var] Failed to get value from source '{}'",
+                "{}[var] Failed to get value from source '{}'",
+                BindAliasPlusClient.tickPrefix(),
                 source
             );
             return this;
@@ -86,7 +89,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         // Store variable
         VARIABLES.put(varName, value);
         BindAliasPlusClient.LOGGER.info(
-            "[var] Variable '{}' set to {}",
+            "{}[var] Variable '{}' set to {}",
+            BindAliasPlusClient.tickPrefix(),
             varName,
             value
         );
@@ -102,7 +106,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
 
         if (argsList.size() < 2) {
             BindAliasPlusClient.LOGGER.error(
-                "[var] Invalid arguments: expected varName and source. Usage: var\\varName\\source"
+                "{}[var] Invalid arguments: expected varName and source. Usage: var\\varName\\source",
+                BindAliasPlusClient.tickPrefix()
             );
             return this;
         }
@@ -113,7 +118,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         // Validate variable name
         if (!isValidVarName(varName)) {
             BindAliasPlusClient.LOGGER.error(
-                "[var] Invalid variable name '{}': variable names cannot start with a number",
+                "{}[var] Invalid variable name '{}': variable names cannot start with a number",
+                BindAliasPlusClient.tickPrefix(),
                 varName
             );
             return this;
@@ -123,7 +129,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         Number value = getValueFromSource(source);
         if (value == null) {
             BindAliasPlusClient.LOGGER.error(
-                "[var] Failed to get value from source '{}'",
+                "{}[var] Failed to get value from source '{}'",
+                BindAliasPlusClient.tickPrefix(),
                 source
             );
             return this;
@@ -140,7 +147,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         }
 
         BindAliasPlusClient.LOGGER.info(
-            "[var] Variable '{}' set to {}",
+            "{}[var] Variable '{}' set to {}",
+            BindAliasPlusClient.tickPrefix(),
             varName,
             value
         );
@@ -192,7 +200,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
                 return Double.parseDouble(source);
             } catch (NumberFormatException e2) {
                 BindAliasPlusClient.LOGGER.error(
-                    "[var] Unknown source '{}' - expected 'hotbarSlot', 'selectedSlot', 'itemsOfSlot0-9', 'pitch', 'yaw', or a number",
+                    "{}[var] Unknown source '{}' - expected 'hotbarSlot', 'selectedSlot', 'itemsOfSlot0-9', 'pitch', 'yaw', or a number",
+                    BindAliasPlusClient.tickPrefix(),
                     source
                 );
                 return null;
@@ -208,13 +217,13 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         ClientPlayerEntity player = client.player;
 
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("[var] Player is null");
+            BindAliasPlusClient.LOGGER.warn("{}[var] Player is null", BindAliasPlusClient.tickPrefix());
             return null;
         }
 
         PlayerInventory inventory = player.getInventory();
         if (inventory == null) {
-            BindAliasPlusClient.LOGGER.warn("[var] Inventory is null");
+            BindAliasPlusClient.LOGGER.warn("{}[var] Inventory is null", BindAliasPlusClient.tickPrefix());
             return null;
         }
 
@@ -231,13 +240,13 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         ClientPlayerEntity player = client.player;
 
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("[var] Player is null");
+            BindAliasPlusClient.LOGGER.warn("{}[var] Player is null", BindAliasPlusClient.tickPrefix());
             return null;
         }
 
         PlayerInventory inventory = player.getInventory();
         if (inventory == null) {
-            BindAliasPlusClient.LOGGER.warn("[var] Inventory is null");
+            BindAliasPlusClient.LOGGER.warn("{}[var] Inventory is null", BindAliasPlusClient.tickPrefix());
             return null;
         }
 
@@ -248,7 +257,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
             slotIndex = Integer.parseInt(slotStr);
         } catch (NumberFormatException e) {
             BindAliasPlusClient.LOGGER.error(
-                "[var] Invalid slot number in '{}' - expected itemsOfSlot0 to itemsOfSlot9",
+                "{}[var] Invalid slot number in '{}' - expected itemsOfSlot0 to itemsOfSlot9",
+                BindAliasPlusClient.tickPrefix(),
                 source
             );
             return null;
@@ -257,7 +267,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         // Validate slot range (0 for offhand, 1-9 for hotbar)
         if (slotIndex < 0 || slotIndex > 9) {
             BindAliasPlusClient.LOGGER.error(
-                "[var] Slot number out of range in '{}' - must be 0-9 (0=offhand, 1-9=hotbar)",
+                "{}[var] Slot number out of range in '{}' - must be 0-9 (0=offhand, 1-9=hotbar)",
+                BindAliasPlusClient.tickPrefix(),
                 source
             );
             return null;
@@ -286,7 +297,7 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         ClientPlayerEntity player = client.player;
 
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("[var] Player is null");
+            BindAliasPlusClient.LOGGER.warn("{}[var] Player is null", BindAliasPlusClient.tickPrefix());
             return null;
         }
 
@@ -301,7 +312,7 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         ClientPlayerEntity player = client.player;
 
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("[var] Player is null");
+            BindAliasPlusClient.LOGGER.warn("{}[var] Player is null", BindAliasPlusClient.tickPrefix());
             return null;
         }
 

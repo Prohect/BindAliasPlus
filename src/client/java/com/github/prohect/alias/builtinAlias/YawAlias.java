@@ -17,7 +17,7 @@ public class YawAlias extends BuiltinAliasWithDoubleArgs<YawAlias> {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         ClientPlayerEntity player = minecraftClient.player;
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("[yaw]Player is null");
+            BindAliasPlusClient.LOGGER.warn("{}[yaw]Player is null", BindAliasPlusClient.tickPrefix());
             return this;
         }
         player.setYaw((float) (player.getYaw() + flag));

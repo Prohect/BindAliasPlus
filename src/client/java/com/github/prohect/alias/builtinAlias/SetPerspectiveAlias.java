@@ -25,16 +25,16 @@ public class SetPerspectiveAlias
         GameOptions options = minecraftClient.options;
 
         if (options == null) {
-            BindAliasPlusClient.LOGGER.warn("[SetPerspective]Options is null");
+            BindAliasPlusClient.LOGGER.warn("{}[SetPerspective]Options is null", BindAliasPlusClient.tickPrefix());
             return this;
         }
 
         // Validate input range
         if (flag < 0 || flag > 2) {
             BindAliasPlusClient.LOGGER.warn(
-                "[SetPerspective]Invalid perspective value: " +
-                    flag +
-                    ". Must be 0 (first-person), 1 (third-person back), or 2 (third-person front)"
+                "{}[SetPerspective]Invalid perspective value: {}. Must be 0 (first-person), 1 (third-person back), or 2 (third-person front)",
+                BindAliasPlusClient.tickPrefix(),
+                flag
             );
             return this;
         }

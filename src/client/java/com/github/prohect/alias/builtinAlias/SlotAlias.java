@@ -23,7 +23,8 @@ public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
 
         if (resolved == null) {
             BindAliasPlusClient.LOGGER.warn(
-                "[Slot]Invalid arguments: '{}' is not a valid number or variable",
+                "{}[Slot]Invalid arguments: '{}' is not a valid number or variable",
+                BindAliasPlusClient.tickPrefix(),
                 args
             );
             return this;
@@ -32,7 +33,8 @@ public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
         int i = resolved;
         if (!(1 <= i && i <= 9)) {
             BindAliasPlusClient.LOGGER.warn(
-                "[Slot]Invalid input! Please enter a number between 1 and 9"
+                "{}[Slot]Invalid input! Please enter a number between 1 and 9",
+                BindAliasPlusClient.tickPrefix()
             );
             return this;
         }
@@ -44,12 +46,12 @@ public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         ClientPlayerEntity player = minecraftClient.player;
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("[Slot]Player is null");
+            BindAliasPlusClient.LOGGER.warn("{}[Slot]Player is null", BindAliasPlusClient.tickPrefix());
             return this;
         }
         PlayerInventory inventory = player.getInventory();
         if (inventory == null) {
-            BindAliasPlusClient.LOGGER.warn("[Slot]Inventory is null");
+            BindAliasPlusClient.LOGGER.warn("{}[Slot]Inventory is null", BindAliasPlusClient.tickPrefix());
             return this;
         }
         inventory.selectedSlot = i - 1;
@@ -59,7 +61,8 @@ public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
                 .sendPacket(new UpdateSelectedSlotC2SPacket(i - 1));
         } catch (Exception e) {
             BindAliasPlusClient.LOGGER.error(
-                "[Slot]Failed to update selected slot.",
+                "{}[Slot]Failed to update selected slot.",
+                BindAliasPlusClient.tickPrefix(),
                 e
             );
         }
