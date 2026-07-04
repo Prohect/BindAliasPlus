@@ -975,3 +975,4 @@ public class BindAliasPlusClient implements ClientModInitializer {
         return key;
     }
 }
+// test
