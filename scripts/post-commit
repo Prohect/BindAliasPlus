@@ -67,8 +67,13 @@ read_lines "$PATTERNS_FILE" patterns
 # --- detect synced files from this commit ---
 changed=$(git diff-tree --no-commit-id --name-only -r HEAD)
 synced=()
+not_synced=()
 for f in $changed; do
-  match_pattern "$f" && synced+=("$f")
+  if match_pattern "$f"; then
+    synced+=("$f")
+  else
+    not_synced+=("$f")
+  fi
 done
 
 [ ${#synced[@]} -eq 0 ] && exit 0
@@ -84,7 +89,8 @@ SOURCE_SHA=$(git rev-parse --short HEAD)
 MSG=$(git log -1 --format='%B' HEAD)
 MSG="${MSG}
 
-source: ${SOURCE_SHA}"
+source: ${SOURCE_SHA}
+synced: ${expanded[*]}"
 
 # --- sync to each target ---
 for target in "${branches[@]}"; do
@@ -113,3 +119,12 @@ for target in "${branches[@]}"; do
     echo "  synced → $target"
   fi
 done
+
+# --- warn about files in this commit NOT auto-synced ---
+if [ ${#not_synced[@]} -gt 0 ]; then
+  echo ""
+  echo "  Not auto-synced (manual merge needed):"
+  for f in "${not_synced[@]}"; do
+    echo "    $f"
+  done
+fi
