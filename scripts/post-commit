@@ -13,8 +13,8 @@
 #   - Does NOT copy the entire commit (no cherry-pick / merge).
 #   - Does NOT sync files not listed in .git_sync_across_active_branches.
 #     Source code, build scripts, etc. must be manually merged per branch.
-#   - Does NOT resolve conflicts — if the file doesn't exist on the target
-#     branch, the sync is skipped silently (via update-index || true).
+#   - Does NOT resolve conflicts — if the target branch has divergent
+#     changes to a synced file, they are silently overwritten.
 #
 # Target branches that == the source branch are skipped.
 # Branches with no matching changed files are skipped.
