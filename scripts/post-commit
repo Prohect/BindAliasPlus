@@ -1,23 +1,8 @@
 #!/bin/bash
 # =============================================================================
-# post-commit hook: sync configured files across active branches.
-#
-# What it does:
-#   On every commit, this hook reads .git_active_branches (target branches)
-#   and .git_sync_across_active_branches (glob patterns of files to sync).
-#   For files changed in this commit that match the patterns, it injects
-#   their new content into each target branch's tree and creates a new
-#   commit there with the same commit message (+ source SHA footer).
-#
-# What it does NOT do:
-#   - Does NOT copy the entire commit (no cherry-pick / merge).
-#   - Does NOT sync files not listed in .git_sync_across_active_branches.
-#     Source code, build scripts, etc. must be manually merged per branch.
-#   - Does NOT resolve conflicts — if the target branch has divergent
-#     changes to a synced file, they are silently overwritten.
-#
-# Target branches that == the source branch are skipped.
-# Branches with no matching changed files are skipped.
+# Auto-syncs files matching .git_sync_across_active_branches to all branches
+# listed in .git_active_branches. Source-code files (not in the list) are
+# intentionally excluded — those must be manually merged per branch.
 #
 # To install:  ln scripts/sync-post-commit .git/hooks/post-commit
 # =============================================================================
