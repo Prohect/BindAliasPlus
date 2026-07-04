@@ -17,7 +17,7 @@ public class SetPitchAlias extends BuiltinAliasWithDoubleArgs<SetPitchAlias> {
         Minecraft minecraftClient = Minecraft.getInstance();
         LocalPlayer player = minecraftClient.player;
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("[setPitch]Player is null");
+            BindAliasPlusClient.LOGGER.warn("{}[setPitch]Player is null", BindAliasPlusClient.tickPrefix());
             return this;
         }
         player.setXRot((float) flag);

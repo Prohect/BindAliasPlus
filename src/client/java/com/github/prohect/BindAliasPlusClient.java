@@ -26,6 +26,7 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
@@ -49,6 +50,11 @@ public class BindAliasPlusClient implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(
         "bind-alias-plus"
     );
+
+    /** Tick counter — incremented every client tick via {@link ClientTickEvents#START_CLIENT_TICK}. */
+    public static long currentTick = 0;
+    /** Tick at which the last {@link ClientPlayConnectionEvents#JOIN} fired, -1 if never joined. */
+    public static long joinTick = -1;
 
     // Silent mode flag - when true, suppresses feedback messages in chat
     public static boolean silentMode = false;
@@ -155,12 +161,18 @@ public class BindAliasPlusClient implements ClientModInitializer {
         try {
             cfgPath.toFile().createNewFile();
         } catch (IOException e) {
-            LOGGER.error("Could not create file {}", cfgPath, e);
+            LOGGER.error("{}Could not create file {}", tickPrefix(), cfgPath, e);
         }
+
+        // tick counter for tick-since-join logging
+        ClientTickEvents.START_CLIENT_TICK.register(client -> currentTick++);
 
         // register CFG autoload on world join
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) ->
-            client.execute(this::loadCFG)
+            client.execute(() -> {
+                joinTick = currentTick;
+                loadCFG();
+            })
         );
 
         // clear mod state on disconnect (restore locked keys, etc.)
@@ -575,18 +587,24 @@ public class BindAliasPlusClient implements ClientModInitializer {
         );
     }
 
+    /** @return {@code "[T+{ticks}] "} if joined, empty string otherwise. */
+    public static String tickPrefix() {
+        return joinTick < 0 ? "" : "[T+" + (currentTick - joinTick) + "] ";
+    }
+
     public void loadCFG() {
+        LOGGER.info("{}autoload start (cfg: {})", tickPrefix(), cfgPath);
         try {
             if (cfgPath.toFile().createNewFile()) return;
         } catch (IOException e) {
-            LOGGER.error("Could not create file {}", cfgPath, e);
+            LOGGER.error("{}Could not create file {}", tickPrefix(), cfgPath, e);
         }
         byte[] data = null;
         try (InputStream inputStream = Files.newInputStream(cfgPath)) {
             data = new byte[inputStream.available()];
             while (inputStream.available() > 0) inputStream.read(data);
         } catch (IOException e) {
-            LOGGER.error("Failed to open cfg file", e);
+            LOGGER.error("{}Failed to open cfg file", tickPrefix(), e);
         }
         if (data == null) return;
         String cfg = new String(data);
@@ -644,13 +662,14 @@ public class BindAliasPlusClient implements ClientModInitializer {
                         new RunAliasAlias().run(aliasName);
                     } else {
                         BindAliasPlusClient.LOGGER.warn(
-                            "Unknown command: {}",
+                            "{}Unknown command: {}",
+                            tickPrefix(),
                             line
                         );
                     }
                 }
             } catch (Exception e) {
-                BindAliasPlusClient.LOGGER.warn("Failed to load CFG file", e);
+                BindAliasPlusClient.LOGGER.warn("{}Failed to load CFG file", tickPrefix(), e);
             }
         });
     }
@@ -946,7 +965,8 @@ public class BindAliasPlusClient implements ClientModInitializer {
                     return InputConstants.Type.MOUSE.getOrCreate(button - 1);
                 } catch (Exception e) {
                     BindAliasPlusClient.LOGGER.warn(
-                        "Invalid key definition: {}",
+                        "{}Invalid key definition: {}",
+                        tickPrefix(),
                         name
                     );
                 }

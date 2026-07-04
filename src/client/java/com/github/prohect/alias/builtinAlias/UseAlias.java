@@ -22,7 +22,7 @@ public class UseAlias extends BuiltinAliasWithArgs<UseAlias> {
                 flag = true;
                 break;
             default:
-                BindAliasPlusClient.LOGGER.warn("[Use]Invalid arguments");
+                BindAliasPlusClient.LOGGER.warn("{}[Use]Invalid arguments", BindAliasPlusClient.tickPrefix());
                 break;
         }
         // cancel press event from text input screen

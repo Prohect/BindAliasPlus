@@ -26,7 +26,8 @@ public class SwapHandAlias extends BuiltinAliasWithoutArgs<SwapHandAlias> {
             Minecraft.getInstance().getConnection();
         if (networkHandler == null) {
             BindAliasPlusClient.LOGGER.warn(
-                "[SwapHand] Network handler is null"
+                "{}[SwapHand] Network handler is null",
+                BindAliasPlusClient.tickPrefix()
             );
             return this;
         }

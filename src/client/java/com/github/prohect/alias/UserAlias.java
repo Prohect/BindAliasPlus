@@ -211,7 +211,8 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                     if (userAliasesCallChains.contains(userAlias)) {
                         //infinite loop is not allowed,  ignore them
                         BindAliasPlusClient.LOGGER.warn(
-                            "[switchSlot]infinite loop detected checking UserAliasesCallChains."
+                            "{}[switchSlot]infinite loop detected checking UserAliasesCallChains.",
+                            BindAliasPlusClient.tickPrefix()
                         );
                         continue;
                     }
