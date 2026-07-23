@@ -2,6 +2,26 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.3.5] - 2026-07-24
+
+### Added
+
+- **`+screenshot` / `-screenshot` alias** — captures screenshots via the vanilla screenshot key.
+- **`+playerList` / `-playerList` alias** — holds/releases the Tab key to show the online-player overlay.
+- **`+freeCursor` / `-freeCursor` alias** — cancels mouse grab/lock for unrestricted cursor movement (hidden from suggestions).
+- **`esc` / `closeScreen` alias** — closes the current screen (`\0`) or toggles pause (`\1`).
+- **`+advancements` / `-advancements` alias** — holds/releases the advancements screen key.
+- **`+debugOverlay` / `-debugOverlay` alias** — toggles the F3 debug overlay.
+
+### Changed
+
+- **Screen tracking** moved from `GuiMixin` to `MinecraftClientMixin.tick` for cross-version compatibility.
+- **`fabric.mod.json`** version ranges widened for better compatibility.
+
+### Fixed
+
+- **`SwapSlotAlias`** `getSelectedSlot()` → `selectedSlot` field on 1.21–1.21.8 for compatibility.
+
 ## [1.3.4] - 2026-07-03
 
 ### Fixed
