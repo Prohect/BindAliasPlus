@@ -1,9 +1,9 @@
-# run method (src/client/java/com/github/prohect/alias/builtinAlias/FreeCursorAlias.java)
+# cancelGrabMouse method (src/client/java/com/github/prohect/mixin/client/MouseMixin.java)
 
 ## Syntax
 
 ```java
-public com.github.prohect.alias.builtinAlias.FreeCursorAlias run(java.lang.String)
+private void cancelGrabMouse(org.spongepowered.asm.mixin.injection.callback.CallbackInfo)
 ```
 
 ## Parameters
