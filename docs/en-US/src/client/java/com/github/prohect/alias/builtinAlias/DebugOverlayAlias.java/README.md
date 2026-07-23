@@ -1,5 +1,9 @@
 # DebugOverlayAlias
 
+Toggles the F3 debug overlay (FPS, coordinates, entity counts, etc.).
+
+**Base:** `BuiltinAliasWithBooleanArgs`
+
 ## Fields
 
 | Name | Type | Description |
@@ -9,10 +13,12 @@
 
 | Name | Signature | Description |
 |------|-----------|-------------|
+| [run](run.md) | `run(String)` | Shows/hides the debug overlay |
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [BuiltinAliasWithBooleanArgs](../../BuiltinAliasWithBooleanArgs.java/README.md) | Base class |
 
-*Documented for Commit: [984d03115abff553b7fe1ec7600ac556be3acc19](https://github.com/Prohect/BindAliasPlus/tree/984d03115abff553b7fe1ec7600ac556be3acc19)*
+_Documented for Commit: [2003c5c](https://github.com/Prohect/BindAliasPlus/tree/2003c5c648f2214e6b8c099a0db1ec96a130246b)_

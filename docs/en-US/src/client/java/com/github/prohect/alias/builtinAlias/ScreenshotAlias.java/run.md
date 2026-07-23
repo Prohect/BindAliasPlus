@@ -1,21 +1,29 @@
 # run method (src/client/java/com/github/prohect/alias/builtinAlias/ScreenshotAlias.java)
 
+Captures a screenshot when the alias is activated (`+screenshot`).
+
 ## Syntax
 
 ```java
-public com.github.prohect.alias.builtinAlias.ScreenshotAlias run(java.lang.String)
+public ScreenshotAlias run(String args)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| args | `String` | `"1"` (press / `+screenshot`) or `"0"` (release / `-screenshot`) |
 
 ## Remarks
+
+- Guarded against text-input screens — no screenshot while typing.
+- Guarded against null player (no screenshot before joining a world).
+- Calls `Screenshot.grab()` which saves a PNG to the game directory with a timestamped name and displays a system chat message with the filename.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [ScreenshotAlias](ScreenshotAlias.md) | Class documentation |
 
-*Documented for Commit: [984d03115abff553b7fe1ec7600ac556be3acc19](https://github.com/Prohect/BindAliasPlus/tree/984d03115abff553b7fe1ec7600ac556be3acc19)*
+_Documented for Commit: [2003c5c](https://github.com/Prohect/BindAliasPlus/tree/2003c5c648f2214e6b8c099a0db1ec96a130246b)_
