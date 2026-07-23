@@ -16,4 +16,4 @@ The root package of BindAliasPlus. **`BindAliasPlusClient.java` is THE entry poi
 | mixin/                                                                       | **Minecraft injection points** for keyboard, mouse, screen, and client tick hooks                                  |
 | util/                                                                        | Reflection-based helpers (e.g., `McScreenHelper` for screen access)                                                |
 
-_Documented for Commit: [5f57a834ca640636c88177748bafb5e9a7ce180a](https://github.com/Prohect/BindAliasPlus/tree/5f57a834ca640636c88177748bafb5e9a7ce180a)_
+_Documented for Commit: [559546bace0e8a52a434e97e41e60e3a76c78989](https://github.com/Prohect/BindAliasPlus/tree/559546bace0e8a52a434e97e41e60e3a76c78989)_
