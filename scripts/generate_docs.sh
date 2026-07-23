@@ -23,14 +23,20 @@ if [ ! -d bin ] || [ -z "$(find bin -name '*.class' -print -quit 2>/dev/null)" ]
     echo "ERROR: No .class files found under bin/. Run './gradlew build' first." >&2
     exit 1
 fi
-# Compare newest source vs newest class — warn if source is newer.
-# Covers the common case: switching branches updates src/ timestamps,
-# making them newer than stale bin/ classes from the previous branch.
+# Check 1: timestamp — source newer than classes (branch switch touched files)
 newest_src=$(find src -name '*.java' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f1)
 newest_class=$(find bin -name '*.class' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f1)
 if [ -n "$newest_src" ] && [ -n "$newest_class" ]; then
     if [ "${newest_src%.*}" -gt "${newest_class%.*}" ] 2>/dev/null; then
         echo "WARNING: Source files are newer than compiled classes. Run './gradlew build' to ensure docs match current branch." >&2
+    fi
+fi
+# Check 2: commit SHA — catches stale bin/ when src files are identical across branches
+stored_sha_file="bin/.docs_generated_from"
+if [ -f "$stored_sha_file" ]; then
+    stored_sha=$(cat "$stored_sha_file")
+    if [ "$stored_sha" != "$COMMIT_SHA" ]; then
+        echo "WARNING: bin/ last used for docs at ${stored_sha:0:7}, but HEAD is ${COMMIT_SHA:0:7}. Run './gradlew build' first." >&2
     fi
 fi
 
@@ -326,3 +332,5 @@ fi
 # Final summary
 echo ""
 echo "Done. Doc scaffolding under $DOCROOT/"
+# Record which commit bin/ was used with — for staleness check on next run
+echo "$COMMIT_SHA" > bin/.docs_generated_from
