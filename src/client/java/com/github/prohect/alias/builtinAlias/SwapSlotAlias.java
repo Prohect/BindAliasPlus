@@ -3,6 +3,7 @@ package com.github.prohect.alias.builtinAlias;
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
+import com.github.prohect.util.McScreenHelper;
 import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -156,8 +157,12 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                         ? new InventoryScreen(player)
                         : (InventoryScreen) currentScreen
                     : new InventoryScreen(player);
-                if (!inInventory) minecraftClient.setScreen(inventoryScreen);
-                if (creativeInventory) minecraftClient.setScreen(
+                if (!inInventory) McScreenHelper.setScreen(
+                    minecraftClient,
+                    inventoryScreen
+                );
+                if (creativeInventory) McScreenHelper.setScreen(
+                    minecraftClient,
                     inventoryScreen
                 );
                 try {
@@ -245,8 +250,9 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             }
         } catch (Exception e) {
             BindAliasPlusClient.LOGGER.error(
-                "{}[SwitchSlot]Failed to swap slots.",
+                "{}[SwitchSlot]Failed to swap slots with args {}.",
                 BindAliasPlusClient.tickPrefix(),
+                args,
                 e
             );
         }

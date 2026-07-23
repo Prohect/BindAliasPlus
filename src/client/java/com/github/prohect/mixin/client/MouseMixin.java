@@ -17,6 +17,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(net.minecraft.client.MouseHandler.class)
 public class MouseMixin {
 
+    // ── freeCursor: cancel grabMouse() at HEAD when active ──────────────
+
+    @Inject(at = @At("HEAD"), method = "grabMouse", cancellable = true)
+    private void cancelGrabMouse(CallbackInfo ci) {
+        if (com.github.prohect.alias.builtinAlias.FreeCursorAlias.freeCursor) {
+            ci.cancel();
+        }
+    }
+
+    // ── key events ──────────────────────────────────────────────────────
+
     @Inject(at = @At("HEAD"), method = "onButton")
     private void onMouseButton(
         long window,

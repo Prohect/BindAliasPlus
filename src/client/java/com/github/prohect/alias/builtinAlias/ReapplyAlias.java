@@ -38,7 +38,8 @@ public class ReapplyAlias extends BuiltinAliasWithArgs<ReapplyAlias> {
         "sneak",
         "sprint",
         "drop",
-        "openInventory"
+        "openInventory",
+        "playerList"
     );
 
     @Override

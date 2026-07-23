@@ -51,12 +51,13 @@ public class BindAliasPlusClient implements ClientModInitializer {
         "bind-alias-plus"
     );
 
-    // Silent mode flag - when true, suppresses feedback messages in chat
-    public static boolean silentMode = false;
     /** Tick counter — incremented every client tick via {@link ClientTickEvents#START_CLIENT_TICK}. */
     public static long currentTick = 0;
     /** Tick at which the last {@link ClientPlayConnectionEvents#JOIN} fired, -1 if never joined. */
     public static long joinTick = -1;
+
+    // Silent mode flag - when true, suppresses feedback messages in chat
+    public static boolean silentMode = false;
 
     /** Cached current screen — updated by {@code GuiMixin} on every screen change. */
     public static Screen currentScreen = null;
@@ -80,6 +81,12 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new SneakAlias().putToAliasesWithArgs_notSuggested();
         new SprintAlias().putToAliasesWithArgs_notSuggested();
         new DropAlias().putToAliasesWithArgs_notSuggested();
+        new ScreenshotAlias().putToAliasesWithArgs_notSuggested();
+        new PlayerListAlias().putToAliasesWithArgs_notSuggested();
+        new FreeCursorAlias().putToAliasesWithArgs_notSuggested();
+        new EscAlias().putToAliasesWithArgs_notSuggested();
+        new AdvancementsAlias().putToAliasesWithArgs_notSuggested();
+        new DebugOverlayAlias().putToAliasesWithArgs_notSuggested();
         new LogAlias().putToAliasesWithArgs();
         new SlotAlias().putToAliasesWithArgs();
         new SwapSlotAlias().putToAliasesWithArgs();
@@ -132,6 +139,18 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new UserAlias("builtinSprint\\0").putToAliasesWithoutArgs("-sprint");
         new UserAlias("builtinDrop\\1").putToAliasesWithoutArgs("+drop");
         new UserAlias("builtinDrop\\0").putToAliasesWithoutArgs("-drop");
+        new UserAlias("builtinScreenshot\\1").putToAliasesWithoutArgs("+screenshot");
+        new UserAlias("builtinScreenshot\\0").putToAliasesWithoutArgs("-screenshot");
+        new UserAlias("builtinPlayerList\\1").putToAliasesWithoutArgs("+playerList");
+        new UserAlias("builtinPlayerList\\0").putToAliasesWithoutArgs("-playerList");
+        new UserAlias("builtinFreeCursor\\1").putToAliasesWithoutArgs_notSuggested("+freeCursor");
+        new UserAlias("builtinFreeCursor\\0").putToAliasesWithoutArgs_notSuggested("-freeCursor");
+        new UserAlias("builtinEsc\\1").putToAliasesWithoutArgs("esc");
+        new UserAlias("builtinEsc\\0").putToAliasesWithoutArgs("closeScreen");
+        new UserAlias("builtinAdvancements\\1").putToAliasesWithoutArgs("+advancements");
+        new UserAlias("builtinAdvancements\\0").putToAliasesWithoutArgs("-advancements");
+        new UserAlias("builtinDebugOverlay\\1").putToAliasesWithoutArgs("+debugOverlay");
+        new UserAlias("builtinDebugOverlay\\0").putToAliasesWithoutArgs("-debugOverlay");
         new UserAlias("builtinOpenInventory\\1").putToAliasesWithoutArgs(
             "+openInventory"
         );
