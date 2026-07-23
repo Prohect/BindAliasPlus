@@ -99,6 +99,13 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new SneakAlias().putToAliasesWithArgs_notSuggested();
         new SprintAlias().putToAliasesWithArgs_notSuggested();
         new DropAlias().putToAliasesWithArgs_notSuggested();
+        new ScreenshotAlias().putToAliasesWithArgs_notSuggested();
+        new PlayerListAlias().putToAliasesWithArgs_notSuggested();
+        new FreeCursorAlias().putToAliasesWithArgs_notSuggested();
+        new EscAlias().putToAliasesWithArgs_notSuggested();
+        new AdvancementsAlias().putToAliasesWithArgs_notSuggested();
+        new DebugOverlayAlias().putToAliasesWithArgs_notSuggested();
+        new LogAlias().putToAliasesWithArgs();
         new SlotAlias().putToAliasesWithArgs();
         new SwapSlotAlias().putToAliasesWithArgs();
         new WaitAlias().putToAliasesWithArgs();
@@ -167,6 +174,19 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new UserAlias("builtinSetPerspective\\2").putToAliasesWithoutArgs(
             "TPS2"
         );
+        // New agent-tooling aliases
+        new UserAlias("builtinFreeCursor\\1").putToAliasesWithoutArgs_notSuggested("+freeCursor");
+        new UserAlias("builtinFreeCursor\\0").putToAliasesWithoutArgs_notSuggested("-freeCursor");
+        new UserAlias("builtinEsc\\1").putToAliasesWithoutArgs("esc");
+        new UserAlias("builtinEsc\\0").putToAliasesWithoutArgs("closeScreen");
+        new UserAlias("builtinAdvancements\\1").putToAliasesWithoutArgs("+advancements");
+        new UserAlias("builtinAdvancements\\0").putToAliasesWithoutArgs("-advancements");
+        new UserAlias("builtinDebugOverlay\\1").putToAliasesWithoutArgs("+debugOverlay");
+        new UserAlias("builtinDebugOverlay\\0").putToAliasesWithoutArgs("-debugOverlay");
+        new UserAlias("builtinScreenshot\\1").putToAliasesWithoutArgs("+screenshot");
+        new UserAlias("builtinScreenshot\\0").putToAliasesWithoutArgs("-screenshot");
+        new UserAlias("builtinPlayerList\\1").putToAliasesWithoutArgs("+playerList");
+        new UserAlias("builtinPlayerList\\0").putToAliasesWithoutArgs("-playerList");
         // Lock aliases (lock/unlock game actions to prevent user input interference)
         // +lock\<action> / -lock\<action> — compact arg-based form with suggestions
         new LockAlias_OnLock().putToAliasesWithArgs();

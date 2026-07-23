@@ -197,7 +197,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                                 player
                             );
                             else BindAliasPlusClient.LOGGER.warn(
-                                "{}[switchSlot]Slot {} is null",
+                                "{}[switchSlot]Slot {} is nul",
                                 BindAliasPlusClient.tickPrefix(),
                                 ratherHotbar
                             );
@@ -248,8 +248,9 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             }
         } catch (Exception e) {
             BindAliasPlusClient.LOGGER.error(
-                "{}[SwitchSlot]Failed to swap slots.",
+                "{}[SwitchSlot]Failed to swap slots with args {}.",
                 BindAliasPlusClient.tickPrefix(),
+                args,
                 e
             );
         }
