@@ -1,5 +1,9 @@
 # EscAlias
 
+Closes the current screen or toggles the pause menu (ESC key equivalent).
+
+**Base:** `BuiltinAliasWithIntegerArgs`
+
 ## Fields
 
 | Name | Type | Description |
@@ -9,10 +13,12 @@
 
 | Name | Signature | Description |
 |------|-----------|-------------|
+| [run](run.md) | `run(String)` | Closes screen or opens pause menu based on arg |
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [BuiltinAliasWithIntegerArgs](../../BuiltinAliasWithIntegerArgs.java/README.md) | Base class |
 
-*Documented for Commit: [743d57ceacea66cd8d44f3e76063658cbcc86568](https://github.com/Prohect/BindAliasPlus/tree/743d57ceacea66cd8d44f3e76063658cbcc86568)*
+_Documented for Commit: [2003c5c](https://github.com/Prohect/BindAliasPlus/tree/2003c5c648f2214e6b8c099a0db1ec96a130246b)_
