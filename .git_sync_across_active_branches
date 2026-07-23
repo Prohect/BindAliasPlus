@@ -1,10 +1,10 @@
 # docs
 CHANGELOG.md
-CLAUDE.md
 CONTRIBUTE.md
 DEVELOP.md
 README.md
 README_CN.md
+test_or_release_README.md
 
 # sync config itself
 .git_active_branches
