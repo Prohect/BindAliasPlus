@@ -8,4 +8,4 @@ public static long joinTick
 
 ## Remarks
 
-*Documented for Commit: [984d03115abff553b7fe1ec7600ac556be3acc19](https://github.com/Prohect/BindAliasPlus/tree/984d03115abff553b7fe1ec7600ac556be3acc19)*
+*Documented for Commit: [d2c580a08b1afe74c3cc22b0bf7cd7736dc08f5c](https://github.com/Prohect/BindAliasPlus/tree/d2c580a08b1afe74c3cc22b0bf7cd7736dc08f5c)*
