@@ -31,14 +31,6 @@ if [ -n "$newest_src" ] && [ -n "$newest_class" ]; then
         echo "WARNING: Source files are newer than compiled classes. Run './gradlew build' to ensure docs match current branch." >&2
     fi
 fi
-# Check 2: commit SHA — catches stale bin/ when src files are identical across branches
-stored_sha_file="bin/.docs_generated_from"
-if [ -f "$stored_sha_file" ]; then
-    stored_sha=$(cat "$stored_sha_file")
-    if [ "$stored_sha" != "$COMMIT_SHA" ]; then
-        echo "WARNING: bin/ last used for docs at ${stored_sha:0:7}, but HEAD is ${COMMIT_SHA:0:7}. Run './gradlew build' first." >&2
-    fi
-fi
 
 write_if_missing() {
     local target="$1"
@@ -332,5 +324,3 @@ fi
 # Final summary
 echo ""
 echo "Done. Doc scaffolding under $DOCROOT/"
-# Record which commit bin/ was used with — for staleness check on next run
-echo "$COMMIT_SHA" > bin/.docs_generated_from
