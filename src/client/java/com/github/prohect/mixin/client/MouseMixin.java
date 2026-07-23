@@ -18,6 +18,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Mouse.class)
 public class MouseMixin {
 
+    // ── freeCursor: cancel lockCursor() at HEAD when active ──────────────
+
+    @Inject(at = @At("HEAD"), method = "lockCursor", cancellable = true)
+    private void cancelLockCursor(CallbackInfo ci) {
+        if (com.github.prohect.alias.builtinAlias.FreeCursorAlias.freeCursor) {
+            ci.cancel();
+        }
+    }
+
+    // ── mouse button events ──────────────────────────────────────────────
+
     @Inject(at = @At("HEAD"), method = "onMouseButton")
     private void onMouseButton(
         long window,
