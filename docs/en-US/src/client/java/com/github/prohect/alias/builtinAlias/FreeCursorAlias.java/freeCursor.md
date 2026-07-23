@@ -8,4 +8,4 @@ public static boolean freeCursor
 
 ## Remarks
 
-*Documented for Commit: [984d03115abff553b7fe1ec7600ac556be3acc19](https://github.com/Prohect/BindAliasPlus/tree/984d03115abff553b7fe1ec7600ac556be3acc19)*
+*Documented for Commit: [743d57ceacea66cd8d44f3e76063658cbcc86568](https://github.com/Prohect/BindAliasPlus/tree/743d57ceacea66cd8d44f3e76063658cbcc86568)*

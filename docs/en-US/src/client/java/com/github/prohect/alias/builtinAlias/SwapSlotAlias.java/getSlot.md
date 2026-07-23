@@ -18,4 +18,4 @@ private static net.minecraft.screen.slot.Slot getSlot(net.minecraft.client.gui.s
 | Item | Description |
 |------|-------------|
 
-*Documented for Commit: [559546bace0e8a52a434e97e41e60e3a76c78989](https://github.com/Prohect/BindAliasPlus/tree/559546bace0e8a52a434e97e41e60e3a76c78989)*
+*Documented for Commit: [743d57ceacea66cd8d44f3e76063658cbcc86568](https://github.com/Prohect/BindAliasPlus/tree/743d57ceacea66cd8d44f3e76063658cbcc86568)*
