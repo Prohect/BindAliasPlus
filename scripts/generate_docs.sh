@@ -18,6 +18,20 @@ CREATED_LOG=$(mktemp)
 trap 'rm -f "$CREATED_LOG"' EXIT
 created_count=0
 
+# --- Pre-check: ensure bin/ is up to date ---
+if [ ! -d bin ] || [ -z "$(find bin -name '*.class' -print -quit 2>/dev/null)" ]; then
+    echo "ERROR: No .class files found under bin/. Run './gradlew build' first." >&2
+    exit 1
+fi
+# Compare newest source vs newest class — warn if source is newer
+newest_src=$(find src -name '*.java' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f1)
+newest_class=$(find bin -name '*.class' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f1)
+if [ -n "$newest_src" ] && [ -n "$newest_class" ]; then
+    if [ "${newest_src%.*}" -gt "${newest_class%.*}" ] 2>/dev/null; then
+        echo "WARNING: Source files are newer than compiled classes. Run './gradlew build' to ensure docs match current branch." >&2
+    fi
+fi
+
 write_if_missing() {
     local target="$1"
     if [ ! -f "$target" ]; then
