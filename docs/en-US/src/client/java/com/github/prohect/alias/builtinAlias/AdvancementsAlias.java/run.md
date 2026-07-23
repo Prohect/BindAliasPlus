@@ -18,4 +18,4 @@ public com.github.prohect.alias.builtinAlias.AdvancementsAlias run(java.lang.Str
 | Item | Description |
 |------|-------------|
 
-*Documented for Commit: [984d03115abff553b7fe1ec7600ac556be3acc19](https://github.com/Prohect/BindAliasPlus/tree/984d03115abff553b7fe1ec7600ac556be3acc19)*
+*Documented for Commit: [ec8e636d69a0711efc7eafe6bb229fb3fa089e3e](https://github.com/Prohect/BindAliasPlus/tree/ec8e636d69a0711efc7eafe6bb229fb3fa089e3e)*
