@@ -5,7 +5,6 @@ CONTRIBUTE.md
 DEVELOP.md
 README.md
 README_CN.md
-docs/**
 
 # sync config itself
 .git_active_branches
