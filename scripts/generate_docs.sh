@@ -23,7 +23,9 @@ if [ ! -d bin ] || [ -z "$(find bin -name '*.class' -print -quit 2>/dev/null)" ]
     echo "ERROR: No .class files found under bin/. Run './gradlew build' first." >&2
     exit 1
 fi
-# Compare newest source vs newest class — warn if source is newer
+# Compare newest source vs newest class — warn if source is newer.
+# Covers the common case: switching branches updates src/ timestamps,
+# making them newer than stale bin/ classes from the previous branch.
 newest_src=$(find src -name '*.java' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f1)
 newest_class=$(find bin -name '*.class' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f1)
 if [ -n "$newest_src" ] && [ -n "$newest_class" ]; then
