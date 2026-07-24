@@ -1,8 +1,10 @@
 package com.github.prohect.mixin.client;
 
+import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.AliasWithArgs;
 import com.github.prohect.alias.builtinAlias.DropAlias;
 import com.github.prohect.alias.builtinAlias.WaitAlias;
+import com.github.prohect.util.McScreenHelper;
 import net.minecraft.client.MinecraftClient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,12 +16,20 @@ public class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "tick")
     private void tick(CallbackInfo ci) {
+        // Track current screen on every tick (cross-version compat)
+        BindAliasPlusClient.currentScreen = McScreenHelper.getCurrentScreen(
+            MinecraftClient.getInstance()
+        );
+
         int size = WaitAlias.tasksWaiting.size();
-        for (int i = 0; i < size; i++) {
-            size -= WaitAlias.tasksWaiting.get(i).tick();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                size -= WaitAlias.tasksWaiting.get(i).tick();
+            }
         }
 
         // Drive continuous drop while the drop-key alias is held
+        // (container screens via onMouseClick, 3D game via timesPressed).
         AliasWithArgs<?> raw =
             com.github.prohect.alias.Alias.aliasesWithArgs_notSuggested.get(
                 "builtinDrop"

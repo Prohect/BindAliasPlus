@@ -304,7 +304,7 @@ public final class McpHttpServer {
      *   <li>empty player-inventory slots compress to ranges in the same 1-41
      *       numbering: {@code "1-9 10-36"}</li>
      *   <li>non-inventory slots (chest grid, crafting grid, anvil, ...) compress
-     *       to an ASCII map ('.' empty, '#' occupied, ' ' no slot) with the x/y
+     *       to an ASCII map ('#' empty, '$' occupied, ' ' no slot) with the x/y
      *       range and per-cell c-indices alongside</li>
      * </ul>
      */
@@ -378,7 +378,7 @@ public final class McpHttpServer {
             for (int[] s : nonInv) {
                 int col = (s[1] - minX) / cell;
                 int row = (s[2] - minY) / cell;
-                map[row][col] = s[3] == 0 ? '.' : '#';
+                map[row][col] = s[3] == 0 ? '#' : '$';
                 cells[row][col] = s[0];
             }
             out
