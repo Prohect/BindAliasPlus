@@ -9,7 +9,7 @@ src/client/java/com/github/prohect/   ← Fabric client-only sources (mixins, al
 src/main/java/com/github/prohect/     ← common sources (entry point, shared config)
 ```
 
-Generated doc stubs mirror this under `docs/en-US/src/`. Run `<doc-generator-script>` after `<build-command>` to scaffold missing stubs.
+Generated doc stubs mirror this under `docs/en-US/src/`. Run `./gradlew build` then `bash scripts/generate_docs.sh` to scaffold missing stubs.
 
 ## Class / Interface / Enum / Record (`<Type>.md`)
 
