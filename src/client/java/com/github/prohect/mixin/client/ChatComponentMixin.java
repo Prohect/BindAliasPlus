@@ -17,6 +17,6 @@ public class ChatComponentMixin {
     }
 
     private static void capture(String text) {
-        ChatCapture.onSystemMessage(text);
+        ChatCapture.onMessage(text);
     }
 }
