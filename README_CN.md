@@ -1,6 +1,7 @@
 # BindAliasPlus
 
-一个 Minecraft Fabric 客户端模组,允许创建自定义别名和按键绑定,通过简单的按键操作来自动化复杂的游戏内动作。
+一个 Minecraft Fabric 客户端模组，允许创建自定义别名和按键绑定，通过简单的按键操作来自动化复杂的游戏内动作。同时支持通过内置 HTTP API 进行 AI 代理控制——配合
+[BindAliasPlus MCP 工具](https://github.com/Prohect/BindAliasPlus-mcp) 实现 AI 辅助的 Minecraft 游戏。
 
 <!-- languages -->
 - 🇺🇸 [English](README.md)
@@ -18,6 +19,9 @@ BindAliasPlus 通过让你定义自定义别名来执行一系列动作并将其
 - **命令系统**：直观的命令来管理别名和绑定（例如：`/alias`、`/bind`、`/unbind`）。
 - **配置持久化**：将别名和绑定保存在配置文件中，加入服务器时自动加载。
 - **链式动作**：组合别名来创建复杂的序列（例如：装备鞘翅 → 使用烟花 → 飞行）。
+- **AI 代理支持**：内置 HTTP API（`GET /state`、`GET /screenshot`、`POST /runAlias` 等）用于 AI 代理
+  控制。配合 [BindAliasPlus MCP 工具](https://github.com/Prohect/BindAliasPlus-mcp) 让 AI 代理观察、
+  推理并操作你的 Minecraft 世界。
 
 ## 安装
 
@@ -139,6 +143,35 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 | `/var <name> <source>`         | 创建或更新变量。            | `/var mySlot hotbarSlot`              |
 | `/unloadCFGVars`               | 移除所有从配置加载的变量。    | `/unloadCFGVars`                      |
 
+### AI 代理 / MCP HTTP 服务器
+
+BindAliasPlus 内置了一个 HTTP 服务器，使 AI 代理（如 Claude、ChatGPT 或自定义自动化脚本）能够观察和控制你的 Minecraft 客户端。这是
+[BindAliasPlus MCP 工具](https://github.com/Prohect/BindAliasPlus-mcp) 的配套模组。
+
+服务器默认监听 `http://localhost:25567`（可在 `config/bind-alias-plus.cfg` 中配置），提供以下接口：
+
+| 接口               | 方法   | 描述                                                        |
+|--------------------|--------|-----------------------------------------------------------|
+| `/state`           | GET    | 玩家位置、生命值、手持物品、打开容器的内容（压缩格式）              |
+| `/screenshot`      | GET    | 内存 PNG 截图（无聊天刷屏，无文件 I/O）                          |
+| `/runAlias`        | POST   | 远程执行别名链（如 `swapSlot\1\2`）                          |
+| `/defineAlias`     | POST   | 通过 API 定义新别名                                           |
+| `/readCFG`         | GET    | 读取当前配置文件内容                                           |
+| `/writeCFG`        | POST   | 写入配置文件（修改按键绑定、别名、变量）                           |
+
+**示例代理用法：**
+
+```bash
+# 查看玩家视角
+curl http://localhost:25567/state
+
+# 执行别名链
+curl -X POST http://localhost:25567/runAlias -d "swapSlot\1\2\wait\2\+attack"
+
+# 截图
+curl http://localhost:25567/screenshot -o screen.png
+```
+
 ### 示例配置
 
 这是一个真实的配置文件 (`config/bind-alias-plus.cfg`)，展示了所有核心功能的实际用法：
@@ -205,6 +238,9 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 - **变量**：支持整数和浮点数值。数值别名（`yaw`、`pitch`、`setYaw`、`setPitch`、`slot`、`swapSlot`、`wait`、
   `setPerspective`）接受变量名代替原始数字。
 - **安全性**：避免在带有反作弊系统的服务器上过度自动化（某些动作可能会被标记）。
+- **MCP 服务器**：内置 HTTP API 默认监听 `25567` 端口。如端口冲突，可在 `config/bind-alias-plus.cfg`
+  中修改 `mcpPort`。配合 [BindAliasPlus MCP 工具](https://github.com/Prohect/BindAliasPlus-mcp)
+  实现 AI 代理集成。
 
 ## 贡献
 
