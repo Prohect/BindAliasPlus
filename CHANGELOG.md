@@ -2,6 +2,17 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.5.0] - 2026-07-25
+
+### Added
+
+- **`getLogDiff` MCP tool** — game log diff for AI agents:
+  - Captures mod log output (`log\...` alias, CFG autoload, variable setup) via scoped Log4j appender on `"bind-alias-plus"` logger
+  - Captures chat messages (player chat, system messages, command feedback) via `ChatComponentMixin`
+  - Persistent ring buffer (200 msg) with diff cursor tracking — returns only new messages since last call
+  - Log capture starts at world join, diff resets on each join to skip startup noise
+  - `GET /logDiff` endpoint in `McpHttpServer`
+
 ## [1.4.0] - 2026-07-25
 
 ### Added
