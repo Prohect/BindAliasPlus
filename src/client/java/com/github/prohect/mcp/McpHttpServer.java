@@ -39,6 +39,7 @@ public final class McpHttpServer {
             server.createContext("/defineAlias", McpHttpServer::handleDefineAlias);
             server.createContext("/readCFG", McpHttpServer::handleReadCFG);
             server.createContext("/writeCFG", McpHttpServer::handleWriteCFG);
+            server.createContext("/logDiff", McpHttpServer::handleLogDiff);
             server.setExecutor(Executors.newCachedThreadPool(r -> {
                 Thread t = new Thread(r, "BindAliasPlus-MCP");
                 t.setDaemon(true);
@@ -384,6 +385,13 @@ public final class McpHttpServer {
         } catch (Exception e) {
             sendJson(ex, 500, "{\"error\":" + j(e.getMessage()) + "}");
         }
+    }
+
+    /** GET /logDiff — return new game-log messages since the last call. */
+    static void handleLogDiff(HttpExchange ex) throws IOException {
+        String messages = ChatCapture.diff();
+        int count = messages.isEmpty() ? 0 : messages.split("\n", -1).length;
+        sendJson(ex, 200, "{\"messages\":" + j(messages) + ",\"count\":" + count + "}");
     }
 
     static void handleWriteCFG(HttpExchange ex) throws IOException {
