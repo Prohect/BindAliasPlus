@@ -4,8 +4,11 @@
 # Linux start script should use lf
 /gradlew        text eol=lf
 
-# Java source files should use lf for cross-platform consistency
+# Source and build files should use lf for cross-platform consistency
 *.java          text eol=lf
+*.gradle        text eol=lf
+*.toml          text eol=lf
+.gitignore      text eol=lf
 
 # These are Windows script files and should use crlf
 *.bat           text eol=crlf
