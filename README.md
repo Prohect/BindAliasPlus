@@ -1,8 +1,9 @@
 # BindAliasPlus
 
 A Minecraft Fabric client mod that allows creating custom aliases and key bindings to automate complex in-game
-actions with simple key presses. Also supports AI agent control via an in-game HTTP API — use with the
-[BindAliasPlus MCP tool](https://github.com/Prohect/BindAliasPlus-mcp) for AI-assisted Minecraft gameplay.
+actions with simple key presses. Also enables autonomous AI agent control via an in-game HTTP API — agents can see,
+reason about, and act in Minecraft independently. Use with the
+[BindAliasPlus MCP tool](https://github.com/Prohect/BindAliasPlus-mcp) to let AI play the game.
 
 <!-- languages -->
 - 🇺🇸 [English](README.md)
