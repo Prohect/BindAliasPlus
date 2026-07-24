@@ -11,33 +11,26 @@ import net.minecraft.util.math.Direction;
 
 public class SwapHandAlias extends BuiltinAliasWithoutArgs<SwapHandAlias> {
 
-    public SwapHandAlias() {
-        super("swapHand");
-    }
+	public SwapHandAlias() {
+		super("swapHand");
+	}
 
-    @Override
-    public SwapHandAlias run(String args) {
-        /*        KeyBinding key = MinecraftClient.getInstance().options.swapHandsKey;
-        key.setPressed(true);
-        key.setPressed(false);
-        KeyBinding.onKeyPressed(key.boundKey);*/
-        if (Alias.isUnderTextInputScreen()) return this;
-        ClientPlayNetworkHandler networkHandler =
-            MinecraftClient.getInstance().getNetworkHandler();
-        if (networkHandler == null) {
-            BindAliasPlusClient.LOGGER.warn(
-                "{}[SwapHand] Network handler is null",
-                BindAliasPlusClient.tickPrefix()
-            );
-            return this;
-        }
-        networkHandler.sendPacket(
-            new PlayerActionC2SPacket(
-                PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND,
-                BlockPos.ORIGIN,
-                Direction.DOWN
-            )
-        );
-        return this;
-    }
+	@Override
+	public SwapHandAlias run(String args) {
+		/*
+		 * KeyBinding key = MinecraftClient.getInstance().options.swapHandsKey;
+		 * key.setPressed(true); key.setPressed(false);
+		 * KeyBinding.onKeyPressed(key.boundKey);
+		 */
+		if (Alias.isUnderTextInputScreen())
+			return this;
+		ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+		if (networkHandler == null) {
+			BindAliasPlusClient.LOGGER.warn("{}[SwapHand] Network handler is null", BindAliasPlusClient.tickPrefix());
+			return this;
+		}
+		networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND,
+				BlockPos.ORIGIN, Direction.DOWN));
+		return this;
+	}
 }

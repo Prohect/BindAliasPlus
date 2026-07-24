@@ -5,13 +5,13 @@ import com.github.prohect.alias.BuiltinAliasWithArgs;
 
 public class LogAlias extends BuiltinAliasWithArgs<LogAlias> {
 
-    public LogAlias() {
-        super("log");
-    }
+	public LogAlias() {
+		super("log");
+	}
 
-    @Override
-    public LogAlias run(String args) {
-        BindAliasPlusClient.LOGGER.info("{}{}", BindAliasPlusClient.tickPrefix(), args);
-        return this;
-    }
+	@Override
+	public LogAlias run(String args) {
+		BindAliasPlusClient.LOGGER.info("{}{}", BindAliasPlusClient.tickPrefix(), args);
+		return this;
+	}
 }

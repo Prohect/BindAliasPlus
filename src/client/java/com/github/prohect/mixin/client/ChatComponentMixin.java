@@ -10,7 +10,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ChatHud.class)
 public class ChatComponentMixin {
-    @Inject(method = "addMessage(Lnet/minecraft/text/Text;)V", at = @At("HEAD"))
-    private void captureMessage(Text message, CallbackInfo ci) { capture(message.getString()); }
-    private static void capture(String text) { ChatCapture.onSystemMessage(text); }
+	@Inject(method = "addMessage(Lnet/minecraft/text/Text;)V", at = @At("HEAD"))
+	private void captureMessage(Text message, CallbackInfo ci) {
+		capture(message.getString());
+	}
+	private static void capture(String text) {
+		ChatCapture.onSystemMessage(text);
+	}
 }
