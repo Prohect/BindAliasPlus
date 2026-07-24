@@ -5,8 +5,8 @@
 A source file `<path>/srcfile.suffix` maps to a doc directory `<path>/srcfile.suffix/` under the locale:
 
 ```
-Source: src/module/pkg/Foo.java
-Doc:    docs/en-US/src/module/pkg/Foo.java/
+Source: src/<source-set>/<pkg>/Foo.ext
+Doc:    docs/en-US/src/<source-set>/<pkg>/Foo.ext/
 ```
 
 ## File naming
@@ -14,7 +14,7 @@ Doc:    docs/en-US/src/module/pkg/Foo.java/
 Each doc file is named after the **exact identifier** declared in source, with `.md` suffix — no conversion, no prefix, no type suffix.
 
 ```
-doc dir:  Foo.java/
+doc dir:  Foo.ext/
 files:    Foo.md          ← the class/struct/enum itself
           doSomething.md  ← a method/function
           count.md        ← a field
@@ -31,26 +31,26 @@ Relative links between doc directories mirror the relative path between source f
 [doSomething](doSomething.md)
 
 # Sibling (same package)
-[Bar](Bar.java/Bar.md)
+[Bar](Bar.ext/Bar.md)
 
 # Other package
-[Baz](../../other/Baz.java/Baz.md)
+[Baz](../../other/Baz.ext/Baz.md)
 ```
 
 ## Parent directory overviews
 
-Any directory with 2 or more children gets a `README.md` listing its contents — descriptions, recommended reading order, and bold entry points. These form a navigable tree from the top-level `src/` down to each leaf package.
+Any directory with 2 or more children gets a `README.md` listing its contents — descriptions, recommended reading order, and bold entry points. These form a navigable tree from the top-level source root down to each leaf package:
 
 ```
-docs/en-US/src/README.md          ← links to client/ and main/
-  client/.../prohect/README.md    ← links to alias/, mixin/, entry points
-    alias/README.md               ← links to interfaces, base classes, builtinAlias/
-      builtinAlias/README.md      ← links to all alias implementations
+docs/en-US/src/README.md            ← links to each source set
+  <source-set>/.../<ns>/README.md   ← links to sub-packages, types, entry points
+    <sub-pkg>/README.md             ← links to interfaces, base classes, impls/
+      impls/README.md               ← links to all implementations
 ```
 
 Each overview tells the reader: what lives here, what to read first, and how the pieces connect.
 
-## Schema for source file overview (`<File>.java/README.md`)
+## Schema for source file overview (`<File>.ext/README.md`)
 
 | Section               | Description           |
 | --------------------- | --------------------- |
@@ -78,7 +78,7 @@ Each overview tells the reader: what lives here, what to read first, and how the
 Every doc file ends with the commit it was written for:
 
 ```
-*Documented for Commit: [`<sha>`](https://github.com/<owner>/<repo>/tree/<sha>)*
+*Documented for Commit: [`<sha>`](https://<git-host>/<owner>/<repo>/tree/<sha>)*
 ```
 
 ## Locales
@@ -91,10 +91,12 @@ Every doc file ends with the commit it was written for:
 ## CONTRIBUTING
 
 **Workflow for batch doc generation:**
-1. `./gradlew build` then `bash scripts/generate_docs.sh`
+1. `<build-command>` then `<doc-generator-script>`
 2. **Commit the empty stubs first** — this records baseline + lets subsequent runs only flag orphans
 3. Fill in the stubs with real content, commit the fill
 4. This avoids re-generating stubs and makes orphan detection reliable
+
+**Before writing any doc under `docs/`:** check for companion `.md` files in the same directory — particularly `JAVA_DOC_GUIDE.md` or language-specific guides — that may define conventions, schemas, or constraints beyond this general overview.
 
 Prefer reading source to understand the implementation. Read docs only when you need to update them.
 Know the project before documenting.
