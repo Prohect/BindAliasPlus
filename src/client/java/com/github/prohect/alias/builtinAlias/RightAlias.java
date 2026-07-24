@@ -7,20 +7,20 @@ import net.minecraft.client.Minecraft;
 
 public class RightAlias extends BuiltinAliasWithBooleanArgs<RightAlias> {
 
-	public RightAlias() {
-		super("builtinRight");
-	}
+    public RightAlias() {
+        super("builtinRight");
+    }
 
-	@Override
-	public RightAlias run(String args) {
-		parseArgs(args);
-		// cancle press event from text input screen
-		if (Alias.isUnderTextInputScreen() && flag)
-			return this;
-		KeyMapping rightKey = Minecraft.getInstance().options.keyRight;
-		rightKey.setDown(flag);
-		if (flag)
-			rightKey.clickCount++;
-		return this;
-	}
+    @Override
+    public RightAlias run(String args) {
+        parseArgs(args);
+        // cancle press event from text input screen
+        if (Alias.isUnderTextInputScreen() && flag)
+            return this;
+        KeyMapping rightKey = Minecraft.getInstance().options.keyRight;
+        rightKey.setDown(flag);
+        if (flag)
+            rightKey.clickCount++;
+        return this;
+    }
 }

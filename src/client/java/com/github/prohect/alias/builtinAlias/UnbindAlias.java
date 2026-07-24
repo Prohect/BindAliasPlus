@@ -9,20 +9,20 @@ import net.minecraft.client.player.LocalPlayer;
 
 public class UnbindAlias extends BuiltinAliasWithGreedyStringArgs<UnbindAlias> {
 
-	public UnbindAlias() {
-		super("unbind");
-	}
+    public UnbindAlias() {
+        super("unbind");
+    }
 
-	@Override
-	public UnbindAlias run(String args) {
-		String line = "unbind" + Alias.divider4AliasDefinition
-				+ args.replaceAll(Pattern.quote(String.valueOf(divider4AliasDefinition)),
-						String.valueOf(Alias.divider4AliasDefinition)).trim();
-		LocalPlayer player = Minecraft.getInstance().player;
-		if (player == null)
-			BindAliasPlusClient.LOGGER.warn("{}[UnbindAlias]player is null", BindAliasPlusClient.tickPrefix());
-		else
-			player.connection.sendCommand(line);
-		return this;
-	}
+    @Override
+    public UnbindAlias run(String args) {
+        String line = "unbind" + Alias.divider4AliasDefinition
+                + args.replaceAll(Pattern.quote(String.valueOf(divider4AliasDefinition)),
+                        String.valueOf(Alias.divider4AliasDefinition)).trim();
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null)
+            BindAliasPlusClient.LOGGER.warn("{}[UnbindAlias]player is null", BindAliasPlusClient.tickPrefix());
+        else
+            player.connection.sendCommand(line);
+        return this;
+    }
 }

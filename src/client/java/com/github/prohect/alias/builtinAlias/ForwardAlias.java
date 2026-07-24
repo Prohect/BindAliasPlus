@@ -7,20 +7,20 @@ import net.minecraft.client.Minecraft;
 
 public class ForwardAlias extends BuiltinAliasWithBooleanArgs<ForwardAlias> {
 
-	public ForwardAlias() {
-		super("builtinForward");
-	}
+    public ForwardAlias() {
+        super("builtinForward");
+    }
 
-	@Override
-	public ForwardAlias run(String args) {
-		parseArgs(args);
-		// cancle press event from text input screen
-		if (Alias.isUnderTextInputScreen() && flag)
-			return this;
-		KeyMapping forwardKey = Minecraft.getInstance().options.keyUp;
-		forwardKey.setDown(flag);
-		if (flag)
-			forwardKey.clickCount++;
-		return this;
-	}
+    @Override
+    public ForwardAlias run(String args) {
+        parseArgs(args);
+        // cancle press event from text input screen
+        if (Alias.isUnderTextInputScreen() && flag)
+            return this;
+        KeyMapping forwardKey = Minecraft.getInstance().options.keyUp;
+        forwardKey.setDown(flag);
+        if (flag)
+            forwardKey.clickCount++;
+        return this;
+    }
 }
