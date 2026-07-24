@@ -9,27 +9,21 @@ import net.minecraft.client.network.ClientPlayerEntity;
 
 public class BindAlias extends BuiltinAliasWithGreedyStringArgs<BindAlias> {
 
-    public BindAlias() {
-        super("bind");
-    }
+	public BindAlias() {
+		super("bind");
+	}
 
-    @Override
-    public BindAlias run(String args) {
-        String line =
-            "bind" +
-            Alias.divider4AliasDefinition +
-            args
-                .replaceAll(
-                    Pattern.quote(String.valueOf(divider4AliasDefinition)),
-                    String.valueOf(Alias.divider4AliasDefinition)
-                )
-                .trim();
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[BindAlias]player is null", BindAliasPlusClient.tickPrefix());
-        } else {
-            player.networkHandler.sendChatCommand(line);
-        }
-        return this;
-    }
+	@Override
+	public BindAlias run(String args) {
+		String line = "bind" + Alias.divider4AliasDefinition
+				+ args.replaceAll(Pattern.quote(String.valueOf(divider4AliasDefinition)),
+						String.valueOf(Alias.divider4AliasDefinition)).trim();
+		ClientPlayerEntity player = MinecraftClient.getInstance().player;
+		if (player == null) {
+			BindAliasPlusClient.LOGGER.warn("{}[BindAlias]player is null", BindAliasPlusClient.tickPrefix());
+		} else {
+			player.networkHandler.sendChatCommand(line);
+		}
+		return this;
+	}
 }

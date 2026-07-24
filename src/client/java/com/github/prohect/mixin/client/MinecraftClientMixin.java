@@ -14,28 +14,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = MinecraftClient.class)
 public class MinecraftClientMixin {
 
-    @Inject(at = @At("HEAD"), method = "tick")
-    private void tick(CallbackInfo ci) {
-        // Track current screen on every tick (cross-version compat)
-        BindAliasPlusClient.currentScreen = McScreenHelper.getCurrentScreen(
-            MinecraftClient.getInstance()
-        );
+	@Inject(at = @At("HEAD"), method = "tick")
+	private void tick(CallbackInfo ci) {
+		// Track current screen on every tick (cross-version compat)
+		BindAliasPlusClient.currentScreen = McScreenHelper.getCurrentScreen(MinecraftClient.getInstance());
 
-        int size = WaitAlias.tasksWaiting.size();
-        if (size > 0) {
-            for (int i = 0; i < size; i++) {
-                size -= WaitAlias.tasksWaiting.get(i).tick();
-            }
-        }
+		int size = WaitAlias.tasksWaiting.size();
+		if (size > 0) {
+			for (int i = 0; i < size; i++) {
+				size -= WaitAlias.tasksWaiting.get(i).tick();
+			}
+		}
 
-        // Drive continuous drop while the drop-key alias is held
-        // (container screens via onMouseClick, 3D game via timesPressed).
-        AliasWithArgs<?> raw =
-            com.github.prohect.alias.Alias.aliasesWithArgs_notSuggested.get(
-                "builtinDrop"
-            );
-        if (raw instanceof DropAlias dropAlias) {
-            dropAlias.tickDrop();
-        }
-    }
+		// Drive continuous drop while the drop-key alias is held
+		// (container screens via onMouseClick, 3D game via timesPressed).
+		AliasWithArgs<?> raw = com.github.prohect.alias.Alias.aliasesWithArgs_notSuggested.get("builtinDrop");
+		if (raw instanceof DropAlias dropAlias) {
+			dropAlias.tickDrop();
+		}
+	}
 }

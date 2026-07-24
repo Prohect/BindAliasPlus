@@ -8,30 +8,31 @@ import net.minecraft.client.option.KeyBinding;
 
 public class UseAlias extends BuiltinAliasWithArgs<UseAlias> {
 
-    public UseAlias() {
-        super("builtinUse");
-    }
+	public UseAlias() {
+		super("builtinUse");
+	}
 
-    @Override
-    public UseAlias run(String args) {
-        boolean flag = false;
-        switch (args) {
-            case "0":
-                break;
-            case "1":
-                flag = true;
-                break;
-            default:
-                BindAliasPlusClient.LOGGER.warn("{}[Use]Invalid arguments", BindAliasPlusClient.tickPrefix());
-                break;
-        }
-        // cancel press event from text input screen
-        if (Alias.isUnderTextInputScreen() && flag) return this;
-        KeyBinding useKey = MinecraftClient.getInstance().options.useKey;
-        useKey.setPressed(flag);
-        if (flag) {
-            useKey.timesPressed++;
-        }
-        return this;
-    }
+	@Override
+	public UseAlias run(String args) {
+		boolean flag = false;
+		switch (args) {
+			case "0" :
+				break;
+			case "1" :
+				flag = true;
+				break;
+			default :
+				BindAliasPlusClient.LOGGER.warn("{}[Use]Invalid arguments", BindAliasPlusClient.tickPrefix());
+				break;
+		}
+		// cancel press event from text input screen
+		if (Alias.isUnderTextInputScreen() && flag)
+			return this;
+		KeyBinding useKey = MinecraftClient.getInstance().options.useKey;
+		useKey.setPressed(flag);
+		if (flag) {
+			useKey.timesPressed++;
+		}
+		return this;
+	}
 }

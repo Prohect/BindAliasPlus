@@ -18,68 +18,59 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Mouse.class)
 public class MouseMixin {
 
-    // ── freeCursor: cancel lockCursor() at HEAD when active ──────────────
+	// ── freeCursor: cancel lockCursor() at HEAD when active ──────────────
 
-    @Inject(at = @At("HEAD"), method = "lockCursor", cancellable = true)
-    private void cancelLockCursor(CallbackInfo ci) {
-        if (com.github.prohect.alias.builtinAlias.FreeCursorAlias.freeCursor) {
-            ci.cancel();
-        }
-    }
+	@Inject(at = @At("HEAD"), method = "lockCursor", cancellable = true)
+	private void cancelLockCursor(CallbackInfo ci) {
+		if (com.github.prohect.alias.builtinAlias.FreeCursorAlias.freeCursor) {
+			ci.cancel();
+		}
+	}
 
-    // ── mouse button events ──────────────────────────────────────────────
+	// ── mouse button events ──────────────────────────────────────────────
 
-    @Inject(at = @At("HEAD"), method = "onMouseButton")
-    private void onMouseButton(
-        long window,
-        MouseInput input,
-        int action,
-        CallbackInfo ci
-    ) {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        if (window != minecraftClient.getWindow().getHandle()) return;
-        InputUtil.Key key = InputUtil.Type.MOUSE.createFromCode(input.button());
-        if (Alias.isUnderTextInputScreen()) return;
-        // Skip mod-bound keys whose action is currently locked
-        if (LockAlias.LOCKED_PHYSICAL_KEYS.contains(key)) return;
-        if (BindAliasPlusClient.BINDING_PLUS.containsKey(key)) {
-            //switch action because 0 -> release 1 -> down 2 -> pressing, and 2 is triggered constantly
-            switch (action) {
-                case 0:
-                    BindAliasPlusClient.KEY_QUEUE.add(
-                        new KeyPressed(key, false)
-                    );
-                    break;
-                case 1:
-                    BindAliasPlusClient.KEY_QUEUE.add(
-                        new KeyPressed(key, true)
-                    );
-                    break;
-            }
-        }
-    }
+	@Inject(at = @At("HEAD"), method = "onMouseButton")
+	private void onMouseButton(long window, MouseInput input, int action, CallbackInfo ci) {
+		MinecraftClient minecraftClient = MinecraftClient.getInstance();
+		if (window != minecraftClient.getWindow().getHandle())
+			return;
+		InputUtil.Key key = InputUtil.Type.MOUSE.createFromCode(input.button());
+		if (Alias.isUnderTextInputScreen())
+			return;
+		// Skip mod-bound keys whose action is currently locked
+		if (LockAlias.LOCKED_PHYSICAL_KEYS.contains(key))
+			return;
+		if (BindAliasPlusClient.BINDING_PLUS.containsKey(key)) {
+			// switch action because 0 -> release 1 -> down 2 -> pressing, and 2 is
+			// triggered constantly
+			switch (action) {
+				case 0 :
+					BindAliasPlusClient.KEY_QUEUE.add(new KeyPressed(key, false));
+					break;
+				case 1 :
+					BindAliasPlusClient.KEY_QUEUE.add(new KeyPressed(key, true));
+					break;
+			}
+		}
+	}
 
-    /*
-    When the game opens a new screen covering the 3d rendering world, it'll release all the keys from gameOptions.
-    When the game closes a screen, then it returns to the 3d rendering world which while running need lock the cursor,
-    and inside this process it also checks if a key from gameOptions is pressed via check a key's state in GLFW's memory,
-    we need to update our aliases' states to the game after that.
-     */
-    @Inject(at = @At("RETURN"), method = "lockCursor")
-    private void lockCursor(CallbackInfo ci) {
-        Alias.aliasesWithArgs_notSuggested.forEach(
-            (aliasName, aliasWithArgs) -> {
-                if (
-                    aliasWithArgs instanceof
-                        BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs
-                ) builtinAliasWithBooleanArgs.reapplyToGameKeyMapping();
-            }
-        );
-        Alias.aliasesWithArgs.forEach((aliasName, aliasWithArgs) -> {
-            if (
-                aliasWithArgs instanceof
-                    BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs
-            ) builtinAliasWithBooleanArgs.reapplyToGameKeyMapping();
-        });
-    }
+	/*
+	 * When the game opens a new screen covering the 3d rendering world, it'll
+	 * release all the keys from gameOptions. When the game closes a screen, then it
+	 * returns to the 3d rendering world which while running need lock the cursor,
+	 * and inside this process it also checks if a key from gameOptions is pressed
+	 * via check a key's state in GLFW's memory, we need to update our aliases'
+	 * states to the game after that.
+	 */
+	@Inject(at = @At("RETURN"), method = "lockCursor")
+	private void lockCursor(CallbackInfo ci) {
+		Alias.aliasesWithArgs_notSuggested.forEach((aliasName, aliasWithArgs) -> {
+			if (aliasWithArgs instanceof BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs)
+				builtinAliasWithBooleanArgs.reapplyToGameKeyMapping();
+		});
+		Alias.aliasesWithArgs.forEach((aliasName, aliasWithArgs) -> {
+			if (aliasWithArgs instanceof BuiltinAliasWithBooleanArgs<?> builtinAliasWithBooleanArgs)
+				builtinAliasWithBooleanArgs.reapplyToGameKeyMapping();
+		});
+	}
 }

@@ -6,60 +6,51 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.Perspective;
 
-public class SetPerspectiveAlias
-    extends BuiltinAliasWithIntegerArgs<SetPerspectiveAlias>
-{
+public class SetPerspectiveAlias extends BuiltinAliasWithIntegerArgs<SetPerspectiveAlias> {
 
-    public SetPerspectiveAlias() {
-        super("builtinSetPerspective");
-    }
+	public SetPerspectiveAlias() {
+		super("builtinSetPerspective");
+	}
 
-    /**
-     * @param args 0 = FIRST_PERSON, 1 = THIRD_PERSON_BACK, 2 = THIRD_PERSON_FRONT
-     */
-    @Override
-    public SetPerspectiveAlias run(String args) {
-        parseArgs(args);
+	/**
+	 * @param args
+	 *            0 = FIRST_PERSON, 1 = THIRD_PERSON_BACK, 2 = THIRD_PERSON_FRONT
+	 */
+	@Override
+	public SetPerspectiveAlias run(String args) {
+		parseArgs(args);
 
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        GameOptions options = minecraftClient.options;
+		MinecraftClient minecraftClient = MinecraftClient.getInstance();
+		GameOptions options = minecraftClient.options;
 
-        if (options == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[SetPerspective]Options is null", BindAliasPlusClient.tickPrefix());
-            return this;
-        }
+		if (options == null) {
+			BindAliasPlusClient.LOGGER.warn("{}[SetPerspective]Options is null", BindAliasPlusClient.tickPrefix());
+			return this;
+		}
 
-        // Validate input range
-        if (flag < 0 || flag > 2) {
-            BindAliasPlusClient.LOGGER.warn(
-                "{}[SetPerspective]Invalid perspective value: {}. Must be 0 (first-person), 1 (third-person back), or 2 (third-person front)",
-                BindAliasPlusClient.tickPrefix(),
-                flag
-            );
-            return this;
-        }
+		// Validate input range
+		if (flag < 0 || flag > 2) {
+			BindAliasPlusClient.LOGGER.warn(
+					"{}[SetPerspective]Invalid perspective value: {}. Must be 0 (first-person), 1 (third-person back), or 2 (third-person front)",
+					BindAliasPlusClient.tickPrefix(), flag);
+			return this;
+		}
 
-        // Get current and target perspectives
-        Perspective currentPerspective = options.getPerspective();
-        Perspective targetPerspective = Perspective.values()[flag];
+		// Get current and target perspectives
+		Perspective currentPerspective = options.getPerspective();
+		Perspective targetPerspective = Perspective.values()[flag];
 
-        // Only update if different
-        if (currentPerspective != targetPerspective) {
-            options.setPerspective(targetPerspective);
+		// Only update if different
+		if (currentPerspective != targetPerspective) {
+			options.setPerspective(targetPerspective);
 
-            // Update camera entity if switching between first-person and third-person
-            if (
-                currentPerspective.isFirstPerson() !=
-                targetPerspective.isFirstPerson()
-            ) {
-                minecraftClient.gameRenderer.onCameraEntitySet(
-                    targetPerspective.isFirstPerson()
-                        ? minecraftClient.getCameraEntity()
-                        : null
-                );
-            }
-        }
+			// Update camera entity if switching between first-person and third-person
+			if (currentPerspective.isFirstPerson() != targetPerspective.isFirstPerson()) {
+				minecraftClient.gameRenderer.onCameraEntitySet(
+						targetPerspective.isFirstPerson() ? minecraftClient.getCameraEntity() : null);
+			}
+		}
 
-        return this;
-    }
+		return this;
+	}
 }
