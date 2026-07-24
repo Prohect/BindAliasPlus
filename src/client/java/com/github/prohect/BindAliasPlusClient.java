@@ -11,6 +11,7 @@ import com.github.prohect.alias.BuiltinAliasWithDoubleArgs;
 import com.github.prohect.alias.BuiltinAliasWithIntegerArgs;
 import com.github.prohect.alias.UserAlias;
 import com.github.prohect.alias.builtinAlias.*;
+import com.github.prohect.mcp.McpHttpServer;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.Suggestions;
@@ -603,6 +604,9 @@ public class BindAliasPlusClient implements ClientModInitializer {
                     )
                 )
         );
+
+        // start MCP HTTP server for AI agent control
+        McpHttpServer.start();
     }
 
     /** @return {@code "[T+{ticks}] "} if joined, empty string otherwise. */
