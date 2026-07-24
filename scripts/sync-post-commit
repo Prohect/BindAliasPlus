@@ -1,6 +1,11 @@
 #!/bin/bash
-# post-commit hook: sync configured files across active branches
-# To install:  ln scripts/sync-post-commit .git/hooks/post-commit
+# =============================================================================
+# Auto-syncs files matching .git_sync_across_active_branches to all branches
+# listed in .git_active_branches. Source-code files (not in the list) are
+# intentionally excluded — those must be manually merged per branch.
+#
+# To install:  cp scripts/sync-post-commit .git/hooks/post-commit
+# =============================================================================
 set -u
 
 BRANCHES_FILE=".git_active_branches"
@@ -47,8 +52,13 @@ read_lines "$PATTERNS_FILE" patterns
 # --- detect synced files from this commit ---
 changed=$(git diff-tree --no-commit-id --name-only -r HEAD)
 synced=()
+not_synced=()
 for f in $changed; do
-  match_pattern "$f" && synced+=("$f")
+  if match_pattern "$f"; then
+    synced+=("$f")
+  else
+    not_synced+=("$f")
+  fi
 done
 
 [ ${#synced[@]} -eq 0 ] && exit 0
@@ -64,7 +74,8 @@ SOURCE_SHA=$(git rev-parse --short HEAD)
 MSG=$(git log -1 --format='%B' HEAD)
 MSG="${MSG}
 
-source: ${SOURCE_SHA}"
+source: ${SOURCE_SHA}
+synced: ${expanded[*]}"
 
 # --- sync to each target ---
 for target in "${branches[@]}"; do
@@ -77,6 +88,12 @@ for target in "${branches[@]}"; do
   git ls-tree HEAD --format='%(objectmode) %(objectname) 0%x09%(path)' -- "${expanded[@]}" \
     | git update-index --index-info 2>/dev/null || true
 
+  # Remove synced files that were deleted in the source commit
+  for f in "${expanded[@]}"; do
+    git cat-file -e "HEAD:$f" 2>/dev/null && continue
+    git rm --cached --quiet -- "$f" 2>/dev/null || true
+  done
+
   new_tree=$(git write-tree)
   old_tree=$(git rev-parse "$target^{tree}")
   unset GIT_INDEX_FILE; rm -f "$tmpidx"
@@ -88,3 +105,11 @@ for target in "${branches[@]}"; do
   fi
 done
 
+# --- warn about files in this commit NOT auto-synced ---
+if [ ${#not_synced[@]} -gt 0 ]; then
+  echo ""
+  echo "  Not auto-synced (manual merge needed):"
+  for f in "${not_synced[@]}"; do
+    echo "    $f"
+  done
+fi
