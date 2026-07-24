@@ -21,9 +21,8 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
  * messages since the last call and is zero-cost when nothing new arrived.</li>
  * </ul>
  * <p>
- * On startup, a Log4j appender is registered on the root logger to capture all game log output — chat messages (via vanilla's
- * {@code logChatMessage}), mod {@code LOGGER.info()} calls, errors, warnings, etc. The {@link ChatComponentMixin} also feeds
- * chat messages for cleaner text (before the {@code "[CHAT]"} prefix).
+ * On startup, a Log4j appender is registered on the {@code "bind-alias-plus"} logger to capture mod log output
+ * ({@code LOGGER.info()} calls from aliases, CFG autoload, etc.). The {@link ChatComponentMixin} feeds chat messages.
  */
 public final class ChatCapture {
 
@@ -52,7 +51,8 @@ public final class ChatCapture {
                 }
             };
             appender.start();
-            ctx.getRootLogger().addAppender(appender);
+            // Register on our mod's logger only — skips Fabric/mixin/rendering noise from root.
+            ctx.getLogger("bind-alias-plus").addAppender(appender);
             ctx.updateLoggers();
         } catch (Exception ignored) {
             // Log capture is best-effort; don't crash the mod if Log4j internals change.
