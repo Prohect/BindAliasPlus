@@ -12,14 +12,11 @@ All notable changes to BindAliasPlus will be documented in this file.
   - `POST /runAlias` — execute alias chains remotely (pre-checks alias existence, returns error for unknowns)
   - `POST /defineAlias` — define new aliases via API
   - `GET /readCFG` / `POST /writeCFG` — read/write `bind-alias-plus.cfg` remotely
-- **MCP bridge scripts** for AI agents:
-  - Node.js bridge (`scripts/mcp_server.js`) with corrected tool instructions and full parser syntax
-  - Python bridge alternative
 - **`swapSlot` expanded to any container screen** — works in chests, crafting tables, furnaces, anvils, enchanting tables, and all other `AbstractContainerScreen` subtypes.
   - New `cN` slot syntax (1-based index into the open menu's slot list) alongside existing player slots 1–41 and variables.
   - Hotbar/offhand-addressable slots use a single SWAP click; other pairs use a guarded PICKUP sequence.
   - Take-only result slots (crafting output, furnace output, anvil output) behave as "take result", enabling craft/forge/enchant automation from alias chains.
-- **MCP `/state` container compression** — open container view with occupied slots as `{index,item,count}`, empty inventory slots as `1-41` ranges, and container slots as an ASCII grid map with per-cell `c`-indices. Sections over 2000 chars are refused with a screenshot hint.
+- **MCP `/state` container compression** — open container view with occupied slots as `{index,item,count}`, empty inventory slots as `1-41` ranges, and container slots as an ASCII grid map with per-cell `c`-indices. Sections over 6000 chars are truncated with a screenshot hint.
 - **MCP chat capture** — `ChatComponentMixin` records incoming chat messages for agent consumption.
 - **MCP screenshot capture** — `NativeImageMixin` enables in-memory PNG screenshots without file I/O.
 - **Predefined (protected) user aliases** — bundled aliases that ship with the mod and cannot be overwritten by users.
