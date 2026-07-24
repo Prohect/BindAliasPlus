@@ -436,7 +436,7 @@ public final class McpHttpServer {
                 net.minecraft.client.Screenshot.grab(
                     mc.gameDirectory,
                     null,
-                    mc.gameRenderer.mainRenderTarget(),
+                    mc.getMainRenderTarget(),
                     1,
                     msg -> {}
                 );
