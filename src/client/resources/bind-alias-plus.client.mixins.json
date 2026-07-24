@@ -3,11 +3,12 @@
   "package": "com.github.prohect.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "GuiMixin",
     "KeyboardInputMixin",
     "KeyBoardMixin",
     "MinecraftClientMixin",
-    "MouseMixin"
+    "MouseMixin",
+    "NativeImageMixin",
+    "ChatComponentMixin"
   ],
   "injectors": {
     "defaultRequire": 1

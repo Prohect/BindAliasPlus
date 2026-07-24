@@ -255,7 +255,8 @@ public final class McpHttpServer {
                             jsonEscape(
                                 Registries.ITEM
                                     .getKey(held.getItem())
-                                    .toString()
+                                    .map(k -> k.getValue().toString())
+                                    .orElse(held.getItem().toString())
                             )
                         );
                         sb.append(",\"heldItemCount\":").append(held.getCount());
@@ -328,7 +329,11 @@ public final class McpHttpServer {
                 );
                 items
                     .append(",\"item\":")
-                    .append(jsonEscape(Registries.ITEM.getKey(stack.getItem()).toString()))
+                    .append(jsonEscape(
+                        Registries.ITEM.getKey(stack.getItem())
+                            .map(k -> k.getValue().toString())
+                            .orElse(stack.getItem().toString())
+                    ))
                     .append(",\"count\":")
                     .append(stack.getCount());
                 items.append('}');
