@@ -306,6 +306,14 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
      * Otherwise a guarded PICKUP sequence (pick up A, click B, put back into A)
      * is used; take-only slots (crafting/anvil/furnace results) then behave as
      * "take the result into B", since they reject the put-back click.
+     *
+     * <p><b>SWAP path limitation:</b> Vanilla's {@code SWAP} click is
+     * all-or-nothing — if the hotbar/offhand item cannot be placed into the
+     * container slot (e.g. non-fuel into a furnace fuel slot, any item into a
+     * result slot), the server silently rejects the entire swap and neither
+     * item moves. For taking items from restricted slots, use an empty hotbar
+     * slot or swap with a non-hotbar inventory slot (10–36) to fall through to
+     * the PICKUP path which handles the rejection gracefully.
      */
     private static void swapInMenu(
         MultiPlayerGameMode interactionManager,
