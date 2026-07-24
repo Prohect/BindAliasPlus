@@ -1,7 +1,8 @@
 # BindAliasPlus
 
-一个 Minecraft Fabric 客户端模组，允许创建自定义别名和按键绑定，通过简单的按键操作来自动化复杂的游戏内动作。同时支持通过内置 HTTP API 进行 AI 代理控制——配合
-[BindAliasPlus MCP 工具](https://github.com/Prohect/BindAliasPlus-mcp) 实现 AI 辅助的 Minecraft 游戏。
+一个 Minecraft Fabric 客户端模组，允许创建自定义别名和按键绑定，通过简单的按键操作来自动化复杂的游戏内动作。同时通过内置 HTTP API 支持 AI 代理自主控制——代理可以独立
+观察、推理并操作 Minecraft。配合 [BindAliasPlus MCP 工具](https://github.com/Prohect/BindAliasPlus-mcp)
+让 AI 来玩游戏。
 
 <!-- languages -->
 - 🇺🇸 [English](README.md)
