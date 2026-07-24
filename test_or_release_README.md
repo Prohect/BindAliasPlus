@@ -20,7 +20,7 @@ Functional correctness must be confirmed by the user.
 3. **STOP** — wait for user confirmation before bumping
 4. **Bump** → `mod_version` in `gradle.properties` + CHANGELOG → commit
 5. **Collect** → build each branch, copy JAR to `release/`
-6. **Verify** → `unzip -p <jar> fabric.mod.json`
+6. **Verify** → `unzip -p <jar> fabric.mod.json` — check the full unzipped JSON, not just grep. Verify `version`, `depends.minecraft` range, and `entrypoints` match the target branch.
 7. **Release** → `git push` all branches + `gh release create`
 
 ## active branches
