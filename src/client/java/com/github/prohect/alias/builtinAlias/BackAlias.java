@@ -7,18 +7,20 @@ import net.minecraft.client.Minecraft;
 
 public class BackAlias extends BuiltinAliasWithBooleanArgs<BackAlias> {
 
-    public BackAlias() {
-        super("builtinBack");
-    }
+	public BackAlias() {
+		super("builtinBack");
+	}
 
-    @Override
-    public BackAlias run(String args) {
-        parseArgs(args);
-        // cancle press event from text input screen
-        if (Alias.isUnderTextInputScreen() && flag) return this;
-        KeyMapping backKey = Minecraft.getInstance().options.keyDown;
-        backKey.setDown(flag);
-        if (flag) backKey.clickCount++;
-        return this;
-    }
+	@Override
+	public BackAlias run(String args) {
+		parseArgs(args);
+		// cancle press event from text input screen
+		if (Alias.isUnderTextInputScreen() && flag)
+			return this;
+		KeyMapping backKey = Minecraft.getInstance().options.keyDown;
+		backKey.setDown(flag);
+		if (flag)
+			backKey.clickCount++;
+		return this;
+	}
 }

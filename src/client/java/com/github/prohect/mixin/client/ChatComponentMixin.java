@@ -11,41 +11,31 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Hooks the three public {@link ChatComponent} message-entry points
- * so {@link ChatCapture} can collect command-feedback text during an
- * active capture window.
+ * Hooks the three public {@link ChatComponent} message-entry points so
+ * {@link ChatCapture} can collect command-feedback text during an active
+ * capture window.
  */
 @Mixin(ChatComponent.class)
 public class ChatComponentMixin {
 
-    @Inject(method = "addClientSystemMessage(Lnet/minecraft/network/chat/Component;)V", at = @At("HEAD"))
-    private void onAddClientSystemMessage(Component message, CallbackInfo ci) {
-        capture(message.getString());
-    }
+	@Inject(method = "addClientSystemMessage(Lnet/minecraft/network/chat/Component;)V", at = @At("HEAD"))
+	private void onAddClientSystemMessage(Component message, CallbackInfo ci) {
+		capture(message.getString());
+	}
 
-    @Inject(method = "addServerSystemMessage(Lnet/minecraft/network/chat/Component;)V", at = @At("HEAD"))
-    private void onAddServerSystemMessage(Component message, CallbackInfo ci) {
-        capture(message.getString());
-    }
+	@Inject(method = "addServerSystemMessage(Lnet/minecraft/network/chat/Component;)V", at = @At("HEAD"))
+	private void onAddServerSystemMessage(Component message, CallbackInfo ci) {
+		capture(message.getString());
+	}
 
-    @Inject(
-        method = "addPlayerMessage"
-            + "(Lnet/minecraft/network/chat/Component;"
-            + "Lnet/minecraft/network/chat/MessageSignature;"
-            + "Lnet/minecraft/client/multiplayer/chat/GuiMessageTag;"
-            + ")V",
-        at = @At("HEAD")
-    )
-    private void onAddPlayerMessage(
-        Component message,
-        MessageSignature signature,
-        GuiMessageTag tag,
-        CallbackInfo ci
-    ) {
-        capture(message.getString());
-    }
+	@Inject(method = "addPlayerMessage" + "(Lnet/minecraft/network/chat/Component;"
+			+ "Lnet/minecraft/network/chat/MessageSignature;" + "Lnet/minecraft/client/multiplayer/chat/GuiMessageTag;"
+			+ ")V", at = @At("HEAD"))
+	private void onAddPlayerMessage(Component message, MessageSignature signature, GuiMessageTag tag, CallbackInfo ci) {
+		capture(message.getString());
+	}
 
-    private static void capture(String text) {
-        ChatCapture.onSystemMessage(text);
-    }
+	private static void capture(String text) {
+		ChatCapture.onSystemMessage(text);
+	}
 }

@@ -7,20 +7,20 @@ import net.minecraft.client.player.LocalPlayer;
 
 public class SetPitchAlias extends BuiltinAliasWithDoubleArgs<SetPitchAlias> {
 
-    public SetPitchAlias() {
-        super("setPitch");
-    }
+	public SetPitchAlias() {
+		super("setPitch");
+	}
 
-    @Override
-    public SetPitchAlias run(String args) {
-        parseArgs(args);
-        Minecraft minecraftClient = Minecraft.getInstance();
-        LocalPlayer player = minecraftClient.player;
-        if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[setPitch]Player is null", BindAliasPlusClient.tickPrefix());
-            return this;
-        }
-        player.setXRot((float) flag);
-        return this;
-    }
+	@Override
+	public SetPitchAlias run(String args) {
+		parseArgs(args);
+		Minecraft minecraftClient = Minecraft.getInstance();
+		LocalPlayer player = minecraftClient.player;
+		if (player == null) {
+			BindAliasPlusClient.LOGGER.warn("{}[setPitch]Player is null", BindAliasPlusClient.tickPrefix());
+			return this;
+		}
+		player.setXRot((float) flag);
+		return this;
+	}
 }

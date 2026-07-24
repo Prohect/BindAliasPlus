@@ -16,33 +16,25 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(KeyboardHandler.class)
 public class KeyBoardMixin {
 
-    @Inject(at = @At("HEAD"), method = "keyPress")
-    private void onKey(
-        long window,
-        int action,
-        KeyEvent event,
-        CallbackInfo ci
-    ) {
-        if (window != Minecraft.getInstance().getWindow().handle()) return;
-        InputConstants.Key keyFromCode = InputConstants.Type.KEYSYM.getOrCreate(
-            event.key()
-        );
-        // Skip mod-bound keys whose action is currently locked
-        if (LockAlias.LOCKED_PHYSICAL_KEYS.contains(keyFromCode)) return;
-        if (BindAliasPlusClient.BINDING_PLUS.containsKey(keyFromCode)) {
-            //switch action because 0 -> release 1 -> down 2 -> pressing, and 2 is triggered constantly
-            switch (action) {
-                case 0:
-                    BindAliasPlusClient.KEY_QUEUE.add(
-                        new KeyPressed(keyFromCode, false)
-                    );
-                    break;
-                case 1:
-                    BindAliasPlusClient.KEY_QUEUE.add(
-                        new KeyPressed(keyFromCode, true)
-                    );
-                    break;
-            }
-        }
-    }
+	@Inject(at = @At("HEAD"), method = "keyPress")
+	private void onKey(long window, int action, KeyEvent event, CallbackInfo ci) {
+		if (window != Minecraft.getInstance().getWindow().handle())
+			return;
+		InputConstants.Key keyFromCode = InputConstants.Type.KEYSYM.getOrCreate(event.key());
+		// Skip mod-bound keys whose action is currently locked
+		if (LockAlias.LOCKED_PHYSICAL_KEYS.contains(keyFromCode))
+			return;
+		if (BindAliasPlusClient.BINDING_PLUS.containsKey(keyFromCode)) {
+			// switch action because 0 -> release 1 -> down 2 -> pressing, and 2 is
+			// triggered constantly
+			switch (action) {
+				case 0 :
+					BindAliasPlusClient.KEY_QUEUE.add(new KeyPressed(keyFromCode, false));
+					break;
+				case 1 :
+					BindAliasPlusClient.KEY_QUEUE.add(new KeyPressed(keyFromCode, true));
+					break;
+			}
+		}
+	}
 }

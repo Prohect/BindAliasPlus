@@ -1,6 +1,7 @@
 plugins {
     id 'net.fabricmc.fabric-loom' version "${loom_version}"
     id 'maven-publish'
+    id 'com.diffplug.spotless' version '6.25.0'
 }
 
 version = project.mod_version
@@ -86,6 +87,25 @@ jar {
 
     from("LICENSE") {
         rename { "${it}_${inputs.properties.archivesName}" }
+    }
+}
+
+// Spotless formatter — uses Eclipse JDT formatter, same engine as Zed's JDTLS LSP.
+// Run: ./gradlew spotlessApply   (format all)   or   ./gradlew spotlessCheck   (verify only)
+spotless {
+    java {
+        // Eclipse JDT formatter — identical formatter engine to what Zed's Java LSP (JDTLS) uses.
+        // No separate config file needed; uses built-in Eclipse defaults which match JDTLS defaults.
+        eclipse()
+        // Remove wildcard imports except for common test packages
+        removeUnusedImports()
+    }
+    // Also format Gradle scripts, JSON, and properties
+    format 'misc', {
+        target '*.gradle', '.gitignore', '*.toml'
+        trimTrailingWhitespace()
+        indentWithSpaces(4)
+        endWithNewline()
     }
 }
 

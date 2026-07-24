@@ -7,18 +7,20 @@ import net.minecraft.client.Minecraft;
 
 public class SneakAlias extends BuiltinAliasWithBooleanArgs<SneakAlias> {
 
-    public SneakAlias() {
-        super("builtinSneak");
-    }
+	public SneakAlias() {
+		super("builtinSneak");
+	}
 
-    @Override
-    public SneakAlias run(String args) {
-        parseArgs(args);
-        // cancle press event from text input screen
-        if (Alias.isUnderTextInputScreen() && flag) return this;
-        KeyMapping sneakKey = Minecraft.getInstance().options.keyShift;
-        sneakKey.setDown(flag);
-        if (flag) sneakKey.clickCount++;
-        return this;
-    }
+	@Override
+	public SneakAlias run(String args) {
+		parseArgs(args);
+		// cancle press event from text input screen
+		if (Alias.isUnderTextInputScreen() && flag)
+			return this;
+		KeyMapping sneakKey = Minecraft.getInstance().options.keyShift;
+		sneakKey.setDown(flag);
+		if (flag)
+			sneakKey.clickCount++;
+		return this;
+	}
 }
