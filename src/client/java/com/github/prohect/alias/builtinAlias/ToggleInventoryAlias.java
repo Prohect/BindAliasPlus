@@ -6,9 +6,7 @@ import com.github.prohect.util.McScreenHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 
-public class ToggleInventoryAlias
-    extends BuiltinAliasWithoutArgs<ToggleInventoryAlias>
-{
+public class ToggleInventoryAlias extends BuiltinAliasWithoutArgs<ToggleInventoryAlias> {
 
     public ToggleInventoryAlias() {
         super("toggleInventory");
@@ -20,9 +18,11 @@ public class ToggleInventoryAlias
     @Override
     public ToggleInventoryAlias run(String args) {
         // cancel open event from text input screen
-        if (Alias.isUnderTextInputScreen()) return this;
+        if (Alias.isUnderTextInputScreen())
+            return this;
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) return this;
+        if (mc.player == null)
+            return this;
         if (Alias.isInContainerScreen()) {
             Alias.getCurrentScreen().onClose();
         } else if (!Alias.isUnderAnyScreen()) {

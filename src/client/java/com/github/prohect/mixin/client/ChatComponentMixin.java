@@ -11,9 +11,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Hooks the three public {@link ChatComponent} message-entry points
- * so {@link ChatCapture} can collect command-feedback text during an
- * active capture window.
+ * Hooks the three public {@link ChatComponent} message-entry points so {@link ChatCapture} can collect command-feedback text
+ * during an active capture window.
  */
 @Mixin(ChatComponent.class)
 public class ChatComponentMixin {
@@ -28,20 +27,10 @@ public class ChatComponentMixin {
         capture(message.getString());
     }
 
-    @Inject(
-        method = "addPlayerMessage"
-            + "(Lnet/minecraft/network/chat/Component;"
-            + "Lnet/minecraft/network/chat/MessageSignature;"
-            + "Lnet/minecraft/client/multiplayer/chat/GuiMessageTag;"
-            + ")V",
-        at = @At("HEAD")
-    )
-    private void onAddPlayerMessage(
-        Component message,
-        MessageSignature signature,
-        GuiMessageTag tag,
-        CallbackInfo ci
-    ) {
+    @Inject(method = "addPlayerMessage" + "(Lnet/minecraft/network/chat/Component;"
+            + "Lnet/minecraft/network/chat/MessageSignature;" + "Lnet/minecraft/client/multiplayer/chat/GuiMessageTag;" + ")V",
+            at = @At("HEAD"))
+    private void onAddPlayerMessage(Component message, MessageSignature signature, GuiMessageTag tag, CallbackInfo ci) {
         capture(message.getString());
     }
 

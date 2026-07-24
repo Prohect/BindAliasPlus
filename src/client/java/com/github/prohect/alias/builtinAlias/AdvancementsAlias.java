@@ -5,12 +5,10 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 
 /**
- * Opens/closes the advancements screen (default: L key).
- * Uses {@code keyAdvancements} which is polled via {@code consumeClick()}
- * in {@code Gui.java} — the screen opens when the key is released.
+ * Opens/closes the advancements screen (default: L key). Uses {@code keyAdvancements} which is polled via
+ * {@code consumeClick()} in {@code Gui.java} — the screen opens when the key is released.
  */
-public class AdvancementsAlias
-    extends BuiltinAliasWithBooleanArgs<AdvancementsAlias> {
+public class AdvancementsAlias extends BuiltinAliasWithBooleanArgs<AdvancementsAlias> {
 
     public AdvancementsAlias() {
         super("builtinAdvancements");
@@ -21,7 +19,8 @@ public class AdvancementsAlias
         parseArgs(args);
         KeyMapping key = Minecraft.getInstance().options.keyAdvancements;
         key.setDown(flag);
-        if (flag) key.clickCount++;
+        if (flag)
+            key.clickCount++;
         return this;
     }
 }

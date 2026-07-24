@@ -3,11 +3,6 @@ package com.github.prohect.mcp;
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.UserAlias;
-import com.github.prohect.alias.builtinAlias.RunAliasAlias;
-import com.github.prohect.alias.builtinAlias.UnloadCFGAliasesAlias;
-import com.github.prohect.alias.builtinAlias.UnloadCFGBindsAlias;
-import com.github.prohect.alias.builtinAlias.UnloadCFGVarsAlias;
-import com.github.prohect.alias.builtinAlias.UnloadCFGAllAlias;
 import com.github.prohect.util.McScreenHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -19,9 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -37,10 +30,9 @@ import net.minecraft.world.item.ItemStack;
 /**
  * Lightweight HTTP API server bound to {@code 127.0.0.1:25575}.
  * <p>
- * Exposes mod state and alias dispatch so an external MCP bridge can
- * control Minecraft through the mod's alias system.  All game-thread
- * access goes through {@link Minecraft#execute(Runnable)} with a 5 s
- * timeout to prevent the HTTP handler from blocking forever.
+ * Exposes mod state and alias dispatch so an external MCP bridge can control Minecraft through the mod's alias system. All
+ * game-thread access goes through {@link Minecraft#execute(Runnable)} with a 5 s timeout to prevent the HTTP handler from
+ * blocking forever.
  * <p>
  * Started from {@link BindAliasPlusClient#onInitializeClient()}.
  */
@@ -54,9 +46,10 @@ public final class McpHttpServer {
 
     // ---- lifecycle ----
 
-    /** Start the HTTP server on the default port.  Safe to call multiple times. */
+    /** Start the HTTP server on the default port. Safe to call multiple times. */
     public static void start() {
-        if (server != null) return;
+        if (server != null)
+            return;
         try {
             server = HttpServer.create(new InetSocketAddress("127.0.0.1", PORT), 0);
             server.createContext("/state", McpHttpServer::handleState);
@@ -71,20 +64,11 @@ public final class McpHttpServer {
                 return t;
             }));
             server.start();
-            Runtime.getRuntime().addShutdownHook(
-                new Thread(McpHttpServer::stop, "BindAliasPlus-MCP-Shutdown")
-            );
-            BindAliasPlusClient.LOGGER.info(
-                "{}[MCP] HTTP server started on 127.0.0.1:{}",
-                BindAliasPlusClient.tickPrefix(),
-                PORT
-            );
+            Runtime.getRuntime().addShutdownHook(new Thread(McpHttpServer::stop, "BindAliasPlus-MCP-Shutdown"));
+            BindAliasPlusClient.LOGGER.info("{}[MCP] HTTP server started on 127.0.0.1:{}", BindAliasPlusClient.tickPrefix(),
+                    PORT);
         } catch (Exception e) {
-            BindAliasPlusClient.LOGGER.error(
-                "{}[MCP] Failed to start HTTP server",
-                BindAliasPlusClient.tickPrefix(),
-                e
-            );
+            BindAliasPlusClient.LOGGER.error("{}[MCP] Failed to start HTTP server", BindAliasPlusClient.tickPrefix(), e);
         }
     }
 
@@ -93,10 +77,7 @@ public final class McpHttpServer {
         if (server != null) {
             server.stop(0);
             server = null;
-            BindAliasPlusClient.LOGGER.info(
-                "{}[MCP] HTTP server stopped",
-                BindAliasPlusClient.tickPrefix()
-            );
+            BindAliasPlusClient.LOGGER.info("{}[MCP] HTTP server stopped", BindAliasPlusClient.tickPrefix());
         }
     }
 
@@ -118,23 +99,20 @@ public final class McpHttpServer {
     /** Parse URL query string into a key-value map. */
     private static Map<String, String> parseQuery(String query) {
         Map<String, String> map = new HashMap<>();
-        if (query == null || query.isBlank()) return map;
+        if (query == null || query.isBlank())
+            return map;
         for (String pair : query.split("&")) {
             int idx = pair.indexOf('=');
             if (idx > 0) {
-                map.put(
-                    decodePercent(pair.substring(0, idx)),
-                    decodePercent(pair.substring(idx + 1))
-                );
+                map.put(decodePercent(pair.substring(0, idx)), decodePercent(pair.substring(idx + 1)));
             }
         }
         return map;
     }
 
     /**
-     * Decode percent-encoded characters (%XX).  No '+' → space
-     * conversion — the bridge uses encodeURIComponent which
-     * emits spaces as %20, so no special-case logic is needed.
+     * Decode percent-encoded characters (%XX). No '+' → space conversion — the bridge uses encodeURIComponent which emits
+     * spaces as %20, so no special-case logic is needed.
      */
     private static String decodePercent(String s) {
         StringBuilder sb = new StringBuilder();
@@ -149,7 +127,8 @@ public final class McpHttpServer {
                         i += 2;
                         continue;
                     }
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
             sb.append(c);
         }
@@ -157,13 +136,9 @@ public final class McpHttpServer {
     }
 
     /** Send a JSON string as the HTTP response. */
-    private static void sendJson(HttpExchange exchange, int code, String json)
-        throws IOException {
+    private static void sendJson(HttpExchange exchange, int code, String json) throws IOException {
         byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-        exchange.getResponseHeaders().set(
-            "Content-Type",
-            "application/json; charset=utf-8"
-        );
+        exchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
         exchange.sendResponseHeaders(code, bytes.length);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(bytes);
@@ -172,16 +147,28 @@ public final class McpHttpServer {
 
     /** Minimal JSON string escaping (no external dependency). */
     private static String jsonEscape(String s) {
-        if (s == null) return "null";
+        if (s == null)
+            return "null";
         StringBuilder sb = new StringBuilder("\"");
         for (char c : s.toCharArray()) {
             switch (c) {
-                case '"': sb.append("\\\""); break;
-                case '\\': sb.append("\\\\"); break;
-                case '\n': sb.append("\\n"); break;
-                case '\r': sb.append("\\r"); break;
-                case '\t': sb.append("\\t"); break;
-                default: sb.append(c);
+                case '"':
+                    sb.append("\\\"");
+                    break;
+                case '\\':
+                    sb.append("\\\\");
+                    break;
+                case '\n':
+                    sb.append("\\n");
+                    break;
+                case '\r':
+                    sb.append("\\r");
+                    break;
+                case '\t':
+                    sb.append("\\t");
+                    break;
+                default:
+                    sb.append(c);
             }
         }
         return sb.append('"').toString();
@@ -204,30 +191,19 @@ public final class McpHttpServer {
                 // screen
                 var screen = McScreenHelper.getCurrentScreen(mc);
                 sb.append("\"screen\":");
-                sb.append(
-                    screen == null
-                        ? "null"
-                        : jsonEscape(screen.getClass().getName())
-                );
+                sb.append(screen == null ? "null" : jsonEscape(screen.getClass().getName()));
 
                 LocalPlayer p = mc.player;
                 if (p != null) {
                     // dimension
                     sb.append(",\"dimension\":");
-                    sb.append(
-                        jsonEscape(
-                            p.level().dimension().toString()
-                        )
-                    );
+                    sb.append(jsonEscape(p.level().dimension().toString()));
 
                     // world / server name
                     String worldName = null;
                     try {
                         if (mc.getSingleplayerServer() != null) {
-                            worldName = mc
-                                .getSingleplayerServer()
-                                .getWorldData()
-                                .getLevelName();
+                            worldName = mc.getSingleplayerServer().getWorldData().getLevelName();
                         } else if (mc.getCurrentServer() != null) {
                             worldName = mc.getCurrentServer().name;
                         }
@@ -235,9 +211,7 @@ public final class McpHttpServer {
                         // best-effort; ignore if mappings differ
                     }
                     sb.append(",\"worldName\":");
-                    sb.append(
-                        worldName == null ? "null" : jsonEscape(worldName)
-                    );
+                    sb.append(worldName == null ? "null" : jsonEscape(worldName));
 
                     // position
                     sb.append(",\"x\":").append(p.getX());
@@ -254,13 +228,7 @@ public final class McpHttpServer {
                     ItemStack held = p.getMainHandItem();
                     if (held != null && !held.isEmpty()) {
                         sb.append(",\"heldItem\":");
-                        sb.append(
-                            jsonEscape(
-                                BuiltInRegistries.ITEM
-                                    .getKey(held.getItem())
-                                    .toString()
-                            )
-                        );
+                        sb.append(jsonEscape(BuiltInRegistries.ITEM.getKey(held.getItem()).toString()));
                         sb.append(",\"heldItemCount\":").append(held.getCount());
                     } else {
                         sb.append(",\"heldItem\":null");
@@ -268,13 +236,11 @@ public final class McpHttpServer {
                     }
 
                     // hotbar slot (1-indexed)
-                    sb.append(",\"hotbarSlot\":")
-                        .append(p.getInventory().getSelectedSlot() + 1);
+                    sb.append(",\"hotbarSlot\":").append(p.getInventory().getSelectedSlot() + 1);
 
                     // open container menu slots (read-only; c matches swapSlot's cN addressing)
                     if (screen instanceof AbstractContainerScreen<?> containerScreen) {
-                        sb.append(",\"container\":")
-                            .append(buildContainerJson(containerScreen.getMenu()));
+                        sb.append(",\"container\":").append(buildContainerJson(containerScreen.getMenu()));
                     }
                 }
 
@@ -283,36 +249,27 @@ public final class McpHttpServer {
             });
             sendJson(exchange, 200, json);
         } catch (Exception e) {
-            sendJson(
-                exchange,
-                500,
-                "{\"error\":" + jsonEscape(e.getMessage()) + "}"
-            );
+            sendJson(exchange, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
         }
     }
 
     /**
-     * Max length of the compressed container section; beyond this we refuse
-     * to attach it and recommend a screenshot instead.
+     * Max length of the compressed container section; beyond this we refuse to attach it and recommend a screenshot instead.
      */
     private static final int CONTAINER_JSON_MAX = 6000;
 
     /**
      * Compressed, read-only view of an open container menu.
      * <ul>
-     *   <li>occupied slots stay JSON: {@code {index, item, count}} where
-     *       {@code index} is literally a swapSlot argument - a number (1-41)
-     *       for player inventory slots, a {@code "cN"} string for container slots</li>
-     *   <li>empty player-inventory slots compress to ranges in the same 1-41
-     *       numbering: {@code "1-9 10-36"}</li>
-     *   <li>non-inventory slots (chest grid, crafting grid, anvil, ...) compress
-     *       to an ASCII map ('#' empty, '$' occupied, ' ' no slot) with the x/y
-     *       range and per-cell c-indices alongside</li>
+     * <li>occupied slots stay JSON: {@code {index, item, count}} where {@code index} is literally a swapSlot argument - a
+     * number (1-41) for player inventory slots, a {@code "cN"} string for container slots</li>
+     * <li>empty player-inventory slots compress to ranges in the same 1-41 numbering: {@code "1-9 10-36"}</li>
+     * <li>non-inventory slots (chest grid, crafting grid, anvil, ...) compress to an ASCII map ('#' empty, '$' occupied, ' ' no
+     * slot) with the x/y range and per-cell c-indices alongside</li>
      * </ul>
      */
     private static String buildContainerJson(AbstractContainerMenu menu) {
-        StringBuilder out = new StringBuilder("{\"menu\":")
-            .append(jsonEscape(menu.getClass().getName()));
+        StringBuilder out = new StringBuilder("{\"menu\":").append(jsonEscape(menu.getClass().getName()));
 
         StringBuilder items = new StringBuilder();
         java.util.List<Integer> emptyInvSlots = new java.util.ArrayList<>();
@@ -324,22 +281,22 @@ public final class McpHttpServer {
             ItemStack stack = slot.getItem();
             boolean playerInv = slot.container instanceof Inventory;
             if (!stack.isEmpty()) {
-                if (items.length() > 0) items.append(',');
+                if (items.length() > 0)
+                    items.append(',');
                 items.append("{\"index\":");
-                if (playerInv) items.append(slot.getContainerSlot() + 1); else items.append(
-                    jsonEscape("c" + c)
-                );
-                items
-                    .append(",\"item\":")
-                    .append(jsonEscape(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()))
-                    .append(",\"count\":")
-                    .append(stack.getCount());
+                if (playerInv)
+                    items.append(slot.getContainerSlot() + 1);
+                else
+                    items.append(jsonEscape("c" + c));
+                items.append(",\"item\":").append(jsonEscape(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()))
+                        .append(",\"count\":").append(stack.getCount());
                 items.append('}');
             }
             if (playerInv) {
-                if (stack.isEmpty()) emptyInvSlots.add(slot.getContainerSlot() + 1);
+                if (stack.isEmpty())
+                    emptyInvSlots.add(slot.getContainerSlot() + 1);
             } else {
-                nonInv.add(new int[] { c, slot.x, slot.y, stack.isEmpty() ? 0 : 1 });
+                nonInv.add(new int[] {c, slot.x, slot.y, stack.isEmpty() ? 0 : 1});
             }
         }
         java.util.Collections.sort(emptyInvSlots);
@@ -350,9 +307,11 @@ public final class McpHttpServer {
             while (i + 1 < emptyInvSlots.size() && emptyInvSlots.get(i + 1) == end + 1) {
                 end = emptyInvSlots.get(++i);
             }
-            if (emptyInv.length() > 0) emptyInv.append(' ');
+            if (emptyInv.length() > 0)
+                emptyInv.append(' ');
             emptyInv.append(start);
-            if (end > start) emptyInv.append('-').append(end);
+            if (end > start)
+                emptyInv.append('-').append(end);
         }
 
         if (!nonInv.isEmpty()) {
@@ -379,21 +338,25 @@ public final class McpHttpServer {
                 map[row][col] = s[3] == 0 ? '#' : '$';
                 cells[row][col] = s[0];
             }
-            out
-                .append(",\"grid\":{\"xy\":")
-                .append(jsonEscape("x" + minX + "-" + maxX + " y" + minY + "-" + maxY))
-                .append(",\"map\":[");
+            out.append(",\"grid\":{\"xy\":").append(jsonEscape("x" + minX + "-" + maxX + " y" + minY + "-" + maxY))
+                    .append(",\"map\":[");
             for (int r = 0; r < rows; r++) {
-                if (r > 0) out.append(',');
+                if (r > 0)
+                    out.append(',');
                 out.append(jsonEscape(new String(map[r])));
             }
             out.append("],\"cells\":[");
             for (int r = 0; r < rows; r++) {
-                if (r > 0) out.append(',');
+                if (r > 0)
+                    out.append(',');
                 StringBuilder row = new StringBuilder();
                 for (int col = 0; col < cols; col++) {
-                    if (col > 0) row.append(',');
-                    if (cells[r][col] >= 0) row.append(cells[r][col]); else row.append(' ');
+                    if (col > 0)
+                        row.append(',');
+                    if (cells[r][col] >= 0)
+                        row.append(cells[r][col]);
+                    else
+                        row.append(' ');
                 }
                 out.append(jsonEscape(row.toString()));
             }
@@ -401,16 +364,11 @@ public final class McpHttpServer {
         }
 
         out.append(",\"items\":[").append(items).append(']');
-        out.append(",\"emptyInv\":")
-            .append(jsonEscape(emptyInv.toString()));
+        out.append(",\"emptyInv\":").append(jsonEscape(emptyInv.toString()));
         out.append('}');
 
         if (out.length() > CONTAINER_JSON_MAX) {
-            return (
-                "{\"menu\":" +
-                jsonEscape(menu.getClass().getName()) +
-                ",\"error\":\"too large; use screenshot instead\"}"
-            );
+            return ("{\"menu\":" + jsonEscape(menu.getClass().getName()) + ",\"error\":\"too large; use screenshot instead\"}");
         }
         return out.toString();
     }
@@ -433,13 +391,8 @@ public final class McpHttpServer {
 
             onMainThread(() -> {
                 Minecraft mc = Minecraft.getInstance();
-                net.minecraft.client.Screenshot.grab(
-                    mc.gameDirectory,
-                    null,
-                    mc.gameRenderer.mainRenderTarget(),
-                    1,
-                    msg -> {}
-                );
+                net.minecraft.client.Screenshot.grab(mc.gameDirectory, null, mc.gameRenderer.mainRenderTarget(), 1, msg -> {
+                });
                 return null;
             });
 
@@ -464,22 +417,19 @@ public final class McpHttpServer {
             String path = ScreenshotCapture.lastPath;
             String name = ScreenshotCapture.lastName;
             String b64 = Base64.getEncoder().encodeToString(data);
-            String json = (
-                "{\"path\":" + jsonEscape(path) +
-                ",\"name\":" + jsonEscape(name) +
-                ",\"base64\":" + jsonEscape(b64) + "}"
-            );
+            String json = ("{\"path\":" + jsonEscape(path) + ",\"name\":" + jsonEscape(name) + ",\"base64\":" + jsonEscape(b64)
+                    + "}");
             sendJson(exchange, 200, json);
         } catch (Exception e) {
             sendJson(exchange, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
         }
     }
 
-    /** POST /runAlias?def=… — execute a chain of aliases (space-separated, \ for args). */
+    /**
+     * POST /runAlias?def=… — execute a chain of aliases (space-separated, \ for args).
+     */
     static void handleRunAlias(HttpExchange exchange) throws IOException {
-        Map<String, String> q = parseQuery(
-            exchange.getRequestURI().getQuery()
-        );
+        Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
         String def = q.get("def");
 
         // Legacy support: also accept name+args
@@ -488,16 +438,13 @@ public final class McpHttpServer {
             String args = q.getOrDefault("args", "");
             if (name != null && !name.isBlank()) {
                 def = name;
-                if (!args.isEmpty()) def += Alias.divider4AliasArgs + args;
+                if (!args.isEmpty())
+                    def += Alias.divider4AliasArgs + args;
             }
         }
 
         if (def == null || def.isBlank()) {
-            sendJson(
-                exchange,
-                400,
-                "{\"error\":\"missing 'def' parameter\"}"
-            );
+            sendJson(exchange, 400, "{\"error\":\"missing 'def' parameter\"}");
             return;
         }
 
@@ -511,28 +458,20 @@ public final class McpHttpServer {
             });
             sendJson(exchange, 200, result);
         } catch (Exception e) {
-            sendJson(
-                exchange,
-                500,
-                "{\"error\":" + jsonEscape(e.getMessage()) + "}"
-            );
+            sendJson(exchange, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
         }
     }
 
-    /** POST /defineAlias?name=…&def=… — define an alias via the real command pipeline and capture feedback. */
+    /**
+     * POST /defineAlias?name=…&def=… — define an alias via the real command pipeline and capture feedback.
+     */
     static void handleDefineAlias(HttpExchange exchange) throws IOException {
-        Map<String, String> q = parseQuery(
-            exchange.getRequestURI().getQuery()
-        );
+        Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
         String name = q.get("name");
         String def = q.get("def");
 
         if (name == null || def == null) {
-            sendJson(
-                exchange,
-                400,
-                "{\"error\":\"missing 'name' or 'def' parameter\"}"
-            );
+            sendJson(exchange, 400, "{\"error\":\"missing 'name' or 'def' parameter\"}");
             return;
         }
 
@@ -544,9 +483,7 @@ public final class McpHttpServer {
             onMainThread(() -> {
                 Minecraft mc = Minecraft.getInstance();
                 if (mc.player != null) {
-                    mc.player.connection.sendCommand(
-                        "alias " + name + " " + def
-                    );
+                    mc.player.connection.sendCommand("alias " + name + " " + def);
                 }
                 return null;
             });
@@ -561,25 +498,13 @@ public final class McpHttpServer {
             }
 
             if (feedback.startsWith("Alias ")) {
-                sendJson(
-                    exchange,
-                    200,
-                    "{\"ok\":true,\"feedback\":" + jsonEscape(feedback) + "}"
-                );
+                sendJson(exchange, 200, "{\"ok\":true,\"feedback\":" + jsonEscape(feedback) + "}");
             } else {
-                sendJson(
-                    exchange,
-                    200,
-                    "{\"error\":" + jsonEscape(feedback) + "}"
-                );
+                sendJson(exchange, 200, "{\"error\":" + jsonEscape(feedback) + "}");
             }
         } catch (Exception e) {
             ChatCapture.end(); // ensure capture is stopped on error
-            sendJson(
-                exchange,
-                500,
-                "{\"error\":" + jsonEscape(e.getMessage()) + "}"
-            );
+            sendJson(exchange, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
         }
     }
 
@@ -587,27 +512,15 @@ public final class McpHttpServer {
     static void handleReadCFG(HttpExchange exchange) throws IOException {
         try {
             String content = Files.readString(BindAliasPlusClient.cfgPath);
-            sendJson(
-                exchange,
-                200,
-                "{\"content\":" + jsonEscape(content) + "}"
-            );
+            sendJson(exchange, 200, "{\"content\":" + jsonEscape(content) + "}");
         } catch (IOException e) {
-            sendJson(
-                exchange,
-                500,
-                "{\"error\":" +
-                jsonEscape("failed to read: " + e.getMessage()) +
-                "}"
-            );
+            sendJson(exchange, 500, "{\"error\":" + jsonEscape("failed to read: " + e.getMessage()) + "}");
         }
     }
 
     /** POST /writeCFG — overwrite the config file and reload. */
     static void handleWriteCFG(HttpExchange exchange) throws IOException {
-        Map<String, String> q = parseQuery(
-            exchange.getRequestURI().getQuery()
-        );
+        Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
         String content = q.get("content");
 
         // if content not in query, try JSON body
@@ -623,22 +536,14 @@ public final class McpHttpServer {
                 int valEnd = body.indexOf('"', valStart + 1);
                 if (valStart > 0 && valEnd > valStart) {
                     content = body.substring(valStart + 1, valEnd);
-                    content = content
-                        .replace("\\n", "\n")
-                        .replace("\\r", "\r")
-                        .replace("\\t", "\t")
-                        .replace("\\\\", "\\")
-                        .replace("\\\"", "\"");
+                    content = content.replace("\\n", "\n").replace("\\r", "\r").replace("\\t", "\t").replace("\\\\", "\\")
+                            .replace("\\\"", "\"");
                 }
             }
         }
 
         if (content == null) {
-            sendJson(
-                exchange,
-                400,
-                "{\"error\":\"missing 'content'\"}"
-            );
+            sendJson(exchange, 400, "{\"error\":\"missing 'content'\"}");
             return;
         }
 
@@ -650,11 +555,7 @@ public final class McpHttpServer {
             });
             sendJson(exchange, 200, "{\"ok\":true}");
         } catch (Exception e) {
-            sendJson(
-                exchange,
-                500,
-                "{\"error\":" + jsonEscape(e.getMessage()) + "}"
-            );
+            sendJson(exchange, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
         }
     }
 }

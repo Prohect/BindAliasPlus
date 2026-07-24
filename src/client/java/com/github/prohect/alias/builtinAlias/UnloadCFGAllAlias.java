@@ -8,16 +8,12 @@ import com.github.prohect.alias.BuiltinAliasWithoutArgs;
  *
  * Usage: unloadCFGAll
  *
- * This is a convenience alias that calls all three unload operations:
- * - unloadCFGAliases (removes autoloaded user aliases)
- * - unloadCFGBinds (removes autoloaded keybindings)
- * - unloadCFGVars (removes autoloaded variables)
+ * This is a convenience alias that calls all three unload operations: - unloadCFGAliases (removes autoloaded user aliases) -
+ * unloadCFGBinds (removes autoloaded keybindings) - unloadCFGVars (removes autoloaded variables)
  *
  * Runtime-created items (via commands during gameplay) are not affected.
  */
-public class UnloadCFGAllAlias
-    extends BuiltinAliasWithoutArgs<UnloadCFGAllAlias>
-{
+public class UnloadCFGAllAlias extends BuiltinAliasWithoutArgs<UnloadCFGAllAlias> {
 
     public UnloadCFGAllAlias() {
         super("unloadCFGAll");
@@ -37,32 +33,16 @@ public class UnloadCFGAllAlias
         UnloadCFGAliasesAlias unloadAliases = new UnloadCFGAliasesAlias();
         unloadAliases.run(args);
         // Count removed aliases manually since we're in silent mode
-        totalAliases = (int) com.github.prohect.alias.Alias.aliasesWithoutArgs
-            .values()
-            .stream()
-            .filter(
-                alias ->
-                    alias instanceof com.github.prohect.alias.UserAlias ua &&
-                    !ua.isFromAutoload()
-            )
-            .count();
-        totalAliases =
-            com.github.prohect.alias.Alias.aliasesWithoutArgs
-                .values()
-                .stream()
-                .filter(
-                    alias -> alias instanceof com.github.prohect.alias.UserAlias
-                )
-                .toList()
-                .size() - totalAliases;
+        totalAliases = (int) com.github.prohect.alias.Alias.aliasesWithoutArgs.values().stream()
+                .filter(alias -> alias instanceof com.github.prohect.alias.UserAlias ua && !ua.isFromAutoload()).count();
+        totalAliases = com.github.prohect.alias.Alias.aliasesWithoutArgs.values().stream()
+                .filter(alias -> alias instanceof com.github.prohect.alias.UserAlias).toList().size() - totalAliases;
 
         // Unload bindings
         UnloadCFGBindsAlias unloadBinds = new UnloadCFGBindsAlias();
         unloadBinds.run(args);
-        totalBinds = (int) BindAliasPlusClient.BINDING_PLUS.values()
-            .stream()
-            .filter(binding -> !binding.fromAutoload())
-            .count();
+        totalBinds =
+                (int) BindAliasPlusClient.BINDING_PLUS.values().stream().filter(binding -> !binding.fromAutoload()).count();
         totalBinds = BindAliasPlusClient.BINDING_PLUS.size() - totalBinds;
 
         // Unload variables
@@ -74,12 +54,8 @@ public class UnloadCFGAllAlias
         BindAliasPlusClient.silentMode = originalSilentMode;
 
         if (!originalSilentMode) {
-            BindAliasPlusClient.LOGGER.info(
-                "[unloadCFGAll] Removed {} alias(es), {} keybinding(s), {} variable(s)",
-                totalAliases,
-                totalBinds,
-                totalVars
-            );
+            BindAliasPlusClient.LOGGER.info("[unloadCFGAll] Removed {} alias(es), {} keybinding(s), {} variable(s)",
+                    totalAliases, totalBinds, totalVars);
         }
 
         return this;

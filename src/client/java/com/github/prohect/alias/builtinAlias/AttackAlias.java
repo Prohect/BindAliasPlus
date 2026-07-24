@@ -15,10 +15,12 @@ public class AttackAlias extends BuiltinAliasWithBooleanArgs<AttackAlias> {
     public AttackAlias run(String args) {
         parseArgs(args);
         // cancle press event from text input screen
-        if (Alias.isUnderTextInputScreen() && flag) return this;
+        if (Alias.isUnderTextInputScreen() && flag)
+            return this;
         KeyMapping attackKey = Minecraft.getInstance().options.keyAttack;
         attackKey.setDown(flag);
-        if (flag) attackKey.clickCount++;
+        if (flag)
+            attackKey.clickCount++;
         return this;
     }
 }

@@ -16,13 +16,10 @@ import org.jetbrains.annotations.NotNull;
 public interface Alias<T extends Alias<T>> {
     List<Alias<?>> blackList4Screen = new ArrayList<>();
     HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs = new HashMap<>();
-    HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs_notSuggested =
-        new HashMap<>();
-    HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs_fromBindCommand =
-        new HashMap<>();
+    HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs_notSuggested = new HashMap<>();
+    HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs_fromBindCommand = new HashMap<>();
     HashMap<String, AliasWithArgs<?>> aliasesWithArgs = new HashMap<>();
-    HashMap<String, AliasWithArgs<?>> aliasesWithArgs_notSuggested =
-        new HashMap<>();
+    HashMap<String, AliasWithArgs<?>> aliasesWithArgs_notSuggested = new HashMap<>();
     char divider4AliasDefinition = ' ';
     char divider4AliasArgs = '\\';
 
@@ -34,15 +31,9 @@ public interface Alias<T extends Alias<T>> {
         ArrayList<String> definitions = getDefinitions(args);
         definitions.forEach(definition -> {
             if (definition.startsWith("+")) {
-                oppositeDefinition
-                    .append("-")
-                    .append(definition.substring(1))
-                    .append(Alias.divider4AliasDefinition);
+                oppositeDefinition.append("-").append(definition.substring(1)).append(Alias.divider4AliasDefinition);
             } else if (definition.startsWith("-")) {
-                oppositeDefinition
-                    .append("+")
-                    .append(definition.substring(1))
-                    .append(Alias.divider4AliasDefinition);
+                oppositeDefinition.append("+").append(definition.substring(1)).append(Alias.divider4AliasDefinition);
             }
         });
         return oppositeDefinition.toString();
@@ -57,14 +48,16 @@ public interface Alias<T extends Alias<T>> {
             if (c != Alias.divider4AliasDefinition) {
                 if (c == '"') {
                     coveredByDoubleQuotes = !coveredByDoubleQuotes;
-                } else currentDefinition.append(c);
+                } else
+                    currentDefinition.append(c);
                 lastStepSubmit = false;
             } else {
                 if (coveredByDoubleQuotes) {
                     currentDefinition.append(c);
                     continue;
                 }
-                if (lastStepSubmit) continue;
+                if (lastStepSubmit)
+                    continue;
                 definitions.add(currentDefinition.toString());
                 currentDefinition = new StringBuilder();
                 lastStepSubmit = true;
@@ -85,14 +78,16 @@ public interface Alias<T extends Alias<T>> {
             if (c != Alias.divider4AliasArgs) {
                 if (c == '"') {
                     coveredByDoubleQuotes = !coveredByDoubleQuotes;
-                } else currentDefinition.append(c);
+                } else
+                    currentDefinition.append(c);
                 lastStepSubmit = false;
             } else {
                 if (coveredByDoubleQuotes) {
                     currentDefinition.append(c);
                     continue;
                 }
-                if (lastStepSubmit) continue;
+                if (lastStepSubmit)
+                    continue;
                 definitionSplits.add(currentDefinition.toString());
                 currentDefinition = new StringBuilder();
                 lastStepSubmit = true;
@@ -108,7 +103,7 @@ public interface Alias<T extends Alias<T>> {
 
     T run(String args);
 
-    @SuppressWarnings({ "unchecked", "UnusedReturnValue" })
+    @SuppressWarnings({"unchecked", "UnusedReturnValue"})
     default T addToScreenBlackList() {
         blackList4Screen.add(this);
         return (T) this;
@@ -122,12 +117,8 @@ public interface Alias<T extends Alias<T>> {
 
     static boolean isUnderTextInputScreen() {
         Screen s = getCurrentScreen();
-        return (
-            s instanceof ChatScreen ||
-            s instanceof CommandBlockEditScreen ||
-            s instanceof SignEditScreen ||
-            s instanceof BookEditScreen
-        );
+        return (s instanceof ChatScreen || s instanceof CommandBlockEditScreen || s instanceof SignEditScreen
+                || s instanceof BookEditScreen);
     }
 
     static boolean isUnderAnyScreen() {

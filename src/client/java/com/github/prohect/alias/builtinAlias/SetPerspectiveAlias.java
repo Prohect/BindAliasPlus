@@ -6,9 +6,7 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 
-public class SetPerspectiveAlias
-    extends BuiltinAliasWithIntegerArgs<SetPerspectiveAlias>
-{
+public class SetPerspectiveAlias extends BuiltinAliasWithIntegerArgs<SetPerspectiveAlias> {
 
     public SetPerspectiveAlias() {
         super("builtinSetPerspective");
@@ -32,10 +30,8 @@ public class SetPerspectiveAlias
         // Validate input range
         if (flag < 0 || flag > 2) {
             BindAliasPlusClient.LOGGER.warn(
-                "{}[SetPerspective]Invalid perspective value: {}. Must be 0 (first-person), 1 (third-person back), or 2 (third-person front)",
-                BindAliasPlusClient.tickPrefix(),
-                flag
-            );
+                    "{}[SetPerspective]Invalid perspective value: {}. Must be 0 (first-person), 1 (third-person back), or 2 (third-person front)",
+                    BindAliasPlusClient.tickPrefix(), flag);
             return this;
         }
 
@@ -48,15 +44,8 @@ public class SetPerspectiveAlias
             options.setCameraType(targetPerspective);
 
             // Update camera entity if switching between first-person and third-person
-            if (
-                currentPerspective.isFirstPerson() !=
-                targetPerspective.isFirstPerson()
-            ) {
-                minecraftClient.setCameraEntity(
-                    targetPerspective.isFirstPerson()
-                        ? minecraftClient.getCameraEntity()
-                        : null
-                );
+            if (currentPerspective.isFirstPerson() != targetPerspective.isFirstPerson()) {
+                minecraftClient.setCameraEntity(targetPerspective.isFirstPerson() ? minecraftClient.getCameraEntity() : null);
             }
         }
 

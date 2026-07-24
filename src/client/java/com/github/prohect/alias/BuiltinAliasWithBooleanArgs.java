@@ -25,10 +25,8 @@ public abstract class BuiltinAliasWithBooleanArgs<T extends BuiltinAliasWithBool
                 flag = true;
                 break;
             default:
-                BindAliasPlusClient.LOGGER.warn(
-                    "{}[" + this.builtinAliasName + "]Invalid arguments",
-                    BindAliasPlusClient.tickPrefix()
-                );
+                BindAliasPlusClient.LOGGER.warn("{}[" + this.builtinAliasName + "]Invalid arguments",
+                        BindAliasPlusClient.tickPrefix());
                 break;
         }
         this.flag = flag;

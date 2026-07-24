@@ -22,27 +22,22 @@ public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
         Integer resolved = VarAlias.resolveInt(args);
 
         if (resolved == null) {
-            BindAliasPlusClient.LOGGER.warn(
-                "{}[Slot]Invalid arguments: '{}' is not a valid number or variable",
-                BindAliasPlusClient.tickPrefix(),
-                args
-            );
+            BindAliasPlusClient.LOGGER.warn("{}[Slot]Invalid arguments: '{}' is not a valid number or variable",
+                    BindAliasPlusClient.tickPrefix(), args);
             return this;
         }
 
         int i = resolved;
         if (!(1 <= i && i <= 9)) {
-            BindAliasPlusClient.LOGGER.warn(
-                "{}[Slot]Invalid input! Please enter a number between 1 and 9",
-                BindAliasPlusClient.tickPrefix()
-            );
+            BindAliasPlusClient.LOGGER.warn("{}[Slot]Invalid input! Please enter a number between 1 and 9",
+                    BindAliasPlusClient.tickPrefix());
             return this;
         }
 
-        /*            KeyMapping hotbarKey = Minecraft.getInstance().options.hotbarKeys[i - 1];
-            hotbarKey.setDown(true);
-            hotbarKey.setDown(false);
-            KeyMapping.click(hotbarKey.key);*/
+        /*
+         * KeyMapping hotbarKey = Minecraft.getInstance().options.hotbarKeys[i - 1]; hotbarKey.setDown(true);
+         * hotbarKey.setDown(false); KeyMapping.click(hotbarKey.key);
+         */
         Minecraft minecraftClient = Minecraft.getInstance();
         LocalPlayer player = minecraftClient.player;
         if (player == null) {
@@ -56,15 +51,9 @@ public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
         }
         inventory.setSelectedSlot(i - 1);
         try {
-            minecraftClient
-                .getConnection()
-                .send(new ServerboundSetCarriedItemPacket(i - 1));
+            minecraftClient.getConnection().send(new ServerboundSetCarriedItemPacket(i - 1));
         } catch (Exception e) {
-            BindAliasPlusClient.LOGGER.error(
-                "{}[Slot]Failed to update selected slot.",
-                BindAliasPlusClient.tickPrefix(),
-                e
-            );
+            BindAliasPlusClient.LOGGER.error("{}[Slot]Failed to update selected slot.", BindAliasPlusClient.tickPrefix(), e);
         }
         return this;
     }

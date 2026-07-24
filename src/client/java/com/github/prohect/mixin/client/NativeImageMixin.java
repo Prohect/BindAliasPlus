@@ -15,20 +15,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Hooks {@link NativeImage#writeToFile(Path)} to capture PNG bytes in
- * memory before they hit disk.  The MCP screenshot endpoint polls
- * {@link ScreenshotCapture#nextPngFuture} instead of reading the
- * filesystem, cutting response time from ~500 ms (sleep + FS scan) to
- * &lt;50 ms (GPU readback + PNG encode).
+ * Hooks {@link NativeImage#writeToFile(Path)} to capture PNG bytes in memory before they hit disk. The MCP screenshot endpoint
+ * polls {@link ScreenshotCapture#nextPngFuture} instead of reading the filesystem, cutting response time from ~500 ms (sleep +
+ * FS scan) to &lt;50 ms (GPU readback + PNG encode).
  */
 @Mixin(NativeImage.class)
 public abstract class NativeImageMixin {
 
     /**
-     * Access-widened invoker for {@code NativeImage.writeToChannel}.
-     * The access widener removes the {@code private} flag so Mixin can
-     * generate the bridge; the runtime call still executes the original
-     * STB-image PNG encoder on {@code this}.
+     * Access-widened invoker for {@code NativeImage.writeToChannel}. The access widener removes the {@code private} flag so
+     * Mixin can generate the bridge; the runtime call still executes the original STB-image PNG encoder on {@code this}.
      */
     @Invoker("writeToChannel")
     abstract boolean invokeWriteToChannel(WritableByteChannel channel) throws IOException;
@@ -42,7 +38,8 @@ public abstract class NativeImageMixin {
         }
 
         CompletableFuture<byte[]> f = ScreenshotCapture.nextPngFuture;
-        if (f == null) return;
+        if (f == null)
+            return;
         ScreenshotCapture.nextPngFuture = null; // one-shot
 
         try {

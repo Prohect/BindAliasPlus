@@ -13,7 +13,8 @@ public class SayAlias extends BuiltinAliasWithGreedyStringArgs<SayAlias> {
     @Override
     public SayAlias run(String args) {
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) return this;
+        if (player == null)
+            return this;
         player.connection.sendChat(args);
         return this;
     }

@@ -5,11 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Cross-thread capture of system chat messages (command feedback).
- * Set via {@link #begin()} / {@link #end()} around a command execution
- * to collect {@code sendFeedback} output.  Uses a plain volatile flag +
- * synchronized list because the capture window is set on the HTTP thread
- * but the mixin fires on the game (render) thread.
+ * Cross-thread capture of system chat messages (command feedback). Set via {@link #begin()} / {@link #end()} around a command
+ * execution to collect {@code sendFeedback} output. Uses a plain volatile flag + synchronized list because the capture window
+ * is set on the HTTP thread but the mixin fires on the game (render) thread.
  */
 public final class ChatCapture {
 

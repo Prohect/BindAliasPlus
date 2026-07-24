@@ -6,9 +6,7 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 
-public class CyclePerspectiveAlias
-    extends BuiltinAliasWithoutArgs<CyclePerspectiveAlias>
-{
+public class CyclePerspectiveAlias extends BuiltinAliasWithoutArgs<CyclePerspectiveAlias> {
 
     public CyclePerspectiveAlias() {
         super("cyclePerspective");
@@ -20,10 +18,7 @@ public class CyclePerspectiveAlias
         Options options = minecraftClient.options;
 
         if (options == null) {
-            BindAliasPlusClient.LOGGER.warn(
-                "{}[CyclePerspective]Options is null",
-                BindAliasPlusClient.tickPrefix()
-            );
+            BindAliasPlusClient.LOGGER.warn("{}[CyclePerspective]Options is null", BindAliasPlusClient.tickPrefix());
             return this;
         }
 
@@ -33,15 +28,8 @@ public class CyclePerspectiveAlias
         options.setCameraType(nextPerspective);
 
         // Update camera entity if switching between first-person and third-person
-        if (
-            currentPerspective.isFirstPerson() !=
-            nextPerspective.isFirstPerson()
-        ) {
-            minecraftClient.setCameraEntity(
-                nextPerspective.isFirstPerson()
-                    ? minecraftClient.getCameraEntity()
-                    : null
-            );
+        if (currentPerspective.isFirstPerson() != nextPerspective.isFirstPerson()) {
+            minecraftClient.setCameraEntity(nextPerspective.isFirstPerson() ? minecraftClient.getCameraEntity() : null);
         }
 
         return this;

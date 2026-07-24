@@ -7,8 +7,8 @@ import net.minecraft.client.Minecraft;
 /**
  * Closes the current screen or toggles the pause menu.
  * <p>
- * Args: {@code \0} = close screen only (no-op if none),
- * {@code \1} = toggle — close screen if open, open pause menu if in a world.
+ * Args: {@code \0} = close screen only (no-op if none), {@code \1} = toggle — close screen if open, open pause menu if in a
+ * world.
  * <p>
  * User-facing shortcuts: {@code +esc} (toggle), {@code -esc} (close only).
  */

@@ -5,9 +5,8 @@ import com.github.prohect.alias.BuiltinAliasWithoutArgs;
 import net.minecraft.client.Minecraft;
 
 /**
- * Shuts down the game cleanly (schedules a graceful stop).
- * Useful in autoload CFG for automated test workflows:
- * define test aliases, run them, then shutdown.
+ * Shuts down the game cleanly (schedules a graceful stop). Useful in autoload CFG for automated test workflows: define test
+ * aliases, run them, then shutdown.
  */
 public class ShutdownAlias extends BuiltinAliasWithoutArgs<ShutdownAlias> {
 

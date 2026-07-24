@@ -26,7 +26,8 @@ public class UseAlias extends BuiltinAliasWithArgs<UseAlias> {
                 break;
         }
         // cancel press event from text input screen
-        if (Alias.isUnderTextInputScreen() && flag) return this;
+        if (Alias.isUnderTextInputScreen() && flag)
+            return this;
         KeyMapping attackKey = Minecraft.getInstance().options.keyUse;
         attackKey.setDown(flag);
         if (flag) {

@@ -20,11 +20,7 @@ public class WaitAliasRecord {
     /**
      * make sure the definition is simply the alias name when reapplyToGameKeyMapping is true
      */
-    public WaitAliasRecord(
-        int ticks,
-        String definition,
-        boolean reapplyToGameKeyMapping
-    ) {
+    public WaitAliasRecord(int ticks, String definition, boolean reapplyToGameKeyMapping) {
         this.ticks = ticks;
         this.definition = definition;
         this.reapplyToGameKeyMapping = reapplyToGameKeyMapping;
@@ -37,20 +33,11 @@ public class WaitAliasRecord {
         if (ticks <= 0) {
             if (reapplyToGameKeyMapping) {
                 // assume that the arg is simply the alias name
-                if (
-                    Alias.aliasesWithArgs.get(definition) instanceof
-                        BuiltinAliasWithBooleanArgs alias &&
-                    alias != null
-                ) {
+                if (Alias.aliasesWithArgs.get(definition) instanceof BuiltinAliasWithBooleanArgs alias && alias != null) {
                     alias.reapplyToGameKeyMapping();
                 }
-                if (
-                    Alias.aliasesWithArgs_notSuggested.get(
-                            definition
-                        ) instanceof
-                        BuiltinAliasWithBooleanArgs alias &&
-                    alias != null
-                ) {
+                if (Alias.aliasesWithArgs_notSuggested.get(definition) instanceof BuiltinAliasWithBooleanArgs alias
+                        && alias != null) {
                     alias.reapplyToGameKeyMapping();
                 }
                 WaitAlias.tasksWaiting.remove(this);

@@ -17,9 +17,7 @@ public class MinecraftClientMixin {
     @Inject(at = @At("HEAD"), method = "tick")
     private void tick(CallbackInfo ci) {
         // Track current screen on every tick (cross-version compat)
-        BindAliasPlusClient.currentScreen = McScreenHelper.getCurrentScreen(
-            Minecraft.getInstance()
-        );
+        BindAliasPlusClient.currentScreen = McScreenHelper.getCurrentScreen(Minecraft.getInstance());
 
         int size = WaitAlias.tasksWaiting.size();
         if (size > 0) {
@@ -30,10 +28,7 @@ public class MinecraftClientMixin {
 
         // Drive continuous drop while the drop-key alias is held
         // (container screens via slotClicked, 3D game via clickCount).
-        AliasWithArgs<?> raw =
-            com.github.prohect.alias.Alias.aliasesWithArgs_notSuggested.get(
-                "builtinDrop"
-            );
+        AliasWithArgs<?> raw = com.github.prohect.alias.Alias.aliasesWithArgs_notSuggested.get("builtinDrop");
         if (raw instanceof DropAlias dropAlias) {
             dropAlias.tickDrop();
         }

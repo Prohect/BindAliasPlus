@@ -3,11 +3,9 @@ package com.github.prohect.mcp;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Shared state for the {@code NativeImageMixin} → {@link McpHttpServer}
- * screenshot capture pipeline.  Static fields live here rather than on the
- * mixin class itself (Mixin forbids non-private static members), and this
- * class is deliberately <b>outside</b> the mixin package so the Mixin
- * framework doesn't try to transform it.
+ * Shared state for the {@code NativeImageMixin} → {@link McpHttpServer} screenshot capture pipeline. Static fields live here
+ * rather than on the mixin class itself (Mixin forbids non-private static members), and this class is deliberately
+ * <b>outside</b> the mixin package so the Mixin framework doesn't try to transform it.
  */
 public final class ScreenshotCapture {
 

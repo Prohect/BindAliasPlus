@@ -10,13 +10,10 @@ import java.util.List;
  *
  * Usage: unloadCFGVars
  *
- * This will remove all variables that were tracked as autoloaded,
- * which are variables created during the loadCFG() process from the config file.
- * Runtime-created variables (via /var command) are not affected.
+ * This will remove all variables that were tracked as autoloaded, which are variables created during the loadCFG() process from
+ * the config file. Runtime-created variables (via /var command) are not affected.
  */
-public class UnloadCFGVarsAlias
-    extends BuiltinAliasWithoutArgs<UnloadCFGVarsAlias>
-{
+public class UnloadCFGVarsAlias extends BuiltinAliasWithoutArgs<UnloadCFGVarsAlias> {
 
     public UnloadCFGVarsAlias() {
         super("unloadCFGVars");
@@ -40,10 +37,7 @@ public class UnloadCFGVarsAlias
         }
 
         if (!BindAliasPlusClient.silentMode) {
-            BindAliasPlusClient.LOGGER.info(
-                "[unloadCFGVars] Removed {} autoloaded variable(s)",
-                count
-            );
+            BindAliasPlusClient.LOGGER.info("[unloadCFGVars] Removed {} autoloaded variable(s)", count);
         }
 
         return this;

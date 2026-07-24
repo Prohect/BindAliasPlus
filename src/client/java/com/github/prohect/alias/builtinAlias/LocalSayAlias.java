@@ -4,9 +4,7 @@ import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
-public class LocalSayAlias
-    extends BuiltinAliasWithGreedyStringArgs<LocalSayAlias>
-{
+public class LocalSayAlias extends BuiltinAliasWithGreedyStringArgs<LocalSayAlias> {
 
     public LocalSayAlias() {
         super("localSay");
@@ -14,10 +12,9 @@ public class LocalSayAlias
 
     @Override
     public LocalSayAlias run(String args) {
-        if (Minecraft.getInstance().player == null) return this;
-        Minecraft.getInstance()
-            .gui.hud.getChat()
-            .addClientSystemMessage(Component.literal(args));
+        if (Minecraft.getInstance().player == null)
+            return this;
+        Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(Component.literal(args));
         return this;
     }
 }

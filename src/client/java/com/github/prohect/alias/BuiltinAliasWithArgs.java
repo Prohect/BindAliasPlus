@@ -2,8 +2,7 @@ package com.github.prohect.alias;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BuiltinAliasWithArgs<T extends BuiltinAliasWithArgs<T>> implements
-    AliasWithArgs<T> {
+public abstract class BuiltinAliasWithArgs<T extends BuiltinAliasWithArgs<T>> implements AliasWithArgs<T> {
 
     @NotNull
     public final String builtinAliasName;

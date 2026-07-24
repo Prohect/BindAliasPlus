@@ -12,13 +12,10 @@ import java.util.List;
  *
  * Usage: unloadCFGAliases
  *
- * This will remove all user aliases that have fromAutoload=true, which are
- * aliases created during the loadCFG() process from the config file.
- * Runtime-created aliases (via /alias command) are not affected.
+ * This will remove all user aliases that have fromAutoload=true, which are aliases created during the loadCFG() process from
+ * the config file. Runtime-created aliases (via /alias command) are not affected.
  */
-public class UnloadCFGAliasesAlias
-    extends BuiltinAliasWithoutArgs<UnloadCFGAliasesAlias>
-{
+public class UnloadCFGAliasesAlias extends BuiltinAliasWithoutArgs<UnloadCFGAliasesAlias> {
 
     public UnloadCFGAliasesAlias() {
         super("unloadCFGAliases");
@@ -45,10 +42,7 @@ public class UnloadCFGAliasesAlias
         }
 
         if (!BindAliasPlusClient.silentMode) {
-            BindAliasPlusClient.LOGGER.info(
-                "[unloadCFGAliases] Removed {} autoloaded alias(es)",
-                count
-            );
+            BindAliasPlusClient.LOGGER.info("[unloadCFGAliases] Removed {} autoloaded alias(es)", count);
         }
 
         return this;

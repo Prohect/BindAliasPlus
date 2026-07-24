@@ -15,10 +15,12 @@ public class RightAlias extends BuiltinAliasWithBooleanArgs<RightAlias> {
     public RightAlias run(String args) {
         parseArgs(args);
         // cancle press event from text input screen
-        if (Alias.isUnderTextInputScreen() && flag) return this;
+        if (Alias.isUnderTextInputScreen() && flag)
+            return this;
         KeyMapping rightKey = Minecraft.getInstance().options.keyRight;
         rightKey.setDown(flag);
-        if (flag) rightKey.clickCount++;
+        if (flag)
+            rightKey.clickCount++;
         return this;
     }
 }

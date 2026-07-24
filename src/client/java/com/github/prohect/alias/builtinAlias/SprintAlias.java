@@ -15,10 +15,12 @@ public class SprintAlias extends BuiltinAliasWithBooleanArgs<SprintAlias> {
     public SprintAlias run(String args) {
         parseArgs(args);
         // cancle press event from text input screen
-        if (Alias.isUnderTextInputScreen() && flag) return this;
+        if (Alias.isUnderTextInputScreen() && flag)
+            return this;
         KeyMapping sprintKey = Minecraft.getInstance().options.keySprint;
         sprintKey.setDown(flag);
-        if (flag) sprintKey.clickCount++;
+        if (flag)
+            sprintKey.clickCount++;
         return this;
     }
 }

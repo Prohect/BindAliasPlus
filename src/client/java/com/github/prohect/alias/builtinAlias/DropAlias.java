@@ -23,9 +23,11 @@ public class DropAlias extends BuiltinAliasWithBooleanArgs<DropAlias> {
     @Override
     public DropAlias run(String args) {
         parseArgs(args);
-        if (Alias.isUnderTextInputScreen() && flag) return this;
+        if (Alias.isUnderTextInputScreen() && flag)
+            return this;
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) return this;
+        if (mc.player == null)
+            return this;
         KeyMapping dropKey = mc.options.keyDrop;
 
         if (flag) {
@@ -36,12 +38,7 @@ public class DropAlias extends BuiltinAliasWithBooleanArgs<DropAlias> {
                 Slot hoveredSlot = containerScreen.hoveredSlot;
                 if (hoveredSlot != null && hoveredSlot.hasItem()) {
                     int button = mc.hasControlDown() ? 1 : 0;
-                    containerScreen.slotClicked(
-                        hoveredSlot,
-                        hoveredSlot.index,
-                        button,
-                        ContainerInput.THROW
-                    );
+                    containerScreen.slotClicked(hoveredSlot, hoveredSlot.index, button, ContainerInput.THROW);
                 }
                 return this;
             }
@@ -60,30 +57,26 @@ public class DropAlias extends BuiltinAliasWithBooleanArgs<DropAlias> {
     }
 
     /**
-     * Called every client tick from {@code MinecraftClientMixin} while
-     * {@link #flag} is {@code true}.  After an initial delay (matching
-     * the OS key-repeat gap that vanilla relies on), drives continuous
-     * dropping — {@code slotClicked(…, THROW)} in container screens,
-     * {@code keyDrop.clickCount++} in the 3D game.
+     * Called every client tick from {@code MinecraftClientMixin} while {@link #flag} is {@code true}. After an initial delay
+     * (matching the OS key-repeat gap that vanilla relies on), drives continuous dropping — {@code slotClicked(…, THROW)} in
+     * container screens, {@code keyDrop.clickCount++} in the 3D game.
      */
     public void tickDrop() {
-        if (!flag) return;
+        if (!flag)
+            return;
         ticksHeld++;
-        if (ticksHeld <= INITIAL_DELAY_TICKS) return;
+        if (ticksHeld <= INITIAL_DELAY_TICKS)
+            return;
 
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) return;
+        if (mc.player == null)
+            return;
         Screen screen = Alias.getCurrentScreen();
         if (screen instanceof AbstractContainerScreen<?> containerScreen) {
             Slot hoveredSlot = containerScreen.hoveredSlot;
             if (hoveredSlot != null && hoveredSlot.hasItem()) {
                 int button = mc.hasControlDown() ? 1 : 0;
-                containerScreen.slotClicked(
-                    hoveredSlot,
-                    hoveredSlot.index,
-                    button,
-                    ContainerInput.THROW
-                );
+                containerScreen.slotClicked(hoveredSlot, hoveredSlot.index, button, ContainerInput.THROW);
             }
         } else if (screen == null) {
             mc.options.keyDrop.clickCount++;
@@ -91,8 +84,7 @@ public class DropAlias extends BuiltinAliasWithBooleanArgs<DropAlias> {
     }
 
     /**
-     * On cursor re-lock, maintain the KeyMapping state without
-     * incrementing clickCount — otherwise an extra drop would fire.
+     * On cursor re-lock, maintain the KeyMapping state without incrementing clickCount — otherwise an extra drop would fire.
      */
     @Override
     public void reapplyToGameKeyMapping() {

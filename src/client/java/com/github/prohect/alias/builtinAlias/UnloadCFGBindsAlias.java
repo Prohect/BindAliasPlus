@@ -12,15 +12,12 @@ import java.util.List;
  *
  * Usage: unloadCFGBinds
  *
- * This will remove all keybindings that have fromAutoload=true, which are
- * bindings created during the loadCFG() process from the config file.
- * Runtime-created bindings (via /bind or /bindByAliasName commands) are not affected.
+ * This will remove all keybindings that have fromAutoload=true, which are bindings created during the loadCFG() process from
+ * the config file. Runtime-created bindings (via /bind or /bindByAliasName commands) are not affected.
  *
  * Also cleans up associated aliases from aliasesWithoutArgs_fromBindCommand.
  */
-public class UnloadCFGBindsAlias
-    extends BuiltinAliasWithoutArgs<UnloadCFGBindsAlias>
-{
+public class UnloadCFGBindsAlias extends BuiltinAliasWithoutArgs<UnloadCFGBindsAlias> {
 
     public UnloadCFGBindsAlias() {
         super("unloadCFGBinds");
@@ -58,10 +55,7 @@ public class UnloadCFGBindsAlias
         }
 
         if (!BindAliasPlusClient.silentMode) {
-            BindAliasPlusClient.LOGGER.info(
-                "[unloadCFGBinds] Removed {} autoloaded keybinding(s)",
-                count
-            );
+            BindAliasPlusClient.LOGGER.info("[unloadCFGBinds] Removed {} autoloaded keybinding(s)", count);
         }
 
         return this;

@@ -5,15 +5,13 @@ import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
 
 /**
- * Executes a registered alias by name. The argument is the alias name
- * (optionally followed by backslash-args). This is useful in autoload CFG
- * to trigger aliases on world join without pressing a bound key.
+ * Executes a registered alias by name. The argument is the alias name (optionally followed by backslash-args). This is useful
+ * in autoload CFG to trigger aliases on world join without pressing a bound key.
  *
- * <p>Usage: {@code runAlias myAlias} or {@code runAlias myAlias\some\args}
+ * <p>
+ * Usage: {@code runAlias myAlias} or {@code runAlias myAlias\some\args}
  */
-public class RunAliasAlias
-    extends BuiltinAliasWithGreedyStringArgs<RunAliasAlias>
-{
+public class RunAliasAlias extends BuiltinAliasWithGreedyStringArgs<RunAliasAlias> {
 
     public RunAliasAlias() {
         super("builtinRunAlias");
@@ -22,10 +20,7 @@ public class RunAliasAlias
     @Override
     public RunAliasAlias run(String args) {
         if (args == null || args.isBlank()) {
-            BindAliasPlusClient.LOGGER.warn(
-                "{}[runAlias] No alias name provided",
-                BindAliasPlusClient.tickPrefix()
-            );
+            BindAliasPlusClient.LOGGER.warn("{}[runAlias] No alias name provided", BindAliasPlusClient.tickPrefix());
             return this;
         }
 
@@ -56,11 +51,7 @@ public class RunAliasAlias
         if (alias != null) {
             alias.run(extraArgs);
         } else {
-            BindAliasPlusClient.LOGGER.warn(
-                "{}[runAlias] Unknown alias: {}",
-                BindAliasPlusClient.tickPrefix(),
-                aliasName
-            );
+            BindAliasPlusClient.LOGGER.warn("{}[runAlias] Unknown alias: {}", BindAliasPlusClient.tickPrefix(), aliasName);
         }
         return this;
     }

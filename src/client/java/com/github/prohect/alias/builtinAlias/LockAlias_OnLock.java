@@ -5,8 +5,8 @@ import com.github.prohect.alias.BuiltinAliasWithArgs;
 /**
  * User-facing lock-key alias.
  * <p>
- * {@code +lockKey\gameKey:attack} — locks a vanilla game key.
- * {@code +lockKey\myAlias} — locks physical keys bound to a custom UserAlias.
+ * {@code +lockKey\gameKey:attack} — locks a vanilla game key. {@code +lockKey\myAlias} — locks physical keys bound to a custom
+ * UserAlias.
  * <p>
  * Command completion suggests both {@code gameKey:*} actions and UserAlias names.
  *
