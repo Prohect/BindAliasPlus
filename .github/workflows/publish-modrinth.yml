@@ -55,6 +55,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
+      - name: Fetch changelog from release
+        id: changelog
+        run: |
+          body="$(gh release view "${{ steps.tag.outputs.tag }}" --repo "${{ github.repository }}" --json body --jq '.body')"
+          # Write to file to avoid shell escaping issues
+          printf '%s' "$body" > /tmp/changelog.md
+          echo "file=/tmp/changelog.md" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Publish to Modrinth
         uses: Kir-Antipov/mc-publish@v3
         with:
@@ -65,3 +75,4 @@ jobs:
           modrinth-name: "BindAliasPlus ${{ steps.tag.outputs.ver }}"
           modrinth-version: ${{ steps.tag.outputs.ver }}
           modrinth-version-type: release
+          modrinth-changelog-file: ${{ steps.changelog.outputs.file }}
