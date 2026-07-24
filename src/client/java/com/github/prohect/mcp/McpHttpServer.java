@@ -2,6 +2,7 @@ package com.github.prohect.mcp;
 
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.Alias;
+import com.github.prohect.alias.UserAlias;
 import com.github.prohect.alias.builtinAlias.RunAliasAlias;
 import com.github.prohect.alias.builtinAlias.UnloadCFGAliasesAlias;
 import com.github.prohect.alias.builtinAlias.UnloadCFGBindsAlias;
@@ -16,7 +17,6 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,8 +26,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -128,9 +132,9 @@ public final class McpHttpServer {
     }
 
     /**
-     * Percent-decode without converting '+' to space.
-     * URLDecoder.decode treats '+' as space (application/x-www-form-urlencoded),
-     * which breaks alias names like "+forward" when the bridge sends them unencoded.
+     * Decode percent-encoded characters (%XX).  No '+' → space
+     * conversion — the bridge uses encodeURIComponent which
+     * emits spaces as %20, so no special-case logic is needed.
      */
     private static String decodePercent(String s) {
         StringBuilder sb = new StringBuilder();
@@ -266,6 +270,12 @@ public final class McpHttpServer {
                     // hotbar slot (1-indexed)
                     sb.append(",\"hotbarSlot\":")
                         .append(p.getInventory().getSelectedSlot() + 1);
+
+                    // open container menu slots (read-only; c matches swapSlot's cN addressing)
+                    if (screen instanceof AbstractContainerScreen<?> containerScreen) {
+                        sb.append(",\"container\":")
+                            .append(buildContainerJson(containerScreen.getMenu()));
+                    }
                 }
 
                 sb.append('}');
@@ -281,22 +291,148 @@ public final class McpHttpServer {
         }
     }
 
-    /** GET /screenshot — trigger a screenshot and return it base64-encoded. */
-    static void handleScreenshot(HttpExchange exchange) throws IOException {
-        try {
-            String json = onMainThread(() -> {
-                Minecraft mc = Minecraft.getInstance();
-                if (mc.player == null) {
-                    return "{\"error\":\"not in game\"}";
+    /**
+     * Max length of the compressed container section; beyond this we refuse
+     * to attach it and recommend a screenshot instead.
+     */
+    private static final int CONTAINER_JSON_MAX = 2000;
+
+    /**
+     * Compressed, read-only view of an open container menu.
+     * <ul>
+     *   <li>occupied slots stay JSON: {@code {index, item, count}} where
+     *       {@code index} is literally a swapSlot argument - a number (1-41)
+     *       for player inventory slots, a {@code "cN"} string for container slots</li>
+     *   <li>empty player-inventory slots compress to ranges in the same 1-41
+     *       numbering: {@code "1-9 10-36"}</li>
+     *   <li>non-inventory slots (chest grid, crafting grid, anvil, ...) compress
+     *       to an ASCII map ('.' empty, '#' occupied, ' ' no slot) with the x/y
+     *       range and per-cell c-indices alongside</li>
+     * </ul>
+     */
+    private static String buildContainerJson(AbstractContainerMenu menu) {
+        StringBuilder out = new StringBuilder("{\"menu\":")
+            .append(jsonEscape(menu.getClass().getName()));
+
+        StringBuilder items = new StringBuilder();
+        java.util.List<Integer> emptyInvSlots = new java.util.ArrayList<>();
+        java.util.List<int[]> nonInv = new java.util.ArrayList<>(); // {c, x, y, occupied}
+
+        for (int i = 0; i < menu.slots.size(); i++) {
+            Slot slot = menu.slots.get(i);
+            int c = i + 1;
+            ItemStack stack = slot.getItem();
+            boolean playerInv = slot.container instanceof Inventory;
+            if (!stack.isEmpty()) {
+                if (items.length() > 0) items.append(',');
+                items.append("{\"index\":");
+                if (playerInv) items.append(slot.getContainerSlot() + 1); else items.append(
+                    jsonEscape("c" + c)
+                );
+                items
+                    .append(",\"item\":")
+                    .append(jsonEscape(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()))
+                    .append(",\"count\":")
+                    .append(stack.getCount());
+                items.append('}');
+            }
+            if (playerInv) {
+                if (stack.isEmpty()) emptyInvSlots.add(slot.getContainerSlot() + 1);
+            } else {
+                nonInv.add(new int[] { c, slot.x, slot.y, stack.isEmpty() ? 0 : 1 });
+            }
+        }
+        java.util.Collections.sort(emptyInvSlots);
+        StringBuilder emptyInv = new StringBuilder();
+        for (int i = 0; i < emptyInvSlots.size(); i++) {
+            int start = emptyInvSlots.get(i);
+            int end = start;
+            while (i + 1 < emptyInvSlots.size() && emptyInvSlots.get(i + 1) == end + 1) {
+                end = emptyInvSlots.get(++i);
+            }
+            if (emptyInv.length() > 0) emptyInv.append(' ');
+            emptyInv.append(start);
+            if (end > start) emptyInv.append('-').append(end);
+        }
+
+        if (!nonInv.isEmpty()) {
+            int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
+            int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
+            for (int[] s : nonInv) {
+                minX = Math.min(minX, s[1]);
+                minY = Math.min(minY, s[2]);
+                maxX = Math.max(maxX, s[1]);
+                maxY = Math.max(maxY, s[2]);
+            }
+            int cell = 18; // standard slot pitch in container GUIs
+            int cols = (maxX - minX) / cell + 1;
+            int rows = (maxY - minY) / cell + 1;
+            char[][] map = new char[rows][cols];
+            int[][] cells = new int[rows][cols];
+            for (int r = 0; r < rows; r++) {
+                java.util.Arrays.fill(map[r], ' ');
+                java.util.Arrays.fill(cells[r], -1);
+            }
+            for (int[] s : nonInv) {
+                int col = (s[1] - minX) / cell;
+                int row = (s[2] - minY) / cell;
+                map[row][col] = s[3] == 0 ? '.' : '#';
+                cells[row][col] = s[0];
+            }
+            out
+                .append(",\"grid\":{\"xy\":")
+                .append(jsonEscape("x" + minX + "-" + maxX + " y" + minY + "-" + maxY))
+                .append(",\"map\":[");
+            for (int r = 0; r < rows; r++) {
+                if (r > 0) out.append(',');
+                out.append(jsonEscape(new String(map[r])));
+            }
+            out.append("],\"cells\":[");
+            for (int r = 0; r < rows; r++) {
+                if (r > 0) out.append(',');
+                StringBuilder row = new StringBuilder();
+                for (int col = 0; col < cols; col++) {
+                    if (col > 0) row.append(',');
+                    if (cells[r][col] >= 0) row.append(cells[r][col]); else row.append(' ');
                 }
+                out.append(jsonEscape(row.toString()));
+            }
+            out.append("]}");
+        }
 
-                Path dir = mc.gameDirectory.toPath().resolve("screenshots");
-                try { Files.createDirectories(dir); } catch (IOException ignored) {}
+        out.append(",\"items\":[").append(items).append(']');
+        out.append(",\"emptyInv\":")
+            .append(jsonEscape(emptyInv.toString()));
+        out.append('}');
 
-                // Record time before triggering to identify the new screenshot
-                long triggerTime = System.currentTimeMillis();
+        if (out.length() > CONTAINER_JSON_MAX) {
+            return (
+                "{\"menu\":" +
+                jsonEscape(menu.getClass().getName()) +
+                ",\"error\":\"too large; use screenshot instead\"}"
+            );
+        }
+        return out.toString();
+    }
 
-                // trigger native screenshot directly (no-op callback suppresses chat msg)
+    /** GET /screenshot — trigger a screenshot and return it base64-encoded. */
+    static synchronized void handleScreenshot(HttpExchange exchange) throws IOException {
+        try {
+            // Pre-check: must be in game
+            Boolean inGame = onMainThread(() -> Minecraft.getInstance().player != null);
+            if (!inGame) {
+                sendJson(exchange, 400, "{\"error\":\"not in game\"}");
+                return;
+            }
+
+            // Arm the mixin capture and trigger the native screenshot.
+            // NativeImageMixin intercepts writeToFile(Path) and completes
+            // the future with in-memory PNG bytes -- no sleep or FS scan.
+            CompletableFuture<byte[]> future = new CompletableFuture<>();
+            ScreenshotCapture.nextPngFuture = future;
+
+            onMainThread(() -> {
+                Minecraft mc = Minecraft.getInstance();
                 net.minecraft.client.Screenshot.grab(
                     mc.gameDirectory,
                     null,
@@ -304,102 +440,73 @@ public final class McpHttpServer {
                     1,
                     msg -> {}
                 );
-
-                // Wait for the file to be written, then find by modification time
-                try { Thread.sleep(500); } catch (InterruptedException ignored) {}
-                Path newFile = null;
-                try (var stream = Files.list(dir)) {
-                    newFile = stream
-                        .filter(p -> p.getFileName().toString().endsWith(".png"))
-                        .filter(p -> {
-                            try {
-                                return Files.getLastModifiedTime(p).toMillis() >= triggerTime;
-                            } catch (IOException e) { return false; }
-                        })
-                        .findFirst()
-                        .orElse(null);
-                } catch (IOException ignored) {}
-
-                // Fallback: pick the most recently modified screenshot
-                if (newFile == null) {
-                    try (var stream = Files.list(dir)) {
-                        newFile = stream
-                            .filter(p -> p.getFileName().toString().endsWith(".png"))
-                            .max((a, b) -> {
-                                try { return Files.getLastModifiedTime(a).compareTo(Files.getLastModifiedTime(b)); }
-                                catch (IOException e) { return 0; }
-                            })
-                            .orElse(null);
-                    } catch (IOException ignored) {}
-                }
-                if (newFile == null) {
-                    return "{\"error\":\"screenshot not found after 3 s\"}";
-                }
-
-                try {
-                    byte[] data = Files.readAllBytes(newFile);
-                    String b64 = Base64.getEncoder().encodeToString(data);
-                    return (
-                        "{\"path\":" +
-                        jsonEscape(newFile.toString()) +
-                        ",\"name\":" +
-                        jsonEscape(newFile.getFileName().toString()) +
-                        ",\"content\":" +
-                        jsonEscape(b64) +
-                        ",\"base64\":" +
-                        jsonEscape(b64) +
-                        "}"
-                    );
-                } catch (IOException e) {
-                    return (
-                        "{\"error\":" +
-                        jsonEscape("failed to read: " + e.getMessage()) +
-                        "}"
-                    );
-                }
+                return null;
             });
+
+            // Wait on the HTTP thread (not the game thread) for the
+            // I/O-thread PNG encode to finish.
+            byte[] data;
+            try {
+                data = future.get(3, java.util.concurrent.TimeUnit.SECONDS);
+            } catch (java.util.concurrent.TimeoutException e) {
+                sendJson(exchange, 500, "{\"error\":\"screenshot timed out\"}");
+                return;
+            } catch (Exception e) {
+                sendJson(exchange, 500, "{\"error\":\"screenshot failed: " + jsonEscape(e.getMessage()) + "\"}");
+                return;
+            }
+
+            if (data == null) {
+                sendJson(exchange, 500, "{\"error\":\"screenshot encode failed\"}");
+                return;
+            }
+
+            String path = ScreenshotCapture.lastPath;
+            String name = ScreenshotCapture.lastName;
+            String b64 = Base64.getEncoder().encodeToString(data);
+            String json = (
+                "{\"path\":" + jsonEscape(path) +
+                ",\"name\":" + jsonEscape(name) +
+                ",\"base64\":" + jsonEscape(b64) + "}"
+            );
             sendJson(exchange, 200, json);
         } catch (Exception e) {
-            sendJson(
-                exchange,
-                500,
-                "{\"error\":" + jsonEscape(e.getMessage()) + "}"
-            );
+            sendJson(exchange, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
         }
     }
 
-    /** POST /runAlias?name=…&args=… — execute a registered alias. */
+    /** POST /runAlias?def=… — execute a chain of aliases (space-separated, \ for args). */
     static void handleRunAlias(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(
             exchange.getRequestURI().getQuery()
         );
-        String name = q.get("name");
-        String args = q.getOrDefault("args", "");
+        String def = q.get("def");
 
-        if (name == null || name.isBlank()) {
+        // Legacy support: also accept name+args
+        if (def == null || def.isBlank()) {
+            String name = q.get("name");
+            String args = q.getOrDefault("args", "");
+            if (name != null && !name.isBlank()) {
+                def = name;
+                if (!args.isEmpty()) def += Alias.divider4AliasArgs + args;
+            }
+        }
+
+        if (def == null || def.isBlank()) {
             sendJson(
                 exchange,
                 400,
-                "{\"error\":\"missing 'name' parameter\"}"
+                "{\"error\":\"missing 'def' parameter\"}"
             );
             return;
         }
 
+        final String definition = def;
         try {
             String result = onMainThread(() -> {
-                // Pre-check alias existence — RunAliasAlias silently logs unknown aliases
-                if (Alias.aliasesWithoutArgs.get(name) == null
-                    && Alias.aliasesWithoutArgs_notSuggested.get(name) == null
-                    && Alias.aliasesWithArgs.get(name) == null
-                    && Alias.aliasesWithArgs_notSuggested.get(name) == null) {
-                    return "{\"error\":\"unknown alias: " + name + "\"}";
-                }
-
-                String full = name;
-                if (!args.isEmpty()) {
-                    full += Alias.divider4AliasArgs + args;
-                }
-                new RunAliasAlias().run(full);
+                // Use UserAlias for full chaining support
+                // (space-separated aliases, \ for args)
+                new UserAlias(definition).run("");
                 return "{\"ok\":true}";
             });
             sendJson(exchange, 200, result);
@@ -412,7 +519,7 @@ public final class McpHttpServer {
         }
     }
 
-    /** POST /defineAlias?name=…&def=… — create an alias via sendCommand. */
+    /** POST /defineAlias?name=…&def=… — define an alias via the real command pipeline and capture feedback. */
     static void handleDefineAlias(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(
             exchange.getRequestURI().getQuery()
@@ -430,16 +537,44 @@ public final class McpHttpServer {
         }
 
         try {
-            String result = onMainThread(() -> {
+            // Enable capture before sending the command so the mixin
+            // collects the sendFeedback output from the /alias handler.
+            ChatCapture.begin();
+
+            onMainThread(() -> {
                 Minecraft mc = Minecraft.getInstance();
-                if (mc.player == null) return "{\"error\":\"not in game\"}";
-                mc.player.connection.sendCommand(
-                    "alias " + name + " " + def
-                );
-                return "{\"ok\":true}";
+                if (mc.player != null) {
+                    mc.player.connection.sendCommand(
+                        "alias " + name + " " + def
+                    );
+                }
+                return null;
             });
-            sendJson(exchange, 200, result);
+
+            // Capture happens synchronously on the main thread — the
+            // command handler fires sendFeedback before returning.
+            String feedback = ChatCapture.end();
+
+            if (feedback == null || feedback.isEmpty()) {
+                sendJson(exchange, 500, "{\"error\":\"no feedback from command\"}");
+                return;
+            }
+
+            if (feedback.startsWith("Alias ")) {
+                sendJson(
+                    exchange,
+                    200,
+                    "{\"ok\":true,\"feedback\":" + jsonEscape(feedback) + "}"
+                );
+            } else {
+                sendJson(
+                    exchange,
+                    200,
+                    "{\"error\":" + jsonEscape(feedback) + "}"
+                );
+            }
         } catch (Exception e) {
+            ChatCapture.end(); // ensure capture is stopped on error
             sendJson(
                 exchange,
                 500,

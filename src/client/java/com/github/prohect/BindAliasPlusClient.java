@@ -27,6 +27,7 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
@@ -120,53 +121,53 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new UnloadCFGBindsAlias().putToAliasesWithoutArgs();
         new UnloadCFGVarsAlias().putToAliasesWithoutArgs();
         new UnloadCFGAllAlias().putToAliasesWithoutArgs();
-        new UserAlias("builtinAttack\\1").putToAliasesWithoutArgs("+attack");
-        new UserAlias("builtinAttack\\0").putToAliasesWithoutArgs("-attack");
-        new UserAlias("builtinUse\\1").putToAliasesWithoutArgs("+use");
-        new UserAlias("builtinUse\\0").putToAliasesWithoutArgs("-use");
-        new UserAlias("builtinForward\\1").putToAliasesWithoutArgs("+forward");
-        new UserAlias("builtinForward\\0").putToAliasesWithoutArgs("-forward");
-        new UserAlias("builtinBack\\1").putToAliasesWithoutArgs("+back");
-        new UserAlias("builtinBack\\0").putToAliasesWithoutArgs("-back");
-        new UserAlias("builtinLeft\\1").putToAliasesWithoutArgs("+left");
-        new UserAlias("builtinLeft\\0").putToAliasesWithoutArgs("-left");
-        new UserAlias("builtinRight\\1").putToAliasesWithoutArgs("+right");
-        new UserAlias("builtinRight\\0").putToAliasesWithoutArgs("-right");
-        new UserAlias("builtinJump\\1").putToAliasesWithoutArgs("+jump");
-        new UserAlias("builtinJump\\0").putToAliasesWithoutArgs("-jump");
-        new UserAlias("builtinSneak\\1").putToAliasesWithoutArgs("+sneak");
-        new UserAlias("builtinSneak\\0").putToAliasesWithoutArgs("-sneak");
-        new UserAlias("builtinSprint\\1").putToAliasesWithoutArgs("+sprint");
-        new UserAlias("builtinSprint\\0").putToAliasesWithoutArgs("-sprint");
-        new UserAlias("builtinDrop\\1").putToAliasesWithoutArgs("+drop");
-        new UserAlias("builtinDrop\\0").putToAliasesWithoutArgs("-drop");
-        new UserAlias("builtinScreenshot\\1").putToAliasesWithoutArgs("+screenshot");
-        new UserAlias("builtinScreenshot\\0").putToAliasesWithoutArgs("-screenshot");
-        new UserAlias("builtinPlayerList\\1").putToAliasesWithoutArgs("+playerList");
-        new UserAlias("builtinPlayerList\\0").putToAliasesWithoutArgs("-playerList");
-        new UserAlias("builtinFreeCursor\\1").putToAliasesWithoutArgs_notSuggested("+freeCursor");
-        new UserAlias("builtinFreeCursor\\0").putToAliasesWithoutArgs_notSuggested("-freeCursor");
-        new UserAlias("builtinEsc\\1").putToAliasesWithoutArgs("esc");
-        new UserAlias("builtinEsc\\0").putToAliasesWithoutArgs("closeScreen");
-        new UserAlias("builtinAdvancements\\1").putToAliasesWithoutArgs("+advancements");
-        new UserAlias("builtinAdvancements\\0").putToAliasesWithoutArgs("-advancements");
-        new UserAlias("builtinDebugOverlay\\1").putToAliasesWithoutArgs("+debugOverlay");
-        new UserAlias("builtinDebugOverlay\\0").putToAliasesWithoutArgs("-debugOverlay");
-        new UserAlias("builtinOpenInventory\\1").putToAliasesWithoutArgs(
+        new UserAlias("builtinAttack\\1", false, true).putToAliasesWithoutArgs("+attack");
+        new UserAlias("builtinAttack\\0", false, true).putToAliasesWithoutArgs("-attack");
+        new UserAlias("builtinUse\\1", false, true).putToAliasesWithoutArgs("+use");
+        new UserAlias("builtinUse\\0", false, true).putToAliasesWithoutArgs("-use");
+        new UserAlias("builtinForward\\1", false, true).putToAliasesWithoutArgs("+forward");
+        new UserAlias("builtinForward\\0", false, true).putToAliasesWithoutArgs("-forward");
+        new UserAlias("builtinBack\\1", false, true).putToAliasesWithoutArgs("+back");
+        new UserAlias("builtinBack\\0", false, true).putToAliasesWithoutArgs("-back");
+        new UserAlias("builtinLeft\\1", false, true).putToAliasesWithoutArgs("+left");
+        new UserAlias("builtinLeft\\0", false, true).putToAliasesWithoutArgs("-left");
+        new UserAlias("builtinRight\\1", false, true).putToAliasesWithoutArgs("+right");
+        new UserAlias("builtinRight\\0", false, true).putToAliasesWithoutArgs("-right");
+        new UserAlias("builtinJump\\1", false, true).putToAliasesWithoutArgs("+jump");
+        new UserAlias("builtinJump\\0", false, true).putToAliasesWithoutArgs("-jump");
+        new UserAlias("builtinSneak\\1", false, true).putToAliasesWithoutArgs("+sneak");
+        new UserAlias("builtinSneak\\0", false, true).putToAliasesWithoutArgs("-sneak");
+        new UserAlias("builtinSprint\\1", false, true).putToAliasesWithoutArgs("+sprint");
+        new UserAlias("builtinSprint\\0", false, true).putToAliasesWithoutArgs("-sprint");
+        new UserAlias("builtinDrop\\1", false, true).putToAliasesWithoutArgs("+drop");
+        new UserAlias("builtinDrop\\0", false, true).putToAliasesWithoutArgs("-drop");
+        new UserAlias("builtinScreenshot\\1", false, true).putToAliasesWithoutArgs("+screenshot");
+        new UserAlias("builtinScreenshot\\0", false, true).putToAliasesWithoutArgs("-screenshot");
+        new UserAlias("builtinPlayerList\\1", false, true).putToAliasesWithoutArgs("+playerList");
+        new UserAlias("builtinPlayerList\\0", false, true).putToAliasesWithoutArgs("-playerList");
+        new UserAlias("builtinFreeCursor\\1", false, true).putToAliasesWithoutArgs_notSuggested("+freeCursor");
+        new UserAlias("builtinFreeCursor\\0", false, true).putToAliasesWithoutArgs_notSuggested("-freeCursor");
+        new UserAlias("builtinEsc\\1", false, true).putToAliasesWithoutArgs("esc");
+        new UserAlias("builtinEsc\\0", false, true).putToAliasesWithoutArgs("closeScreen");
+        new UserAlias("builtinAdvancements\\1", false, true).putToAliasesWithoutArgs("+advancements");
+        new UserAlias("builtinAdvancements\\0", false, true).putToAliasesWithoutArgs("-advancements");
+        new UserAlias("builtinDebugOverlay\\1", false, true).putToAliasesWithoutArgs("+debugOverlay");
+        new UserAlias("builtinDebugOverlay\\0", false, true).putToAliasesWithoutArgs("-debugOverlay");
+        new UserAlias("builtinOpenInventory\\1", false, true).putToAliasesWithoutArgs(
             "+openInventory"
         );
-        new UserAlias("builtinOpenInventory\\0").putToAliasesWithoutArgs(
+        new UserAlias("builtinOpenInventory\\0", false, true).putToAliasesWithoutArgs(
             "-openInventory"
         );
-        new UserAlias("builtinSilent\\1").putToAliasesWithoutArgs("+silent");
-        new UserAlias("builtinSilent\\0").putToAliasesWithoutArgs("-silent");
-        new UserAlias("builtinSetPerspective\\0").putToAliasesWithoutArgs(
+        new UserAlias("builtinSilent\\1", false, true).putToAliasesWithoutArgs("+silent");
+        new UserAlias("builtinSilent\\0", false, true).putToAliasesWithoutArgs("-silent");
+        new UserAlias("builtinSetPerspective\\0", false, true).putToAliasesWithoutArgs(
             "FPS"
         );
-        new UserAlias("builtinSetPerspective\\1").putToAliasesWithoutArgs(
+        new UserAlias("builtinSetPerspective\\1", false, true).putToAliasesWithoutArgs(
             "TPS"
         );
-        new UserAlias("builtinSetPerspective\\2").putToAliasesWithoutArgs(
+        new UserAlias("builtinSetPerspective\\2", false, true).putToAliasesWithoutArgs(
             "TPS2"
         );
         // Lock aliases (lock/unlock game actions or custom UserAliases)
@@ -594,11 +595,13 @@ public class BindAliasPlusClient implements ClientModInitializer {
                                 return builder.buildFuture();
                             })
                             .executes(context -> {
-                                String aliasName = StringArgumentType.getString(
+                                String input = StringArgumentType.getString(
                                     context,
                                     "aliasName"
                                 );
-                                new RunAliasAlias().run(aliasName);
+                                // Use UserAlias to support chaining syntax
+                                // (space-separated, \ for args: "slot\2 wait\1 +forward")
+                                new UserAlias(input).run("");
                                 return 1;
                             })
                     )
@@ -607,6 +610,11 @@ public class BindAliasPlusClient implements ClientModInitializer {
 
         // start MCP HTTP server for AI agent control
         McpHttpServer.start();
+
+        // Shut down the MCP HTTP server when the game stops
+        // (more reliable than the JVM shutdown hook alone — fires
+        //  as soon as Minecraft.stop() is called).
+        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> McpHttpServer.stop());
     }
 
     /** @return {@code "[T+{ticks}] "} if joined, empty string otherwise. */
@@ -808,9 +816,10 @@ public class BindAliasPlusClient implements ClientModInitializer {
         AliasWithoutArgs<?> aliasWithoutArgs = Alias.aliasesWithoutArgs.get(
             aliasName
         );
-        if (
-            aliasWithoutArgs != null && !(aliasWithoutArgs instanceof UserAlias)
-        ) return 3;
+        if (aliasWithoutArgs != null) {
+            if (!(aliasWithoutArgs instanceof UserAlias)) return 3;
+            if (((UserAlias) aliasWithoutArgs).isPredefined()) return 3;
+        }
         Alias.aliasesWithoutArgs.put(
             aliasName,
             new UserAlias(definition, fromAutoload)

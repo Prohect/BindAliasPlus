@@ -6,7 +6,9 @@
     "KeyboardInputMixin",
     "KeyBoardMixin",
     "MinecraftClientMixin",
-    "MouseMixin"
+    "MouseMixin",
+    "NativeImageMixin",
+    "ChatComponentMixin"
   ],
   "injectors": {
     "defaultRequire": 1
