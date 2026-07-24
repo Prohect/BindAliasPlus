@@ -11,6 +11,7 @@ cd minecraft-decompiled-sources/<branch>/ && grep <args>
 Harness the autoLoaded(loaded at `net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.JOIN`) cfg(`run/config/bind-alias-plus.cfg` via `com.github.prohect.BindAliasPlusClient.loadCFG()`) for automatic crash/error detection.
 **Add test aliases for new code paths, make sure the log for new test aliases is in the log**.
 Functional correctness must be confirmed by the user.
+**Never test with curl or raw HTTP — always use the MCP tools (getState, getLogDiff, runAlias, etc.).**
 
 ## release workflow
 
