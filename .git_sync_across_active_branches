@@ -5,6 +5,8 @@ DEVELOP.md
 README.md
 README_CN.md
 test_or_release_README.md
+docs/README.md
+docs/JAVA_DOC_GUIDE.md
 
 # sync config itself
 .git_active_branches
