@@ -90,6 +90,12 @@ Every doc file ends with the commit it was written for:
 
 ## CONTRIBUTING
 
+**Workflow for batch doc generation:**
+1. `./gradlew build` then `bash scripts/generate_docs.sh`
+2. **Commit the empty stubs first** — this records baseline + lets subsequent runs only flag orphans
+3. Fill in the stubs with real content, commit the fill
+4. This avoids re-generating stubs and makes orphan detection reliable
+
 Prefer reading source to understand the implementation. Read docs only when you need to update them.
 Know the project before documenting.
 Docs contain project information only — no history.
