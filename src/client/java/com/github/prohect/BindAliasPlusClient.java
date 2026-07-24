@@ -11,6 +11,7 @@ import com.github.prohect.alias.BuiltinAliasWithDoubleArgs;
 import com.github.prohect.alias.BuiltinAliasWithIntegerArgs;
 import com.github.prohect.alias.UserAlias;
 import com.github.prohect.alias.builtinAlias.*;
+import com.github.prohect.mcp.McpHttpServer;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -25,6 +26,7 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
@@ -632,6 +634,10 @@ public class BindAliasPlusClient implements ClientModInitializer {
                     )
                 )
         );
+
+        // start MCP HTTP server for AI agent control
+        McpHttpServer.start();
+        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> McpHttpServer.stop());
     }
 
     /** @return {@code "[T+{ticks}] "} if joined, empty string otherwise. */
