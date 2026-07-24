@@ -11,7 +11,7 @@ public class ToggleInventoryAlias
 {
 
     public ToggleInventoryAlias() {
-        super("toggleinventory");
+        super("toggleInventory");
     }
 
     /**
