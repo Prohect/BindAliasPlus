@@ -7,20 +7,20 @@ import net.minecraft.client.network.ClientPlayerEntity;
 
 public class YawAlias extends BuiltinAliasWithDoubleArgs<YawAlias> {
 
-	public YawAlias() {
-		super("yaw");
-	}
+    public YawAlias() {
+        super("yaw");
+    }
 
-	@Override
-	public YawAlias run(String args) {
-		parseArgs(args);
-		MinecraftClient minecraftClient = MinecraftClient.getInstance();
-		ClientPlayerEntity player = minecraftClient.player;
-		if (player == null) {
-			BindAliasPlusClient.LOGGER.warn("{}[yaw]Player is null", BindAliasPlusClient.tickPrefix());
-			return this;
-		}
-		player.setYaw((float) (player.getYaw() + flag));
-		return this;
-	}
+    @Override
+    public YawAlias run(String args) {
+        parseArgs(args);
+        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        ClientPlayerEntity player = minecraftClient.player;
+        if (player == null) {
+            BindAliasPlusClient.LOGGER.warn("{}[yaw]Player is null", BindAliasPlusClient.tickPrefix());
+            return this;
+        }
+        player.setYaw((float) (player.getYaw() + flag));
+        return this;
+    }
 }

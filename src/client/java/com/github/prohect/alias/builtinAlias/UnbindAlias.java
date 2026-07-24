@@ -9,20 +9,20 @@ import net.minecraft.client.network.ClientPlayerEntity;
 
 public class UnbindAlias extends BuiltinAliasWithGreedyStringArgs<UnbindAlias> {
 
-	public UnbindAlias() {
-		super("unbind");
-	}
+    public UnbindAlias() {
+        super("unbind");
+    }
 
-	@Override
-	public UnbindAlias run(String args) {
-		String line = "unbind" + Alias.divider4AliasDefinition
-				+ args.replaceAll(Pattern.quote(String.valueOf(divider4AliasDefinition)),
-						String.valueOf(Alias.divider4AliasDefinition)).trim();
-		ClientPlayerEntity player = MinecraftClient.getInstance().player;
-		if (player == null)
-			BindAliasPlusClient.LOGGER.warn("{}[UnbindAlias]player is null", BindAliasPlusClient.tickPrefix());
-		else
-			player.networkHandler.sendChatCommand(line);
-		return this;
-	}
+    @Override
+    public UnbindAlias run(String args) {
+        String line = "unbind" + Alias.divider4AliasDefinition
+                + args.replaceAll(Pattern.quote(String.valueOf(divider4AliasDefinition)),
+                        String.valueOf(Alias.divider4AliasDefinition)).trim();
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null)
+            BindAliasPlusClient.LOGGER.warn("{}[UnbindAlias]player is null", BindAliasPlusClient.tickPrefix());
+        else
+            player.networkHandler.sendChatCommand(line);
+        return this;
+    }
 }

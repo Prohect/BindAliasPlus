@@ -6,15 +6,15 @@ import net.minecraft.text.Text;
 
 public class LocalSayAlias extends BuiltinAliasWithGreedyStringArgs<LocalSayAlias> {
 
-	public LocalSayAlias() {
-		super("localSay");
-	}
+    public LocalSayAlias() {
+        super("localSay");
+    }
 
-	@Override
-	public LocalSayAlias run(String args) {
-		if (MinecraftClient.getInstance().player == null)
-			return this;
-		MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.literal(args));
-		return this;
-	}
+    @Override
+    public LocalSayAlias run(String args) {
+        if (MinecraftClient.getInstance().player == null)
+            return this;
+        MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.literal(args));
+        return this;
+    }
 }

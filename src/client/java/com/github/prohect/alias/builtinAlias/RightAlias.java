@@ -7,20 +7,20 @@ import net.minecraft.client.option.KeyBinding;
 
 public class RightAlias extends BuiltinAliasWithBooleanArgs<RightAlias> {
 
-	public RightAlias() {
-		super("builtinRight");
-	}
+    public RightAlias() {
+        super("builtinRight");
+    }
 
-	@Override
-	public RightAlias run(String args) {
-		parseArgs(args);
-		// cancle press event from text input screen
-		if (Alias.isUnderTextInputScreen() && flag)
-			return this;
-		KeyBinding rightKey = MinecraftClient.getInstance().options.rightKey;
-		rightKey.setPressed(flag);
-		if (flag)
-			rightKey.timesPressed++;
-		return this;
-	}
+    @Override
+    public RightAlias run(String args) {
+        parseArgs(args);
+        // cancle press event from text input screen
+        if (Alias.isUnderTextInputScreen() && flag)
+            return this;
+        KeyBinding rightKey = MinecraftClient.getInstance().options.rightKey;
+        rightKey.setPressed(flag);
+        if (flag)
+            rightKey.timesPressed++;
+        return this;
+    }
 }

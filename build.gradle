@@ -94,9 +94,9 @@ jar {
 // Run: ./gradlew spotlessApply   (format all)   or   ./gradlew spotlessCheck   (verify only)
 spotless {
     java {
-        // Eclipse JDT formatter — identical formatter engine to what Zed's Java LSP (JDTLS) uses.
-        // No separate config file needed; uses built-in Eclipse defaults which match JDTLS defaults.
-        eclipse()
+        // Eclipse JDT formatter — same config file that Zed's JDTLS LSP auto-discovers.
+        // Pointing at the project's formatter.xml ensures identical formatting in-editor and via CLI.
+        eclipse().configFile(rootProject.file('formatter.xml'))
         // Remove wildcard imports except for common test packages
         removeUnusedImports()
     }
