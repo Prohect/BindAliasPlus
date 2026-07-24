@@ -295,7 +295,7 @@ public final class McpHttpServer {
      * Max length of the compressed container section; beyond this we refuse
      * to attach it and recommend a screenshot instead.
      */
-    private static final int CONTAINER_JSON_MAX = 2000;
+    private static final int CONTAINER_JSON_MAX = 6000;
 
     /**
      * Compressed, read-only view of an open container menu.
