@@ -1,17 +1,15 @@
 package com.github.prohect.alias;
 
 /**
- * while normal aliases' definition is divided by Alias.divider4AliasDefinition,
- * BuiltinAliasWithGreedyStringArgs use its own one to divide aliases'
- * definition to make its args compatible to define aliases inside
+ * while normal aliases' definition is divided by Alias.divider4AliasDefinition, BuiltinAliasWithGreedyStringArgs use its own
+ * one to divide aliases' definition to make its args compatible to define aliases inside
  */
 public abstract class BuiltinAliasWithGreedyStringArgs<T extends BuiltinAliasWithGreedyStringArgs<T>>
-		extends
-			BuiltinAliasWithArgs<T> {
+        extends BuiltinAliasWithArgs<T> {
 
-	protected BuiltinAliasWithGreedyStringArgs(String builtinAliasName) {
-		super(builtinAliasName);
-	}
+    protected BuiltinAliasWithGreedyStringArgs(String builtinAliasName) {
+        super(builtinAliasName);
+    }
 
-	public static final char divider4AliasDefinition = ';';
+    public static final char divider4AliasDefinition = ';';
 }
