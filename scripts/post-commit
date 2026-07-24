@@ -4,7 +4,7 @@
 # listed in .git_active_branches. Source-code files (not in the list) are
 # intentionally excluded — those must be manually merged per branch.
 #
-# To install:  cp scripts/sync-post-commit .git/hooks/post-commit
+# To install:  ln -s ../../scripts/post-commit .git/hooks/post-commit
 # =============================================================================
 set -u
 
