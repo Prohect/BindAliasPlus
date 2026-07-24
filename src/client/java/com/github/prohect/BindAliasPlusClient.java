@@ -12,6 +12,7 @@ import com.github.prohect.alias.BuiltinAliasWithIntegerArgs;
 import com.github.prohect.alias.UserAlias;
 import com.github.prohect.alias.builtinAlias.*;
 import com.github.prohect.mcp.McpHttpServer;
+import com.github.prohect.mcp.ChatCapture;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.Suggestions;
@@ -176,6 +177,8 @@ public class BindAliasPlusClient implements ClientModInitializer {
 		// register CFG autoload on world join
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> client.execute(() -> {
 			joinTick = currentTick;
+			ChatCapture.init();
+			ChatCapture.resetDiff();
 			loadCFG();
 		}));
 
