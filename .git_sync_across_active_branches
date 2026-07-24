@@ -9,7 +9,10 @@ test_or_release_README.md
 # sync config itself
 .git_active_branches
 .git_sync_across_active_branches
-scripts/*
+scripts/generate_docs.sh
+scripts/post-checkout
+scripts/post-commit
+scripts/sync-post-commit
 
 # repo config
 .gitattributes
