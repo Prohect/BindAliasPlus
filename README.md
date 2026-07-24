@@ -1,7 +1,8 @@
 # BindAliasPlus
 
-A Minecraft Fabric client mod that allows creating custom aliases and key bindings to automate complex in-game actions
-with simple key presses.
+A Minecraft Fabric client mod that allows creating custom aliases and key bindings to automate complex in-game
+actions with simple key presses. Also supports AI agent control via an in-game HTTP API — use with the
+[BindAliasPlus MCP tool](https://github.com/Prohect/BindAliasPlus-mcp) for AI-assisted Minecraft gameplay.
 
 <!-- languages -->
 - 🇺🇸 [English](README.md)
@@ -22,6 +23,9 @@ using a bow or placing blocks that not even in your hotbars or second hand), thi
 - **Command System**: Intuitive commands to manage aliases and bindings (e.g., `/alias`, `/bind`, `/unbind`).
 - **Config Persistence**: Saves aliases and bindings in a config file, loaded automatically when joining servers.
 - **Chained Actions**: Combine aliases to create complex sequences (e.g., equip elytra → use firework → fly).
+- **AI Agent Support**: Built-in HTTP API (`GET /state`, `GET /screenshot`, `POST /runAlias`, etc.) for AI agent
+  control. Use with the [BindAliasPlus MCP tool](https://github.com/Prohect/BindAliasPlus-mcp) to let AI agents see,
+  reason about, and act in your Minecraft world.
 
 ## Installation
 
@@ -148,9 +152,37 @@ Variables can then be used as arguments in any numeric alias (e.g., `yaw\myVar`,
 | `/var <name> <source>`         | Create or update a variable.                       | `/var mySlot hotbarSlot`              |
 | `/unloadCFGVars`               | Remove all config-loaded variables.                | `/unloadCFGVars`                      |
 
-### Example Config
+### AI Agent / MCP HTTP Server
 
-Here's a real-world config file (`config/bind-alias-plus.cfg`) showing the key features in one place:
+BindAliasPlus includes a built-in HTTP server that enables AI agents (such as Claude, ChatGPT, or custom
+automation scripts) to observe and control your Minecraft client. This is the companion mod for the
+[BindAliasPlus MCP tool](https://github.com/Prohect/BindAliasPlus-mcp).
+
+The server listens on `http://localhost:25567` (configurable in `config/bind-alias-plus.cfg`) and provides:
+
+| Endpoint           | Method | Description                                                              |
+|--------------------|--------|--------------------------------------------------------------------------|
+| `/state`           | GET    | Player position, health, held item, open container contents (compressed) |
+| `/screenshot`      | GET    | In-memory PNG screenshot (no chat spam, no file I/O)                     |
+| `/runAlias`        | POST   | Execute alias chains remotely (e.g., `swapSlot\1\2`)                   |
+| `/defineAlias`     | POST   | Define new aliases via API                                               |
+| `/readCFG`         | GET    | Read the current config file contents                                    |
+| `/writeCFG`        | POST   | Write to the config file (modify binds, aliases, variables)              |
+
+**Example agent usage:**
+
+```bash
+# Check what the player sees
+curl http://localhost:25567/state
+
+# Execute an alias chain
+curl -X POST http://localhost:25567/runAlias -d "swapSlot\1\2\wait\2\+attack"
+
+# Take a screenshot
+curl http://localhost:25567/screenshot -o screen.png
+```
+
+### Example Config
 
 ```cfg
 /var offHand 41
@@ -215,6 +247,9 @@ Here's a real-world config file (`config/bind-alias-plus.cfg`) showing the key f
 - **Variables**: Supports integer and floating-point values. Numeric aliases (`yaw`, `pitch`, `setYaw`, `setPitch`,
   `slot`, `swapSlot`, `wait`, `setPerspective`) accept variable names in place of raw numbers.
 - **Safety**: Avoid excessive automation on servers with anti-cheat systems (some actions may be flagged).
+- **MCP Server**: The built-in HTTP API listens on port `25567` by default. Change `mcpPort` in
+  `config/bind-alias-plus.cfg` if the port conflicts. Pair with the
+  [BindAliasPlus MCP tool](https://github.com/Prohect/BindAliasPlus-mcp) for AI agent integration.
 
 ## Contributing
 
