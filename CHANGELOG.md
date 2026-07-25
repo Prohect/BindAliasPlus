@@ -2,6 +2,12 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.5.2] - 2026-07-25
+
+### Fixed
+
+- **`freeCursor` no longer breaks hold-to-mine** — the game now keeps its logical "cursor grabbed" state while only the OS-level grab is skipped, so continuous block breaking (`continueAttack`) works with a free host cursor. Physical mouse movement still never rotates the camera while active, and disabling `freeCursor` cleanly restores the real grab.
+
 ## [1.5.1] - 2026-07-25
 
 ### Added
