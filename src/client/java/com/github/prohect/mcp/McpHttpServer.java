@@ -195,7 +195,8 @@ public final class McpHttpServer {
                 sb.append(screen == null ? "null" : jsonEscape(screen.getClass().getName()));
 
                 // tick (since world join; same as log tick stamp)
-                sb.append(",\"tick\":").append(BindAliasPlusClient.joinTick < 0 ? -1 : (BindAliasPlusClient.currentTick - BindAliasPlusClient.joinTick));
+                sb.append(",\"tick\":").append(BindAliasPlusClient.joinTick < 0 ? -1
+                        : (BindAliasPlusClient.currentTick - BindAliasPlusClient.joinTick));
 
                 LocalPlayer p = mc.player;
                 if (p != null) {
@@ -436,7 +437,8 @@ public final class McpHttpServer {
                         pos[2], pos[3], pos[4]));
             }
             // tick (since world join; same as log tick stamp)
-            json.append(",\"tick\":").append(BindAliasPlusClient.joinTick < 0 ? -1 : (BindAliasPlusClient.currentTick - BindAliasPlusClient.joinTick));
+            json.append(",\"tick\":").append(
+                    BindAliasPlusClient.joinTick < 0 ? -1 : (BindAliasPlusClient.currentTick - BindAliasPlusClient.joinTick));
             json.append('}');
             sendJson(exchange, 200, json.toString());
         } catch (Exception e) {
