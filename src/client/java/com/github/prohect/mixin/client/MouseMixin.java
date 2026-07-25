@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @SuppressWarnings("DuplicatedCode")
 @Mixin(net.minecraft.client.MouseHandler.class)
@@ -43,6 +44,18 @@ public class MouseMixin {
     private void skipCameraTurn(CallbackInfo ci) {
         if (FreeCursorAlias.freeCursor) {
             ci.cancel();
+        }
+    }
+
+    /*
+     * isMouseGrabbed gates hold-to-mine (continueAttack) in Minecraft#handleKeybinds. While freeCursor is active, the
+     * logical grab may be false (e.g. after a screen opens and calls releaseMouse), but we want mining to continue as if
+     * the cursor were still grabbed. Return true to bypass the guard.
+     */
+    @Inject(method = "isMouseGrabbed", at = @At("RETURN"), cancellable = true)
+    private void overrideIsMouseGrabbed(CallbackInfoReturnable<Boolean> cir) {
+        if (FreeCursorAlias.freeCursor) {
+            cir.setReturnValue(true);
         }
     }
 
