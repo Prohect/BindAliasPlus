@@ -387,11 +387,17 @@ public final class McpHttpServer {
             // Arm the mixin capture and trigger the native screenshot.
             // NativeImageMixin intercepts writeToFile(Path) and completes
             // the future with in-memory PNG bytes -- no sleep or FS scan.
+            // Also capture player position in the same main-thread roundtrip.
             CompletableFuture<byte[]> future = new CompletableFuture<>();
             ScreenshotCapture.nextPngFuture = future;
+            final double[][] posHolder = new double[1][];
 
             onMainThread(() -> {
                 Minecraft mc = Minecraft.getInstance();
+                var p = mc.player;
+                if (p != null) {
+                    posHolder[0] = new double[] {p.getX(), p.getY(), p.getZ(), p.getYRot(), p.getXRot()};
+                }
                 net.minecraft.client.Screenshot.grab(mc.gameDirectory, null, mc.getMainRenderTarget(), 1, msg -> {
                 });
                 return null;
@@ -418,9 +424,16 @@ public final class McpHttpServer {
             String path = ScreenshotCapture.lastPath;
             String name = ScreenshotCapture.lastName;
             String b64 = Base64.getEncoder().encodeToString(data);
-            String json = ("{\"path\":" + jsonEscape(path) + ",\"name\":" + jsonEscape(name) + ",\"base64\":" + jsonEscape(b64)
-                    + "}");
-            sendJson(exchange, 200, json);
+            StringBuilder json = new StringBuilder(512);
+            json.append("{\"path\":").append(jsonEscape(path)).append(",\"name\":").append(jsonEscape(name))
+                    .append(",\"base64\":").append(jsonEscape(b64));
+            double[] pos = posHolder[0];
+            if (pos != null) {
+                json.append(String.format(",\"x\":%.2f,\"y\":%.2f,\"z\":%.2f,\"yaw\":%.2f,\"pitch\":%.2f", pos[0], pos[1],
+                        pos[2], pos[3], pos[4]));
+            }
+            json.append('}');
+            sendJson(exchange, 200, json.toString());
         } catch (Exception e) {
             sendJson(exchange, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
         }
