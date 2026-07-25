@@ -1,11 +1,3 @@
-BindAliasPlus\minecraft-decompiled-sources is in .gitignore,
-search inside:
-
-```bash
-cd minecraft-decompiled-sources/<branch>/ && grep <args>
-# cd to a more specific path if you understand the file tree structure
-```
-
 ## test by gradle runTestClient
 
 Harness the autoLoaded(loaded at `net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.JOIN`) cfg(`run/config/bind-alias-plus.cfg` via `com.github.prohect.BindAliasPlusClient.loadCFG()`) for automatic crash/error detection.
