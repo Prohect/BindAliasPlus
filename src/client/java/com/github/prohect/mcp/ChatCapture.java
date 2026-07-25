@@ -10,6 +10,8 @@ import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 
 /**
  * Cross-thread capture of game log messages for MCP tools.
@@ -30,6 +32,7 @@ public final class ChatCapture {
 
     // ---- Log4j appender (one-time init, captures ALL log output) ----
 
+    private static final String LOGGER_NAME = "bind-alias-plus";
     private static final Object initLock = new Object();
     private static boolean initialized;
 
@@ -52,7 +55,20 @@ public final class ChatCapture {
             };
             appender.start();
             // Register on our mod's logger only — skips Fabric/mixin/rendering noise from root.
-            ctx.getLogger("bind-alias-plus").addAppender(appender);
+            // NOTE: logger.addAppender() (AbstractConfiguration.addLoggerAppender) would create the
+            // child LoggerConfig inheriting the ROOT's additivity — false for the root logger — which
+            // swallows all bind-alias-plus logs so they never reach console/latest.log again.
+            // Build the child LoggerConfig with additive=true so normal output keeps flowing.
+            Configuration config = ctx.getConfiguration();
+            LoggerConfig lc = config.getLoggerConfig(LOGGER_NAME);
+            if (lc.getName().equals(LOGGER_NAME)) {
+                lc.addAppender(appender, null, null);
+            } else {
+                LoggerConfig nlc = new LoggerConfig(LOGGER_NAME, lc.getLevel(), true);
+                nlc.addAppender(appender, null, null);
+                nlc.setParent(lc);
+                config.addLogger(LOGGER_NAME, nlc);
+            }
             ctx.updateLoggers();
         } catch (Exception ignored) {
             // Log capture is best-effort; don't crash the mod if Log4j internals change.
