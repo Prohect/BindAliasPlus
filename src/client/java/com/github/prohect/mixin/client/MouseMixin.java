@@ -21,19 +21,12 @@ public class MouseMixin {
     // ── freeCursor: skip only the OS-level grab, keep the logical grab ──
 
     /*
-     * Vanilla gates hold-to-mine (handleBlockBreaking) and camera turning on the logical cursorLocked flag,
-     * so instead of cancelling lockCursor()/unlockCursor() entirely we let them run and skip only the OS-level
-     * call (glfwSetCursorPos + glfwSetInputMode(GLFW_CURSOR, ...)). The game then behaves as if grabbed
-     * while the host cursor stays free.
+     * Vanilla gates hold-to-mine (handleBlockBreaking) and camera turning on the logical cursorLocked flag, so instead of
+     * cancelling lockCursor()/unlockCursor() entirely we let them run and skip only the OS-level call (glfwSetCursorPos +
+     * glfwSetInputMode(GLFW_CURSOR, ...)). The game then behaves as if grabbed while the host cursor stays free.
      */
-    @Inject(
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/util/InputUtil;setCursorParameters(JIDD)V"
-        ),
-        method = {"lockCursor", "unlockCursor"},
-        cancellable = true
-    )
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/InputUtil;setCursorParameters(JIDD)V"),
+            method = {"lockCursor", "unlockCursor"}, cancellable = true)
     private void skipOsCursorGrab(CallbackInfo ci) {
         if (FreeCursorAlias.freeCursor) {
             ci.cancel();
@@ -41,9 +34,9 @@ public class MouseMixin {
     }
 
     /*
-     * Physical mouse deltas must not turn the camera while freeCursor is active: the physical cursor
-     * belongs to the host machine, and view control stays with the yaw/pitch aliases. Without this, the
-     * faked logical grab would newly enable camera turning when moving the mouse over the focused window.
+     * Physical mouse deltas must not turn the camera while freeCursor is active: the physical cursor belongs to the host
+     * machine, and view control stays with the yaw/pitch aliases. Without this, the faked logical grab would newly enable
+     * camera turning when moving the mouse over the focused window.
      */
     @Inject(at = @At("HEAD"), method = "updateMouse", cancellable = true)
     private void skipCameraTurn(CallbackInfo ci) {
