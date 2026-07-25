@@ -90,8 +90,9 @@ jar {
     }
 }
 
-// Spotless formatter — uses Eclipse JDT formatter, same engine as Zed's JDTLS LSP.
-// Run: ./gradlew spotlessApply   (format all)   or   ./gradlew spotlessCheck   (verify only)
+// Spotless auto-apply before compilation — no manual ./gradlew spotlessApply needed.
+tasks.named('compileJava') { dependsOn 'spotlessApply' }
+
 spotless {
     java {
         // Eclipse JDT formatter — same config file that Zed's JDTLS LSP auto-discovers.
