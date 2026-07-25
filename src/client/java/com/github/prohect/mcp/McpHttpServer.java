@@ -297,8 +297,13 @@ public final class McpHttpServer {
             }
             CompletableFuture<byte[]> f = new CompletableFuture<>();
             ScreenshotCapture.nextPngFuture = f;
+            final double[][] posHolder = new double[1][];
             onMainThread(() -> {
                 MinecraftClient mc = MinecraftClient.getInstance();
+                var p = mc.player;
+                if (p != null) {
+                    posHolder[0] = new double[] {p.getX(), p.getY(), p.getZ(), p.getYaw(), p.getPitch()};
+                }
                 net.minecraft.client.util.ScreenshotRecorder.saveScreenshot(mc.runDirectory, mc.getFramebuffer(), msg -> {
                 });
                 return null;
@@ -319,7 +324,16 @@ public final class McpHttpServer {
             }
             String path = ScreenshotCapture.lastPath, name = ScreenshotCapture.lastName,
                     b64 = Base64.getEncoder().encodeToString(data);
-            sendJson(ex, 200, "{\"path\":" + j(path) + ",\"name\":" + j(name) + ",\"base64\":" + j(b64) + "}");
+            StringBuilder json = new StringBuilder(512);
+            json.append("{\"path\":").append(j(path)).append(",\"name\":").append(j(name)).append(",\"base64\":")
+                    .append(j(b64));
+            double[] pos = posHolder[0];
+            if (pos != null) {
+                json.append(String.format(",\"x\":%.2f,\"y\":%.2f,\"z\":%.2f,\"yaw\":%.2f,\"pitch\":%.2f", pos[0], pos[1],
+                        pos[2], pos[3], pos[4]));
+            }
+            json.append('}');
+            sendJson(ex, 200, json.toString());
         } catch (Exception e) {
             sendJson(ex, 500, "{\"error\":" + j(e.getMessage()) + "}");
         }
