@@ -2,6 +2,13 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.5.4] - 2026-07-26
+
+### Fixed
+
+- **WriteCFG endpoint truncates JSON bodies at escaped quotes** — the naive body parser stopped at the first `\"` instead of honoring JSON string escapes, corrupting any cfg that contained quoted alias args (e.g. `say\"...\",` `sendCommand\"...\"`). Now uses an escape-aware single-pass string extractor.
+- **Mod logs not reaching `latest.log` after world join** — the `ChatCapture` Log4j appender registered its child `LoggerConfig` inheriting the ROOT's `additivity=false`, which swallowed every `bind-alias-plus` log line after the capture appender was installed on world join. Now registers it with `additive=true` so normal console/file output keeps flowing alongside the capture buffer.
+
 ## [1.5.3] - 2026-07-25
 
 ### Fixed
