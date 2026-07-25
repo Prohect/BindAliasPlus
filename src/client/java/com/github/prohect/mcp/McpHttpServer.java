@@ -548,6 +548,59 @@ public final class McpHttpServer {
         sendJson(exchange, 200, "{\"messages\":" + jsonEscape(messages) + ",\"count\":" + count + "}");
     }
 
+    /**
+     * Extract a string field's value from a flat JSON object body, decoding escapes in a single left-to-right pass. A naive
+     * indexOf('"') search for the closing quote stops early at escaped quotes (\"), truncating cfg content that contains quoted
+     * alias args (e.g. say\"...\").
+     *
+     * @return the decoded string, or null if the field is absent or malformed
+     */
+    private static String extractJsonStringField(String body, String fieldName) {
+        int start = body.indexOf("\"" + fieldName + "\"");
+        if (start < 0)
+            return null;
+        int colon = body.indexOf(':', start);
+        if (colon < 0)
+            return null;
+        int i = colon + 1;
+        while (i < body.length() && Character.isWhitespace(body.charAt(i)))
+            i++;
+        if (i >= body.length() || body.charAt(i) != '"')
+            return null;
+        i++;
+        StringBuilder sb = new StringBuilder();
+        while (i < body.length()) {
+            char c = body.charAt(i++);
+            if (c == '"')
+                return sb.toString();
+            if (c == '\\' && i < body.length()) {
+                char esc = body.charAt(i++);
+                switch (esc) {
+                    case 'n' -> sb.append('\n');
+                    case 'r' -> sb.append('\r');
+                    case 't' -> sb.append('\t');
+                    case 'b' -> sb.append('\b');
+                    case 'f' -> sb.append('\f');
+                    case '/', '"', '\\' -> sb.append(esc);
+                    case 'u' -> {
+                        if (i + 4 <= body.length()) {
+                            try {
+                                sb.append((char) Integer.parseInt(body.substring(i, i + 4), 16));
+                                i += 4;
+                            } catch (NumberFormatException e) {
+                                sb.append("\\u");
+                            }
+                        } else
+                            return null;
+                    }
+                    default -> sb.append(esc);
+                }
+            } else
+                sb.append(c);
+        }
+        return null; // unterminated string
+    }
+
     /** POST /writeCFG — overwrite the config file and reload. */
     static void handleWriteCFG(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
@@ -559,16 +612,8 @@ public final class McpHttpServer {
             try (InputStream is = exchange.getRequestBody()) {
                 body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             }
-            if (body != null && body.contains("\"content\"")) {
-                int start = body.indexOf("\"content\"");
-                int colon = body.indexOf(':', start);
-                int valStart = body.indexOf('"', colon + 1);
-                int valEnd = body.indexOf('"', valStart + 1);
-                if (valStart > 0 && valEnd > valStart) {
-                    content = body.substring(valStart + 1, valEnd);
-                    content = content.replace("\\n", "\n").replace("\\r", "\r").replace("\\t", "\t").replace("\\\\", "\\")
-                            .replace("\\\"", "\"");
-                }
+            if (body != null) {
+                content = extractJsonStringField(body, "content");
             }
         }
 
