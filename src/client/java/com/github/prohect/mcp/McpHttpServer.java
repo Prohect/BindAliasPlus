@@ -416,26 +416,93 @@ public final class McpHttpServer {
         sendJson(ex, 200, "{\"messages\":" + j(messages) + ",\"count\":" + count + "}");
     }
 
-    static void handleWriteCFG(HttpExchange ex) throws IOException {
-        if (!"POST".equalsIgnoreCase(ex.getRequestMethod())) {
-            sendJson(ex, 405, "{\"error\":\"POST required\"}");
+    /**
+     * Extract a string field's value from a flat JSON object body, decoding escapes in a single left-to-right pass. A naive
+     * indexOf('"') search for the closing quote stops early at escaped quotes (\"), truncating cfg content that contains quoted
+     * alias args (e.g. say\"...\").
+     *
+     * @return the decoded string, or null if the field is absent or malformed
+     */
+    private static String extractJsonStringField(String body, String fieldName) {
+        int start = body.indexOf("\"" + fieldName + "\"");
+        if (start < 0)
+            return null;
+        int colon = body.indexOf(':', start);
+        if (colon < 0)
+            return null;
+        int i = colon + 1;
+        while (i < body.length() && Character.isWhitespace(body.charAt(i)))
+            i++;
+        if (i >= body.length() || body.charAt(i) != '"')
+            return null;
+        i++;
+        StringBuilder sb = new StringBuilder();
+        while (i < body.length()) {
+            char c = body.charAt(i++);
+            if (c == '"')
+                return sb.toString();
+            if (c == '\\' && i < body.length()) {
+                char esc = body.charAt(i++);
+                switch (esc) {
+                    case 'n' -> sb.append('\n');
+                    case 'r' -> sb.append('\r');
+                    case 't' -> sb.append('\t');
+                    case 'b' -> sb.append('\b');
+                    case 'f' -> sb.append('\f');
+                    case '/', '"', '\\' -> sb.append(esc);
+                    case 'u' -> {
+                        if (i + 4 <= body.length()) {
+                            try {
+                                sb.append((char) Integer.parseInt(body.substring(i, i + 4), 16));
+                                i += 4;
+                            } catch (NumberFormatException e) {
+                                sb.append("\\u");
+                            }
+                        } else
+                            return null;
+                    }
+                    default -> sb.append(esc);
+                }
+            } else
+                sb.append(c);
+        }
+        return null; // unterminated string
+    }
+
+    /** POST /writeCFG — overwrite the config file and reload. */
+    static void handleWriteCFG(HttpExchange exchange) throws IOException {
+        if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+            sendJson(exchange, 405, "{\"error\":\"POST required\"}");
             return;
         }
-        try (InputStream is = ex.getRequestBody()) {
-            Map<String, String> q = parseQuery(new String(is.readAllBytes(), StandardCharsets.UTF_8));
-            String c = q.get("content");
-            if (c == null) {
-                sendJson(ex, 400, "{\"error\":\"missing 'content'\"}");
-                return;
+        Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
+        String content = q.get("content");
+
+        // if content not in query, try JSON body
+        if (content == null) {
+            String body;
+            try (InputStream is = exchange.getRequestBody()) {
+                body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             }
+            if (body != null) {
+                content = extractJsonStringField(body, "content");
+            }
+        }
+
+        if (content == null) {
+            sendJson(exchange, 400, "{\"error\":\"missing 'content'\"}");
+            return;
+        }
+        try {
+            final String c = content;
             onMainThread(() -> {
                 Files.writeString(BindAliasPlusClient.cfgPath, c);
                 BindAliasPlusClient.INSTANCE.loadCFG();
                 return null;
             });
-            sendJson(ex, 200, "{\"ok\":true}");
+            sendJson(exchange, 200, "{\"ok\":true}");
         } catch (Exception e) {
-            sendJson(ex, 500, "{\"error\":" + j(e.getMessage()) + "}");
+            sendJson(exchange, 500, "{\"error\":" + j(e.getMessage()) + "}");
         }
     }
 }
