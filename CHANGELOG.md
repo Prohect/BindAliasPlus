@@ -2,6 +2,12 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.5.1] - 2026-07-25
+
+### Added
+
+- **Player position in `getScreenshot`** — screenshot response now includes `x`, `y`, `z`, `yaw`, `pitch` fields (2 decimal places), captured on the same main-thread roundtrip as the screenshot trigger for zero extra latency
+
 ## [1.5.0] - 2026-07-25
 
 ### Added
