@@ -2,6 +2,12 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.5.3] - 2026-07-25
+
+### Fixed
+
+- **`freeCursor` mining survives screen opens and focus loss** — overrides `isMouseGrabbed()` / `isCursorLocked()` to always return `true` while `freeCursor` is active, so the vanilla hold-to-mine guard (`continueAttack` / `handleBlockBreaking`) no longer resets block breaking progress when a screen opens or the game window loses focus.
+
 ## [1.5.2] - 2026-07-25
 
 ### Fixed
