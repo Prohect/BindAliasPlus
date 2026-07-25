@@ -4,6 +4,7 @@ import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.KeyPressed;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
+import com.github.prohect.alias.builtinAlias.FreeCursorAlias;
 import com.github.prohect.alias.builtinAlias.LockAlias;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
@@ -17,11 +18,36 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(net.minecraft.client.MouseHandler.class)
 public class MouseMixin {
 
-    // ── freeCursor: cancel grabMouse() at HEAD when active ──────────────
+    // ── freeCursor: skip only the OS-level grab, keep the logical grab ──
 
-    @Inject(at = @At("HEAD"), method = "grabMouse", cancellable = true)
-    private void cancelGrabMouse(CallbackInfo ci) {
-        if (com.github.prohect.alias.builtinAlias.FreeCursorAlias.freeCursor) {
+    /*
+     * Vanilla gates hold-to-mine (continueAttack) and camera turning on the logical mouseGrabbed flag, so
+     * instead of cancelling grabMouse()/releaseMouse() entirely we let them run and skip only the OS-level
+     * call (glfwSetCursorPos + glfwSetInputMode(GLFW_CURSOR, ...)). The game then behaves as if grabbed
+     * while the host cursor stays free.
+     */
+    @Inject(
+        at = @At(
+            value = "INVOKE",
+            target = "Lcom/mojang/blaze3d/platform/InputConstants;grabOrReleaseMouse(Lcom/mojang/blaze3d/platform/Window;IDD)V"
+        ),
+        method = {"grabMouse", "releaseMouse"},
+        cancellable = true
+    )
+    private void skipOsCursorGrab(CallbackInfo ci) {
+        if (FreeCursorAlias.freeCursor) {
+            ci.cancel();
+        }
+    }
+
+    /*
+     * Physical mouse deltas must not turn the camera while freeCursor is active: the physical cursor
+     * belongs to the host machine, and view control stays with the yaw/pitch aliases. Without this, the
+     * faked logical grab would newly enable camera turning when moving the mouse over the focused window.
+     */
+    @Inject(at = @At("HEAD"), method = "turnPlayer", cancellable = true)
+    private void skipCameraTurn(CallbackInfo ci) {
+        if (FreeCursorAlias.freeCursor) {
             ci.cancel();
         }
     }
