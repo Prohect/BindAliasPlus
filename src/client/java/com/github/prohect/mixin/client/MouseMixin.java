@@ -48,9 +48,9 @@ public class MouseMixin {
     }
 
     /*
-     * isMouseGrabbed gates hold-to-mine (continueAttack) in Minecraft#handleKeybinds. While freeCursor is active, the
-     * logical grab may be false (e.g. after a screen opens and calls releaseMouse), but we want mining to continue as if
-     * the cursor were still grabbed. Return true to bypass the guard.
+     * isMouseGrabbed gates hold-to-mine (continueAttack) in Minecraft#handleKeybinds. While freeCursor is active, the logical
+     * grab may be false (e.g. after a screen opens and calls releaseMouse), but we want mining to continue as if the cursor
+     * were still grabbed. Return true to bypass the guard.
      */
     @Inject(method = "isMouseGrabbed", at = @At("RETURN"), cancellable = true)
     private void overrideIsMouseGrabbed(CallbackInfoReturnable<Boolean> cir) {
