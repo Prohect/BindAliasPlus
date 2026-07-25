@@ -21,19 +21,13 @@ public class MouseMixin {
     // ── freeCursor: skip only the OS-level grab, keep the logical grab ──
 
     /*
-     * Vanilla gates hold-to-mine (continueAttack) and camera turning on the logical mouseGrabbed flag, so
-     * instead of cancelling grabMouse()/releaseMouse() entirely we let them run and skip only the OS-level
-     * call (glfwSetCursorPos + glfwSetInputMode(GLFW_CURSOR, ...)). The game then behaves as if grabbed
-     * while the host cursor stays free.
+     * Vanilla gates hold-to-mine (continueAttack) and camera turning on the logical mouseGrabbed flag, so instead of cancelling
+     * grabMouse()/releaseMouse() entirely we let them run and skip only the OS-level call (glfwSetCursorPos +
+     * glfwSetInputMode(GLFW_CURSOR, ...)). The game then behaves as if grabbed while the host cursor stays free.
      */
-    @Inject(
-        at = @At(
-            value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/platform/InputConstants;grabOrReleaseMouse(Lcom/mojang/blaze3d/platform/Window;IDD)V"
-        ),
-        method = {"grabMouse", "releaseMouse"},
-        cancellable = true
-    )
+    @Inject(at = @At(value = "INVOKE",
+            target = "Lcom/mojang/blaze3d/platform/InputConstants;grabOrReleaseMouse(Lcom/mojang/blaze3d/platform/Window;IDD)V"),
+            method = {"grabMouse", "releaseMouse"}, cancellable = true)
     private void skipOsCursorGrab(CallbackInfo ci) {
         if (FreeCursorAlias.freeCursor) {
             ci.cancel();
@@ -41,9 +35,9 @@ public class MouseMixin {
     }
 
     /*
-     * Physical mouse deltas must not turn the camera while freeCursor is active: the physical cursor
-     * belongs to the host machine, and view control stays with the yaw/pitch aliases. Without this, the
-     * faked logical grab would newly enable camera turning when moving the mouse over the focused window.
+     * Physical mouse deltas must not turn the camera while freeCursor is active: the physical cursor belongs to the host
+     * machine, and view control stays with the yaw/pitch aliases. Without this, the faked logical grab would newly enable
+     * camera turning when moving the mouse over the focused window.
      */
     @Inject(at = @At("HEAD"), method = "turnPlayer", cancellable = true)
     private void skipCameraTurn(CallbackInfo ci) {
