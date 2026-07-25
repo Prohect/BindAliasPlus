@@ -4,10 +4,10 @@ import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 import net.minecraft.client.Minecraft;
 
 /**
- * Toggles a flag that keeps the OS cursor free while the game behaves as if it were grabbed. When active,
- * {@code MouseMixin} skips only the OS-level grab call inside {@code grabMouse()}/{@code releaseMouse()}, so the
- * logical {@code mouseGrabbed} flag still turns on — hold-to-mine ({@code continueAttack}) keeps working while
- * the host cursor stays usable for a better dev/test experience.
+ * Toggles a flag that keeps the OS cursor free while the game behaves as if it were grabbed. When active, {@code MouseMixin}
+ * skips only the OS-level grab call inside {@code grabMouse()}/{@code releaseMouse()}, so the logical {@code mouseGrabbed} flag
+ * still turns on — hold-to-mine ({@code continueAttack}) keeps working while the host cursor stays usable for a better dev/test
+ * experience.
  * <p>
  * Usage: {@code +freeCursor} to enable, {@code -freeCursor} to disable.
  */
