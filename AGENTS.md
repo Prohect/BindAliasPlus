@@ -1,5 +1,5 @@
 BindAliasPlus\minecraft-decompiled-sources is in .gitignore,
-search inside :
+search inside:
 
 ```bash
 cd minecraft-decompiled-sources/<branch>/ && grep <args>
