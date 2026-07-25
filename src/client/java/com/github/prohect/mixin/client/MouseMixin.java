@@ -49,9 +49,9 @@ public class MouseMixin {
     }
 
     /*
-     * isCursorLocked gates hold-to-mine (handleBlockBreaking) in MinecraftClient#handleInputEvents. While freeCursor is
-     * active, the logical grab may be false (e.g. after a screen opens and calls unlockCursor), but we want mining to
-     * continue as if the cursor were still grabbed. Return true to bypass the guard.
+     * isCursorLocked gates hold-to-mine (handleBlockBreaking) in MinecraftClient#handleInputEvents. While freeCursor is active,
+     * the logical grab may be false (e.g. after a screen opens and calls unlockCursor), but we want mining to continue as if
+     * the cursor were still grabbed. Return true to bypass the guard.
      */
     @Inject(method = "isCursorLocked", at = @At("RETURN"), cancellable = true)
     private void overrideIsCursorLocked(CallbackInfoReturnable<Boolean> cir) {
