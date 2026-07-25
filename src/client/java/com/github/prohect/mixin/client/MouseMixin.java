@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @SuppressWarnings("DuplicatedCode")
 @Mixin(Mouse.class)
@@ -42,6 +43,18 @@ public class MouseMixin {
     private void skipCameraTurn(CallbackInfo ci) {
         if (FreeCursorAlias.freeCursor) {
             ci.cancel();
+        }
+    }
+
+    /*
+     * isCursorLocked gates hold-to-mine (handleBlockBreaking) in MinecraftClient#handleInputEvents. While freeCursor is
+     * active, the logical grab may be false (e.g. after a screen opens and calls unlockCursor), but we want mining to
+     * continue as if the cursor were still grabbed. Return true to bypass the guard.
+     */
+    @Inject(method = "isCursorLocked", at = @At("RETURN"), cancellable = true)
+    private void overrideIsCursorLocked(CallbackInfoReturnable<Boolean> cir) {
+        if (FreeCursorAlias.freeCursor) {
+            cir.setReturnValue(true);
         }
     }
 
