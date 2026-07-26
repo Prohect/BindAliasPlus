@@ -24,7 +24,7 @@ static void handleRunAlias(HttpExchange exchange) throws IOException
 
 **Execution**: Creates a `UserAlias` from the definition and calls `run("")` on the main thread via `onMainThread()`. The `UserAlias` class handles the full alias chain parsing and dispatch.
 
-Returns `{"ok": true}` on success. On error (timeout, exception), returns `{"error": "..."}` with status 500.
+Returns `{"tick": <N>}` where `tick` is the ticks-since-world-join at the moment the alias was executed (-1 if not in a world). On error (timeout, exception), returns `{"error": "..."}` with status 500.
 
 ## See Also
 

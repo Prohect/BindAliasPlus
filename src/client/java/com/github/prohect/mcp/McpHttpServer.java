@@ -364,10 +364,14 @@ public final class McpHttpServer {
         }
         final String d = def;
         try {
-            sendJson(ex, 200, onMainThread(() -> {
+            String result = onMainThread(() -> {
                 new UserAlias(d).run("");
-                return "{\"ok\":true}";
-            }));
+                // tick since world join at the exact moment the alias was executed
+                long tickSinceJoin = BindAliasPlusClient.joinTick < 0 ? -1
+                        : (BindAliasPlusClient.currentTick - BindAliasPlusClient.joinTick);
+                return "{\"tick\":" + tickSinceJoin + "}";
+            });
+            sendJson(ex, 200, result);
         } catch (Exception e) {
             sendJson(ex, 500, "{\"error\":" + j(e.getMessage()) + "}");
         }
