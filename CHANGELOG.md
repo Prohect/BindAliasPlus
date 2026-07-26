@@ -2,6 +2,16 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.5.7] - 2026-07-27
+
+### Fixed
+
+- **WaitAlias deferred chain: `;` → ` ` replacement for greedy-string aliases** — `AliasAlias`, `BindAlias`, and `UnbindAlias` use `;` as their definition divider. When their args are reconstructed in a `wait`-deferred chain, the `;` divider is now replaced with ` ` (the general divider) instead of quoting, matching what these aliases do internally.
+- **`wait\1` now defers to next tick; `wait\0` → NOP** — `wait\1` correctly defers the rest of the chain by one tick. `wait\0` is a no-op and the chain continues immediately.
+- **Root alias resolution in deferred chain** — `userAliasesCallChains.getFirst()` → `getLast()` so the deferred chain drain walks aliases from the innermost caller outward.
+- **Log tag rename** — `[runAlias]` → `[builtinRunAlias]` in log messages from the `builtinRunAlias` alias.
+- **CFG autoload uses `UserAlias` for runAlias lines** — fixes chaining syntax support in autoloaded `runAlias` entries.
+
 ## [1.5.6] - 2026-07-27
 
 ### Added
