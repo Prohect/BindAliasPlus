@@ -201,7 +201,7 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                         firstItem = false;
                     }
                     while (true) {
-                        UserAlias rootAlias = userAliasesCallChains.getFirst();
+                        UserAlias rootAlias = userAliasesCallChains.getLast();
                         if (rootAlias.aliases.isEmpty())
                             break;
                         aliasRecord1 = rootAlias.aliases.poll();
