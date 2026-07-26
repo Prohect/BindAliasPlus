@@ -30,7 +30,8 @@ public class WaitAliasRecord {
      * @return 1 if taskWaiting performed, 0 if taskWaiting still wait
      */
     public int tick() {
-        if (ticks <= 0) {
+        --ticks;
+        if (ticks == 0) {
             if (reapplyToGameKeyMapping) {
                 // assume that the arg is simply the alias name
                 if (Alias.aliasesWithArgs.get(definition) instanceof BuiltinAliasWithBooleanArgs alias && alias != null) {
@@ -47,7 +48,6 @@ public class WaitAliasRecord {
             WaitAlias.tasksWaiting.remove(this);
             return 1;
         }
-        --ticks;
         return 0;
     }
 }

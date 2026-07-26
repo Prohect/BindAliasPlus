@@ -2,6 +2,8 @@ package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.BuiltinAliasWithIntegerArgs;
+import com.github.prohect.alias.UserAlias;
+
 import java.util.ArrayList;
 
 public class WaitAlias extends BuiltinAliasWithIntegerArgs<WaitAlias> {
@@ -24,8 +26,10 @@ public class WaitAlias extends BuiltinAliasWithIntegerArgs<WaitAlias> {
 
     public WaitAlias run(String args, String definition) {
         parseArgs(args);
-        if (flag >= 0)
+        if (flag > 0)
             tasksWaiting.add(new WaitAliasRecord(flag, definition, false));
+        else if (flag == 0)
+            new UserAlias(definition).run("");
         else
             BindAliasPlusClient.LOGGER.error("{}Invalid arguments:ticks not expected", BindAliasPlusClient.tickPrefix());
         return this;
