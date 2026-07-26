@@ -31,7 +31,7 @@ jobs:
       - name: Build JAR list
         id: set-matrix
         run: |
-          jars="$(ls assets/*.jar | jq -R -s -c 'split("\n") | map(select(length > 0))')"
+          jars="$(ls assets/*.jar | grep -v '\-sources\.jar$' | jq -R -s -c 'split("\n") | map(select(length > 0))')"
           echo "jars=$jars" >> "$GITHUB_OUTPUT"
 
   publish:
