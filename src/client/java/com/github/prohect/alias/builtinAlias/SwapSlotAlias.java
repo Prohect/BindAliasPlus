@@ -4,7 +4,6 @@ import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
 import com.github.prohect.util.McScreenHelper;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -24,7 +23,7 @@ import net.minecraft.util.math.Direction;
 
 public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
 
-    private static final Pattern CONTAINER_SLOT_PATTERN = Pattern.compile("^[cC](\\d+)$");
+    private static final Pattern CONTAINER_SLOT_PATTERN = Pattern.compile("^c(\\d+)$");
 
     public SwapSlotAlias() {
         super("swapSlot");
@@ -139,17 +138,26 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
     }
 
     private static SlotRef parseSlotRef(String a) {
-        Matcher m = CONTAINER_SLOT_PATTERN.matcher(a.trim());
-        if (m.matches()) {
+        String t = a.trim();
+
+        // cN is always a direct container slot reference, even if a variable with
+        // the same name exists ("c<n>" could also be a valid var name per VarAlias).
+        if (t.length() > 1 && t.charAt(0) == 'c') {
             try {
-                int n = Integer.parseInt(m.group(1));
+                int n = Integer.parseInt(t.substring(1));
                 if (n >= 1)
                     return SlotRef.container(n - 1);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
             }
-            return null;
         }
-        Integer r = VarAlias.resolveInt(a.trim());
+
+        // Check if this is a variable that holds a container slot reference
+        Integer cSlot = VarAlias.CONTAINER_SLOT_VARIABLES.get(t);
+        if (cSlot != null) {
+            return SlotRef.container(cSlot - 1);
+        }
+
+        Integer r = VarAlias.resolveInt(t);
         if (r == null)
             return null;
         int idx = r - 1;

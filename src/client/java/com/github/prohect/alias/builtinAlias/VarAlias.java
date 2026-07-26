@@ -18,12 +18,13 @@ import net.minecraft.item.ItemStack;
  * Usage: - var\varName\source - Store a value from a source into varName
  *
  * Sources: - "hotbarSlot" or "selectedSlot" - Current hotbar slot (1-9) - "itemsOfSlot0" to "itemsOfSlot9" - Item count in slot
- * (0=offhand, 1-9=hotbar) - "pitch" - Player's current pitch angle (float) - "yaw" - Player's current yaw angle (float) - A
- * number (e.g., 5, 3.14) - Direct integer or float value
+ * (0=offhand, 1-9=hotbar) - "pitch" - Player's current pitch angle (float) - "yaw" - Player's current yaw angle (float) - "cN"
+ * (e.g., c1, c5, c12) - Container slot number for swapSlot compatibility, stores the number N - A number (e.g., 5, 3.14) -
+ * Direct integer or float value
  *
  * Examples: - var\mySlot\hotbarSlot - Store current hotbar slot - var\backup\5 - Store the number 5 - var\myPitch\pitch - Store
  * current pitch angle - var\myYaw\yaw - Store current yaw angle - var\arrowCount\itemsOfSlot2 - Store item count from hotbar
- * slot 2
+ * slot 2 - var\resultSlot\c3 - Store container slot 3 for use with swapSlot
  */
 public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
 
@@ -36,6 +37,14 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
 
     // Track which variables were loaded from config file
     public static final java.util.Set<String> AUTOLOADED_VARIABLES = new java.util.HashSet<>();
+
+    // Map variable name -> container slot number (1-based), set via cN source (e.g. var\mySlot\c5).
+    // Only SwapSlotAlias reads this to distinguish container slot references from plain player slot numbers.
+    public static final Map<String, Integer> CONTAINER_SLOT_VARIABLES = new HashMap<>();
+
+    // Reserved sentinel returned by fromContainerSlotSource when parsing fails.
+    // Chosen to be hard to guess and impossible to collide with a real slot index.
+    private static final int CONTAINER_SLOT_PARSE_ERR = Integer.MIN_VALUE + 17;
 
     // Pattern to check if variable name starts with a number (not allowed)
     private static final Pattern STARTS_WITH_NUMBER = Pattern.compile("^[0-9].*");
@@ -71,6 +80,15 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
 
         // Store variable
         VARIABLES.put(varName, value);
+
+        // Track container slot references (cN source) for swapSlot compatibility
+        int cSlot = fromContainerSlotSource(source);
+        if (cSlot >= 1) {
+            CONTAINER_SLOT_VARIABLES.put(varName, cSlot);
+        } else {
+            CONTAINER_SLOT_VARIABLES.remove(varName);
+        }
+
         BindAliasPlusClient.LOGGER.info("{}[var] Variable '{}' set to {}", BindAliasPlusClient.tickPrefix(), varName, value);
 
         return this;
@@ -110,6 +128,14 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         // Store variable
         VARIABLES.put(varName, value);
 
+        // Track container slot references (cN source) for swapSlot compatibility
+        int cSlot = fromContainerSlotSource(source);
+        if (cSlot >= 1) {
+            CONTAINER_SLOT_VARIABLES.put(varName, cSlot);
+        } else {
+            CONTAINER_SLOT_VARIABLES.remove(varName);
+        }
+
         // Track if from autoload
         if (fromAutoload) {
             AUTOLOADED_VARIABLES.add(varName);
@@ -130,6 +156,23 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
             return false;
         }
         return !STARTS_WITH_NUMBER.matcher(varName).matches();
+    }
+
+    /**
+     * Parse a cN container-slot source string (lowercase 'c' + digits, e.g. c1, c5, c12).
+     *
+     * @return the 1-based slot number (>= 1), or {@link #CONTAINER_SLOT_PARSE_ERR} if not a valid cN string
+     */
+    private static int fromContainerSlotSource(String source) {
+        String s = source.trim();
+        if (s.length() < 2 || s.charAt(0) != 'c')
+            return CONTAINER_SLOT_PARSE_ERR;
+        try {
+            int n = Integer.parseInt(s.substring(1));
+            return n >= 1 ? n : CONTAINER_SLOT_PARSE_ERR;
+        } catch (NumberFormatException e) {
+            return CONTAINER_SLOT_PARSE_ERR;
+        }
     }
 
     /**
@@ -154,6 +197,12 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
             return getPlayerYaw();
         }
 
+        // Check for cN pattern (container slot reference, e.g. c1, c5, c12).
+        int cSlot = fromContainerSlotSource(source);
+        if (cSlot >= 1) {
+            return cSlot;
+        }
+
         // Try to parse as a number: prefer integer if possible, otherwise double
         try {
             return Integer.parseInt(source);
@@ -162,7 +211,7 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
                 return Double.parseDouble(source);
             } catch (NumberFormatException e2) {
                 BindAliasPlusClient.LOGGER.error(
-                        "{}[var] Unknown source '{}' - expected 'hotbarSlot', 'selectedSlot', 'itemsOfSlot0-9', 'pitch', 'yaw', or a number",
+                        "{}[var] Unknown source '{}' - expected 'hotbarSlot', 'selectedSlot', 'itemsOfSlot0-9', 'pitch', 'yaw', 'cN', or a number",
                         BindAliasPlusClient.tickPrefix(), source);
                 return null;
             }
