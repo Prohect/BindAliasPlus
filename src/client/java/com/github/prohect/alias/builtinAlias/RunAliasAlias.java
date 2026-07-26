@@ -47,7 +47,8 @@ public class RunAliasAlias extends BuiltinAliasWithGreedyStringArgs<RunAliasAlia
         if (alias != null) {
             alias.run(extraArgs);
         } else {
-            BindAliasPlusClient.LOGGER.warn("{}[builtinRunAlias] Unknown alias: {}", BindAliasPlusClient.tickPrefix(), aliasName);
+            BindAliasPlusClient.LOGGER.warn("{}[builtinRunAlias] Unknown alias: {}", BindAliasPlusClient.tickPrefix(),
+                    aliasName);
         }
         return this;
     }
