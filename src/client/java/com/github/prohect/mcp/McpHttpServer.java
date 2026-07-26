@@ -477,7 +477,10 @@ public final class McpHttpServer {
                 // Use UserAlias for full chaining support
                 // (space-separated aliases, \ for args)
                 new UserAlias(definition).run("");
-                return "{\"ok\":true}";
+                // tick since world join at the exact moment the alias was executed
+                long tickSinceJoin = BindAliasPlusClient.joinTick < 0 ? -1
+                        : (BindAliasPlusClient.currentTick - BindAliasPlusClient.joinTick);
+                return "{\"tick\":" + tickSinceJoin + "}";
             });
             sendJson(exchange, 200, result);
         } catch (Exception e) {
