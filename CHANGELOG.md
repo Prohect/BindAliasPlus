@@ -2,6 +2,12 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.5.8] - 2026-07-27
+
+### Changed
+
+- **runAlias API returns tick-since-join** — `POST /runAlias` now returns `{"tick": <N>}` (ticks since world join at the moment the alias executed) instead of `{"ok": true}`. The MCP server surfaces this as `[T+<N>]` to the caller.
+
 ## [1.5.7] - 2026-07-27
 
 ### Fixed
