@@ -99,7 +99,7 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
     }
 
     /**
-     * Lock all physical keys bound to the given alias name. The alias can still be triggered via {@code runAlias}.
+     * Lock all physical keys bound to the given alias name. The alias can still be triggered via {@code builtinRunAlias}.
      */
     static void lockAliasByName(String aliasName) {
         if (LOCKED_ALIAS_KEYS.containsKey(aliasName))

@@ -368,12 +368,12 @@ public class BindAliasPlusClient implements ClientModInitializer {
 		// register command runAlias
 		ClientCommandRegistrationCallback.EVENT
 				.register((dispatcher, registryAccess) -> dispatcher.register(literal("runAlias")
-						.then(argument("aliasName", StringArgumentType.greedyString()).suggests((context, builder) -> {
+						.then(argument("definition", StringArgumentType.greedyString()).suggests((context, builder) -> {
 							Alias.aliasesWithoutArgs.keySet().forEach(builder::suggest);
 							Alias.aliasesWithArgs.keySet().forEach(builder::suggest);
 							return builder.buildFuture();
 						}).executes(context -> {
-							String input = StringArgumentType.getString(context, "aliasName");
+							String input = StringArgumentType.getString(context, "definition");
 							// Use UserAlias to support chaining syntax
 							// (space-separated, \ for args: "slot\2 wait\1 +forward")
 							new UserAlias(input).run("");
@@ -448,7 +448,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
                         }
                     } else if (line.startsWith("runAlias ")) {
                         String aliasName = line.substring("runAlias ".length()).trim();
-                        new RunAliasAlias().run(aliasName);
+                        new UserAlias(aliasName).run("");
                     } else {
                         BindAliasPlusClient.LOGGER.warn("{}Unknown command: {}", tickPrefix(), line);
                     }
