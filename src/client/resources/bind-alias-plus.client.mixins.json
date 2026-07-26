@@ -8,7 +8,8 @@
     "MinecraftClientMixin",
     "MouseMixin",
     "NativeImageMixin",
-    "ChatComponentMixin"
+    "ChatComponentMixin",
+    "AbstractContainerScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
