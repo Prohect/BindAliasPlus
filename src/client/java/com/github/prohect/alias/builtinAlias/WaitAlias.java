@@ -16,9 +16,7 @@ public class WaitAlias extends BuiltinAliasWithIntegerArgs<WaitAlias> {
     @Override
     public WaitAlias run(String args) {
         parseArgs(args);
-        if (flag > 0)
-            tasksWaiting.add(new WaitAliasRecord(flag, "", false));
-        else
+        if (flag < 0)
             BindAliasPlusClient.LOGGER.error("{}Invalid arguments: ticks of waitAlias could only be positive integers.",
                     BindAliasPlusClient.tickPrefix());
         return this;
