@@ -4,7 +4,6 @@ import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
 import com.github.prohect.util.McScreenHelper;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -24,7 +23,7 @@ import net.minecraft.util.math.Direction;
 
 public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
 
-    private static final Pattern CONTAINER_SLOT_PATTERN = Pattern.compile("^[cC](\\d+)$");
+    private static final Pattern CONTAINER_SLOT_PATTERN = Pattern.compile("^c(\\d+)$");
 
     public SwapSlotAlias() {
         super("swapSlot");
@@ -184,19 +183,32 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
      * Parse one slot argument: "cN" for a container menu slot (1-based index into the open menu's slot list), or a plain number
      * / variable (1-41) for a player inventory slot.
      *
+     * <p>
+     * Variables created from a cN source (e.g. var\mySlot\c5) are tracked in {@link VarAlias#CONTAINER_SLOT_VARIABLES} so they
+     * resolve as container slots here.
+     *
      * @return the parsed SlotRef, or null if invalid
      */
     private static SlotRef parseSlotRef(String arg) {
         String trimmed = arg.trim();
-        Matcher matcher = CONTAINER_SLOT_PATTERN.matcher(trimmed);
-        if (matcher.matches()) {
+
+        // cN is always a direct container slot reference, even if a variable with
+        // the same name exists ("c<n>" could also be a valid var name per VarAlias).
+        if (trimmed.length() > 1 && trimmed.charAt(0) == 'c') {
             try {
-                int n = Integer.parseInt(matcher.group(1));
-                return n >= 1 ? SlotRef.container(n - 1) : null;
-            } catch (NumberFormatException e) {
-                return null;
+                int n = Integer.parseInt(trimmed.substring(1));
+                if (n >= 1)
+                    return SlotRef.container(n - 1);
+            } catch (NumberFormatException ignored) {
             }
         }
+
+        // Check if this is a variable that holds a container slot reference
+        Integer cSlot = VarAlias.CONTAINER_SLOT_VARIABLES.get(trimmed);
+        if (cSlot != null) {
+            return SlotRef.container(cSlot - 1);
+        }
+
         Integer resolved = VarAlias.resolveInt(trimmed);
         if (resolved == null)
             return null;
