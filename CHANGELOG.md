@@ -2,6 +2,12 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.5.6] - 2026-07-27
+
+### Added
+
+- **`cN` container slot source for `var` alias** — `var\name\c3` now stores the container slot number (3), and `swapSlot` resolves such variables as container slot references via a `CONTAINER_SLOT_VARIABLES` map. `cN` literal args in `swapSlot` still take priority over same-named variables.
+
 ## [1.5.5] - 2026-07-26
 
 ### Added
