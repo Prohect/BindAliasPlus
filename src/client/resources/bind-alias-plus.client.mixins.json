@@ -1,1 +1,1 @@
-{"required":true,"package":"com.github.prohect.mixin.client","compatibilityLevel":"JAVA_21","client":["KeyboardInputMixin","KeyBoardMixin","MinecraftClientMixin","MouseMixin","NativeImageMixin","ChatComponentMixin"],"injectors":{"defaultRequire":1}}
+{"required":true,"package":"com.github.prohect.mixin.client","compatibilityLevel":"JAVA_21","client":["KeyboardInputMixin","KeyBoardMixin","MinecraftClientMixin","MouseMixin","NativeImageMixin","ChatComponentMixin","HandledScreenMixin"],"injectors":{"defaultRequire":1}}
