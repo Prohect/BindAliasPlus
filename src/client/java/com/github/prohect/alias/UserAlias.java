@@ -1,6 +1,9 @@
 package com.github.prohect.alias;
 
 import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.alias.builtinAlias.AliasAlias;
+import com.github.prohect.alias.builtinAlias.BindAlias;
+import com.github.prohect.alias.builtinAlias.UnbindAlias;
 import com.github.prohect.alias.builtinAlias.WaitAlias;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -124,9 +127,12 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                         definitionLeft.append(aliasRecord1.aliasName());
                         if (!aliasRecord1.args().isEmpty()) {
                             definitionLeft.append(Alias.divider4AliasArgs);
-                            // Quote args if they contain spaces to prevent splitting
                             String argsStr = aliasRecord1.args();
-                            if (argsStr.contains(String.valueOf(Alias.divider4AliasDefinition))) {
+                            var _alias = Alias.aliasesWithArgs.get(aliasRecord1.aliasName());
+                            if (_alias instanceof AliasAlias || _alias instanceof BindAlias || _alias instanceof UnbindAlias) {
+                                definitionLeft.append(argsStr.replace(BuiltinAliasWithGreedyStringArgs.divider4AliasDefinition,
+                                        Alias.divider4AliasDefinition));
+                            } else if (argsStr.contains(String.valueOf(Alias.divider4AliasDefinition))) {
                                 definitionLeft.append('"').append(argsStr).append('"');
                             } else {
                                 definitionLeft.append(argsStr);
@@ -190,9 +196,12 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                         definitionLeft.append(aliasRecord1.aliasName());
                         if (!aliasRecord1.args().isEmpty()) {
                             definitionLeft.append(Alias.divider4AliasArgs);
-                            // Quote args if they contain spaces to prevent splitting
                             String argsStr = aliasRecord1.args();
-                            if (argsStr.contains(String.valueOf(Alias.divider4AliasDefinition))) {
+                            var _alias = Alias.aliasesWithArgs.get(aliasRecord1.aliasName());
+                            if (_alias instanceof AliasAlias || _alias instanceof BindAlias || _alias instanceof UnbindAlias) {
+                                definitionLeft.append(argsStr.replace(BuiltinAliasWithGreedyStringArgs.divider4AliasDefinition,
+                                        Alias.divider4AliasDefinition));
+                            } else if (argsStr.contains(String.valueOf(Alias.divider4AliasDefinition))) {
                                 definitionLeft.append('"').append(argsStr).append('"');
                             } else {
                                 definitionLeft.append(argsStr);
@@ -200,26 +209,33 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                         }
                         firstItem = false;
                     }
-                    while (true) {
-                        UserAlias rootAlias = userAliasesCallChains.getLast();
-                        if (rootAlias.aliases.isEmpty())
-                            break;
-                        aliasRecord1 = rootAlias.aliases.poll();
-                        if (!firstItem) {
-                            definitionLeft.append(Alias.divider4AliasDefinition);
-                        }
-                        definitionLeft.append(aliasRecord1.aliasName());
-                        if (!aliasRecord1.args().isEmpty()) {
-                            definitionLeft.append(Alias.divider4AliasArgs);
-                            // Quote args if they contain spaces to prevent splitting
-                            String argsStr = aliasRecord1.args();
-                            if (argsStr.contains(String.valueOf(Alias.divider4AliasDefinition))) {
-                                definitionLeft.append('"').append(argsStr).append('"');
-                            } else {
-                                definitionLeft.append(argsStr);
+                    for (int i = userAliasesCallChains.size() - 1; i >= 0; i--) {
+                        UserAlias rootAlias = userAliasesCallChains.get(i);
+                        while (true) {
+                            if (rootAlias.aliases.isEmpty())
+                                break;
+                            aliasRecord1 = rootAlias.aliases.poll();
+                            if (!firstItem) {
+                                definitionLeft.append(Alias.divider4AliasDefinition);
                             }
+                            definitionLeft.append(aliasRecord1.aliasName());
+                            if (!aliasRecord1.args().isEmpty()) {
+                                definitionLeft.append(Alias.divider4AliasArgs);
+                                String argsStr = aliasRecord1.args();
+                                var _alias = Alias.aliasesWithArgs.get(aliasRecord1.aliasName());
+                                if (_alias instanceof AliasAlias || _alias instanceof BindAlias
+                                        || _alias instanceof UnbindAlias) {
+                                    definitionLeft
+                                            .append(argsStr.replace(BuiltinAliasWithGreedyStringArgs.divider4AliasDefinition,
+                                                    Alias.divider4AliasDefinition));
+                                } else if (argsStr.contains(String.valueOf(Alias.divider4AliasDefinition))) {
+                                    definitionLeft.append('"').append(argsStr).append('"');
+                                } else {
+                                    definitionLeft.append(argsStr);
+                                }
+                            }
+                            firstItem = false;
                         }
-                        firstItem = false;
                     }
                     waitAlias.run(aliasRecord.args(), definitionLeft.toString());
                     return;
