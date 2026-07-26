@@ -361,9 +361,9 @@ public final class McpHttpServer {
                     if (col > 0)
                         row.append(',');
                     if (cells[r][col] >= 0)
-                        row.append(cells[r][col]);
+                        row.append('c').append(String.format("%02d", cells[r][col]));
                     else
-                        row.append(' ');
+                        row.append("   ");
                 }
                 out.append(jsonEscape(row.toString()));
             }
