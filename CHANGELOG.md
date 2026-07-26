@@ -2,6 +2,12 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.5.5] - 2026-07-26
+
+### Added
+
+- **`freeCursor` hover-pin to slot 14** - while `freeCursor` is active, the hovered slot on container screens is pinned to the player-inventory slot 14 (container index 13), making `+drop` and swap operations target a deterministic slot regardless of OS cursor position. Added `AbstractContainerScreenMixin` (Mojang) / `HandledScreenMixin` (Yarn) to override `getHoveredSlot` / `getSlotAt`.
+
 ## [1.5.4] - 2026-07-26
 
 ### Fixed
