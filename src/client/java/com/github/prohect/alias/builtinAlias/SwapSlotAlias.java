@@ -23,8 +23,6 @@ import net.minecraft.world.inventory.Slot;
 
 public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
 
-    private static final Pattern CONTAINER_SLOT_PATTERN = Pattern.compile("^c(\\d+)$");
-
     public SwapSlotAlias() {
         super("swapSlot");
     }
