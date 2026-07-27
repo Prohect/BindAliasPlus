@@ -348,15 +348,15 @@ public final class McpHttpServer {
             for (int r = 0; r < rows; r++) {
                 if (r > 0)
                     out.append(',');
-                out.append('[');
+                out.append("\"|");
                 for (int c = 0; c < cols; c++) {
                     if (c > 0)
                         out.append(',');
                     out.append(grid[r][c]);
                 }
-                out.append(']');
+                out.append('|');
             }
-            out.append(']');
+            out.append("]\"");
         }
 
         out.append('}');
