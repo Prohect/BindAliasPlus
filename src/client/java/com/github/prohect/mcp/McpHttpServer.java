@@ -265,8 +265,10 @@ public final class McpHttpServer {
      * <li>{@code inventory_items}: occupied slots as {@code [{index, item, count}]}. Index is a swapSlot argument — 1–41 for
      * player inventory, {@code "cN"} for container slots.</li>
      * <li>{@code empty_inv}: empty player-inventory slots compressed to ranges (e.g. {@code "1-9 10-36"}).</li>
-     * <li>{@code container_grid}: array of row strings, cells comma-separated between {@code |} — {@code cNN:*}
-     * (occupied), {@code cNN:O} (empty), five spaces (no slot), e.g. {@code "|c01:*,c02:O|"}.</li>
+     * <li>{@code container_grid}: array of row strings. Consecutive container cells are space-separated inside one
+     * {@code |group|} — {@code cNN:*} (occupied), {@code cNN:O} (empty); a no-slot cell is five spaces. Everything past the
+     * last container cell of a row is blank padding, and all rows but the last end with {@code \n}, e.g.
+     * {@code "|c01:* c02:O|     |c03:*|\n"}.</li>
      * </ul>
      */
     private static String buildContainerJson(AbstractContainerMenu menu) {
@@ -340,21 +342,36 @@ public final class McpHttpServer {
             for (int[] s : gridSlots) {
                 int col = (s[1] - minX) / 18;
                 int row = (s[2] - minY) / 18;
-                char state = s[3] == 0 ? 'O' : '*';
+                char state = s[3] == 0 ? 'o' : '*';
                 grid[row][col] = "c" + String.format("%02d", s[0]) + ':' + state;
             }
 
             out.append(",\"container_grid\":[");
+            int width = cols * 6 + 1;
             for (int r = 0; r < rows; r++) {
                 if (r > 0)
                     out.append(',');
-                StringBuilder row = new StringBuilder("|");
-                for (int c = 0; c < cols; c++) {
-                    if (c > 0)
-                        row.append(',');
-                    row.append(grid[r][c]);
+                // group consecutive container cells inside one |group|; drop everything past the last container cell
+                int last = -1;
+                for (int c = cols - 1; c >= 0; c--)
+                    if (!grid[r][c].startsWith(" ")) {
+                        last = c;
+                        break;
+                    }
+                StringBuilder row = new StringBuilder();
+                if (last >= 0) {
+                    row.append('|');
+                    for (int c = 0; c <= last; c++) {
+                        if (c > 0)
+                            row.append(grid[r][c - 1].startsWith(" ") || grid[r][c].startsWith(" ") ? '|' : ' ');
+                        row.append(grid[r][c]);
+                    }
+                    row.append('|');
                 }
-                row.append('|');
+                while (row.length() < width)
+                    row.append(' ');
+                if (r < rows - 1)
+                    row.append('\n');
                 out.append(jsonEscape(row.toString()));
             }
             out.append(']');
