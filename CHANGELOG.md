@@ -2,7 +2,7 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
-## [1.5.11] - 2026-07-27
+## [1.6.0] - 2026-07-27
 
 ### Changed
 
