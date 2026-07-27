@@ -1,3 +1,8 @@
+# sync config itself
+.git_active_branches
+.git_sync_across_active_branches
+scripts/*
+
 # docs
 AGENTS.md
 BUILD.md
@@ -8,10 +13,11 @@ test_or_release_README.md
 docs/README.md
 docs/JAVA_DOC_GUIDE.md
 
-# sync config itself
-.git_active_branches
-.git_sync_across_active_branches
-scripts/*
+# test cfg
+run/config/bind-alias-plus.cfg
+
+# mcp
+MCP_node_js_src/mcp_server.js
 
 # repo config
 .gitattributes
@@ -23,6 +29,3 @@ setup-jdtls.sh
 
 # CI
 .github/workflows/*.yml
-
-# test cfg
-run/config/bind-alias-plus.cfg
