@@ -284,8 +284,9 @@ public final class McpHttpServer {
                     items.append(slot.getIndex() + 1);
                 else
                     items.append(jsonEscape("c" + c));
-                items.append(",\"item\":").append(jsonEscape(Registries.ITEM.getKey(stack.getItem())
-                        .map(k -> k.getValue().toString()).orElse(stack.getItem().toString())))
+                items.append(",\"item\":")
+                        .append(jsonEscape(Registries.ITEM.getKey(stack.getItem()).map(k -> k.getValue().toString())
+                                .orElse(stack.getItem().toString())))
                         .append(",\"count\":").append(stack.getCount()).append('}');
             }
 
