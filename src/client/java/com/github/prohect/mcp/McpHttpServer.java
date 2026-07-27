@@ -12,8 +12,12 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
@@ -259,125 +263,98 @@ public final class McpHttpServer {
         }
     }
 
-    /**
-     * Max length of the compressed container section; beyond this we refuse to attach it and recommend a screenshot instead.
-     */
-    private static final int CONTAINER_JSON_MAX = 6000;
-
-    /**
-     * Compressed, read-only view of an open container menu.
-     * <ul>
-     * <li>occupied slots stay JSON: {@code {index, item, count}} where {@code index} is literally a swapSlot argument - a
-     * number (1-41) for player inventory slots, a {@code "cN"} string for container slots</li>
-     * <li>empty player-inventory slots compress to ranges in the same 1-41 numbering: {@code "1-9 10-36"}</li>
-     * <li>non-inventory slots (chest grid, crafting grid, anvil, ...) compress to an ASCII map ('#' empty, '$' occupied, ' ' no
-     * slot) with the x/y range and per-cell c-indices alongside</li>
-     * </ul>
-     */
     private static String buildContainerJson(ScreenHandler menu) {
-        StringBuilder out = new StringBuilder("{\"menu\":").append(jsonEscape(menu.getClass().getName()));
+        StringBuilder out = new StringBuilder("{");
 
         StringBuilder items = new StringBuilder();
-        java.util.List<Integer> emptyInvSlots = new java.util.ArrayList<>();
-        java.util.List<int[]> nonInv = new java.util.ArrayList<>(); // {c, x, y, occupied}
+        List<Integer> emptyInv = new ArrayList<>();
+        List<int[]> gridSlots = new ArrayList<>(); // {c, x, y, occupied(0|1)}
 
         for (int i = 0; i < menu.slots.size(); i++) {
             Slot slot = menu.slots.get(i);
             int c = i + 1;
             ItemStack stack = slot.getStack();
-            boolean playerInv = slot.inventory instanceof PlayerInventory;
+            boolean isPlayerInv = slot.inventory instanceof PlayerInventory;
+
             if (!stack.isEmpty()) {
                 if (items.length() > 0)
                     items.append(',');
                 items.append("{\"index\":");
-                if (playerInv)
+                if (isPlayerInv)
                     items.append(slot.getIndex() + 1);
                 else
                     items.append(jsonEscape("c" + c));
                 items.append(",\"item\":").append(jsonEscape(Registries.ITEM.getKey(stack.getItem())
-                        .map(k -> k.getValue().toString()).orElse(stack.getItem().toString()))).append(",\"count\":")
-                        .append(stack.getCount());
-                items.append('}');
+                        .map(k -> k.getValue().toString()).orElse(stack.getItem().toString())))
+                        .append(",\"count\":").append(stack.getCount()).append('}');
             }
-            if (playerInv) {
+
+            if (isPlayerInv) {
                 if (stack.isEmpty())
-                    emptyInvSlots.add(slot.getIndex() + 1);
+                    emptyInv.add(slot.getIndex() + 1);
             } else {
-                nonInv.add(new int[] {c, slot.x, slot.y, stack.isEmpty() ? 0 : 1});
+                gridSlots.add(new int[] {c, slot.x, slot.y, stack.isEmpty() ? 0 : 1});
             }
         }
-        java.util.Collections.sort(emptyInvSlots);
-        StringBuilder emptyInv = new StringBuilder();
-        for (int i = 0; i < emptyInvSlots.size(); i++) {
-            int start = emptyInvSlots.get(i);
+
+        // compress empty inventory slots to ranges
+        Collections.sort(emptyInv);
+        StringBuilder emptyRanges = new StringBuilder();
+        for (int i = 0; i < emptyInv.size(); i++) {
+            int start = emptyInv.get(i);
             int end = start;
-            while (i + 1 < emptyInvSlots.size() && emptyInvSlots.get(i + 1) == end + 1) {
-                end = emptyInvSlots.get(++i);
-            }
-            if (emptyInv.length() > 0)
-                emptyInv.append(' ');
-            emptyInv.append(start);
+            while (i + 1 < emptyInv.size() && emptyInv.get(i + 1) == end + 1)
+                end = emptyInv.get(++i);
+            if (emptyRanges.length() > 0)
+                emptyRanges.append(' ');
+            emptyRanges.append(start);
             if (end > start)
-                emptyInv.append('-').append(end);
+                emptyRanges.append('-').append(end);
         }
 
-        out.append(",\"items\":[").append(items).append(']');
-        out.append(",\"emptyInv\":").append(jsonEscape(emptyInv.toString()));
+        out.append("\"inventory_items\":[").append(items).append(']');
+        out.append(",\"empty_inv\":").append(jsonEscape(emptyRanges.toString()));
 
-        if (!nonInv.isEmpty()) {
-            int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
-            int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
-            for (int[] s : nonInv) {
+        // build container grid
+        if (!gridSlots.isEmpty()) {
+            int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
+            int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
+            for (int[] s : gridSlots) {
                 minX = Math.min(minX, s[1]);
-                minY = Math.min(minY, s[2]);
                 maxX = Math.max(maxX, s[1]);
+                minY = Math.min(minY, s[2]);
                 maxY = Math.max(maxY, s[2]);
             }
-            int cell = 18; // standard slot pitch in container GUIs
-            int cols = (maxX - minX) / cell + 1;
-            int rows = (maxY - minY) / cell + 1;
-            char[][] map = new char[rows][cols];
-            int[][] cells = new int[rows][cols];
-            for (int r = 0; r < rows; r++) {
-                java.util.Arrays.fill(map[r], ' ');
-                java.util.Arrays.fill(cells[r], -1);
+
+            int cols = (maxX - minX) / 18 + 1;
+            int rows = (maxY - minY) / 18 + 1;
+            String[][] grid = new String[rows][cols];
+            for (int r = 0; r < rows; r++)
+                Arrays.fill(grid[r], "\"     \"");
+
+            for (int[] s : gridSlots) {
+                int col = (s[1] - minX) / 18;
+                int row = (s[2] - minY) / 18;
+                char state = s[3] == 0 ? 'O' : '*';
+                grid[row][col] = "\"c" + String.format("%02d", s[0]) + ':' + state + '"';
             }
-            for (int[] s : nonInv) {
-                int col = (s[1] - minX) / cell;
-                int row = (s[2] - minY) / cell;
-                map[row][col] = s[3] == 0 ? '#' : '$';
-                cells[row][col] = s[0];
-            }
-            out.append(",\"grid\":{\"xy\":").append(jsonEscape("x" + minX + "-" + maxX + " y" + minY + "-" + maxY))
-                    .append(",\"map\":[");
+
+            out.append(",\"container_grid\":[");
             for (int r = 0; r < rows; r++) {
                 if (r > 0)
                     out.append(',');
-                out.append(jsonEscape(new String(map[r])));
-            }
-            out.append("],\"cells\":[");
-            for (int r = 0; r < rows; r++) {
-                if (r > 0)
-                    out.append(',');
-                StringBuilder row = new StringBuilder();
-                for (int col = 0; col < cols; col++) {
-                    if (col > 0)
-                        row.append(',');
-                    if (cells[r][col] >= 0)
-                        row.append('c').append(String.format("%02d", cells[r][col]));
-                    else
-                        row.append("   ");
+                out.append("\"|");
+                for (int c = 0; c < cols; c++) {
+                    if (c > 0)
+                        out.append(',');
+                    out.append(grid[r][c]);
                 }
-                out.append(jsonEscape(row.toString()));
+                out.append('|');
             }
-            out.append("]}");
+            out.append("]\"");
         }
 
         out.append('}');
-
-        if (out.length() > CONTAINER_JSON_MAX) {
-            return ("{\"menu\":" + jsonEscape(menu.getClass().getName()) + ",\"error\":\"too large; use screenshot instead\"}");
-        }
         return out.toString();
     }
 
