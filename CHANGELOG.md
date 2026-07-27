@@ -7,7 +7,7 @@ All notable changes to BindAliasPlus will be documented in this file.
 ### Changed
 
 - **/state JSON schema refactored** — all keys use snake_case, reordered (dimension, screen, position, health, tick). Removed `world_name` and `max_health`; added `durability` sub-object for the selected hotbar slot.
-- **Container grid now nested JSON arrays** — `container_grid` uses `["cNN:*","cNN:O","     "]` cell format instead of flat CSV strings. Removed menu class name and size throttle.
+- **Container grid reworked** — `container_grid` uses pipe-delimited string rows (`"|c00:*","c01:O|"`) instead of nested JSON arrays. `inventory_items` and `empty_inv` now appear before the grid. Removed menu class name and size throttle.
 
 ## [1.5.8] - 2026-07-27
 
