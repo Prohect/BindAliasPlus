@@ -244,6 +244,9 @@ public final class McpHttpServer {
             if (end > start)
                 emptyInv.append('-').append(end);
         }
+        out.append(",\"items\":[").append(items).append(']');
+        out.append(",\"emptyInv\":").append(j(emptyInv.toString()));
+
         if (!nonInv.isEmpty()) {
             int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
             for (int[] s : nonInv) {
@@ -287,8 +290,7 @@ public final class McpHttpServer {
             }
             out.append("]}");
         }
-        out.append(",\"items\":[").append(items).append(']');
-        out.append(",\"emptyInv\":").append(j(emptyInv.toString())).append('}');
+        out.append('}');
         if (out.length() > CONTAINER_JSON_MAX)
             return "{\"menu\":" + j(menu.getClass().getName()) + ",\"error\":\"too large; use screenshot instead\"}";
         return out.toString();
