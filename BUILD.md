@@ -18,6 +18,7 @@ cd BindAliasPlus
 The built JAR lands in `build/libs/`.
 
 > **Windows:** use `gradlew.bat` instead of `./gradlew`.
+> ./gradlew build would format the code.
 
 ## Run the test client
 
