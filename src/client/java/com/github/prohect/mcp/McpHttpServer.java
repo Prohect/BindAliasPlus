@@ -401,13 +401,13 @@ public final class McpHttpServer {
                 long tickSinceJoin = BindAliasPlusClient.joinTick < 0 ? -1
                         : (BindAliasPlusClient.currentTick - BindAliasPlusClient.joinTick);
                 StringBuilder sb = new StringBuilder("{\"tick\":").append(tickSinceJoin);
-                LocalPlayer p = Minecraft.getInstance().player;
+                ClientPlayerEntity p = MinecraftClient.getInstance().player;
                 if (p != null) {
                     sb.append(",\"x\":").append(p.getX());
                     sb.append(",\"y\":").append(p.getY());
                     sb.append(",\"z\":").append(p.getZ());
-                    sb.append(",\"yaw\":").append(p.getYRot());
-                    sb.append(",\"pitch\":").append(p.getXRot());
+                    sb.append(",\"yaw\":").append(p.getYaw());
+                    sb.append(",\"pitch\":").append(p.getPitch());
                 }
                 sb.append('}');
                 String json = sb.toString();
