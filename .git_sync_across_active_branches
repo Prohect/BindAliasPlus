@@ -17,7 +17,7 @@ docs/JAVA_DOC_GUIDE.md
 run/config/bind-alias-plus.cfg
 
 # mcp
-MCP_node_js_src/mcp_server.js
+MCP/mcp_server.js
 
 # repo config
 .gitattributes
