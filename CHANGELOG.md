@@ -2,6 +2,13 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.5.10] - 2026-07-27
+
+### Changed
+
+- **Container grid format unified** — `container_grid` row strings now use space-separated groups inside `|group|` with trailing padding and `\n` row separators. Empty cells use lowercase `o`. Output is identical across all MC versions.
+- **Internal method rename** — `j()` → `jsonEscape()`, `decode()` → `decodePercent()` for consistency across branches.
+
 ## [1.5.9] - 2026-07-27
 
 ### Changed
