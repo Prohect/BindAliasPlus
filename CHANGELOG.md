@@ -2,6 +2,13 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.5.9] - 2026-07-27
+
+### Changed
+
+- **/state JSON schema refactored** — all keys use snake_case, reordered (dimension, screen, position, health, tick). Removed `world_name` and `max_health`; added `durability` sub-object for the selected hotbar slot.
+- **Container grid now nested JSON arrays** — `container_grid` uses `["cNN:*","cNN:O","     "]` cell format instead of flat CSV strings. Removed menu class name and size throttle.
+
 ## [1.5.8] - 2026-07-27
 
 ### Changed
