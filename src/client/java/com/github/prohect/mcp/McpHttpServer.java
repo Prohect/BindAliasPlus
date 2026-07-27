@@ -81,12 +81,12 @@ public final class McpHttpServer {
         for (String p : q.split("&")) {
             int i = p.indexOf('=');
             if (i > 0)
-                m.put(decode(p.substring(0, i)), decode(p.substring(i + 1)));
+                m.put(decodePercent(p.substring(0, i)), decodePercent(p.substring(i + 1)));
         }
         return m;
     }
 
-    private static String decode(String s) {
+    private static String decodePercent(String s) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
@@ -115,7 +115,7 @@ public final class McpHttpServer {
         }
     }
 
-    private static String j(String s) {
+    private static String jsonEscape(String s) {
         if (s == null)
             return "null";
         StringBuilder sb = new StringBuilder("\"");
@@ -154,7 +154,7 @@ public final class McpHttpServer {
                 MinecraftClient mc = MinecraftClient.getInstance();
                 StringBuilder sb = new StringBuilder("{");
                 var sc = McScreenHelper.getCurrentScreen(mc);
-                sb.append("\"screen\":").append(sc == null ? "null" : j(sc.getClass().getName()));
+                sb.append("\"screen\":").append(sc == null ? "null" : jsonEscape(sc.getClass().getName()));
 
                 // tick (since world join; same as log tick stamp)
                 sb.append(",\"tick\":").append(BindAliasPlusClient.joinTick < 0 ? -1
@@ -162,7 +162,7 @@ public final class McpHttpServer {
 
                 ClientPlayerEntity p = mc.player;
                 if (p != null) {
-                    sb.append(",\"dimension\":").append(j(p.getWorld().getRegistryKey().getValue().toString()));
+                    sb.append(",\"dimension\":").append(jsonEscape(p.getWorld().getRegistryKey().getValue().toString()));
                     String worldName = null;
                     try {
                         if (mc.getServer() != null)
@@ -171,7 +171,7 @@ public final class McpHttpServer {
                             worldName = mc.getCurrentServerEntry().name;
                     } catch (Exception ignored) {
                     }
-                    sb.append(",\"worldName\":").append(worldName == null ? "null" : j(worldName));
+                    sb.append(",\"worldName\":").append(worldName == null ? "null" : jsonEscape(worldName));
                     sb.append(",\"x\":").append(p.getX());
                     sb.append(",\"y\":").append(p.getY());
                     sb.append(",\"z\":").append(p.getZ());
@@ -181,7 +181,7 @@ public final class McpHttpServer {
                     sb.append(",\"maxHealth\":").append(p.getMaxHealth());
                     ItemStack held = p.getMainHandStack();
                     if (held != null && !held.isEmpty()) {
-                        sb.append(",\"heldItem\":").append(j(Registries.ITEM.getKey(held.getItem())
+                        sb.append(",\"heldItem\":").append(jsonEscape(Registries.ITEM.getKey(held.getItem())
                                 .map(k -> k.getValue().toString()).orElse(held.getItem().toString())));
                         sb.append(",\"heldItemCount\":").append(held.getCount());
                     } else {
@@ -197,7 +197,7 @@ public final class McpHttpServer {
             });
             sendJson(ex, 200, json);
         } catch (Exception e) {
-            sendJson(ex, 500, "{\"error\":" + j(e.getMessage()) + "}");
+            sendJson(ex, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
         }
     }
 
@@ -233,9 +233,9 @@ public final class McpHttpServer {
                 if (isPlayerInv)
                     items.append(slot.getIndex() + 1);
                 else
-                    items.append(j("c" + c));
+                    items.append(jsonEscape("c" + c));
                 items.append(",\"item\":")
-                        .append(j(Registries.ITEM.getKey(stack.getItem()).map(k -> k.getValue().toString())
+                        .append(jsonEscape(Registries.ITEM.getKey(stack.getItem()).map(k -> k.getValue().toString())
                                 .orElse(stack.getItem().toString())))
                         .append(",\"count\":").append(stack.getCount()).append('}');
             }
@@ -264,7 +264,7 @@ public final class McpHttpServer {
         }
 
         out.append("\"inventory_items\":[").append(items).append(']');
-        out.append(",\"empty_inv\":").append(j(emptyRanges.toString()));
+        out.append(",\"empty_inv\":").append(jsonEscape(emptyRanges.toString()));
 
         // build container grid
         if (!gridSlots.isEmpty()) {
@@ -316,7 +316,7 @@ public final class McpHttpServer {
                     row.append(' ');
                 if (r < rows - 1)
                     row.append('\n');
-                out.append(j(row.toString()));
+                out.append(jsonEscape(row.toString()));
             }
             out.append(']');
         }
@@ -351,7 +351,7 @@ public final class McpHttpServer {
                 sendJson(ex, 500, "{\"error\":\"screenshot timed out\"}");
                 return;
             } catch (Exception e) {
-                sendJson(ex, 500, "{\"error\":\"screenshot failed: " + j(e.getMessage()) + "\"}");
+                sendJson(ex, 500, "{\"error\":\"screenshot failed: " + jsonEscape(e.getMessage()) + "\"}");
                 return;
             }
             if (data == null) {
@@ -361,8 +361,8 @@ public final class McpHttpServer {
             String path = ScreenshotCapture.lastPath, name = ScreenshotCapture.lastName,
                     b64 = Base64.getEncoder().encodeToString(data);
             StringBuilder json = new StringBuilder(512);
-            json.append("{\"path\":").append(j(path)).append(",\"name\":").append(j(name)).append(",\"base64\":")
-                    .append(j(b64));
+            json.append("{\"path\":").append(jsonEscape(path)).append(",\"name\":").append(jsonEscape(name)).append(",\"base64\":")
+                    .append(jsonEscape(b64));
             double[] pos = posHolder[0];
             if (pos != null) {
                 json.append(String.format(",\"x\":%.2f,\"y\":%.2f,\"z\":%.2f,\"yaw\":%.2f,\"pitch\":%.2f", pos[0], pos[1],
@@ -374,7 +374,7 @@ public final class McpHttpServer {
             json.append('}');
             sendJson(ex, 200, json.toString());
         } catch (Exception e) {
-            sendJson(ex, 500, "{\"error\":" + j(e.getMessage()) + "}");
+            sendJson(ex, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
         }
     }
 
@@ -404,7 +404,7 @@ public final class McpHttpServer {
             });
             sendJson(ex, 200, result);
         } catch (Exception e) {
-            sendJson(ex, 500, "{\"error\":" + j(e.getMessage()) + "}");
+            sendJson(ex, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
         }
     }
 
@@ -429,18 +429,18 @@ public final class McpHttpServer {
                 return;
             }
             sendJson(ex, 200,
-                    fb.startsWith("Alias ") ? "{\"ok\":true,\"feedback\":" + j(fb) + "}" : "{\"error\":" + j(fb) + "}");
+                    fb.startsWith("Alias ") ? "{\"ok\":true,\"feedback\":" + jsonEscape(fb) + "}" : "{\"error\":" + jsonEscape(fb) + "}");
         } catch (Exception e) {
             ChatCapture.end();
-            sendJson(ex, 500, "{\"error\":" + j(e.getMessage()) + "}");
+            sendJson(ex, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
         }
     }
 
     static void handleReadCFG(HttpExchange ex) throws IOException {
         try {
-            sendJson(ex, 200, "{\"content\":" + j(Files.readString(BindAliasPlusClient.cfgPath)) + "}");
+            sendJson(ex, 200, "{\"content\":" + jsonEscape(Files.readString(BindAliasPlusClient.cfgPath)) + "}");
         } catch (Exception e) {
-            sendJson(ex, 500, "{\"error\":" + j(e.getMessage()) + "}");
+            sendJson(ex, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
         }
     }
 
@@ -448,7 +448,7 @@ public final class McpHttpServer {
     static void handleLogDiff(HttpExchange ex) throws IOException {
         String messages = ChatCapture.diff();
         int count = messages.isEmpty() ? 0 : messages.split("\n", -1).length;
-        sendJson(ex, 200, "{\"messages\":" + j(messages) + ",\"count\":" + count + "}");
+        sendJson(ex, 200, "{\"messages\":" + jsonEscape(messages) + ",\"count\":" + count + "}");
     }
 
     /**
@@ -537,7 +537,7 @@ public final class McpHttpServer {
             });
             sendJson(exchange, 200, "{\"ok\":true}");
         } catch (Exception e) {
-            sendJson(exchange, 500, "{\"error\":" + j(e.getMessage()) + "}");
+            sendJson(exchange, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
         }
     }
 }
