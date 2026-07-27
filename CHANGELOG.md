@@ -2,6 +2,13 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.5.11] - 2026-07-27
+
+### Changed
+
+- **runAlias response extended** — POS snapshot (`x`, `y`, `z`, `yaw`, `pitch`) captured before alias execution, returned alongside `tick`.
+- **POS snapshot synced** — new commit cherry-picked and method names aligned across all active branches.
+
 ## [1.5.10] - 2026-07-27
 
 ### Changed
