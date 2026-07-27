@@ -354,9 +354,9 @@ public final class McpHttpServer {
                         out.append(',');
                     out.append(grid[r][c]);
                 }
-                out.append('|');
+                out.append("|\"");
             }
-            out.append("]\"");
+            out.append("]");
         }
 
         out.append('}');
