@@ -263,6 +263,16 @@ public final class McpHttpServer {
         }
     }
 
+    /**
+     * Compact JSON view of an open container menu.
+     * <ul>
+     * <li>{@code inventory_items}: occupied slots as {@code [{index, item, count}]}. Index is a swapSlot argument — 1–41 for
+     * player inventory, {@code "cN"} for container slots.</li>
+     * <li>{@code empty_inv}: empty player-inventory slots compressed to ranges (e.g. {@code "1-9 10-36"}).</li>
+     * <li>{@code container_grid}: array of row strings, cells comma-separated between {@code |} — {@code cNN:*}
+     * (occupied), {@code cNN:O} (empty), five spaces (no slot), e.g. {@code "|c01:*,c02:O|"}.</li>
+     * </ul>
+     */
     private static String buildContainerJson(ScreenHandler menu) {
         StringBuilder out = new StringBuilder("{");
 
@@ -331,28 +341,29 @@ public final class McpHttpServer {
             int rows = (maxY - minY) / 18 + 1;
             String[][] grid = new String[rows][cols];
             for (int r = 0; r < rows; r++)
-                Arrays.fill(grid[r], "\"     \"");
+                Arrays.fill(grid[r], "     ");
 
             for (int[] s : gridSlots) {
                 int col = (s[1] - minX) / 18;
                 int row = (s[2] - minY) / 18;
                 char state = s[3] == 0 ? 'O' : '*';
-                grid[row][col] = "\"c" + String.format("%02d", s[0]) + ':' + state + '"';
+                grid[row][col] = "c" + String.format("%02d", s[0]) + ':' + state;
             }
 
             out.append(",\"container_grid\":[");
             for (int r = 0; r < rows; r++) {
                 if (r > 0)
                     out.append(',');
-                out.append("\"|");
+                StringBuilder row = new StringBuilder("|");
                 for (int c = 0; c < cols; c++) {
                     if (c > 0)
-                        out.append(',');
-                    out.append(grid[r][c]);
+                        row.append(',');
+                    row.append(grid[r][c]);
                 }
-                out.append("|\"");
+                row.append('|');
+                out.append(jsonEscape(row.toString()));
             }
-            out.append("]");
+            out.append(']');
         }
 
         out.append('}');
