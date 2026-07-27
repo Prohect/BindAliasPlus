@@ -317,6 +317,9 @@ public final class McpHttpServer {
                 emptyRanges.append('-').append(end);
         }
 
+        out.append("\"inventory_items\":[").append(items).append(']');
+        out.append(",\"empty_inv\":").append(jsonEscape(emptyRanges.toString()));
+
         // build container grid
         if (!gridSlots.isEmpty()) {
             int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
@@ -356,8 +359,6 @@ public final class McpHttpServer {
             out.append(']');
         }
 
-        out.append(",\"inventory_items\":[").append(items).append(']');
-        out.append(",\"empty_inv\":").append(jsonEscape(emptyRanges.toString()));
         out.append('}');
         return out.toString();
     }
