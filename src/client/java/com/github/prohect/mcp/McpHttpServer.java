@@ -319,6 +319,9 @@ public final class McpHttpServer {
                 emptyInv.append('-').append(end);
         }
 
+        out.append(",\"items\":[").append(items).append(']');
+        out.append(",\"emptyInv\":").append(jsonEscape(emptyInv.toString()));
+
         if (!nonInv.isEmpty()) {
             int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
             int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
@@ -368,8 +371,6 @@ public final class McpHttpServer {
             out.append("]}");
         }
 
-        out.append(",\"items\":[").append(items).append(']');
-        out.append(",\"emptyInv\":").append(jsonEscape(emptyInv.toString()));
         out.append('}');
 
         if (out.length() > CONTAINER_JSON_MAX) {
