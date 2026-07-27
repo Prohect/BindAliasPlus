@@ -475,13 +475,25 @@ public final class McpHttpServer {
         final String definition = def;
         try {
             String result = onMainThread(() -> {
-                // Use UserAlias for full chaining support
-                // (space-separated aliases, \ for args)
-                new UserAlias(definition).run("");
-                // tick since world join at the exact moment the alias was executed
+                // snapshot: captured BEFORE alias execution executes,
+                // consistently reflecting state at the moment the call was made
                 long tickSinceJoin = BindAliasPlusClient.joinTick < 0 ? -1
                         : (BindAliasPlusClient.currentTick - BindAliasPlusClient.joinTick);
-                return "{\"tick\":" + tickSinceJoin + "}";
+                StringBuilder sb = new StringBuilder("{\"tick\":").append(tickSinceJoin);
+                LocalPlayer p = Minecraft.getInstance().player;
+                if (p != null) {
+                    sb.append(",\"x\":").append(p.getX());
+                    sb.append(",\"y\":").append(p.getY());
+                    sb.append(",\"z\":").append(p.getZ());
+                    sb.append(",\"yaw\":").append(p.getYRot());
+                    sb.append(",\"pitch\":").append(p.getXRot());
+                }
+                sb.append('}');
+                String json = sb.toString();
+                // dispatch alias chain after snapshot is cached
+                // (chain may contain wait\N — deferred effects not in this snapshot)
+                new UserAlias(definition).run("");
+                return json;
             });
             sendJson(exchange, 200, result);
         } catch (Exception e) {
