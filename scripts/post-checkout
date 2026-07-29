@@ -80,7 +80,7 @@ if $CACHE_VALID; then
     echo "[cache hit] Restoring Eclipse config + sources for '$BRANCH'..."
     cp "$CACHED_CLASSPATH" .classpath
     cp "$CACHED_PROJECT"  .project
-    rm -f ./*.launch
+    rm -f ./BindAliasPlus_*.launch
     echo "  $(find "$SRC_DIR" -name '*.java' | wc -l) source files ready"
     echo ""
     echo "Done."
@@ -112,7 +112,7 @@ sed -i '/gradleprojectnature/d'     .project
 sed -i '/<buildCommand>/{:a;N;/<\/buildCommand>/!ba;/gradleprojectbuilder/d}' .project
 
 # Clean up .launch files (Eclipse run-config boilerplate — not needed for JDTLS)
-rm -f ./*.launch
+rm -f ./BindAliasPlus_*.launch
 
 # Step 4: Extract MC source jars → minecraft-decompiled-sources/ for agent browsing
 if [ -d "$SRC_DIR" ] && [ "$(find "$SRC_DIR" -name '*.java' | wc -l)" -gt 0 ]; then
