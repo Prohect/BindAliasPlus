@@ -2,6 +2,10 @@
 # =============================================================================
 # post-checkout hook:  keep LSP/IDE in sync with the current branch
 #
+# Caches Eclipse project files (.classpath, .project) per branch under
+# minecraft-decompiled-sources/.cache/$BRANCH/ so that switching back to a
+# previously-built branch skips the Gradle toolchain entirely.
+#
 # To install:  cp scripts/post-checkout .git/hooks/post-checkout
 # =============================================================================
 
@@ -10,61 +14,101 @@ NEW_HEAD=$2
 # checkout type:  1 = branch switch,  0 = file checkout
 CHECKOUT_TYPE=$3
 
-if [ "$CHECKOUT_TYPE" = "1" ]; then
-    echo ""
-    echo "=== Branch switch detected → syncing JDTLS ==="
-    echo "    from: $PREV_HEAD"
-    echo "    to:   $NEW_HEAD"
+if [ "$CHECKOUT_TYPE" != "1" ]; then
+    exit 0
+fi
 
-    set -e
+echo ""
+echo "=== Branch switch detected → syncing JDTLS ==="
+echo "    from: $PREV_HEAD"
+echo "    to:   $NEW_HEAD"
 
-    ROOT="$(git rev-parse --show-toplevel)"
-    cd "$ROOT"
-    BRANCH="$(git branch --show-current)"
-    echo "=== Branch: $BRANCH ==="
+set -e
 
-    SRC_DIR="minecraft-decompiled-sources/$BRANCH"
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+BRANCH="$(git branch --show-current)"
+echo "=== Branch: $BRANCH ==="
 
-    # Step 1: Generate decompiled Minecraft sources (if not already cached)
-    if [ -d "$SRC_DIR" ] && [ "$(find "$SRC_DIR" -name '*.java' 2>/dev/null | wc -l)" -gt 0 ]; then
-        echo "[1/4] Sources already cached: $SRC_DIR ($(find "$SRC_DIR" -name '*.java' | wc -l) files)"
-    else
-        echo "[1/4] Generating Minecraft sources..."
-        ./gradlew clean
-        ./gradlew genSources --no-daemon --quiet
-    fi
+SRC_DIR="minecraft-decompiled-sources/$BRANCH"
+CACHE_DIR="minecraft-decompiled-sources/.cache/$BRANCH"
+CACHED_CLASSPATH="$CACHE_DIR/.classpath"
+CACHED_PROJECT="$CACHE_DIR/.project"
 
-    # Step 2: Generate Eclipse .classpath + .project
-    echo "[2/4] Generating Eclipse config..."
-    ./gradlew eclipse --no-daemon --quiet
+# ------------------------------------------------------------------
+# Determine whether a valid cache exists:
+#   - cached .classpath + .project are present
+#   - decompiled MC sources are already extracted
+# ------------------------------------------------------------------
+CACHE_VALID=false
+if [ -f "$CACHED_CLASSPATH" ] && [ -f "$CACHED_PROJECT" ] && \
+   [ -d "$SRC_DIR" ] && [ "$(find "$SRC_DIR" -name '*.java' 2>/dev/null | wc -l)" -gt 0 ]; then
+    CACHE_VALID=true
+fi
 
-    # Step 3: Strip Buildship from .project and .classpath
-    echo "[3/4] Stripping Buildship references..."
-    sed -i '/gradleclasspathcontainer/d' .classpath
-    sed -i '/gradleprojectnature/d' .project
-    sed -i '/<buildCommand>/{:a;N;/<\/buildCommand>/!ba;/gradleprojectbuilder/d}' .project
-
-    # Step 4: Extract MC source jars to minecraft-decompiled-sources/ for agent browsing
-    if [ -d "$SRC_DIR" ] && [ "$(find "$SRC_DIR" -name '*.java' | wc -l)" -gt 0 ]; then
-        echo "[4/4] Sources already cached: $SRC_DIR ($(find "$SRC_DIR" -name '*.java' | wc -l) files)"
-    else
-        echo "[4/4] Extracting Minecraft sources → $SRC_DIR ..."
-        rm -rf "$SRC_DIR"
-        mkdir -p "$SRC_DIR"
-        grep -o 'sourcepath="[^"]*loom-cache[^"]*-sources\.jar"' .classpath | sed 's/sourcepath="//;s/"$//' | sort -u | while read srcjar; do
-            echo "  extracting: $srcjar"
-            unzip -o -q "$srcjar" -d "$SRC_DIR"/
-        done
-        FILE_COUNT=$(find "$SRC_DIR" -name '*.java' | wc -l)
-        echo "  done: $FILE_COUNT files"
-        if [ "$FILE_COUNT" -eq 0 ]; then
-            echo "ERROR: No Java sources extracted. Check that genSources succeeded." >&2
-            exit 1
-        fi
-    fi
-
+# ==================================================================
+# CACHE HIT — restore files, skip the Gradle toolchain entirely
+# ==================================================================
+if $CACHE_VALID; then
+    echo "[cache hit] Restoring Eclipse config + sources for '$BRANCH'..."
+    cp "$CACHED_CLASSPATH" .classpath
+    cp "$CACHED_PROJECT"  .project
+    echo "  $(find "$SRC_DIR" -name '*.java' | wc -l) source files ready"
     echo ""
     echo "Done."
-
     set +e
+    exit 0
 fi
+
+# ==================================================================
+# CACHE MISS — run the full pipeline, then populate the cache
+# ==================================================================
+
+# Step 1: Generate decompiled Minecraft sources (if not already present)
+if [ -d "$SRC_DIR" ] && [ "$(find "$SRC_DIR" -name '*.java' 2>/dev/null | wc -l)" -gt 0 ]; then
+    echo "[1/4] Sources already present: $SRC_DIR ($(find "$SRC_DIR" -name '*.java' | wc -l) files)"
+else
+    echo "[1/4] Generating Minecraft sources..."
+    ./gradlew clean
+    ./gradlew genSources --no-daemon --quiet
+fi
+
+# Step 2: Generate Eclipse .classpath + .project
+echo "[2/4] Generating Eclipse config..."
+./gradlew eclipse --no-daemon --quiet
+
+# Step 3: Strip Buildship references (they're not needed for JDTLS / plain Eclipse)
+echo "[3/4] Stripping Buildship references..."
+sed -i '/gradleclasspathcontainer/d' .classpath
+sed -i '/gradleprojectnature/d'     .project
+sed -i '/<buildCommand>/{:a;N;/<\/buildCommand>/!ba;/gradleprojectbuilder/d}' .project
+
+# Step 4: Extract MC source jars → minecraft-decompiled-sources/ for agent browsing
+if [ -d "$SRC_DIR" ] && [ "$(find "$SRC_DIR" -name '*.java' | wc -l)" -gt 0 ]; then
+    echo "[4/4] Sources already extracted: $SRC_DIR ($(find "$SRC_DIR" -name '*.java' | wc -l) files)"
+else
+    echo "[4/4] Extracting Minecraft sources → $SRC_DIR ..."
+    rm -rf "$SRC_DIR"
+    mkdir -p "$SRC_DIR"
+    grep -o 'sourcepath="[^"]*loom-cache[^"]*-sources\.jar"' .classpath | sed 's/sourcepath="//;s/"$//' | sort -u | while read srcjar; do
+        echo "  extracting: $srcjar"
+        unzip -o -q "$srcjar" -d "$SRC_DIR"/
+    done
+    FILE_COUNT=$(find "$SRC_DIR" -name '*.java' | wc -l)
+    echo "  done: $FILE_COUNT files"
+    if [ "$FILE_COUNT" -eq 0 ]; then
+        echo "ERROR: No Java sources extracted. Check that genSources succeeded." >&2
+        exit 1
+    fi
+fi
+
+# Populate the cache so the next checkout of this branch skips Gradle
+echo "[cache] Saving Eclipse config for branch '$BRANCH'..."
+mkdir -p "$CACHE_DIR"
+cp .classpath "$CACHED_CLASSPATH"
+cp .project  "$CACHED_PROJECT"
+
+echo ""
+echo "Done."
+
+set +e
