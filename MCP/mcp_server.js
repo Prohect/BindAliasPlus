@@ -178,7 +178,7 @@ const TOOLS = [
         nap: {
           type: "number",
           description:
-            "Take a nap: seconds (float, 0.0-60.0) to keep waiting after the immediate game response before returning — gives deferred chain effects (after wait\\N) time to land in this response's channels and lets you pace calls without an external sleep. WARNING: the game keeps running while you nap — the response snapshot/channels were captured BEFORE the nap, and you cannot react to anything happening during it (mobs approaching, deferred chains firing, other actors acting) until this call returns; keep naps short in dangerous situations.",
+            "Take a nap: seconds (float, 0.0-60.0) to keep waiting after the immediate game response before returning — gives deferred chain effects (after wait\\N) time to land in this response's channels and lets you pace calls without an external sleep. WARNING: the game keeps running while you nap — the response snapshot/channels were captured BEFORE the nap, and you cannot react to anything happening during it (mobs approaching, deferred chains firing, other actors acting) until this call returns; keep naps short or not defined in dangerous situations.",
         },
       },
       required: ["def"],
