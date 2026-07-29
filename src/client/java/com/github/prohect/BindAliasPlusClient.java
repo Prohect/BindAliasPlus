@@ -11,8 +11,11 @@ import com.github.prohect.alias.BuiltinAliasWithDoubleArgs;
 import com.github.prohect.alias.BuiltinAliasWithIntegerArgs;
 import com.github.prohect.alias.UserAlias;
 import com.github.prohect.alias.builtinAlias.*;
+import com.github.prohect.mcp.GameChannels;
 import com.github.prohect.mcp.McpHttpServer;
-import com.github.prohect.mcp.ChatCapture;
+import com.github.prohect.mcp.RecipeBookHelper;
+import com.github.prohect.mcp.SoundCapture;
+import com.github.prohect.mcp.StateTracker;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -119,6 +122,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
 		new LockAlias().putToAliasesWithArgs_notSuggested();
 		new RunAliasAlias().putToAliasesWithArgs_notSuggested();
 		new OpenInventoryAlias().putToAliasesWithArgs_notSuggested();
+		new ApplyRecipeAlias().putToAliasesWithArgs();
 
 		// load builtin aliasesWithoutArgs
 		new CyclePerspectiveAlias().putToAliasesWithoutArgs();
@@ -190,8 +194,13 @@ public class BindAliasPlusClient implements ClientModInitializer {
 		// register CFG autoload on world join
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> client.execute(() -> {
 			joinTick = currentTick;
-			ChatCapture.init();
-			ChatCapture.resetDiff();
+			GameChannels.init();
+			GameChannels.resetAll();
+			StateTracker.reset();
+			RecipeBookHelper.reset();
+			// feed the sound channel (SoundManager does not exist yet during onInitializeClient;
+			// registration is deduped by listener identity, so repeat joins are harmless)
+			SoundCapture.register();
 			loadCFG();
 		}));
 
