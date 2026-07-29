@@ -17,7 +17,7 @@ cd BindAliasPlus
 
 The built JAR lands in `build/libs/`.
 
-> **Windows:** use `gradlew.bat` instead of `./gradlew`.
+> **Windows:** use `gradlew.bat` instead of `./gradlew` if you use cmd or powershell.
 > ./gradlew build would format the code.
 
 ## Run the test client
@@ -25,9 +25,13 @@ The built JAR lands in `build/libs/`.
 ```bash
 ./gradlew runTestClient
 ```
+or
+```bash
+./gradlew runClient
+```
 
-This launches Minecraft with the mod loaded and joins a test world
-(`Test_26_2` on the `26.1.2_26.2` branch). Test config lives in
+This launches Minecraft with the mod loaded and runTestClient joins a test world
+(`Test_26_2` on the `26.1.2_26.2` branch) automatically. Test config lives in
 `run/config/bind-alias-plus.cfg`.
 
 ## Useful Gradle tasks
