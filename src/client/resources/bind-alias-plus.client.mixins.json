@@ -9,7 +9,8 @@
     "MouseMixin",
     "NativeImageMixin",
     "ChatComponentMixin",
-    "AbstractContainerScreenMixin"
+    "AbstractContainerScreenMixin",
+    "ClientPacketListenerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

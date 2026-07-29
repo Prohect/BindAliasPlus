@@ -1,6 +1,6 @@
 package com.github.prohect.mixin.client;
 
-import com.github.prohect.mcp.ChatCapture;
+import com.github.prohect.mcp.GameChannels;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.network.chat.Component;
@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Hooks the three public {@link ChatComponent} message-entry points so {@link ChatCapture} can collect command-feedback text
- * during an active capture window.
+ * Hooks the three public {@link ChatComponent} message-entry points so the {@link GameChannels#CHAT} channel receives every
+ * chat line shown on the HUD (server/system/player messages).
  */
 @Mixin(ChatComponent.class)
 public class ChatComponentMixin {
@@ -35,6 +35,6 @@ public class ChatComponentMixin {
     }
 
     private static void capture(String text) {
-        ChatCapture.onMessage(text);
+        GameChannels.post(GameChannels.CHAT, text);
     }
 }
