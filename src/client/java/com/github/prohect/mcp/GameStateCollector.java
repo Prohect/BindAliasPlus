@@ -233,10 +233,7 @@ public final class GameStateCollector {
             first = false;
             var pEyePos = p.getEyePosition();
             sb.append(jsonEscape(other.getName().getString() + " ["
-                    + SoundCapture.directionOf(p,
-                            other.getX() - pEyePos.x,
-                            other.getY() - pEyePos.y,
-                            other.getZ() - pEyePos.z)
+                    + SoundCapture.directionOf(p, other.getX() - pEyePos.x, other.getY() - pEyePos.y, other.getZ() - pEyePos.z)
                     + "]"));
         }
         return sb.append(']').toString();
