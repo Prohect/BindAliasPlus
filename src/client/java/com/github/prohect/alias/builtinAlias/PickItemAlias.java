@@ -16,7 +16,9 @@ public class PickItemAlias extends BuiltinAliasWithoutArgs<PickItemAlias> {
      * {@code pickBlockOrEntity()} in the next polling cycle.
      */
     @Override
-    public PickItemAlias run(String args) {
+    public PickItemAlias run(String args) { // sets this.flag
+        if (Alias.isUnderTextInputScreen())
+            return this;
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null)
             return this;
