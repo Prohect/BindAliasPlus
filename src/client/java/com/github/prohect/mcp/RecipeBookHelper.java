@@ -1,0 +1,133 @@
+package com.github.prohect.mcp;
+
+import com.github.prohect.BindAliasPlusClient;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.NetworkRecipeId;
+import net.minecraft.recipe.RecipeDisplayEntry;
+import net.minecraft.recipe.RecipeFinder;
+import net.minecraft.recipe.display.SlotDisplayContexts;
+import net.minecraft.registry.Registries;
+import net.minecraft.screen.AbstractRecipeScreenHandler;
+import net.minecraft.util.context.ContextParameterMap;
+
+/**
+ * Read side of the client recipe book for the MCP API: lists unlocked recipes (result-item locale name + registry id + live
+ * craftability) and resolves name/id queries for the {@code applyRecipe} alias and the {@code listRecipes} tool.
+ * <p>
+ * Craftability mirrors the recipe book's own logic ({@code RecipeBookComponent#initVisuals}): account every player inventory
+ * stack plus the crafting slots of the open {@link AbstractRecipeScreenHandler}, then
+ * {@link RecipeDisplayEntry#isCraftable(RecipeFinder)}.
+ */
+public final class RecipeBookHelper {
+
+    private RecipeBookHelper() {}
+
+    /** One unlocked recipe, deduplicated by (item id, display name). */
+    public record RecipeInfo(String name, String itemId, boolean craftable, NetworkRecipeId displayId) {}
+
+    // ---- listing ----
+
+    /**
+     * All currently unlocked recipes, deduplicated, with live craftability. Works with or without an open screen; an open
+     * {@link AbstractRecipeScreenHandler} additionally accounts its crafting slots.
+     */
+    public static List<RecipeInfo> unlocked(MinecraftClient mc) {
+        ClientPlayerEntity p = mc.player;
+        List<RecipeInfo> out = new ArrayList<>();
+        if (p == null || p.getWorld() == null)
+            return out;
+        ContextParameterMap context = SlotDisplayContexts.createParameters(p.getWorld());
+        RecipeFinder stacked = new RecipeFinder();
+        p.getInventory().populateRecipeFinder(stacked);
+        if (p.currentScreenHandler instanceof AbstractRecipeScreenHandler menu)
+            menu.populateRecipeFinder(stacked);
+
+        Set<String> seen = new HashSet<>();
+        for (RecipeResultCollection collection : p.getRecipeBook().getOrderedResults()) {
+            for (RecipeDisplayEntry entry : collection.getAllRecipes()) {
+                List<ItemStack> results = entry.getStacks(context);
+                if (results.isEmpty())
+                    continue;
+                ItemStack result = results.get(0);
+                String itemId = Registries.ITEM.getId(result.getItem()).toString();
+                String name = result.getName().getString();
+                if (!seen.add(itemId + '|' + name))
+                    continue;
+                out.add(new RecipeInfo(name, itemId, entry.isCraftable(stacked), entry.id()));
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Resolve a user query to an unlocked recipe: exact result-item id first ({@code "minecraft:torch"} or bare
+     * {@code "torch"}), then case-insensitive substring of the locale name ({@code "iron sword"}).
+     *
+     * @return the first match, or null when nothing unlocked matches
+     */
+    public static RecipeInfo find(MinecraftClient mc, String query) {
+        List<RecipeInfo> all = unlocked(mc);
+        String q = query.toLowerCase(java.util.Locale.ROOT);
+        for (RecipeInfo r : all)
+            if (r.itemId().equals(query) || r.itemId().equals("minecraft:" + query))
+                return r;
+        for (RecipeInfo r : all)
+            if (r.name().toLowerCase(java.util.Locale.ROOT).contains(q))
+                return r;
+        return null;
+    }
+
+    /** @return true when {@code query} matches this recipe (same rules as {@link #find}). */
+    public static boolean matches(RecipeInfo r, String query) {
+        return r.itemId().equals(query) || r.itemId().equals("minecraft:" + query)
+                || r.name().toLowerCase(java.util.Locale.ROOT).contains(query.toLowerCase(java.util.Locale.ROOT));
+    }
+
+    // ---- diff bookkeeping for listRecipes (no-query mode) ----
+
+    private static final Set<Integer> reportedDisplayIds = new HashSet<>();
+    private static long baselineJoinTick = Long.MIN_VALUE;
+
+    public static void reset() {
+        reportedDisplayIds.clear();
+        baselineJoinTick = Long.MIN_VALUE;
+    }
+
+    /**
+     * Filter to recipes not yet reported by a previous no-query listRecipes call. Resets automatically on world change. Updates
+     * the reported set as a side effect.
+     */
+    public static synchronized List<RecipeInfo> onlyNew(List<RecipeInfo> all) {
+        if (BindAliasPlusClient.joinTick != baselineJoinTick) {
+            reportedDisplayIds.clear();
+            baselineJoinTick = BindAliasPlusClient.joinTick;
+        }
+        List<RecipeInfo> fresh = new ArrayList<>();
+        for (RecipeInfo r : all)
+            if (reportedDisplayIds.add(r.displayId().index()))
+                fresh.add(r);
+        return fresh;
+    }
+
+    /** JSON of a recipe list: {@code [{"name":"Torch","item":"minecraft:torch","craftable":true}]}. */
+    public static String recipesJson(List<RecipeInfo> recipes) {
+        StringBuilder sb = new StringBuilder("[");
+        boolean first = true;
+        for (RecipeInfo r : recipes) {
+            if (!first)
+                sb.append(',');
+            first = false;
+            sb.append("{\"name\":").append(GameStateCollector.jsonEscape(r.name())).append(",\"item\":")
+                    .append(GameStateCollector.jsonEscape(r.itemId())).append(",\"craftable\":").append(r.craftable())
+                    .append('}');
+        }
+        return sb.append(']').toString();
+    }
+}

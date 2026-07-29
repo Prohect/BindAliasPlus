@@ -1,6 +1,6 @@
 package com.github.prohect.mixin.client;
 
-import com.github.prohect.mcp.ChatCapture;
+import com.github.prohect.mcp.GameChannels;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,6 +16,6 @@ public class ChatComponentMixin {
     }
 
     private static void capture(String text) {
-        ChatCapture.onMessage(text);
+        GameChannels.post(GameChannels.CHAT, text);
     }
 }
