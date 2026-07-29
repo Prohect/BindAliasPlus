@@ -2,6 +2,19 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.7.1] - 2026-07-30
+
+### Fixed
+
+- **Builtin key aliases under text-input screens** — `+advancements`, `+debugOverlay` and `pickItem` no longer act while a chat/sign/book/command screen is open, matching the other builtin key aliases.
+- **Nearby-player direction** — now measured from the local player's eye position instead of feet.
+- **`sound` channel `here` threshold** — tightened from 0.5 m to 0.31 m.
+
+### Changed
+
+- **Bridge** — `mcp_server.js` revisions around the unified state envelope; tool instructions trimmed.
+- **post-checkout hook** — caches Eclipse config per branch to skip Gradle on re-checkout; cache invalidated when build config files change; `.launch` cleanup scoped to the `BindAliasPlus_` prefix.
+
 ## [1.7.0] - 2026-07-29
 
 ### Added
