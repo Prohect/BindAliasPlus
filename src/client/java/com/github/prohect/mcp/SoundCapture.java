@@ -73,7 +73,7 @@ public final class SoundCapture implements SoundInstanceListener {
     static String directionOf(ClientPlayerEntity p, double dx, double dy, double dz) {
         double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
         double horiz = Math.sqrt(dx * dx + dz * dz);
-        if (dist < 0.5)
+        if (dist < 0.31)
             return "here " + fmt1(dist) + "m";
         StringBuilder sb = new StringBuilder();
         if (horiz >= 0.5) {
