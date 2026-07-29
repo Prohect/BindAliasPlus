@@ -18,8 +18,9 @@ public class AdvancementsAlias extends BuiltinAliasWithBooleanArgs<AdvancementsA
 
     @Override
     public AdvancementsAlias run(String args) {
-        parseArgs(args);                          // sets this.flag
-        if (Alias.isUnderTextInputScreen() && flag) return this;
+        parseArgs(args); // sets this.flag
+        if (Alias.isUnderTextInputScreen() && flag)
+            return this;
         KeyMapping key = Minecraft.getInstance().options.keyAdvancements;
         key.setDown(flag);
         if (flag)
