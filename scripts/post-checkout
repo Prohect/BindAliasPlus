@@ -6,6 +6,10 @@
 # minecraft-decompiled-sources/.cache/$BRANCH/ so that switching back to a
 # previously-built branch skips the Gradle toolchain entirely.
 #
+# Cache validity is tied to a hash of build-config files (build.gradle,
+# gradle.properties, settings.gradle).  When those change the cache is
+# automatically invalidated and the full pipeline reruns.
+#
 # To install:  cp scripts/post-checkout .git/hooks/post-checkout
 # =============================================================================
 
@@ -34,16 +38,39 @@ SRC_DIR="minecraft-decompiled-sources/$BRANCH"
 CACHE_DIR="minecraft-decompiled-sources/.cache/$BRANCH"
 CACHED_CLASSPATH="$CACHE_DIR/.classpath"
 CACHED_PROJECT="$CACHE_DIR/.project"
+CACHED_BUILDHASH="$CACHE_DIR/.buildhash"
+
+# Files whose contents determine whether the cached classpath is still valid
+BUILD_FILES="build.gradle gradle.properties settings.gradle"
+
+# ------------------------------------------------------------------
+# Compute a hash of the build-config files that affect the classpath
+# ------------------------------------------------------------------
+compute_buildhash() {
+    cat $BUILD_FILES 2>/dev/null | md5sum | cut -d' ' -f1
+}
 
 # ------------------------------------------------------------------
 # Determine whether a valid cache exists:
 #   - cached .classpath + .project are present
+#   - cached buildhash matches current build files
 #   - decompiled MC sources are already extracted
 # ------------------------------------------------------------------
 CACHE_VALID=false
 if [ -f "$CACHED_CLASSPATH" ] && [ -f "$CACHED_PROJECT" ] && \
+   [ -f "$CACHED_BUILDHASH" ] && \
    [ -d "$SRC_DIR" ] && [ "$(find "$SRC_DIR" -name '*.java' 2>/dev/null | wc -l)" -gt 0 ]; then
-    CACHE_VALID=true
+
+    CURRENT_HASH=$(compute_buildhash)
+    CACHED_HASH=$(cat "$CACHED_BUILDHASH")
+
+    if [ "$CURRENT_HASH" = "$CACHED_HASH" ]; then
+        CACHE_VALID=true
+    else
+        echo "[cache stale] Build config changed — invalidating cache"
+        echo "  cached:  $CACHED_HASH"
+        echo "  current: $CURRENT_HASH"
+    fi
 fi
 
 # ==================================================================
@@ -107,6 +134,7 @@ echo "[cache] Saving Eclipse config for branch '$BRANCH'..."
 mkdir -p "$CACHE_DIR"
 cp .classpath "$CACHED_CLASSPATH"
 cp .project  "$CACHED_PROJECT"
+compute_buildhash > "$CACHED_BUILDHASH"
 
 echo ""
 echo "Done."
