@@ -79,6 +79,7 @@ BindAliasPlus includes prebuilt aliases for common actions. They are divided int
 | `localSay\string`      | display a chat message on the local client only, without sending to the server. Useful for testing, notifications, and debug output. | `localSay\"Debug: slot is \(mySlot)"` (local-only message) |
 | `sendCommand\command`  | send a command.                                                                           | `sendCommand\"gamemode creative"` (send a command that is "gamemode creative") |
 | `var\varName\source`  | Store a value into a variable. Sources: `hotbarSlot`, `itemsOfSlot0-9`, `pitch`, `yaw`, or a number. | `var\mySlot\hotbarSlot` (store hotbar slot), `var\angle\pitch` (store pitch angle) |
+| `applyRecipe\query`   | Place an unlocked, craftable recipe into the crafting grid of the open recipe menu (inventory / crafting table / furnace), like clicking it in the recipe book. No crafting is performed. Query: result-item id (`minecraft:torch` / `torch`) or locale-name substring (`iron sword`). Errors (no menu open / not unlocked / missing ingredients) go to the local game chat. | `applyRecipe\torch` |
 | `reapply\action`       | Manually re-assert a held-down boolean alias (attack, use, forward, back, left, right, jump, sneak, sprint, drop, openInventory). Useful at the end of a UserAlias after screen transitions. | `reapply\forward` (re-presses forward key if held)                                |
 | `openInventory\state`  | Opens (1) or closes (0) the inventory screen.                                            | `openInventory\1` (opens inventory), `openInventory\0` (closes inventory)         |
 
@@ -159,28 +160,36 @@ BindAliasPlus includes a built-in HTTP server that enables AI agents (such as Cl
 automation scripts) to observe and control your Minecraft client. This is the companion mod for the
 [BindAliasPlus MCP tool](https://github.com/Prohect/BindAliasPlus-mcp).
 
-The server listens on `http://localhost:25567` (configurable in `config/bind-alias-plus.cfg`) and provides:
+The server listens on `http://localhost:25575` (falls back to the next free port, up to +9, when occupied — the chosen port is logged) and provides:
 
 | Endpoint           | Method | Description                                                              |
 |--------------------|--------|--------------------------------------------------------------------------|
-| `/state`           | GET    | Player position, health, held item, open container contents (compressed) |
-| `/screenshot`      | GET    | In-memory PNG screenshot (no chat spam, no file I/O)                     |
+| `/state`           | GET    | Full game-state snapshot + drained message channels (envelope)           |
+| `/screenshot`      | GET    | In-memory PNG screenshot (base64) + envelope (no chat spam, no file I/O) |
 | `/runAlias`        | POST   | Execute alias chains remotely (e.g., `swapSlot\1\2`)                   |
-| `/defineAlias`     | POST   | Define new aliases via API                                               |
-| `/readCFG`         | GET    | Read the current config file contents                                    |
+| `/defineAlias`     | POST   | Define new aliases via API (feedback arrives in the chat channel)        |
+| `/readCFG`         | GET    | Read the current config file contents (raw text, no envelope)            |
 | `/writeCFG`        | POST   | Write to the config file (modify binds, aliases, variables)              |
+| `/listRecipes`     | GET    | List recipes unlocked in the recipe book (diff or per-query answers)     |
+
+Every game-interacting endpoint answers with the same **envelope**:
+`{"tick":N, "state":{...}, "chat":[...], "mod":[...], "sound":[...], "recipe":[...]}` — `state` is a full snapshot
+for `/state` and a changed-members-only diff for everything else (omitted when nothing changed); `chat` (game chat),
+`mod` (mod log), `sound` (subtitled sounds with compass direction + distance) and `recipe` (newly unlocked recipes)
+are message channels drained exactly once per message and omitted when empty. All state info is also visible on the
+vanilla HUD or the open screen.
 
 **Example agent usage:**
 
 ```bash
 # Check what the player sees
-curl http://localhost:25567/state
+curl http://localhost:25575/state
 
 # Execute an alias chain
-curl -X POST http://localhost:25567/runAlias -d "swapSlot\1\2\wait\2\+attack"
+curl -X POST http://localhost:25575/runAlias -d "swapSlot\1\2\wait\2\+attack"
 
 # Take a screenshot
-curl http://localhost:25567/screenshot -o screen.png
+curl http://localhost:25575/screenshot -o screen.png
 ```
 
 ### Example Config
@@ -248,8 +257,8 @@ curl http://localhost:25567/screenshot -o screen.png
 - **Variables**: Supports integer and floating-point values. Numeric aliases (`yaw`, `pitch`, `setYaw`, `setPitch`,
   `slot`, `swapSlot`, `wait`, `setPerspective`) accept variable names in place of raw numbers.
 - **Safety**: Avoid excessive automation on servers with anti-cheat systems (some actions may be flagged).
-- **MCP Server**: The built-in HTTP API listens on port `25567` by default. Change `mcpPort` in
-  `config/bind-alias-plus.cfg` if the port conflicts. Pair with the
+- **MCP Server**: The built-in HTTP API listens on port `25575` by default (falls back to the next free port when
+  occupied). Pair with the
   [BindAliasPlus MCP tool](https://github.com/Prohect/BindAliasPlus-mcp) for AI agent integration.
 
 ## Contributing
