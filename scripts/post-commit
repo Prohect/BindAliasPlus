@@ -26,9 +26,11 @@ read_lines() {
 }
 
 match_pattern() {
+  shopt -s extglob
   for p in "${patterns[@]}"; do
     [[ "$1" == $p ]] && return 0
   done
+  shopt -u extglob
   return 1
 }
 
