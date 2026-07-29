@@ -4,12 +4,7 @@
 scripts/*
 
 # docs
-AGENTS.md
-BUILD.md
-CHANGELOG.md
-README.md
-README_CN.md
-test_or_release_README.md
+*.md
 docs/README.md
 docs/JAVA_DOC_GUIDE.md
 
