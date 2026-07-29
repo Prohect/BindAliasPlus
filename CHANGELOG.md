@@ -2,6 +2,25 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [1.7.0] - 2026-07-29
+
+### Added
+
+- **Unified state envelope** — every game endpoint returns `{tick,state,chat,mod,sound,recipe}`: full snapshot for `getState`, changed-member diffs elsewhere (container diffed at slot granularity); `held_keys` is present whenever non-empty.
+- **New state fields** — `world_name`, `feet`, `hunger`/`saturation`/`armor`/`xp`, crosshair `target`, active `effects`, nearby `players` (locator-bar style, relative yaw/pitch), `hotbar` (+`hotbar_empty`); container items gained `durability`/`enchanted`/`tooltip`.
+- **`sound` channel** — subtitle-audible sounds with tick stamp, relative yaw/pitch (20° steps) and distance; repeats coalesce with `xN`.
+- **`recipe` channel, `listRecipes` tool, `applyRecipe` alias** — recipe unlocks reported by result-item name; unlocked recipes can be listed (diff or per-query) and placed into the crafting grid like a recipe-book click (no crafting).
+- **MCP port fallback** — the mod falls back to the next free port from 25575; bridge gained `--port`.
+
+### Changed
+
+- **chat/mod channels split** — `ChatCapture` replaced by `GameChannels`: `chat` = game chat, `mod` = mod log output (alias feedback, errors, `log\` messages).
+- **Bridge** — `runAlias` delay parameter renamed to `nap`; `listRecipes` added, `getLogDiff` dropped.
+
+### Fixed
+
+- **container_grid leading-blank alignment**.
+
 ## [1.6.0] - 2026-07-27
 
 ### Changed
