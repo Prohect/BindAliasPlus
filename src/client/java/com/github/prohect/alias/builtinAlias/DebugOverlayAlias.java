@@ -1,5 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
+import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 import net.minecraft.client.Minecraft;
 
@@ -15,7 +16,8 @@ public class DebugOverlayAlias extends BuiltinAliasWithBooleanArgs<DebugOverlayA
 
     @Override
     public DebugOverlayAlias run(String args) {
-        parseArgs(args);
+        parseArgs(args);                          // sets this.flag
+        if (Alias.isUnderTextInputScreen() && flag) return this;
         Minecraft.getInstance().debugEntries.setOverlayVisible(flag);
         return this;
     }

@@ -1,6 +1,8 @@
 package com.github.prohect.alias.builtinAlias;
 
+import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
+
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 
@@ -16,7 +18,8 @@ public class AdvancementsAlias extends BuiltinAliasWithBooleanArgs<AdvancementsA
 
     @Override
     public AdvancementsAlias run(String args) {
-        parseArgs(args);
+        parseArgs(args);                          // sets this.flag
+        if (Alias.isUnderTextInputScreen() && flag) return this;
         KeyMapping key = Minecraft.getInstance().options.keyAdvancements;
         key.setDown(flag);
         if (flag)
