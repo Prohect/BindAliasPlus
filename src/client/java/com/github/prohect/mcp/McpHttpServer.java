@@ -13,9 +13,6 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,58 +20,67 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
 
 /**
- * Lightweight HTTP API server bound to {@code 127.0.0.1:25575}.
+ * Lightweight HTTP API server (default {@code 127.0.0.1:25575}, falls back to the next free port up to +9 when occupied — the
+ * chosen port is logged).
  * <p>
- * Exposes mod state and alias dispatch so an external MCP bridge can control Minecraft through the mod's alias system. All
- * game-thread access goes through {@link Minecraft#execute(Runnable)} with a 5 s timeout to prevent the HTTP handler from
- * blocking forever.
+ * Every game-interacting endpoint returns the same <b>envelope</b> assembled by {@link StateTracker}: {@code {"tick":N,
+ * "state":{...}, "chat":[...], "mod":[...], "sound":[...], "recipe":[...]}} — changed-state diff (full for {@code /state}) plus
+ * freshly drained message channels, so callers never need a separate poll for feedback. {@code /readCFG} is the only
+ * non-envelope endpoint (raw file text). All game-thread access goes through {@link Minecraft#execute(Runnable)} with a timeout
+ * to keep HTTP threads from blocking forever.
  * <p>
  * Started from {@link BindAliasPlusClient#onInitializeClient()}.
  */
 public final class McpHttpServer {
 
-    private static final int PORT = 25575;
+    private static final int DEFAULT_PORT = 25575;
+    private static final int MAX_PORT_ATTEMPTS = 10;
     private static final int TIMEOUT_SECONDS = 5;
     private static HttpServer server;
+    private static int port = DEFAULT_PORT;
 
     private McpHttpServer() {}
 
     // ---- lifecycle ----
 
-    /** Start the HTTP server on the default port. Safe to call multiple times. */
+    /** Start the HTTP server on the first free port from {@value #DEFAULT_PORT} upwards. Safe to call multiple times. */
     public static void start() {
         if (server != null)
             return;
-        try {
-            server = HttpServer.create(new InetSocketAddress("127.0.0.1", PORT), 0);
-            server.createContext("/state", McpHttpServer::handleState);
-            server.createContext("/screenshot", McpHttpServer::handleScreenshot);
-            server.createContext("/runAlias", McpHttpServer::handleRunAlias);
-            server.createContext("/defineAlias", McpHttpServer::handleDefineAlias);
-            server.createContext("/readCFG", McpHttpServer::handleReadCFG);
-            server.createContext("/writeCFG", McpHttpServer::handleWriteCFG);
-            server.createContext("/logDiff", McpHttpServer::handleLogDiff);
-            server.setExecutor(Executors.newCachedThreadPool(r -> {
-                Thread t = new Thread(r, "BindAliasPlus-MCP");
-                t.setDaemon(true);
-                return t;
-            }));
-            server.start();
-            Runtime.getRuntime().addShutdownHook(new Thread(McpHttpServer::stop, "BindAliasPlus-MCP-Shutdown"));
-            BindAliasPlusClient.LOGGER.info("{}[MCP] HTTP server started on 127.0.0.1:{}", BindAliasPlusClient.tickPrefix(),
-                    PORT);
-        } catch (Exception e) {
-            BindAliasPlusClient.LOGGER.error("{}[MCP] Failed to start HTTP server", BindAliasPlusClient.tickPrefix(), e);
+        for (int attempt = 0; attempt < MAX_PORT_ATTEMPTS; attempt++) {
+            int candidate = DEFAULT_PORT + attempt;
+            try {
+                server = HttpServer.create(new InetSocketAddress("127.0.0.1", candidate), 0);
+                port = candidate;
+                break;
+            } catch (IOException e) {
+                BindAliasPlusClient.LOGGER.warn("{}[MCP] Port {} unavailable, trying next", BindAliasPlusClient.tickPrefix(),
+                        candidate);
+            }
         }
+        if (server == null) {
+            BindAliasPlusClient.LOGGER.error("{}[MCP] Failed to start HTTP server: no free port in {}-{}",
+                    BindAliasPlusClient.tickPrefix(), DEFAULT_PORT, DEFAULT_PORT + MAX_PORT_ATTEMPTS - 1);
+            return;
+        }
+        server.createContext("/state", McpHttpServer::handleState);
+        server.createContext("/screenshot", McpHttpServer::handleScreenshot);
+        server.createContext("/runAlias", McpHttpServer::handleRunAlias);
+        server.createContext("/defineAlias", McpHttpServer::handleDefineAlias);
+        server.createContext("/readCFG", McpHttpServer::handleReadCFG);
+        server.createContext("/writeCFG", McpHttpServer::handleWriteCFG);
+        server.createContext("/listRecipes", McpHttpServer::handleListRecipes);
+        server.setExecutor(Executors.newCachedThreadPool(r -> {
+            Thread t = new Thread(r, "BindAliasPlus-MCP");
+            t.setDaemon(true);
+            return t;
+        }));
+        server.start();
+        Runtime.getRuntime().addShutdownHook(new Thread(McpHttpServer::stop, "BindAliasPlus-MCP-Shutdown"));
+        BindAliasPlusClient.LOGGER.info("{}[MCP] HTTP server started on 127.0.0.1:{}", BindAliasPlusClient.tickPrefix(), port);
     }
 
     /** Stop the HTTP server with a 0-second grace period. */
@@ -84,6 +90,11 @@ public final class McpHttpServer {
             server = null;
             BindAliasPlusClient.LOGGER.info("{}[MCP] HTTP server stopped", BindAliasPlusClient.tickPrefix());
         }
+    }
+
+    /** The port the server actually bound (≤ {@value #DEFAULT_PORT} + 9). */
+    public static int port() {
+        return port;
     }
 
     // ---- helpers ----
@@ -150,35 +161,6 @@ public final class McpHttpServer {
         }
     }
 
-    /** Minimal JSON string escaping (no external dependency). */
-    private static String jsonEscape(String s) {
-        if (s == null)
-            return "null";
-        StringBuilder sb = new StringBuilder("\"");
-        for (char c : s.toCharArray()) {
-            switch (c) {
-                case '"':
-                    sb.append("\\\"");
-                    break;
-                case '\\':
-                    sb.append("\\\\");
-                    break;
-                case '\n':
-                    sb.append("\\n");
-                    break;
-                case '\r':
-                    sb.append("\\r");
-                    break;
-                case '\t':
-                    sb.append("\\t");
-                    break;
-                default:
-                    sb.append(c);
-            }
-        }
-        return sb.append('"').toString();
-    }
-
     @FunctionalInterface
     private interface CheckedSupplier<T> {
         T get() throws Exception;
@@ -186,205 +168,17 @@ public final class McpHttpServer {
 
     // ---- endpoints ----
 
-    /** GET /state — snapshot of current game state. */
+    /** GET /state — full state snapshot + drained channels. */
     static void handleState(HttpExchange exchange) throws IOException {
         try {
-            String json = onMainThread(() -> {
-                Minecraft mc = Minecraft.getInstance();
-                StringBuilder sb = new StringBuilder("{");
-
-                // screen
-                var screen = McScreenHelper.getCurrentScreen(mc);
-                sb.append("\"screen\":");
-                sb.append(screen == null ? "null" : jsonEscape(screen.getClass().getName()));
-
-                // tick (since world join; same as log tick stamp)
-                sb.append(",\"tick\":").append(BindAliasPlusClient.joinTick < 0 ? -1
-                        : (BindAliasPlusClient.currentTick - BindAliasPlusClient.joinTick));
-
-                LocalPlayer p = mc.player;
-                if (p != null) {
-                    // dimension
-                    sb.append(",\"dimension\":");
-                    sb.append(jsonEscape(p.level().dimension().toString()));
-
-                    // world / server name
-                    String worldName = null;
-                    try {
-                        if (mc.getSingleplayerServer() != null) {
-                            worldName = mc.getSingleplayerServer().getWorldData().getLevelName();
-                        } else if (mc.getCurrentServer() != null) {
-                            worldName = mc.getCurrentServer().name;
-                        }
-                    } catch (Exception ignored) {
-                        // best-effort; ignore if mappings differ
-                    }
-                    sb.append(",\"worldName\":");
-                    sb.append(worldName == null ? "null" : jsonEscape(worldName));
-
-                    // position
-                    sb.append(",\"x\":").append(p.getX());
-                    sb.append(",\"y\":").append(p.getY());
-                    sb.append(",\"z\":").append(p.getZ());
-                    sb.append(",\"yaw\":").append(p.getYRot());
-                    sb.append(",\"pitch\":").append(p.getXRot());
-
-                    // health
-                    sb.append(",\"health\":").append(p.getHealth());
-                    sb.append(",\"maxHealth\":").append(p.getMaxHealth());
-
-                    // held item
-                    ItemStack held = p.getMainHandItem();
-                    if (held != null && !held.isEmpty()) {
-                        sb.append(",\"heldItem\":");
-                        sb.append(jsonEscape(BuiltInRegistries.ITEM.getKey(held.getItem()).toString()));
-                        sb.append(",\"heldItemCount\":").append(held.getCount());
-                    } else {
-                        sb.append(",\"heldItem\":null");
-                        sb.append(",\"heldItemCount\":0");
-                    }
-
-                    // hotbar slot (1-indexed)
-                    sb.append(",\"hotbarSlot\":").append(p.getInventory().getSelectedSlot() + 1);
-
-                    // open container menu slots (read-only; c matches swapSlot's cN addressing)
-                    if (screen instanceof AbstractContainerScreen<?> containerScreen) {
-                        sb.append(",\"container\":").append(buildContainerJson(containerScreen.getMenu()));
-                    }
-                }
-
-                sb.append('}');
-                return sb.toString();
-            });
+            String json = onMainThread(() -> StateTracker.finish(StateTracker.begin(true)));
             sendJson(exchange, 200, json);
         } catch (Exception e) {
-            sendJson(exchange, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
+            sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
         }
     }
 
-    /**
-     * Compact JSON view of an open container menu.
-     * <ul>
-     * <li>{@code inventory_items}: occupied slots as {@code [{index, item, count}]}. Index is a swapSlot argument — 1–41 for
-     * player inventory, {@code "cN"} for container slots.</li>
-     * <li>{@code empty_inv}: empty player-inventory slots compressed to ranges (e.g. {@code "1-9 10-36"}).</li>
-     * <li>{@code container_grid}: array of row strings. Consecutive container cells are space-separated inside one
-     * {@code |group|} — {@code cNN:*} (occupied), {@code cNN:O} (empty); a no-slot cell is five spaces. Everything past the
-     * last container cell of a row is blank padding, and all rows but the last end with {@code \n}, e.g.
-     * {@code "|c01:* c02:O|     |c03:*|\n"}.</li>
-     * </ul>
-     */
-    private static String buildContainerJson(AbstractContainerMenu menu) {
-        StringBuilder out = new StringBuilder("{");
-
-        StringBuilder items = new StringBuilder();
-        List<Integer> emptyInv = new ArrayList<>();
-        List<int[]> gridSlots = new ArrayList<>(); // {c, x, y, occupied(0|1)}
-
-        for (int i = 0; i < menu.slots.size(); i++) {
-            Slot slot = menu.slots.get(i);
-            int c = i + 1;
-            ItemStack stack = slot.getItem();
-            boolean isPlayerInv = slot.container instanceof Inventory;
-
-            if (!stack.isEmpty()) {
-                if (items.length() > 0)
-                    items.append(',');
-                items.append("{\"index\":");
-                if (isPlayerInv)
-                    items.append(slot.getContainerSlot() + 1);
-                else
-                    items.append(jsonEscape("c" + c));
-                items.append(",\"item\":").append(jsonEscape(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()))
-                        .append(",\"count\":").append(stack.getCount()).append('}');
-            }
-
-            if (isPlayerInv) {
-                if (stack.isEmpty())
-                    emptyInv.add(slot.getContainerSlot() + 1);
-            } else {
-                gridSlots.add(new int[] {c, slot.x, slot.y, stack.isEmpty() ? 0 : 1});
-            }
-        }
-
-        // compress empty inventory slots to ranges
-        Collections.sort(emptyInv);
-        StringBuilder emptyRanges = new StringBuilder();
-        for (int i = 0; i < emptyInv.size(); i++) {
-            int start = emptyInv.get(i);
-            int end = start;
-            while (i + 1 < emptyInv.size() && emptyInv.get(i + 1) == end + 1)
-                end = emptyInv.get(++i);
-            if (emptyRanges.length() > 0)
-                emptyRanges.append(' ');
-            emptyRanges.append(start);
-            if (end > start)
-                emptyRanges.append('-').append(end);
-        }
-
-        out.append("\"inventory_items\":[").append(items).append(']');
-        out.append(",\"empty_inv\":").append(jsonEscape(emptyRanges.toString()));
-
-        // build container grid
-        if (!gridSlots.isEmpty()) {
-            int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
-            int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
-            for (int[] s : gridSlots) {
-                minX = Math.min(minX, s[1]);
-                maxX = Math.max(maxX, s[1]);
-                minY = Math.min(minY, s[2]);
-                maxY = Math.max(maxY, s[2]);
-            }
-
-            int cols = (maxX - minX) / 18 + 1;
-            int rows = (maxY - minY) / 18 + 1;
-            String[][] grid = new String[rows][cols];
-            for (int r = 0; r < rows; r++)
-                Arrays.fill(grid[r], "     ");
-
-            for (int[] s : gridSlots) {
-                int col = (s[1] - minX) / 18;
-                int row = (s[2] - minY) / 18;
-                char state = s[3] == 0 ? 'o' : '*';
-                grid[row][col] = "c" + String.format("%02d", s[0]) + ':' + state;
-            }
-
-            out.append(",\"container_grid\":[");
-            int width = cols * 6 + 1;
-            for (int r = 0; r < rows; r++) {
-                if (r > 0)
-                    out.append(',');
-                // group consecutive container cells inside one |group|; drop everything past the last container cell
-                int last = -1;
-                for (int c = cols - 1; c >= 0; c--)
-                    if (!grid[r][c].startsWith(" ")) {
-                        last = c;
-                        break;
-                    }
-                StringBuilder row = new StringBuilder();
-                if (last >= 0) {
-                    row.append('|');
-                    for (int c = 0; c <= last; c++) {
-                        if (c > 0)
-                            row.append(grid[r][c - 1].startsWith(" ") || grid[r][c].startsWith(" ") ? '|' : ' ');
-                        row.append(grid[r][c]);
-                    }
-                    row.append('|');
-                }
-                while (row.length() < width)
-                    row.append(' ');
-                if (r < rows - 1)
-                    row.append('\n');
-                out.append(jsonEscape(row.toString()));
-            }
-            out.append(']');
-        }
-
-        out.append('}');
-        return out.toString();
-    }
-
-    /** GET /screenshot — trigger a screenshot and return it base64-encoded. */
+    /** GET /screenshot — in-memory PNG (base64) merged with the standard envelope. */
     static synchronized void handleScreenshot(HttpExchange exchange) throws IOException {
         try {
             // Pre-check: must be in game
@@ -397,32 +191,28 @@ public final class McpHttpServer {
             // Arm the mixin capture and trigger the native screenshot.
             // NativeImageMixin intercepts writeToFile(Path) and completes
             // the future with in-memory PNG bytes -- no sleep or FS scan.
-            // Also capture player position in the same main-thread roundtrip.
             CompletableFuture<byte[]> future = new CompletableFuture<>();
             ScreenshotCapture.nextPngFuture = future;
-            final double[][] posHolder = new double[1][];
 
-            onMainThread(() -> {
+            String begun = onMainThread(() -> {
+                String env = StateTracker.begin(false);
                 Minecraft mc = Minecraft.getInstance();
-                var p = mc.player;
-                if (p != null) {
-                    posHolder[0] = new double[] {p.getX(), p.getY(), p.getZ(), p.getYRot(), p.getXRot()};
-                }
                 net.minecraft.client.Screenshot.grab(mc.gameDirectory, null, mc.getMainRenderTarget(), 1, msg -> {
                 });
-                return null;
+                return env;
             });
 
             // Wait on the HTTP thread (not the game thread) for the
             // I/O-thread PNG encode to finish.
             byte[] data;
             try {
-                data = future.get(3, java.util.concurrent.TimeUnit.SECONDS);
+                data = future.get(3, TimeUnit.SECONDS);
             } catch (java.util.concurrent.TimeoutException e) {
                 sendJson(exchange, 500, "{\"error\":\"screenshot timed out\"}");
                 return;
             } catch (Exception e) {
-                sendJson(exchange, 500, "{\"error\":\"screenshot failed: " + jsonEscape(e.getMessage()) + "\"}");
+                sendJson(exchange, 500,
+                        "{\"error\":\"screenshot failed: " + GameStateCollector.jsonEscape(e.getMessage()) + "\"}");
                 return;
             }
 
@@ -431,29 +221,20 @@ public final class McpHttpServer {
                 return;
             }
 
-            String path = ScreenshotCapture.lastPath;
-            String name = ScreenshotCapture.lastName;
-            String b64 = Base64.getEncoder().encodeToString(data);
-            StringBuilder json = new StringBuilder(512);
-            json.append("{\"path\":").append(jsonEscape(path)).append(",\"name\":").append(jsonEscape(name))
-                    .append(",\"base64\":").append(jsonEscape(b64));
-            double[] pos = posHolder[0];
-            if (pos != null) {
-                json.append(String.format(",\"x\":%.2f,\"y\":%.2f,\"z\":%.2f,\"yaw\":%.2f,\"pitch\":%.2f", pos[0], pos[1],
-                        pos[2], pos[3], pos[4]));
-            }
-            // tick (since world join; same as log tick stamp)
-            json.append(",\"tick\":").append(
-                    BindAliasPlusClient.joinTick < 0 ? -1 : (BindAliasPlusClient.currentTick - BindAliasPlusClient.joinTick));
-            json.append('}');
-            sendJson(exchange, 200, json.toString());
+            String b64 = java.util.Base64.getEncoder().encodeToString(data);
+            String envelope = StateTracker.finish(begun);
+            // merge: {"base64":"...", <envelope members>}
+            String json = "{\"base64\":" + GameStateCollector.jsonEscape(b64) + "," + envelope.substring(1);
+            sendJson(exchange, 200, json);
         } catch (Exception e) {
-            sendJson(exchange, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
+            sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
         }
     }
 
     /**
-     * POST /runAlias?def=… — execute a chain of aliases (space-separated, \ for args).
+     * POST /runAlias?def=… — execute a chain of aliases (space-separated, \ for args). The state diff is captured BEFORE
+     * execution; message channels are drained AFTER the immediate part of the chain ran, so {@code log\} and chat feedback
+     * inside the chain is delivered with this response. Deferred effects (after {@code wait\N}) show up in later responses.
      */
     static void handleRunAlias(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
@@ -478,34 +259,19 @@ public final class McpHttpServer {
         final String definition = def;
         try {
             String result = onMainThread(() -> {
-                // snapshot: captured BEFORE alias execution executes,
-                // consistently reflecting state at the moment the call was made
-                long tickSinceJoin = BindAliasPlusClient.joinTick < 0 ? -1
-                        : (BindAliasPlusClient.currentTick - BindAliasPlusClient.joinTick);
-                StringBuilder sb = new StringBuilder("{\"tick\":").append(tickSinceJoin);
-                LocalPlayer p = Minecraft.getInstance().player;
-                if (p != null) {
-                    sb.append(",\"x\":").append(p.getX());
-                    sb.append(",\"y\":").append(p.getY());
-                    sb.append(",\"z\":").append(p.getZ());
-                    sb.append(",\"yaw\":").append(p.getYRot());
-                    sb.append(",\"pitch\":").append(p.getXRot());
-                }
-                sb.append('}');
-                String json = sb.toString();
-                // dispatch alias chain after snapshot is cached
-                // (chain may contain wait\N — deferred effects not in this snapshot)
+                String begun = StateTracker.begin(false);
                 new UserAlias(definition).run("");
-                return json;
+                return StateTracker.finish(begun);
             });
             sendJson(exchange, 200, result);
         } catch (Exception e) {
-            sendJson(exchange, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
+            sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
         }
     }
 
     /**
-     * POST /defineAlias?name=…&def=… — define an alias via the real command pipeline and capture feedback.
+     * POST /defineAlias?name=…&def=… — define an alias via the real {@code /alias} client command. The command's feedback line
+     * ({@code "Alias x = ..."} / {@code "Can't replace builtinAlias x"}) is delivered in the response's {@code chat} channel.
      */
     static void handleDefineAlias(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
@@ -518,53 +284,133 @@ public final class McpHttpServer {
         }
 
         try {
-            // Enable capture before sending the command so the mixin
-            // collects the sendFeedback output from the /alias handler.
-            ChatCapture.begin();
-
-            onMainThread(() -> {
+            String result = onMainThread(() -> {
                 Minecraft mc = Minecraft.getInstance();
-                if (mc.player != null) {
-                    mc.player.connection.sendCommand("alias " + name + " " + def);
-                }
-                return null;
+                if (mc.player == null)
+                    return null;
+                String begun = StateTracker.begin(false);
+                mc.player.connection.sendCommand("alias " + name + " " + def);
+                return StateTracker.finish(begun);
             });
-
-            // Capture happens synchronously on the main thread — the
-            // command handler fires sendFeedback before returning.
-            String feedback = ChatCapture.end();
-
-            if (feedback == null || feedback.isEmpty()) {
-                sendJson(exchange, 500, "{\"error\":\"no feedback from command\"}");
+            if (result == null) {
+                sendJson(exchange, 400, "{\"error\":\"not in world\"}");
                 return;
             }
-
-            if (feedback.startsWith("Alias ")) {
-                sendJson(exchange, 200, "{\"ok\":true,\"feedback\":" + jsonEscape(feedback) + "}");
-            } else {
-                sendJson(exchange, 200, "{\"error\":" + jsonEscape(feedback) + "}");
-            }
+            sendJson(exchange, 200, result);
         } catch (Exception e) {
-            ChatCapture.end(); // ensure capture is stopped on error
-            sendJson(exchange, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
+            sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
         }
     }
 
-    /** GET /readCFG — return the raw config file content. */
+    /** GET /readCFG — return the raw config file content (the only non-envelope endpoint). */
     static void handleReadCFG(HttpExchange exchange) throws IOException {
         try {
             String content = Files.readString(BindAliasPlusClient.cfgPath);
-            sendJson(exchange, 200, "{\"content\":" + jsonEscape(content) + "}");
+            sendJson(exchange, 200, "{\"content\":" + GameStateCollector.jsonEscape(content) + "}");
         } catch (IOException e) {
-            sendJson(exchange, 500, "{\"error\":" + jsonEscape("failed to read: " + e.getMessage()) + "}");
+            sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape("failed to read: " + e.getMessage()) + "}");
         }
     }
 
-    /** GET /logDiff — return new game-log messages since the last call. */
-    static void handleLogDiff(HttpExchange exchange) throws IOException {
-        String messages = ChatCapture.diff();
-        int count = messages.isEmpty() ? 0 : messages.split("\n", -1).length;
-        sendJson(exchange, 200, "{\"messages\":" + jsonEscape(messages) + ",\"count\":" + count + "}");
+    /** POST /writeCFG — overwrite the config file and reload it (reload log lines arrive via the mod channel). */
+    static void handleWriteCFG(HttpExchange exchange) throws IOException {
+        Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
+        String content = q.get("content");
+
+        // if content not in query, try JSON body
+        if (content == null) {
+            String body;
+            try (InputStream is = exchange.getRequestBody()) {
+                body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            }
+            if (body != null) {
+                content = extractJsonStringField(body, "content");
+            }
+        }
+
+        if (content == null) {
+            sendJson(exchange, 400, "{\"error\":\"missing 'content'\"}");
+            return;
+        }
+
+        try {
+            Files.writeString(BindAliasPlusClient.cfgPath, content);
+            String result = onMainThread(() -> {
+                String begun = StateTracker.begin(false);
+                BindAliasPlusClient.INSTANCE.loadCFG();
+                return StateTracker.finish(begun);
+            });
+            sendJson(exchange, 200, result);
+        } catch (Exception e) {
+            sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
+        }
+    }
+
+    /**
+     * GET /listRecipes[?q=a,b,c] — list recipes unlocked in the recipe book. Only works while an
+     * {@link AbstractRecipeBookScreen} is open. Without {@code q}: recipes learned since the previous call (diff). With
+     * {@code q} (comma-separated item ids or name substrings): every query is answered independently — {@code recipes} holds
+     * the matches, {@code recipe_errors} the per-query failures (one bad query never eats valid results).
+     */
+    static void handleListRecipes(HttpExchange exchange) throws IOException {
+        Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
+        String queryParam = q.get("q");
+        try {
+            String result = onMainThread(() -> {
+                Minecraft mc = Minecraft.getInstance();
+                if (mc.player == null)
+                    return null;
+                if (!(McScreenHelper.getCurrentScreen(mc) instanceof AbstractRecipeBookScreen))
+                    return "";
+                String begun = StateTracker.begin(false);
+                List<RecipeBookHelper.RecipeInfo> recipes;
+                List<String> errors = new ArrayList<>();
+                if (queryParam == null || queryParam.isBlank()) {
+                    recipes = RecipeBookHelper.onlyNew(RecipeBookHelper.unlocked(mc));
+                } else {
+                    recipes = new ArrayList<>();
+                    List<RecipeBookHelper.RecipeInfo> all = RecipeBookHelper.unlocked(mc);
+                    for (String query : queryParam.split(",")) {
+                        String trimmed = query.trim();
+                        if (trimmed.isEmpty())
+                            continue;
+                        List<RecipeBookHelper.RecipeInfo> matches =
+                                all.stream().filter(r -> RecipeBookHelper.matches(r, trimmed)).toList();
+                        if (matches.isEmpty()) {
+                            errors.add("'" + trimmed + "': no matching unlocked recipe");
+                        } else {
+                            for (RecipeBookHelper.RecipeInfo r : matches)
+                                if (!recipes.contains(r))
+                                    recipes.add(r);
+                        }
+                    }
+                }
+                String envelope = StateTracker.finish(begun);
+                StringBuilder sb = new StringBuilder(envelope.substring(0, envelope.length() - 1));
+                sb.append(",\"recipes\":").append(RecipeBookHelper.recipesJson(recipes));
+                if (!errors.isEmpty()) {
+                    sb.append(",\"recipe_errors\":[");
+                    for (int i = 0; i < errors.size(); i++) {
+                        if (i > 0)
+                            sb.append(',');
+                        sb.append(GameStateCollector.jsonEscape(errors.get(i)));
+                    }
+                    sb.append(']');
+                }
+                return sb.append('}').toString();
+            });
+            if (result == null) {
+                sendJson(exchange, 400, "{\"error\":\"not in world\"}");
+                return;
+            }
+            if (result.isEmpty()) {
+                sendJson(exchange, 400, "{\"error\":\"no recipe book screen open\"}");
+                return;
+            }
+            sendJson(exchange, 200, result);
+        } catch (Exception e) {
+            sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
+        }
     }
 
     /**
@@ -618,38 +464,5 @@ public final class McpHttpServer {
                 sb.append(c);
         }
         return null; // unterminated string
-    }
-
-    /** POST /writeCFG — overwrite the config file and reload. */
-    static void handleWriteCFG(HttpExchange exchange) throws IOException {
-        Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
-        String content = q.get("content");
-
-        // if content not in query, try JSON body
-        if (content == null) {
-            String body;
-            try (InputStream is = exchange.getRequestBody()) {
-                body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-            }
-            if (body != null) {
-                content = extractJsonStringField(body, "content");
-            }
-        }
-
-        if (content == null) {
-            sendJson(exchange, 400, "{\"error\":\"missing 'content'\"}");
-            return;
-        }
-
-        try {
-            Files.writeString(BindAliasPlusClient.cfgPath, content);
-            onMainThread(() -> {
-                BindAliasPlusClient.INSTANCE.loadCFG();
-                return null;
-            });
-            sendJson(exchange, 200, "{\"ok\":true}");
-        } catch (Exception e) {
-            sendJson(exchange, 500, "{\"error\":" + jsonEscape(e.getMessage()) + "}");
-        }
     }
 }
