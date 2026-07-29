@@ -7,8 +7,8 @@ Functional correctness must be confirmed by the user.
 
 ## release workflow
 
-1. **Develop** → build + runTestClient → **Confirm by User** → commit
-2. **Sync** → the post-commit hook auto-syncs the commit record and `.git_sync_across_active_branches` files to all active branches. **Everything else (source code, build scripts, etc.) must be manually merged** per branch — cherry-pick or re-apply changes, then build + runTestClient per branch.
+1. **Develop** → build + runTestClient → **Confirm by User or by MCP tools** → commit
+2. **Sync** → the post-commit hook auto-syncs the commit record and `.git_sync_across_active_branches` files to all active branches. **Everything else (source code, build scripts, etc.) must be manually merged** per branch — cherry-pick or re-apply changes, then build + runTestClient + **Confirm by User or by MCP tools** + commit per branch.
 3. **STOP** — wait for user confirmation before bumping
 4. **Bump** → `mod_version` in `gradle.properties` + CHANGELOG → commit
 5. **Collect** → build each branch, copy **only the main mod JAR** (NOT `-sources.jar` nor `-dev.jar`) to `release/`. Name each JAR with the MC range suffix: `bind-alias-plus-<version>-mc<range>.jar` (e.g. `bind-alias-plus-1.5.8-mc26.1.2-26.2.jar`).
