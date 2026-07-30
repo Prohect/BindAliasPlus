@@ -4,6 +4,7 @@ import com.github.prohect.BindAliasPlusClient;
 import com.github.prohect.alias.AliasWithArgs;
 import com.github.prohect.alias.builtinAlias.DropAlias;
 import com.github.prohect.alias.builtinAlias.WaitAlias;
+import com.github.prohect.mcp.McpHttpServer;
 import com.github.prohect.util.McScreenHelper;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,5 +30,9 @@ public class MinecraftClientMixin {
         if (raw instanceof DropAlias dropAlias) {
             dropAlias.tickDrop();
         }
+
+        // Count down MCP nap responses — last, so the deferred envelope capture
+        // reflects everything else this tick already did (WaitAlias chain, drop, ...)
+        McpHttpServer.tickNapTasks();
     }
 }
