@@ -116,9 +116,14 @@ public final class RecipeBookHelper {
         return fresh;
     }
 
-    /** JSON of a recipe list: {@code [{"name":"Torch","item":"minecraft:torch","craftable":true}]}. */
+    /**
+     * JSON of a recipe list: {@code [{"name":"Torch","item":"minecraft:torch","craftable":true}]}. Pre-sized for late-game
+     * recipe counts (500+ unlocked recipes → ~40 KiB) to avoid repeated StringBuilder reallocations.
+     */
     public static String recipesJson(List<RecipeInfo> recipes) {
-        StringBuilder sb = new StringBuilder("[");
+        // estimate: ~80 chars per recipe entry (name + item id + craftable flag + JSON syntax)
+        StringBuilder sb = new StringBuilder(recipes.size() * 80 + 2);
+        sb.append('[');
         boolean first = true;
         for (RecipeInfo r : recipes) {
             if (!first)
