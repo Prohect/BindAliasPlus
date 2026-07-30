@@ -484,7 +484,10 @@ public final class McpHttpServer {
                     }
                 }
                 String envelope = StateTracker.finish(begun);
-                StringBuilder sb = new StringBuilder(envelope.substring(0, envelope.length() - 1));
+                // pre-size for envelope + recipes (~80 chars/recipe) + optional errors
+                int estCap = envelope.length() + recipes.size() * 80 + errors.size() * 60;
+                StringBuilder sb = new StringBuilder(estCap);
+                sb.append(envelope, 0, envelope.length() - 1);
                 sb.append(",\"recipes\":").append(RecipeBookHelper.recipesJson(recipes));
                 if (!errors.isEmpty()) {
                     sb.append(",\"recipe_errors\":[");
