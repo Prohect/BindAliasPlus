@@ -461,7 +461,7 @@ public final class GameStateCollector {
 
     /**
      * container_grid array JSON: one row string per grid row (every row ends with {@code \n}). Runs of adjacent container cells
-     * share one {@code |group|} — {@code cNN:*} (occupied), {@code cNN:o} (empty); blank cells are plain padding. Width is
+     * share one {@code |group|} — {@code cNN:X} (occupied), {@code cNN:O} (empty); blank cells are plain padding. Width is
      * {@code cols*6+1} so slot columns line up across rows.
      *
      * @param gridSlots {@code {cIndex, x, y, occupied(0|1)}} per non-player-inventory slot
@@ -488,7 +488,7 @@ public final class GameStateCollector {
         for (int[] s : gridSlots) {
             int col = (s[1] - minX) / 18;
             int row = (s[2] - minY) / 18;
-            char state = s[3] == 0 ? 'o' : '*';
+            char state = s[3] == 0 ? 'O' : 'X';
             grid[row][col] = "c" + String.format(Locale.ROOT, "%02d", s[0]) + ':' + state;
         }
 
