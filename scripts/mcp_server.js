@@ -124,7 +124,7 @@ const TOOLS = [
     name: "getFullState",
     description:
       "Get a full snapshot of the current game state and drain all message channels. " +
-      "Prefer reading the standard envelope (state diffs) attached to other tool response ('runAlias', 'getScreenshot', 'defineAlias', 'listRecipes', 'writeCFG') over polling 'getFullState'.",
+      "Prefer reading the standard envelope (state diffs) attached to other tool response ('runAlias', 'getScreenshot', 'defineAlias' with OP needed or NOP) over polling 'getFullState'.",
     inputSchema: { type: "object", properties: {}, required: [] },
   },
   {
