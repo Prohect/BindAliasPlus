@@ -27,7 +27,7 @@ import net.minecraft.client.gui.screen.ingame.RecipeBookScreen;
  * Lightweight HTTP API server (default {@code 127.0.0.1:25575}, falls back to the next free port up to +9 when occupied — the
  * chosen port is logged).
  * <p>
- * Every game-interacting endpoint returns the same <b>envelope</b> assembled by {@link StateTracker}: {@code {"tick":N,
+ * Every game-interacting endpoint returns the same <b>envelope</b> assembled by {@link StateTracker}: {@code {"client_tick":N,
  * "state":{...}, "chat":[...], "mod":[...], "sound":[...], "recipe":[...]}} — changed-state diff (full for {@code /state}) plus
  * freshly drained message channels, so callers never need a separate poll for feedback. {@code /readCFG} is the only
  * non-envelope endpoint (raw file text). All game-thread access goes through {@link MinecraftClient#execute(Runnable)} with a
@@ -171,7 +171,7 @@ public final class McpHttpServer {
         T get() throws Exception;
     }
 
-    // ---- nap (client-tick deferred responses) ----
+    // ---- nap (client_tick deferred responses) ----
 
     /** Pending nap responses — ticked by {@code MinecraftClientMixin} on every client tick. */
     private static final List<NapTask> NAP_TASKS = new CopyOnWriteArrayList<>();
@@ -192,8 +192,8 @@ public final class McpHttpServer {
     /**
      * Count down pending nap responses; on expiry capture the envelope fresh (newest state diff + channels drained, so
      * everything produced during the nap is delivered). Called from {@code MinecraftClientMixin} after the WaitAlias queue, so
-     * a {@code wait\N} task expiring on the same tick is already reflected. The {@code synchronized} makes cancel-vs-capture
-     * atomic: a cancelled nap never drains channels into a response nobody reads.
+     * a {@code wait\N} task expiring on the same client_tick is already reflected. The {@code synchronized} makes
+     * cancel-vs-capture atomic: a cancelled nap never drains channels into a response nobody reads.
      */
     public static void tickNapTasks() {
         for (NapTask task : NAP_TASKS) {
@@ -282,8 +282,8 @@ public final class McpHttpServer {
      * feedback inside the chain is delivered with this response. Deferred effects (after {@code wait\N}) show up in later
      * responses.
      * <p>
-     * {@code nap=N} (client ticks, the same unit as {@code wait\N}; 0-{@value #MAX_NAP_TICKS}) defers the whole response: the
-     * chain still runs immediately, but the envelope is captured only after N client ticks elapsed — newest state diff plus
+     * {@code nap=N} (client_tick, the same unit as {@code wait\N}; 0-{@value #MAX_NAP_TICKS}) defers the whole response: the
+     * chain still runs immediately, but the envelope is captured only after N client_tick elapsed — newest state diff plus
      * every message produced during the nap.
      */
     static void handleRunAlias(HttpExchange exchange) throws IOException {
@@ -316,7 +316,7 @@ public final class McpHttpServer {
             }
             if (napTicks < 0 || napTicks > MAX_NAP_TICKS) {
                 sendJson(exchange, 400,
-                        "{\"error\":\"invalid 'nap' — integer client ticks in [0," + MAX_NAP_TICKS + "] expected\"}");
+                        "{\"error\":\"invalid 'nap' — integer client_tick in [0," + MAX_NAP_TICKS + "] expected\"}");
                 return;
             }
         }
@@ -340,7 +340,7 @@ public final class McpHttpServer {
                     return null;
                 });
                 try {
-                    // a client tick is 50 ms at nominal speed; the margin absorbs lag/pause hiccups
+                    // a client_tick is 50 ms at nominal speed; the margin absorbs lag/pause hiccups
                     result = task.future.get(nap * 50 + NAP_TIMEOUT_MARGIN_MS, TimeUnit.MILLISECONDS);
                 } catch (java.util.concurrent.TimeoutException e) {
                     // Game stopped ticking — cancel so a late tick never captures (and drains channels)

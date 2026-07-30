@@ -406,9 +406,9 @@ public class BindAliasPlusClient implements ClientModInitializer {
 		ClientLifecycleEvents.CLIENT_STOPPING.register(client -> McpHttpServer.stop());
 	}
 
-	/** @return {@code "[tick:{ticks}] "} if joined, {@code "[tick:-1]"} otherwise. */
+	/** @return {@code "[client_tick:{client_ticks}]"} if joined, {@code "[client_tick:-1]"} otherwise. */
     public static String tickPrefix() {
-        return joinTick < 0 ? "[tick:-1]" : "[tick:" + (currentTick - joinTick) + "] ";
+        return joinTick < 0 ? "[client_tick:-1]" : "[client_tick:" + (currentTick - joinTick) + "]";
     }
 
     public void loadCFG() {
