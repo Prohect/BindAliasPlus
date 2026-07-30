@@ -2,6 +2,13 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+## [x.x.x] - time
+
+### Changed
+
+- **MCP standard envelope** — rename `tick` field to `client_tick`.
+- **logger helper tickPrefix()** — now use same tick counter format as the MCP tool api.
+- **style consistency** — make all tick counter formats consistent.
 
 ## [1.8.2] - 2026-07-30
 
