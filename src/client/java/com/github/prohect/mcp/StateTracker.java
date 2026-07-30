@@ -7,8 +7,8 @@ import java.util.Map;
 
 /**
  * Tracks the last state snapshot sent to the MCP caller and assembles the response envelope:
- * 
- * <pre>{@code {"tick":N, "state":{...}, "chat":[...], "mod":[...], "sound":[...], "recipe":[...]}}</pre>
+ *
+ * <pre>{@code {"client_tick":N, "state":{...}, "chat":[...], "mod":[...], "sound":[...], "recipe":[...]}}</pre>
  * <p>
  * {@code state} is the FULL snapshot for {@code getState} and only the <b>changed</b> members for every other tool (a member
  * serialized as {@code null} means it disappeared — e.g. the container screen closed). {@code state} is omitted entirely when
@@ -47,8 +47,8 @@ public final class StateTracker {
     }
 
     /**
-     * Begin an envelope: snapshot the current state and emit {@code {"tick":N[,"state":{...}]}}. A world change since the
-     * previous call forces a full snapshot. Must be called on the Minecraft main thread.
+     * Begin an envelope: snapshot the current state and emit {@code {"client_tick":N[,"state":{...}]}}. A world change since
+     * the previous call forces a full snapshot. Must be called on the Minecraft main thread.
      *
      * @param full true for getState (always every member), false for the changed-members diff
      */
@@ -63,8 +63,8 @@ public final class StateTracker {
         }
         LinkedHashMap<String, String> current = GameStateCollector.collect();
 
-        StringBuilder sb = new StringBuilder(512);
-        sb.append("{\"tick\":").append(
+        StringBuilder jsonBuilder = new StringBuilder(2048);
+        jsonBuilder.append("{\"client_tick\":").append(
                 BindAliasPlusClient.joinTick < 0 ? -1 : (BindAliasPlusClient.currentTick - BindAliasPlusClient.joinTick));
 
         StringBuilder state = new StringBuilder();
@@ -78,7 +78,7 @@ public final class StateTracker {
                 state.append('"').append(key).append("\":").append(value);
             }
         }
-        // members that disappeared since the previous snapshot → explicit null
+        // members that disappeared since the previous snapshot 鈫� explicit null
         for (String key : last.keySet()) {
             if (!current.containsKey(key)) {
                 if (state.length() > 0)
@@ -87,7 +87,7 @@ public final class StateTracker {
             }
         }
 
-        // container — diffed at slot granularity (full on getState / open / menu change)
+        // container 鈥� diffed at slot granularity (full on getState / open / menu change)
         net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
         GameStateCollector.ContainerSnapshot snap = GameStateCollector.containerSnapshot(mc, mc.player);
         if (snap == null) {
@@ -112,7 +112,7 @@ public final class StateTracker {
             lastContainer = snap;
         }
 
-        // hotbar — diffed at slot granularity (full on getState / world change)
+        // hotbar 鈥� diffed at slot granularity (full on getState / world change)
         if (mc.player != null) {
             Map<String, String> curHotbar = GameStateCollector.hotbarItems(mc.player);
             String curEmpty = GameStateCollector.hotbarEmptyRanges(mc.player);
@@ -145,10 +145,10 @@ public final class StateTracker {
         }
 
         if (state.length() > 0)
-            sb.append(",\"state\":{").append(state).append('}');
+            jsonBuilder.append(",\"state\":{").append(state).append('}');
 
         last = current;
-        return sb.toString();
+        return jsonBuilder.toString();
     }
 
     /** Drain all message channels into the envelope and close it. Thread-safe. */
