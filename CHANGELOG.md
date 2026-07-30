@@ -3,6 +3,12 @@
 All notable changes to BindAliasPlus will be documented in this file.
 
 
+## [1.8.2] - 2026-07-30
+
+### Changed
+
+- **container_grid markers** — occupied slots now use `X` instead of `*`, empty slots use `O` instead of `o`.
+
 ## [1.8.1] - 2026-07-30
 
 ### Changed
