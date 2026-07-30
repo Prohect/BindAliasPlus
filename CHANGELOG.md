@@ -3,6 +3,12 @@
 All notable changes to BindAliasPlus will be documented in this file.
 
 
+## [1.8.1] - 2026-07-30
+
+### Changed
+
+- **MCP hotbar & container diff** — `hotbar` and `container` members are now diffed at slot granularity: full view on getState / open / menu change, afterwards only changed slots (`"item":null` = slot became empty) plus `empty_inv` / `container_grid` or `hotbar_empty` only when they changed.
+
 ## [1.8.0] - 2026-07-30
 
 ### Changed
