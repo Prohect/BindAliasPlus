@@ -17,9 +17,9 @@ import java.util.Map;
  * know what is currently held.
  * <p>
  * Channels are drained by {@link #finish(String)} — each message is delivered exactly once; empty channels are omitted. The
- * {@code container} member is diffed at slot granularity: full view on getState / open / menu change, afterwards only changed
- * slots ({@code "item":null} = slot became empty) plus {@code empty_inv}/{@code container_grid} only when they changed. Typical
- * usage per request, in one main-thread roundtrip:
+ * {@code container} and {@code hotbar} members are diffed at slot granularity: full view on getState / open / menu change,
+ * afterwards only changed slots ({@code "item":null} = slot became empty) plus {@code empty_inv}/{@code container_grid} or
+ * {@code hotbar_empty} only when they changed. Typical usage per request, in one main-thread roundtrip:
  *
  * <pre>
  * String env = StateTracker.begin(false); // state snapshot BEFORE the action
@@ -31,6 +31,8 @@ public final class StateTracker {
 
     private static Map<String, String> last = Map.of();
     private static GameStateCollector.ContainerSnapshot lastContainer;
+    private static Map<String, String> lastHotbarItems;
+    private static String lastHotbarEmpty;
     private static long baselineJoinTick = Long.MIN_VALUE;
 
     private StateTracker() {}
@@ -39,6 +41,8 @@ public final class StateTracker {
     public static synchronized void reset() {
         last = Map.of();
         lastContainer = null;
+        lastHotbarItems = null;
+        lastHotbarEmpty = null;
         baselineJoinTick = Long.MIN_VALUE;
     }
 
@@ -52,6 +56,8 @@ public final class StateTracker {
         if (BindAliasPlusClient.joinTick != baselineJoinTick) {
             last = Map.of();
             lastContainer = null;
+            lastHotbarItems = null;
+            lastHotbarEmpty = null;
             baselineJoinTick = BindAliasPlusClient.joinTick;
             full = true;
         }
@@ -104,6 +110,38 @@ public final class StateTracker {
                 state.append("\"container\":").append(diff);
             }
             lastContainer = snap;
+        }
+
+        // hotbar — diffed at slot granularity (full on getState / world change)
+        if (mc.player != null) {
+            Map<String, String> curHotbar = GameStateCollector.hotbarItems(mc.player);
+            String curEmpty = GameStateCollector.hotbarEmptyRanges(mc.player);
+
+            if (full || lastHotbarItems == null) {
+                if (state.length() > 0)
+                    state.append(',');
+                state.append("\"hotbar\":").append(GameStateCollector.hotbarFullJson(curHotbar));
+                if (curEmpty != null) {
+                    state.append(",\"hotbar_empty\":").append(GameStateCollector.jsonEscape(curEmpty));
+                } else if (lastHotbarEmpty != null) {
+                    state.append(",\"hotbar_empty\":null");
+                }
+            } else {
+                String hbDiff = GameStateCollector.hotbarDiffJson(lastHotbarItems, curHotbar);
+                if (hbDiff != null) {
+                    if (state.length() > 0)
+                        state.append(',');
+                    state.append("\"hotbar\":").append(hbDiff);
+                }
+                if (!java.util.Objects.equals(curEmpty, lastHotbarEmpty)) {
+                    if (state.length() > 0)
+                        state.append(',');
+                    state.append("\"hotbar_empty\":")
+                            .append(curEmpty == null ? "null" : GameStateCollector.jsonEscape(curEmpty));
+                }
+            }
+            lastHotbarItems = curHotbar;
+            lastHotbarEmpty = curEmpty;
         }
 
         if (state.length() > 0)

@@ -132,11 +132,6 @@ public final class GameStateCollector {
             out.put("durability", "{\"remaining\":" + (selectedItem.getMaxDamage() - selectedItem.getDamageValue())
                     + ",\"max\":" + selectedItem.getMaxDamage() + '}');
 
-        String[] hotbar = hotbarJson(p);
-        out.put("hotbar", hotbar[0]);
-        if (hotbar[1] != null)
-            out.put("hotbar_empty", jsonEscape(hotbar[1]));
-
         return out;
     }
 
@@ -258,29 +253,30 @@ public final class GameStateCollector {
     }
 
     /**
-     * Occupied hotbar slots as {@code [{"slot":N,"name":"..","count":N}]} (1-based). Empty slots are reported separately via
-     * the optional {@code hotbar_empty} field (range-compressed, see {@link #compressRanges}) — an all-empty hotbar is just
-     * {@code "hotbar":[], "hotbar_empty":"1-9"} instead of nine nulls.
-     *
-     * @return {@code [hotbarArrayJson, emptyRangesOrNull]}
+     * Returns a map of slot number (1-9) → entry JSON for non-empty hotbar slots. Slot-level diffing in {@link StateTracker}
+     * uses this together with {@link #hotbarEmptyRanges}.
      */
-    private static String[] hotbarJson(LocalPlayer p) {
-        StringBuilder sb = new StringBuilder("[");
-        List<Integer> empty = new ArrayList<>();
-        boolean first = true;
+    static Map<String, String> hotbarItems(LocalPlayer p) {
+        Map<String, String> items = new LinkedHashMap<>();
         for (int i = 0; i < 9; i++) {
             ItemStack stack = p.getInventory().getItem(i);
-            if (stack.isEmpty()) {
-                empty.add(i + 1);
-                continue;
+            if (!stack.isEmpty()) {
+                int slot = i + 1;
+                items.put(String.valueOf(slot), "{\"slot\":" + slot + ",\"name\":"
+                        + jsonEscape(stack.getHoverName().getString()) + ",\"count\":" + stack.getCount() + '}');
             }
-            if (!first)
-                sb.append(',');
-            first = false;
-            sb.append("{\"slot\":").append(i + 1).append(",\"name\":").append(jsonEscape(stack.getHoverName().getString()))
-                    .append(",\"count\":").append(stack.getCount()).append('}');
         }
-        return new String[] {sb.append(']').toString(), empty.isEmpty() ? null : compressRanges(empty)};
+        return items;
+    }
+
+    /** Compressed empty hotbar slot ranges (null when all 9 slots are filled). */
+    static String hotbarEmptyRanges(LocalPlayer p) {
+        List<Integer> empty = new ArrayList<>();
+        for (int i = 0; i < 9; i++) {
+            if (p.getInventory().getItem(i).isEmpty())
+                empty.add(i + 1);
+        }
+        return empty.isEmpty() ? null : compressRanges(empty);
     }
 
     /** Compress sorted-or-unsorted slot numbers to ranges: {@code [1,2,3,5,7,8,9] → "1-3 5 7-9"}. */
@@ -423,6 +419,44 @@ public final class GameStateCollector {
             out.append("\"container_grid\":").append(cur.grid == null ? "null" : cur.grid);
         }
         return out.length() == 0 ? null : out.insert(0, '{').append('}').toString();
+    }
+
+    // ---- hotbar diff ----
+
+    /** Full hotbar JSON: array of all non-empty slots (same format the old collect() emitted). */
+    static String hotbarFullJson(Map<String, String> items) {
+        StringBuilder out = new StringBuilder("[");
+        boolean first = true;
+        for (String entry : items.values()) {
+            if (!first)
+                out.append(',');
+            first = false;
+            out.append(entry);
+        }
+        return out.append(']').toString();
+    }
+
+    /**
+     * Slot-level hotbar diff: only slots whose stack changed are listed (a slot that became empty appears as
+     * {@code {"slot":N,"item":null}}). Returns null when nothing changed.
+     */
+    static String hotbarDiffJson(Map<String, String> prevItems, Map<String, String> curItems) {
+        StringBuilder items = new StringBuilder();
+        for (Map.Entry<String, String> e : curItems.entrySet()) {
+            if (!e.getValue().equals(prevItems.get(e.getKey()))) {
+                if (items.length() > 0)
+                    items.append(',');
+                items.append(e.getValue());
+            }
+        }
+        for (String slot : prevItems.keySet()) {
+            if (!curItems.containsKey(slot)) {
+                if (items.length() > 0)
+                    items.append(',');
+                items.append("{\"slot\":").append(slot).append(",\"item\":null}");
+            }
+        }
+        return items.length() == 0 ? null : "[" + items + ']';
     }
 
     /**
