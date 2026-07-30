@@ -96,10 +96,10 @@ const COMMAND_ALIASES = [
   "`setPitch\\deg` — set absolute pitch, -90 <= deg <= 90",
   "`swapSlot\\a\\b` or `swapSlot\\a` — SWAP(not implemented by left click event) two item stacks (1-arg form swaps with the selected hotbar slot). Slots: 1-9 hotbar, 10-36 inventory, 37 feet, 38 legs, 39 chest, 40 head, 41 offhand, `cN` Nth slot of a container menu. `cN` is valid on container screen if Nth slot exists. Works on container screen when `cN` or `cN` var is included. Works whether or not on screen when `cN` or `cN` var is not included. Arg order not matter. Examples: `swapSlot\\1\\c2`",
   '`applyRecipe\\query` — apply an unlocked craftable recipe into the crafting grid on screen (by recipe book event); NO crafting performed. query = result-item id ("minecraft:torch" or "torch") or a case-insensitive locale-name substring ("iron sword"). Errors go to the local game chat. See also the `listRecipes` tool',
-  "`say\\text` — send a chat message to server",
-  "`localSay\\text` — client-side-only chat message (never sent to server)",
-  "`sendCommand\\cmd` — send a server command (no leading slash)",
-  "`log\\text` — append text to the mod log",
+  "`say\\text` — send a chat text to server (quote arg if needed)",
+  "`localSay\\text` — client-side-only chat text (quote arg if needed)",
+  "`sendCommand\\cmd` — send a command to server (no leading slash)(quote arg if needed)",
+  "`log\\text` — send text to the mod log (quote arg if needed)",
   "`var\\name\\source` — store a number for use as an arg. sources: `hotbarSlot`, `yaw`, `pitch`, `itemsOfSlotN` (N=0-9, 0=offhand, 1-9=hotbar) (stack count), a literal number, or specially `cN` which is in a different map that only `swapSlot` could access as a container_slot reference.",
   "`alias\\name_with_definition` — define or redefine an alias (\" quoted arg, or ';' repacing space arg) during alias (chain) execution",
   "`builtinRunAlias\\name` — run a alias by name (support optional \\args)(not support inline multi-alias chain)",
@@ -142,7 +142,7 @@ const TOOLS = [
         def: {
           type: "string",
           description:
-            'Alias chain definition of 0 or more alias(es). Space for alias(with arg) separator, backslash for alias_name-arg separator or arg-arg separator, " quotes multi-word arg preventing space inside to be treated as alias(with arg) separator: e.g. `say\\"hello world"`. Semicolon for alias\'s (the alias named as `alias`) extra separator: e.g. `alias\\newAlias;+forward;wait\\20;-forward`',
+            'Alias chain definition of 0 or more alias(es). Space for alias(with arg) separator, backslash for alias_name-arg separator or arg-arg separator, " quotes multi-word arg preventing space inside to be treated as alias(with arg) separator: e.g. `say\\"hello world"`. Semicolon for alias\'s (the alias named as `alias`) extra separator: e.g. `alias\\turnDown;setPitch\\90`, `alias\\turnRight;yaw\\90`',
         },
         nap: {
           type: "integer",
