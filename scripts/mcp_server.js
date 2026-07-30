@@ -95,7 +95,7 @@ const COMMAND_ALIASES = [
   "`setYaw\\deg` — set absolute yaw",
   "`setPitch\\deg` — set absolute pitch, -90 <= deg <= 90",
   "`swapSlot\\a\\b` or `swapSlot\\a` — SWAP(not implemented by left click event) two item stacks (1-arg form swaps with the selected hotbar slot). Slots: 1-9 hotbar, 10-36 inventory, 37 feet, 38 legs, 39 chest, 40 head, 41 offhand, `cN` Nth slot of a container menu. `cN` is valid on container screen if Nth slot exists. Works on container screen when `cN` or `cN` var is included. Works whether or not on screen when `cN` or `cN` var is not included. Arg order not matter. Examples: `swapSlot\\1\\c2`",
-  "`applyRecipe\\query` — apply an unlocked craftable recipe into the crafting grid on screen (by recipe book event); NO crafting performed. query = result-item id (\"minecraft:torch\" or \"torch\") or a case-insensitive locale-name substring (\"iron sword\"). Errors go to the local game chat. See also the `listRecipes` tool",
+  '`applyRecipe\\query` — apply an unlocked craftable recipe into the crafting grid on screen (by recipe book event); NO crafting performed. query = result-item id ("minecraft:torch" or "torch") or a case-insensitive locale-name substring ("iron sword"). Errors go to the local game chat. See also the `listRecipes` tool',
   "`say\\text` — send a chat message to server",
   "`localSay\\text` — client-side-only chat message (never sent to server)",
   "`sendCommand\\cmd` — send a server command (no leading slash)",
