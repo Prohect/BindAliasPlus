@@ -49,8 +49,8 @@ const API_BASE = "http://127.0.0.1:" + parsePort();
 const ALIAS_RULES = [
   "SILENT FAILURES: misspelled alias_name and invalid args.",
   "SCREENS: +attack/+use's effects to game logic are suppressed when any screen is open. " +
-  "These aliases (+-attack, +-use, +-forward, +-back, +-left, +-right, +-jump, +-sneak, +-sprint, +-drop, +-playerList, +-advancements, esc, closeScreen, toggleInventory, swapHand, pickItem, swapSlot, sendCommand, reapply) are suppressed while a text-screen (chat, sign, book, command block) is open. " +
-  "These aliases (+forward, +left, +right, +back, +jump, +sneak, +drop) work on non-text-screens.  All builtin +aliases would be reapplied once per screen close event",
+    "These aliases (+-attack, +-use, +-forward, +-back, +-left, +-right, +-jump, +-sneak, +-sprint, +-drop, +-playerList, +-advancements, esc, closeScreen, toggleInventory, swapHand, pickItem, swapSlot, sendCommand, reapply) are suppressed while a text-screen (chat, sign, book, command block) is open. " +
+    "These aliases (+forward, +left, +right, +back, +jump, +sneak, +drop) work on non-text-screens.  All builtin +aliases would be reapplied once per screen close event",
   "VARIABLES: numbers stored via the var alias can be used as numeric args (slot, wait, yaw, pitch, setYaw, setPitch, swapSlot), e.g. 'var\\s\\hotbarSlot slot\\1 ... slot\\s'. Variables set from a c<N> source (var\\name\\c3) are stored in a special map only accessible by swapSlot and treated as container_slot references by swapSlot.",
 ];
 
@@ -101,7 +101,7 @@ const COMMAND_ALIASES = [
   "sendCommand\\cmd — send a server command (no leading slash)",
   "log\\text — append text to the mod log",
   "var\\name\\source — store a number for use as an arg. sources: hotbarSlot, yaw, pitch, itemsOfSlot0-9 (0=offhand, 1-9=hotbar) (stack count), a literal number, or specially c<N> which is in a different map that only swapSlot could access as a container_slot reference.",
-  'alias\\"name definition..." — define an alias (quoted arg, or \';\' repacing space arg). Dynamic alias definition during alias execution',
+  "alias\\\"name definition...\" — define an alias (quoted arg, or ';' repacing space arg). Dynamic alias definition during alias execution",
   "builtinRunAlias\\name — run a alias by name (support optional \\args)(not support inline multi-alias chain)",
   "reapply\\action — re-sync all held key alias to game's KeyMapping after a screen transition. Actions: attack, use, forward, back, left, right, jump, sneak, sprint, drop, playerList. Make most actions possible to beat the vanilla releaseAll() on setScreen event (make sure reapply is deferred after the setScreen event), +attack and +use have builtin guard to avoid this bypass for safety",
 ];
@@ -117,7 +117,7 @@ const RUNALIAS_DESCRIPTION =
   ACTION_ALIASES.join("; ") +
   ". COMMAND ALIASES (backslash separates args): " +
   COMMAND_ALIASES.join("; ") +
-  ". RETURNS the standard envelope: the state diff is captured BEFORE execution, or AFTER the nap when the nap arg is given (newest info).";
+  ". RETURNS the standard envelope: the state diff is captured BEFORE execution, or AFTER the nap when the nap arg is given.";
 
 const TOOLS = [
   {
@@ -148,7 +148,7 @@ const TOOLS = [
         nap: {
           type: "integer",
           description:
-            "Take a nap: defer the tool call's response by N client ticks (integer, 1-1200; 20 client ticks = 1 second at normal game speed — the same unit as the wait\\ alias). The alias chain runs immediately; the response then blocks until N client ticks elapsed in game and returns the standard envelope captured AFTER the nap — newest state diff plus every message produced during the nap. WARNING: game KEEPS RUNNING while you nap, and you can neither react to anything happening nor poll info from game during nap until the api returns; DO NOT nap unless you have to skip safe boring time.",
+            "Take a nap: defer the tool call's response by N client ticks (integer, same unit as the wait\\N alias). The alias chain runs immediately; the response then blocks until N client ticks elapsed in game and returns the standard envelope captured AFTER the nap. WARNING: game KEEPS RUNNING while you nap, and you can neither react to anything happening nor poll info from game during nap until the api returns; DO NOT nap unless you have to skip safe boring time.",
         },
       },
       required: ["def"],
@@ -171,7 +171,8 @@ const TOOLS = [
         },
         def: {
           type: "string",
-          description: "Alias definition string (chain syntax, same as runAlias).",
+          description:
+            "Alias definition string (chain syntax, same as runAlias).",
         },
       },
       required: ["name", "def"],
@@ -391,7 +392,8 @@ async function handleToolCall(toolName, args) {
       // chain immediately, then holds the response until N client ticks
       // elapsed and captures the envelope fresh (newest state + messages).
       const nap = Number(args.nap);
-      const napTicks = Number.isInteger(nap) && nap >= 1 && nap <= 1200 ? nap : 0;
+      const napTicks =
+        Number.isInteger(nap) && nap >= 1 && nap <= 1200 ? nap : 0;
       const params = { def: args.def || "" };
       if (napTicks > 0) params.nap = String(napTicks);
       // The mod answers only after the nap — the (inactivity) timeout must
