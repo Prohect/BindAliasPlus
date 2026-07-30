@@ -121,11 +121,11 @@ const RUNALIAS_DESCRIPTION =
 
 const TOOLS = [
   {
-    name: "getState",
+    name: "getFullState",
     description:
       "Get a full snapshot of the current game state and drain all message channels. " +
       "The envelope's tick counts client ticks since world join (-1 when not in a world). " +
-      "Prefer reading the incremental state diffs attached to every other tool response over polling 'getState' repeatedly.",
+      "Prefer reading the incremental state diffs attached to every other tool response over polling 'getFullState' repeatedly.",
     inputSchema: { type: "object", properties: {}, required: [] },
   },
   {
@@ -212,7 +212,7 @@ const TOOLS = [
       "Without 'queries': returns recipes learned since the previous 'listRecipes' call (a diff — the first call after joining the world returns everything). " +
       "With 'queries' (result-item ids like 'minecraft:torch' or 'torch', or locale-name substrings like 'iron sword'): every query is answered independently — matches land in 'recipes', per-query failures in 'recipe_errors'. " +
       "Entries: {name, item, craftable}. craftable=true means the ingredients are in your inventory right now. " +
-      "Returns the standard envelope plus recipes/recipe_errors (see the 'getState' description).",
+      "Returns the standard envelope plus recipes/recipe_errors (see the 'getFullState' description).",
     inputSchema: {
       type: "object",
       properties: {
@@ -369,6 +369,9 @@ function wrapResult(result) {
 
 async function handleToolCall(toolName, args) {
   switch (toolName) {
+    case "getFullState":
+      return wrapResult(await apiGet("/state"));
+    //back compatibility with old client
     case "getState":
       return wrapResult(await apiGet("/state"));
 
