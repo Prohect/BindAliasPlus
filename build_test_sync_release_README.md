@@ -27,7 +27,7 @@ zed-reload --settle 15 --wait 30 \
 
 ## gradlew build
 
-- `./gradlew build` is integrated with Spotless formatting, so build before committing.
+`./gradlew build` is integrated with Spotless formatting, so build before committing.
 
 ## release workflow
 
