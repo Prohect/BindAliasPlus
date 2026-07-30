@@ -25,6 +25,10 @@ zed-reload --settle 15 --wait 30 \
 - `--settle 15` — time after Zed's window appears before injecting the revival message (MCP servers may still be starting; verify readiness by retrying `getState` for up to ~2 min).
 - The agent thread continues unattended — the revived instance reads the whole history plus the injected message and picks up where it left off.
 
+## gradlew build
+
+- `./gradlew build` is integrated with Spotless formatting, so build before committing.
+
 ## release workflow
 
 1. **Develop** → build + runTestClient → **Confirm Functional correctness by User or by MCP tools** → commit
