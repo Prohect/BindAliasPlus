@@ -4,6 +4,27 @@ Harness the autoLoaded(loaded at `net.fabricmc.fabric.api.client.networking.v1.C
 **Add test aliases for new code paths, make sure the log for new test aliases is in the log**.
 **Never test MCP api with curl or raw HTTP — always use the MCP tools (getState, runAlias, etc.).**
 
+### launch (detached, survives the caller)
+
+```bash
+cmd //c start \"\" '.\gradlew.bat' runTestClient --nodaemon
+```
+
+Only one game client can occupy the default MCP port (25575) at a time — shut down the previous client (builtinShutdown via the MCP tools) before launching a new one.
+
+### MCP bridge reload
+
+Zed spawns MCP servers only at startup, so edits to `MCP/mcp_server.js` (tool descriptions, HTTP bridge logic) take effect only after a Zed reload. Use the global `zed-reload` skill:
+
+```bash
+zed-reload --settle 25 --wait 25 \
+  "[zed-reload] Zed reloaded to restart the BindAliasPlus MCP bridge. <context and next step>"
+```
+
+- `--wait 25` — time for the agent's final chat message to flush before Zed closes.
+- `--settle 25` — time after Zed's window appears before injecting the revival message (MCP servers may still be starting; verify readiness by retrying `getState` for up to ~2 min).
+- The agent thread continues unattended — the revived instance reads the whole history plus the injected message and picks up where it left off.
+
 ## release workflow
 
 1. **Develop** → build + runTestClient → **Confirm Functional correctness by User or by MCP tools** → commit
