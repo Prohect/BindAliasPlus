@@ -2,6 +2,13 @@
 
 All notable changes to BindAliasPlus will be documented in this file.
 
+
+## [1.8.0] - 2026-07-30
+
+### Changed
+
+- **MCP nap** — moved from the bridge to the mod API, unit changed from real-world seconds to **client ticks** (same unit as `wait\`), and the state envelope is now captured **after** the nap (newest info) instead of before. The bridge forwards the `nap` parameter and scales the request timeout accordingly.
+
 ## [1.7.1] - 2026-07-30
 
 ### Fixed
