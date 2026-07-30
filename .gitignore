@@ -8,7 +8,6 @@ build/
 
 # eclipse
 .classpath
-*.launch
 .project
 
 # idea
@@ -33,7 +32,6 @@ run/config/*
 !run/config/bind-alias-plus.cfg
 
 # custom
-scripts/.mcp_startup
 # please add your custom gitignored files/directories to .git/info/exclude
 #
 # if you find that there are common files/directories introduced by the build system,
