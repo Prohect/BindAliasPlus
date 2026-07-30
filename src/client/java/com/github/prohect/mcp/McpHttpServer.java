@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.client.Minecraft;
@@ -39,6 +40,10 @@ public final class McpHttpServer {
     private static final int DEFAULT_PORT = 25575;
     private static final int MAX_PORT_ATTEMPTS = 10;
     private static final int TIMEOUT_SECONDS = 5;
+    /** Max {@code nap} value — 1200 client ticks = 60 s at the nominal 20 client ticks per second. */
+    private static final long MAX_NAP_TICKS = 1200;
+    /** Grace beyond a nap's expected wall time (ticks × 50 ms) before the request is failed as not-ticking. */
+    private static final long NAP_TIMEOUT_MARGIN_MS = 15_000;
     private static HttpServer server;
     private static int port = DEFAULT_PORT;
 
@@ -166,6 +171,45 @@ public final class McpHttpServer {
         T get() throws Exception;
     }
 
+    // ---- nap (client-tick deferred responses) ----
+
+    /** Pending nap responses — ticked by {@code MinecraftClientMixin} on every client tick. */
+    private static final List<NapTask> NAP_TASKS = new CopyOnWriteArrayList<>();
+
+    private static final class NapTask {
+        /** Client ticks remaining (access under {@code synchronized (this)}). */
+        long ticksLeft;
+        /** Set by the HTTP thread when the request timed out — the capture must never happen then. */
+        boolean cancelled;
+        final CompletableFuture<String> future;
+
+        NapTask(long ticksLeft, CompletableFuture<String> future) {
+            this.ticksLeft = ticksLeft;
+            this.future = future;
+        }
+    }
+
+    /**
+     * Count down pending nap responses; on expiry capture the envelope fresh (newest state diff + channels drained, so
+     * everything produced during the nap is delivered). Called from {@code MinecraftClientMixin} after the WaitAlias queue, so
+     * a {@code wait\N} task expiring on the same tick is already reflected. The {@code synchronized} makes cancel-vs-capture
+     * atomic: a cancelled nap never drains channels into a response nobody reads.
+     */
+    public static void tickNapTasks() {
+        for (NapTask task : NAP_TASKS) {
+            synchronized (task) {
+                if (task.cancelled) {
+                    NAP_TASKS.remove(task);
+                    continue;
+                }
+                if (--task.ticksLeft > 0)
+                    continue;
+                NAP_TASKS.remove(task);
+                task.future.complete(StateTracker.finish(StateTracker.begin(false)));
+            }
+        }
+    }
+
     // ---- endpoints ----
 
     /** GET /state — full state snapshot + drained channels. */
@@ -232,9 +276,14 @@ public final class McpHttpServer {
     }
 
     /**
-     * POST /runAlias?def=… — execute a chain of aliases (space-separated, \ for args). The state diff is captured BEFORE
-     * execution; message channels are drained AFTER the immediate part of the chain ran, so {@code log\} and chat feedback
-     * inside the chain is delivered with this response. Deferred effects (after {@code wait\N}) show up in later responses.
+     * POST /runAlias?def=…[&nap=N] — execute a chain of aliases (space-separated, \ for args). The state diff is captured
+     * BEFORE execution; message channels are drained AFTER the immediate part of the chain ran, so {@code log\} and chat
+     * feedback inside the chain is delivered with this response. Deferred effects (after {@code wait\N}) show up in later
+     * responses.
+     * <p>
+     * {@code nap=N} (client ticks, the same unit as {@code wait\N}; 0-{@value #MAX_NAP_TICKS}) defers the whole response: the
+     * chain still runs immediately, but the envelope is captured only after N client ticks elapsed — newest state diff plus
+     * every message produced during the nap.
      */
     static void handleRunAlias(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
@@ -256,15 +305,63 @@ public final class McpHttpServer {
             return;
         }
 
+        long napTicks = 0;
+        String napParam = q.get("nap");
+        if (napParam != null && !napParam.isBlank()) {
+            try {
+                napTicks = Long.parseLong(napParam.trim());
+            } catch (NumberFormatException e) {
+                napTicks = -1;
+            }
+            if (napTicks < 0 || napTicks > MAX_NAP_TICKS) {
+                sendJson(exchange, 400,
+                        "{\"error\":\"invalid 'nap' — integer client ticks in [0," + MAX_NAP_TICKS + "] expected\"}");
+                return;
+            }
+        }
+
         final String definition = def;
+        final long nap = napTicks;
+        final NapTask napTask = nap == 0 ? null : new NapTask(nap, new CompletableFuture<>());
         try {
-            String result = onMainThread(() -> {
-                String begun = StateTracker.begin(false);
-                new UserAlias(definition).run("");
-                return StateTracker.finish(begun);
-            });
+            String result;
+            if (napTask == null) {
+                result = onMainThread(() -> {
+                    String begun = StateTracker.begin(false);
+                    new UserAlias(definition).run("");
+                    return StateTracker.finish(begun);
+                });
+            } else {
+                NapTask task = napTask;
+                onMainThread(() -> {
+                    new UserAlias(definition).run("");
+                    NAP_TASKS.add(task);
+                    return null;
+                });
+                try {
+                    // a client tick is 50 ms at nominal speed; the margin absorbs lag/pause hiccups
+                    result = task.future.get(nap * 50 + NAP_TIMEOUT_MARGIN_MS, TimeUnit.MILLISECONDS);
+                } catch (java.util.concurrent.TimeoutException e) {
+                    // Game stopped ticking — cancel so a late tick never captures (and drains channels)
+                    // into a response nobody reads; a capture that already won the race is still used.
+                    synchronized (task) {
+                        task.cancelled = true;
+                    }
+                    result = task.future.getNow(null);
+                    if (result == null) {
+                        sendJson(exchange, 500, "{\"error\":\"nap timed out — game not ticking?\"}");
+                        return;
+                    }
+                }
+            }
             sendJson(exchange, 200, result);
         } catch (Exception e) {
+            // a nap task whose scheduling failed (main thread stalled) must never fire late either
+            if (napTask != null) {
+                synchronized (napTask) {
+                    napTask.cancelled = true;
+                }
+            }
             sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
         }
     }
