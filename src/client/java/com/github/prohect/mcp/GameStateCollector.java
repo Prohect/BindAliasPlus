@@ -490,7 +490,7 @@ public final class GameStateCollector {
         for (int[] s : gridSlots) {
             int col = (s[1] - minX) / 18;
             int row = (s[2] - minY) / 18;
-            char state = s[3] == 0 ? 'o' : '*';
+            char state = s[3] == 0 ? 'O' : 'X';
             grid[row][col] = "c" + String.format(Locale.ROOT, "%02d", s[0]) + ':' + state;
         }
 
