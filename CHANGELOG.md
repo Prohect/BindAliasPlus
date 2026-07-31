@@ -2,6 +2,18 @@
 
 All notable changes to BindAlias will be documented in this file.
 
+## [1.8.4] - 2026-07-31
+
+### Added
+
+- **unloadUser* built-in aliases** — `unloadUserAliases`, `unloadUserVars`, `unloadUserBinds`, `unloadUserAll` remove runtime-created items (via `/alias`, `/bind`, `/var` commands) while preserving CFG-loaded and builtin items. Complements the existing `unloadCFG*` series.
+
+### Fixed
+
+- **`/var cN` feedback** — `/var` command with `cN` source now correctly shows success instead of "Failed".
+- **`/runAlias` suggestions** — now uses chain-aware suggestion provider supporting token-level alias completions and variable suggestions in arg positions.
+- **`swapSlot` var suggestions** — container slot variables and general int vars are now suggested for `swapSlot` args.
+
 ## [1.8.3] - 2026-07-31
 
 ### Changed
