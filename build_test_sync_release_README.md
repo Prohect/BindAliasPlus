@@ -7,7 +7,7 @@ Harness the autoLoaded(loaded at `net.fabricmc.fabric.api.client.networking.v1.C
 ### launch (detached, survives the caller)
 
 ```bash
-cmd //c start \"\" '.\gradlew.bat' runTestClient --nodaemon
+cmd //c start \"\" '.\gradlew.bat' runTestClient --no-daemon
 ```
 
 Only one game client can occupy the default MCP port (25575) at a time — shut down the previous client (builtinShutdown via the MCP tools) before launching a new one, the game client should be ready in 35 seconds.
