@@ -3,19 +3,23 @@
 ## Syntax
 
 ```java
-public static net.minecraft.client.gui.screens.Screen getCurrentScreen()
+public static Screen getCurrentScreen()
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+The current `Screen` instance from `BindAliasClient.currentScreen`, or `null` if no screen is open.
 
 ## Remarks
+
+A convenience accessor for `BindAliasClient.currentScreen`, which is set each tick by the `MinecraftClientMixin` mixin. All other screen-type helpers delegate to this method.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [isUnderAnyScreen](isUnderAnyScreen.md) | Returns `true` when this method returns non-null |
+| [isUnderTextInputScreen](isUnderTextInputScreen.md) | Checks specific screen types |
+| [BindAliasClient](BindAliasClient.java/BindAliasClient.md) | Where `currentScreen` is updated |
 
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

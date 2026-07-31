@@ -3,19 +3,22 @@
 ## Syntax
 
 ```java
-private static void capture(java.lang.String)
+private static void capture(String text)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `text` | `String` | The plain-text message to post to the CHAT channel |
 
 ## Remarks
+
+Private static helper called by `captureMessage`. Posts the extracted message text to [`GameChannels.CHAT`](../../../mcp/GameChannels.java/CHAT.md) via `GameChannels.post(CHAT, text)`. Does not filter or transform the text — raw `Text#getString()` output is forwarded as-is. Thread-safe because `GameChannels.post` synchronizes internally.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+| [GameChannels.post](../../../mcp/GameChannels.java/post.md) | The channel posting method |
+| [ChatComponentMixin](ChatComponentMixin.md) | The enclosing mixin class |

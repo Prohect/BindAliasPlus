@@ -3,19 +3,23 @@
 ## Syntax
 
 ```java
-public static void setScreen(net.minecraft.client.Minecraft, net.minecraft.client.gui.screens.Screen)
+public static void setScreen(MinecraftClient client, Screen screen)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `client` | `MinecraftClient` | The Minecraft client instance |
+| `screen` | `Screen` | The screen to open; `null` to close the current screen |
 
 ## Remarks
+
+Delegates to `client.setScreen(screen)` directly. Passing `null` as `screen` closes the current screen.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+| [getCurrentScreen](getCurrentScreen.md) | The getter counterpart |
+| [static-init](static-init.md) | Where `GUI_HAS_SCREEN` and the cached handles are initialized |

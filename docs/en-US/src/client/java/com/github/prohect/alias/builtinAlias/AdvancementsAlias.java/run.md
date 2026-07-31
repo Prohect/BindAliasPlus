@@ -1,5 +1,7 @@
 # run method (src/client/java/com/github/prohect/alias/builtinAlias/AdvancementsAlias.java)
 
+Handles `+advancements` (press) and `-advancements` (release) by manipulating the vanilla advancements key binding.
+
 ## Syntax
 
 ```java
@@ -10,12 +12,20 @@ public com.github.prohect.alias.builtinAlias.AdvancementsAlias run(java.lang.Str
 
 | Name | Type | Description |
 |------|------|-------------|
+| `args` | `String` | `"1"` for press (`+advancements`), `"0"` for release (`-advancements`) |
 
 ## Remarks
+
+1. Calls `parseArgs(args)` to set `this.flag`.
+2. **Screen suppression (press only, text-input only):** If `flag` is true and a text-input screen is open, returns immediately. Release events always process.
+3. Retrieves `MinecraftClient.getInstance().options.advancementsKey` and calls `setPressed(flag)` plus `timesPressed++` on press.
+
+The advancements key is unusual: vanilla's `MinecraftClient` polls it via `advancementsKey.wasPressed()`, and the advancements screen opens when the key is **released** after being pressed — not on the press itself. The `-advancements` form has no toggle effect. (Yarn: `wasPressed()`; Mojang: `consumeClick()`)
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [PlayerListAlias.run()](../PlayerListAlias.java/run.md) | Similar toggle pattern |
 
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

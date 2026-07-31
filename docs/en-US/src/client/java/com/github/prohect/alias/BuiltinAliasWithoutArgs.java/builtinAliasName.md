@@ -3,9 +3,22 @@
 ## Syntax
 
 ```java
-public final java.lang.String builtinAliasName
+public final @NotNull String builtinAliasName
 ```
+
+The name used for registration and lookup. Set by the constructor and never changes. Annotated `@NotNull`.
 
 ## Remarks
 
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+Same role as `BuiltinAliasWithArgs.builtinAliasName` — used by `putToAliasesWithoutArgs()` (no-arg overload) as the registration key.
+
+For example, `EscAlias` passes `"esc"`, so `new EscAlias().putToAliasesWithoutArgs()` registers it as `aliasesWithoutArgs["esc"]`.
+
+## See Also
+
+| Item | Description |
+|------|-------------|
+| [putToAliasesWithoutArgs](putToAliasesWithoutArgs.md) | Uses this field as the registration key |
+| [BuiltinAliasWithArgs.builtinAliasName](BuiltinAliasWithArgs.java/builtinAliasName.md) | Same field in the with-args base class |
+
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

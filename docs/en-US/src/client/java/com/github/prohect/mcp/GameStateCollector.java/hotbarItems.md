@@ -3,19 +3,21 @@
 ## Syntax
 
 ```java
-static java.util.Map<java.lang.String, java.lang.String> hotbarItems(net.minecraft.client.player.LocalPlayer)
+static Map<String, String> hotbarItems(ClientPlayerEntity p)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+A map from hotbar slot key (`"1"`–`"9"`) to item description string. Only non-empty slots are included.
 
 ## Remarks
+
+Iterates the player's hotbar inventory slots (indices 0-8). For each non-empty slot, formats the item description via `appendTooltipIfValuable` (including enchantment/lore annotations). The slot key is 1-based (`"1"`–`"9"`).
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+| [hotbarFullJson](hotbarFullJson.md) | Formats the result as JSON |
+| [hotbarDiffJson](hotbarDiffJson.md) | Produces per-slot diffs |
+| [appendTooltipIfValuable](appendTooltipIfValuable.md) | Item description formatter |

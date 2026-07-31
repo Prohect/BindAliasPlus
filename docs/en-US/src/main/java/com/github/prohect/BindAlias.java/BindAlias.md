@@ -3,7 +3,7 @@
 ## Syntax
 
 ```java
-public class com.github.prohect.BindAlias implements net.fabricmc.api.ModInitializer
+public class BindAlias implements net.fabricmc.api.ModInitializer
 ```
 
 ## Static Initializer
@@ -12,10 +12,13 @@ _None._
 
 ## Remarks
 
+The main mod initializer (common source set). Implements `ModInitializer`, which Fabric calls once during mod initialization. Sets the `MOD_ID` constant to `"bind-alias"` and creates the mod's SLF4J logger with that name. The `onInitialize()` method logs a startup message — the bulk of mod initialization (alias registration, key bindings, MCP server startup) happens in the client source set's `BindAliasClient.onInitializeClient()`.
+
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
-
+| [BindAliasClient](../../client/java/com/github/prohect/BindAliasClient.java/README.md) | The client-side initializer that registers all aliases, key bindings, and starts the MCP server |
+| [MOD_ID](MOD_ID.md) | The mod's string ID |
+| [LOGGER](LOGGER.md) | The mod's logger |
+| [onInitialize](onInitialize.md) | The Fabric entry point |

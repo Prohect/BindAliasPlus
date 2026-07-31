@@ -1,5 +1,7 @@
 # run method (src/client/java/com/github/prohect/alias/builtinAlias/ReloadCFGAlias.java)
 
+Triggers a reload of the configuration file by calling `BindAliasClient.INSTANCE.loadCFG()`.
+
 ## Syntax
 
 ```java
@@ -10,12 +12,27 @@ public com.github.prohect.alias.builtinAlias.ReloadCFGAlias run(java.lang.String
 
 | Name | Type | Description |
 |------|------|-------------|
+| args | String | Unused (one-shot alias, ignored) |
 
 ## Remarks
+
+**Algorithm:**
+
+1. Call `BindAliasClient.INSTANCE.loadCFG()` — re-reads the configuration file and processes all aliases, keybindings, and variables defined in it.
+
+**Side effects:**
+- New aliases, keybindings, and variables from the CFG are registered. Existing ones with the same name are overwritten.
+- CFG-defined items already in memory that are no longer in the CFG are NOT removed — use `unloadCFGAll` before reloading if a full reset is needed.
+
+**Return value:** `this` (fluent return).
+
+**No screen suppression:** Works on any screen.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [ReloadCFGAlias](ReloadCFGAlias.md) | Class overview |
+| [UnloadCFGAllAlias](../UnloadCFGAllAlias.java/run.md) | Full CFG unload (use before reload) |
 
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

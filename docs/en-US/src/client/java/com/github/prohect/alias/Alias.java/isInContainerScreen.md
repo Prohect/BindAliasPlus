@@ -6,16 +6,20 @@
 public static boolean isInContainerScreen()
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+`true` if the current screen is a `HandledScreen` (any container GUI — chests, furnaces, crafting tables, player inventory, etc.). Otherwise `false`. (Yarn: `HandledScreen`; Mojang: `AbstractContainerScreen`)
 
 ## Remarks
+
+Used by `VarAlias` and `SwapSlotAlias` to determine whether container-slot operations are valid. The `cN` argument syntax (container slot N) is only valid when this returns `true`. Also used by `PickItemAlias` and `+drop` to adjust behavior for container screens.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [isInInventoryScreen](isInInventoryScreen.md) | Narrower — only the player's inventory screen |
+| [isInCreativeInventoryScreen](isInCreativeInventoryScreen.md) | Narrower — creative inventory screen |
+| [isUnderAnyScreen](isUnderAnyScreen.md) | Broadest — any screen at all |
 
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

@@ -1,18 +1,21 @@
 # ShutdownAlias
 
+One-shot alias that cleanly shuts down the game. Usage: `builtinShutdown`.
+
 ## Fields
 
-| Name | Type | Description |
-|------|------|-------------|
+_No public/protected fields._
 
 ## Methods
 
 | Name | Signature | Description |
 |------|-----------|-------------|
+| [run](run.md) | `run(String args)` | Call `MinecraftClient.getInstance().scheduleStop()()` to exit the game |
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [ReloadCFGAlias](../ReloadCFGAlias.java/README.md) | Reload config (another system-level alias) |
 
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

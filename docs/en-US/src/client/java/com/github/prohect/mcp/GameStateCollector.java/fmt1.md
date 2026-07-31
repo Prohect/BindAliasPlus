@@ -3,19 +3,19 @@
 ## Syntax
 
 ```java
-static java.lang.String fmt1(double)
+static String fmt1(double v)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+The double value formatted to 1 decimal place (e.g., `"123.5"`). Uses `Locale.ROOT` for consistent decimal separator.
 
 ## Remarks
+
+Shared formatting helper used for coordinates and distances. Equivalent to `String.format(Locale.ROOT, "%.1f", v)`.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+| [fmt2](fmt2.md) | 2-decimal-place variant |

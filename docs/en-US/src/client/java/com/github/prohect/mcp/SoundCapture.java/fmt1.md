@@ -3,19 +3,26 @@
 ## Syntax
 
 ```java
-private static java.lang.String fmt1(double)
+private static String fmt1(double v)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `v` | `double` | The value to format |
+
+## Return value
+
+The value formatted to 1 decimal place using `Locale.ROOT`.
 
 ## Remarks
+
+Distance formatting helper (e.g., `"4.2"`). Uses the same pattern as `GameStateCollector.fmt1` but is a private copy in this class to avoid cross-class coupling for sound events.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+| [directionOf](directionOf.md) | The caller |
+| [GameStateCollector.fmt1](GameStateCollector.java/fmt1.md) | The equivalent in GameStateCollector |

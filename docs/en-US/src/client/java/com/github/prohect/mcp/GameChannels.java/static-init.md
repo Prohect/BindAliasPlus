@@ -2,6 +2,12 @@
 
 ## Remarks
 
-Executed once when the class is loaded. See source for content.
+Executed once when the `GameChannels` class is loaded. Initializes the `CHANNELS` map with four entries in insertion order:
 
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+1. `CHAT` — non-coalescing (`false`)
+2. `MOD` — non-coalescing (`false`)
+3. `SOUND` — coalescing (`true`)
+4. `RECIPE` — non-coalescing (`false`)
+
+Each entry is a new `Channel` instance with an empty `entries` map, a zeroed `cursor`, and a zeroed `lastSent`. The insertion order is preserved by `LinkedHashMap` and dictates the iteration order of `drain()`, ensuring consistent JSON output ordering in the MCP envelope.
+

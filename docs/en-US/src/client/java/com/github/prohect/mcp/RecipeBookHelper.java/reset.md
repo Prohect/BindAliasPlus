@@ -6,16 +6,12 @@
 public static void reset()
 ```
 
-## Parameters
-
-| Name | Type | Description |
-|------|------|-------------|
-
 ## Remarks
+
+Clears the `reportedDisplayIds` set and resets the `baselineJoinTick` to `Long.MIN_VALUE`, forcing the next `onlyNew` call to start fresh (return all recipes). Called on world join/disconnect to prevent stale recipe tracking across worlds.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+| [onlyNew](onlyNew.md) | The method whose state is reset |

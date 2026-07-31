@@ -8,14 +8,16 @@ public java.lang.String aliasNameOnKeyPressed()
 
 ## Parameters
 
-| Name | Type | Description |
-|------|------|-------------|
+_None._
 
 ## Remarks
+
+Record accessor for the alias name invoked on key press. This is the first argument to the canonical constructor. May be an empty string if no press action is defined. The alias must be an `AliasWithoutArgs` — it will be invoked via `UserAlias.run("")` with no arguments.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [aliasNameOnKeyReleased](aliasNameOnKeyReleased.md) | The alias invoked on key release |
 
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

@@ -3,19 +3,26 @@
 ## Syntax
 
 ```java
-private static <T> T onMainThread(com.github.prohect.mcp.McpHttpServer$CheckedSupplier<T>) throws java.lang.Exception
+private static <T> T onMainThread(CheckedSupplier<T> supplier) throws Exception
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `supplier` | `CheckedSupplier<T>` | A functional interface wrapping an operation that may throw `Exception` |
+
+## Return value
+
+The value computed by the supplier on the main thread.
 
 ## Remarks
+
+Ensures the given operation executes on the Minecraft main thread (the render thread). If the calling thread is already the main thread, the supplier runs inline. Otherwise, submits a `CompletableFuture` to `MinecraftClient.getInstance()` and blocks until completion. Used by all HTTP handlers to guarantee thread-safety for game-state access.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+| [handleState](handleState.md) | Uses onMainThread for state collection |
+| [handleRunAlias](handleRunAlias.md) | Uses onMainThread for alias execution |

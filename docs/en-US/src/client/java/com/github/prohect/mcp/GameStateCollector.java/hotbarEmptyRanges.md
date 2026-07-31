@@ -3,19 +3,20 @@
 ## Syntax
 
 ```java
-static java.lang.String hotbarEmptyRanges(net.minecraft.client.player.LocalPlayer)
+static String hotbarEmptyRanges(ClientPlayerEntity p)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+Compressed empty-slot range string (e.g., `"1-3,7,9"`) for hotbar slots 1-9, or `null` if no slots are empty. Ranges of 3+ consecutive empty slots are collapsed to `"start-end"`.
 
 ## Remarks
+
+Collects the 1-based indices of all empty hotbar slots (0-8 in inventory) and compresses them via `compressRanges`.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
+| [compressRanges](compressRanges.md) | The range compression helper |
+| [hotbarItems](hotbarItems.md) | The complementary non-empty slot extractor |
