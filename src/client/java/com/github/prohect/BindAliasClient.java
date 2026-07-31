@@ -1,6 +1,6 @@
 package com.github.prohect;
 
-import static com.github.prohect.BindAliasPlus.MOD_ID;
+import static com.github.prohect.BindAlias.MOD_ID;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
@@ -41,15 +41,15 @@ import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BindAliasPlusClient implements ClientModInitializer {
+public class BindAliasClient implements ClientModInitializer {
 
-    public static final BindAliasPlusClient INSTANCE = new BindAliasPlusClient();
+    public static final BindAliasClient INSTANCE = new BindAliasClient();
     public static final Path cfgPath = FabricLoader.getInstance().getConfigDir().resolve(MOD_ID + ".cfg");
 
     public static final ArrayDeque<KeyPressed> KEY_QUEUE = new ArrayDeque<>();
     public static final Map<InputConstants.Key, KeyBindingPlus> BINDING_PLUS = new HashMap<>();
 
-    public static final Logger LOGGER = LoggerFactory.getLogger("bind-alias-plus");
+    public static final Logger LOGGER = LoggerFactory.getLogger("bind-alias");
 
     /**
      * Tick counter — incremented every client tick via {@link ClientTickEvents#START_CLIENT_TICK}.
@@ -98,7 +98,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
 		new SetYawAlias().putToAliasesWithArgs();
 		new SetPitchAlias().putToAliasesWithArgs();
 		new AliasAlias().putToAliasesWithArgs();
-		new BindAlias().putToAliasesWithArgs();
+		new com.github.prohect.alias.builtinAlias.BindAlias().putToAliasesWithArgs();
 		new UnbindAlias().putToAliasesWithArgs();
 		new SayAlias().putToAliasesWithArgs();
 		new LocalSayAlias().putToAliasesWithArgs();
@@ -459,11 +459,11 @@ public class BindAliasPlusClient implements ClientModInitializer {
                         String aliasName = line.substring("runAlias ".length()).trim();
                         new UserAlias(aliasName).run("");
                     } else {
-                        BindAliasPlusClient.LOGGER.warn("{}Unknown command: {}", tickPrefix(), line);
+                        BindAliasClient.LOGGER.warn("{}Unknown command: {}", tickPrefix(), line);
                     }
                 }
             } catch (Exception e) {
-                BindAliasPlusClient.LOGGER.warn("{}Failed to load CFG file", tickPrefix(), e);
+                BindAliasClient.LOGGER.warn("{}Failed to load CFG file", tickPrefix(), e);
             }
         });
     }
@@ -680,7 +680,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
                     int button = Integer.parseInt(name.substring(5));
                     return InputConstants.Type.MOUSE.getOrCreate(button - 1);
                 } catch (Exception e) {
-                    BindAliasPlusClient.LOGGER.warn("{}Invalid key definition: {}", tickPrefix(), name);
+                    BindAliasClient.LOGGER.warn("{}Invalid key definition: {}", tickPrefix(), name);
                 }
             }
         }

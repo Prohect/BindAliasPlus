@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
 import net.minecraft.client.KeyMapping;
@@ -22,7 +22,7 @@ public class UseAlias extends BuiltinAliasWithArgs<UseAlias> {
                 flag = true;
                 break;
             default:
-                BindAliasPlusClient.LOGGER.warn("{}[Use]Invalid arguments", BindAliasPlusClient.tickPrefix());
+                BindAliasClient.LOGGER.warn("{}[Use]Invalid arguments", BindAliasClient.tickPrefix());
                 break;
         }
         // cancel press event from text input screen

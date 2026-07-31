@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -22,15 +22,15 @@ public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
         Integer resolved = VarAlias.resolveInt(args);
 
         if (resolved == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[Slot]Invalid arguments: '{}' is not a valid number or variable",
-                    BindAliasPlusClient.tickPrefix(), args);
+            BindAliasClient.LOGGER.warn("{}[Slot]Invalid arguments: '{}' is not a valid number or variable",
+                    BindAliasClient.tickPrefix(), args);
             return this;
         }
 
         int i = resolved;
         if (!(1 <= i && i <= 9)) {
-            BindAliasPlusClient.LOGGER.warn("{}[Slot]Invalid input! Please enter a number between 1 and 9",
-                    BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[Slot]Invalid input! Please enter a number between 1 and 9",
+                    BindAliasClient.tickPrefix());
             return this;
         }
 
@@ -41,19 +41,19 @@ public class SlotAlias extends BuiltinAliasWithArgs<SlotAlias> {
         Minecraft minecraftClient = Minecraft.getInstance();
         LocalPlayer player = minecraftClient.player;
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[Slot]Player is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[Slot]Player is null", BindAliasClient.tickPrefix());
             return this;
         }
         Inventory inventory = player.getInventory();
         if (inventory == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[Slot]Inventory is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[Slot]Inventory is null", BindAliasClient.tickPrefix());
             return this;
         }
         inventory.setSelectedSlot(i - 1);
         try {
             minecraftClient.getConnection().send(new ServerboundSetCarriedItemPacket(i - 1));
         } catch (Exception e) {
-            BindAliasPlusClient.LOGGER.error("{}[Slot]Failed to update selected slot.", BindAliasPlusClient.tickPrefix(), e);
+            BindAliasClient.LOGGER.error("{}[Slot]Failed to update selected slot.", BindAliasClient.tickPrefix(), e);
         }
         return this;
     }

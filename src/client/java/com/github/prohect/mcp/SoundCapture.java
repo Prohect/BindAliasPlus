@@ -1,6 +1,6 @@
 package com.github.prohect.mcp;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SoundInstance;
@@ -47,7 +47,7 @@ public final class SoundCapture implements SoundEventListener {
             if (!Float.isInfinite(range) && distSq > (double) range * range)
                 return;
             GameChannels.postCoalescing(GameChannels.SOUND, name,
-                    BindAliasPlusClient.tickPrefix() + name + " [" + directionOf(p, dx, dy, dz) + "]");
+                    BindAliasClient.tickPrefix() + name + " [" + directionOf(p, dx, dy, dz) + "]");
         } catch (Exception ignored) {
             // never break the sound engine
         }

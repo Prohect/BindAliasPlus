@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.BuiltinAliasWithoutArgs;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -18,7 +18,7 @@ public class CyclePerspectiveAlias extends BuiltinAliasWithoutArgs<CyclePerspect
         Options options = minecraftClient.options;
 
         if (options == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[CyclePerspective]Options is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[CyclePerspective]Options is null", BindAliasClient.tickPrefix());
             return this;
         }
 
