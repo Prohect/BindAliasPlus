@@ -5,6 +5,7 @@
 让 AI 来玩游戏。
 
 <!-- languages -->
+
 - 🇺🇸 [English](README.md)
 - 🇨🇳 [中文 (简体)](README_CN.md)
 
@@ -44,7 +45,7 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 
 #### 带参数的别名
 
-*注意：槽位遵循 Minecraft 的内部编号：*
+_注意：槽位遵循 Minecraft 的内部编号：_
 
 - 1-9 → 快捷栏槽位
 - 10-36 → 物品栏槽位（10-19 = 第一行）
@@ -54,26 +55,26 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 - 你可以用双引号包裹参数,这样其中的空格就不会被视为分隔符。
 - **推荐用于嵌套定义**: 在其他别名定义内使用 `alias`、`bind`、`unbind`、`say`、`sendCommand` 或 `localSay` 内置别名时,使用分号 `;` 而不是空格 ` ` 作为参数之间的分隔符。这样你就可以在嵌套定义中使用正常的空格分隔符而不会产生冲突。示例: `alias +testAlias bind\v;+anotherAlias alias\+yetAnotherAlias;+anotherAlias;+jump alias\+nextAlias;wait\2;+yetAnotherAlias wait\1 bind\x;+testAlias` - 这里分号分隔这些内置别名的参数,而引号内的空格正常工作。
 
-| 别名                    | 描述                                                           | 示例                                                            |
-|------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
-| `log`                  | 将消息记录到游戏控制台（用于调试）。                                          | `log\Hello World`                                             |
-| `slot\slotNumber`      | 切换到特定的快捷栏槽位（1-9）。接受变量名。                                  | `slot\3`（切换到快捷栏槽位 3），`slot\mySlot`（使用变量）                     |
+| 别名                   | 描述                                                                                                                                                                                                                           | 示例                                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| `log`                  | 将消息记录到游戏控制台（用于调试）。                                                                                                                                                                                           | `log\Hello World`                                                                           |
+| `slot\slotNumber`      | 切换到特定的快捷栏槽位（1-9）。接受变量名。                                                                                                                                                                                    | `slot\3`（切换到快捷栏槽位 3），`slot\mySlot`（使用变量）                                   |
 | `swapSlot\slot1\slot2` | 交换两个槽位之间的物品（1-9 快捷栏，10-36 背包，37-40 装备，41 副手）。支持任意容器界面；用 `cN` 表示当前打开界面的第 N 个槽位（如合成台 `c1` = 产物，熔炉 `c3` = 输出）——可用于合成/锻造/附魔等。接受变量名（仅限普通槽位）。 | `swapSlot\10\39`（将物品栏槽位 10 与胸甲槽位交换），`swapSlot\c1\10`（取合成产物到槽位 10） |
-| `swapSlot\slot1`       | 交换当前持有的快捷栏槽位（主手）与指定的 `slot1` 之间的物品。接受变量名。                | `swapSlot\19`（将当前快捷栏槽位与物品栏槽位 19 交换）                           |
-| `wait\ticks`           | 暂停执行指定数量的游戏刻（20 刻 = 1 秒）。接受变量名。                          | `wait\20`（等待 1 秒），`wait\myTicks`（使用变量）                           |
-| `yaw\degrees`          | 按相对度数值调整玩家偏航角（水平旋转）。接受变量名。                              | `yaw\90`（向右转 90°），`yaw\myVar`（使用变量）                              |
-| `pitch\degrees`        | 按相对度数值调整玩家俯仰角（垂直旋转）。接受变量名。                              | `pitch\-30`（向下看 30°），`pitch\myVar`（使用变量）                         |
-| `setYaw\degrees`       | 将玩家偏航角设置为绝对度数值（0 = 北，90 = 东）。接受变量名。                     | `setYaw\180`（面向南），`setYaw\myVar`（使用变量）                          |
-| `setPitch\degrees`     | 将玩家俯仰角设置为绝对度数值（-90 = 垂直向上，90 = 垂直向下）。接受变量名。             | `setPitch\0`（直视前方），`setPitch\myVar`（使用变量）                       |
-| `alias\args`           | 几乎与命令 alias 相同，只是你需要用双引号包裹参数。                                | `alias\"meow say\nya~"`（创建或替换别名）                             |
-| `bind\args`            | 几乎与命令 bind 相同，只是你需要用双引号包裹参数。                                 | `bind\"m meow wait\0 +fly"`（创建或替换绑定）                         |
-| `unbind\keyName`       | 几乎与命令 unbind 相同。                                              | `unbind\m`（解除按键上的绑定）                                         |
-| `say\string`           | 发送聊天消息。                                                      | `say\"How old r u?"`（发送聊天消息 "how old r u?"）                  |
-| `localSay\string`      | 仅在本地客户端显示聊天消息，不发送到服务器。适用于测试、通知和调试输出。        | `localSay\"Debug: slot is \(mySlot)"`（仅本地显示的消息）            |
-| `sendCommand\command`  | 发送命令。                                                        | `sendCommand\"gamemode creative"`（发送命令 "gamemode creative"） |
-| `var\varName\source`  | 将值存入变量。来源：`hotbarSlot`、`itemsOfSlot0-9`、`pitch`、`yaw` 或数字。 | `var\mySlot\hotbarSlot`（存储快捷栏槽位），`var\angle\pitch`（存储俯仰角） |
-| `reapply\action`       | 手动重新激活一个按住状态的布尔别名（attack, use, forward, back, left, right, jump, sneak, sprint, drop, openInventory）。适合在 UserAlias 末尾用于界面切换后恢复按键状态。 | `reapply\forward`（如果处于按住状态则重新按下前进键）                                |
-| `openInventory\state`  | 打开（1）或关闭（0）物品栏界面。                                            | `openInventory\1`（打开物品栏），`openInventory\0`（关闭物品栏）         |
+| `swapSlot\slot1`       | 交换当前持有的快捷栏槽位（主手）与指定的 `slot1` 之间的物品。接受变量名。                                                                                                                                                      | `swapSlot\19`（将当前快捷栏槽位与物品栏槽位 19 交换）                                       |
+| `wait\ticks`           | 暂停执行指定数量的游戏刻（20 刻 = 1 秒）。接受变量名。                                                                                                                                                                         | `wait\20`（等待 1 秒），`wait\myTicks`（使用变量）                                          |
+| `yaw\degrees`          | 按相对度数值调整玩家偏航角（水平旋转）。接受变量名。                                                                                                                                                                           | `yaw\90`（向右转 90°），`yaw\myVar`（使用变量）                                             |
+| `pitch\degrees`        | 按相对度数值调整玩家俯仰角（垂直旋转）。接受变量名。                                                                                                                                                                           | `pitch\-30`（向下看 30°），`pitch\myVar`（使用变量）                                        |
+| `setYaw\degrees`       | 将玩家偏航角设置为绝对度数值（0 = 北，90 = 东）。接受变量名。                                                                                                                                                                  | `setYaw\180`（面向南），`setYaw\myVar`（使用变量）                                          |
+| `setPitch\degrees`     | 将玩家俯仰角设置为绝对度数值（-90 = 垂直向上，90 = 垂直向下）。接受变量名。                                                                                                                                                    | `setPitch\0`（直视前方），`setPitch\myVar`（使用变量）                                      |
+| `alias\args`           | 几乎与命令 alias 相同，只是你需要用双引号包裹参数。                                                                                                                                                                            | `alias\"meow say\nya~"`（创建或替换别名）                                                   |
+| `bind\args`            | 几乎与命令 bind 相同，只是你需要用双引号包裹参数。                                                                                                                                                                             | `bind\"m meow wait\0 +fly"`（创建或替换绑定）                                               |
+| `unbind\keyName`       | 几乎与命令 unbind 相同。                                                                                                                                                                                                       | `unbind\m`（解除按键上的绑定）                                                              |
+| `say\string`           | 发送聊天消息。                                                                                                                                                                                                                 | `say\"How old r u?"`（发送聊天消息 "how old r u?"）                                         |
+| `localSay\string`      | 仅在本地客户端显示聊天消息，不发送到服务器。适用于测试、通知和调试输出。                                                                                                                                                       | `localSay\"Debug: slot is \(mySlot)"`（仅本地显示的消息）                                   |
+| `sendCommand\command`  | 发送命令。                                                                                                                                                                                                                     | `sendCommand\"gamemode creative"`（发送命令 "gamemode creative"）                           |
+| `var\varName\source`   | 将值存入变量。来源：`hotbarSlot`、`itemsOfSlot0-9`、`pitch`、`yaw` 或数字。                                                                                                                                                    | `var\mySlot\hotbarSlot`（存储快捷栏槽位），`var\angle\pitch`（存储俯仰角）                  |
+| `reapply\action`       | 手动重新激活一个按住状态的布尔别名（attack, use, forward, back, left, right, jump, sneak, sprint, drop, openInventory）。适合在 UserAlias 末尾用于界面切换后恢复按键状态。                                                     | `reapply\forward`（如果处于按住状态则重新按下前进键）                                       |
+| `openInventory\state`  | 打开（1）或关闭（0）物品栏界面。                                                                                                                                                                                               | `openInventory\1`（打开物品栏），`openInventory\0`（关闭物品栏）                            |
 
 > **数值别名支持变量引用：** `yaw`、`pitch`、`setYaw`、`setPitch`、`slot`、`swapSlot`、`wait` 和 `setPerspective` 均接受变量名（如 `yaw\myVar` 或 `slot\mySlot`）代替原始数字。
 
@@ -81,45 +82,45 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 
 这些是映射到常见 `state=1`（开始）和 `state=0`（停止）动作的简写别名，使用更简单：
 
-| 别名          | 等价于                  | 描述                       |
-|-------------|----------------------|--------------------------|
-| `+attack`   | `builtinAttack\1`    | 开始攻击（按住左键）。              |
-| `-attack`   | `builtinAttack\0`    | 停止攻击（释放左键）。              |
-| `+use`      | `builtinUse\1`       | 开始使用持有的物品（按住右键）。         |
-| `-use`      | `builtinUse\0`       | 停止使用持有的物品（释放右键）。         |
-| `+forward`  | `builtinForward\1`   | 开始向前移动。                  |
-| `-forward`  | `builtinForward\0`   | 停止向前移动。                  |
-| `+back`     | `builtinBack\1`      | 开始向后移动。                  |
-| `-back`     | `builtinBack\0`      | 停止向后移动。                  |
-| `+left`     | `builtinLeft\1`      | 开始向左移动。                  |
-| `-left`     | `builtinLeft\0`      | 停止向左移动。                  |
-| `+right`    | `builtinRight\1`     | 开始向右移动。                  |
-| `-right`    | `builtinRight\0`     | 停止向右移动。                  |
-| `+jump`     | `builtinJump\1`      | 开始跳跃（按住跳跃键）。             |
-| `-jump`     | `builtinJump\0`      | 停止跳跃（释放跳跃键）。             |
-| `+sneak`    | `builtinSneak\1`     | 开始潜行（按住潜行键）。             |
-| `-sneak`    | `builtinSneak\0`     | 停止潜行（释放潜行键）。             |
-| `+sprint`   | `builtinSprint\1`    | 开始疾跑（按住疾跑键）。             |
-| `-sprint`   | `builtinSprint\0`    | 停止疾跑（释放疾跑键）。             |
-| `+drop`     | `builtinDrop\1`    | 按下丢弃键。**按住可持续丢弃**物品，在3D游戏和容器/物品栏界面中均可使用（与原版一致，有初始连发延迟）。与键盘ctrl组合可丢弃整组。              |
-| `-drop`     | `builtinDrop\0`    | 释放丢弃键。                                                  |
-| `+openInventory` | `builtinOpenInventory\1` | 打开物品栏界面。                              |
-| `-openInventory` | `builtinOpenInventory\0` | 关闭物品栏界面（如果已打开）。                   |
-| `pickItem`  | —                   | 对瞄准的方块/实体触发原版的选取方块功能。     |
-| `swapHand`  | _                    | 交换主手和副手之间的物品。            |
-| `+silent`   | `builtinSilent\1`    | 启用静默模式（禁止命令反馈消息）。        |
-| `-silent`   | `builtinSilent\0`    | 禁用静默模式（重新启用命令反馈消息）。      |
-| `+lockKey\<target>` | `builtinLock\<target>\1` | 锁定游戏按键或自定义别名。对原版按键使用 `gameKey:attack`、`gameKey:forward` 等格式，或直接使用别名名称。 |
-| `-lockKey\<target>` | `builtinLock\<target>\0` | 解锁之前锁定的游戏按键或自定义别名。 |
-| `cyclePerspective` | —                    | 循环切换视角（FPS → TPS → TPS2）。                |
-| `FPS`              | `builtinSetPerspective\0` | 切换到第一人称视角。                              |
-| `TPS`              | `builtinSetPerspective\1` | 切换到第三人称背面视角。                          |
-| `TPS2`             | `builtinSetPerspective\2` | 切换到第三人称正面视角。                          |
-| `reloadCFG`      | —                    | 重新加载配置文件（无需重启即可应用更改）。                            |
-| `unloadCFGAliases` | —                  | 移除所有从配置文件加载的别名。                                         |
-| `unloadCFGBinds`   | —                  | 移除所有从配置文件加载的按键绑定。                                     |
-| `unloadCFGVars`    | —                  | 移除所有从配置文件加载的变量。                                         |
-| `unloadCFGAll`     | —                  | 移除所有从配置文件加载的别名、按键绑定和变量。                          |
+| 别名                | 等价于                    | 描述                                                                                                                              |
+| ------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `+attack`           | `builtinAttack\1`         | 开始攻击（按住左键）。                                                                                                            |
+| `-attack`           | `builtinAttack\0`         | 停止攻击（释放左键）。                                                                                                            |
+| `+use`              | `builtinUse\1`            | 开始使用持有的物品（按住右键）。                                                                                                  |
+| `-use`              | `builtinUse\0`            | 停止使用持有的物品（释放右键）。                                                                                                  |
+| `+forward`          | `builtinForward\1`        | 开始向前移动。                                                                                                                    |
+| `-forward`          | `builtinForward\0`        | 停止向前移动。                                                                                                                    |
+| `+back`             | `builtinBack\1`           | 开始向后移动。                                                                                                                    |
+| `-back`             | `builtinBack\0`           | 停止向后移动。                                                                                                                    |
+| `+left`             | `builtinLeft\1`           | 开始向左移动。                                                                                                                    |
+| `-left`             | `builtinLeft\0`           | 停止向左移动。                                                                                                                    |
+| `+right`            | `builtinRight\1`          | 开始向右移动。                                                                                                                    |
+| `-right`            | `builtinRight\0`          | 停止向右移动。                                                                                                                    |
+| `+jump`             | `builtinJump\1`           | 开始跳跃（按住跳跃键）。                                                                                                          |
+| `-jump`             | `builtinJump\0`           | 停止跳跃（释放跳跃键）。                                                                                                          |
+| `+sneak`            | `builtinSneak\1`          | 开始潜行（按住潜行键）。                                                                                                          |
+| `-sneak`            | `builtinSneak\0`          | 停止潜行（释放潜行键）。                                                                                                          |
+| `+sprint`           | `builtinSprint\1`         | 开始疾跑（按住疾跑键）。                                                                                                          |
+| `-sprint`           | `builtinSprint\0`         | 停止疾跑（释放疾跑键）。                                                                                                          |
+| `+drop`             | `builtinDrop\1`           | 按下丢弃键。**按住可持续丢弃**物品，在3D游戏和容器/物品栏界面中均可使用（与原版一致，有初始连发延迟）。与键盘ctrl组合可丢弃整组。 |
+| `-drop`             | `builtinDrop\0`           | 释放丢弃键。                                                                                                                      |
+| `+openInventory`    | `builtinOpenInventory\1`  | 打开物品栏界面。                                                                                                                  |
+| `-openInventory`    | `builtinOpenInventory\0`  | 关闭物品栏界面（如果已打开）。                                                                                                    |
+| `pickItem`          | —                         | 对瞄准的方块/实体触发原版的选取方块功能。                                                                                         |
+| `swapHand`          | _                         | 交换主手和副手之间的物品。                                                                                                        |
+| `+silent`           | `builtinSilent\1`         | 启用静默模式（禁止命令反馈消息）。                                                                                                |
+| `-silent`           | `builtinSilent\0`         | 禁用静默模式（重新启用命令反馈消息）。                                                                                            |
+| `+lockKey\<target>` | `builtinLock\<target>\1`  | 锁定游戏按键或自定义别名。对原版按键使用 `gameKey:attack`、`gameKey:forward` 等格式，或直接使用别名名称。                         |
+| `-lockKey\<target>` | `builtinLock\<target>\0`  | 解锁之前锁定的游戏按键或自定义别名。                                                                                              |
+| `cyclePerspective`  | —                         | 循环切换视角（FPS → TPS → TPS2）。                                                                                                |
+| `FPS`               | `builtinSetPerspective\0` | 切换到第一人称视角。                                                                                                              |
+| `TPS`               | `builtinSetPerspective\1` | 切换到第三人称背面视角。                                                                                                          |
+| `TPS2`              | `builtinSetPerspective\2` | 切换到第三人称正面视角。                                                                                                          |
+| `reloadCFG`         | —                         | 重新加载配置文件（无需重启即可应用更改）。                                                                                        |
+| `unloadCFGAliases`  | —                         | 移除所有从配置文件加载的别名。                                                                                                    |
+| `unloadCFGBinds`    | —                         | 移除所有从配置文件加载的按键绑定。                                                                                                |
+| `unloadCFGVars`     | —                         | 移除所有从配置文件加载的变量。                                                                                                    |
+| `unloadCFGAll`      | —                         | 移除所有从配置文件加载的别名、按键绑定和变量。                                                                                    |
 
 ### 变量
 
@@ -127,22 +128,22 @@ BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的�
 
 **来源** 用于 `var\varName\source`：
 
-| 来源              | 描述                             | 示例                           |
-|-------------------|---------------------------------|-------------------------------|
-| `hotbarSlot`      | 当前快捷栏槽位（1-9）               | `var\mySlot\hotbarSlot`     |
-| `itemsOfSlotN`    | 槽位 N 中的物品数量（0=副手，1-9=快捷栏）| `var\count\itemsOfSlot2`   |
-| `pitch`           | 玩家当前的俯仰角（浮点数）            | `var\myPitch\pitch`        |
-| `yaw`             | 玩家当前的偏航角（浮点数）            | `var\myYaw\yaw`            |
-| `42` 或 `3.14`    | 直接数值（整数或浮点数）              | `var\backup\42`            |
+| 来源           | 描述                                      | 示例                     |
+| -------------- | ----------------------------------------- | ------------------------ |
+| `hotbarSlot`   | 当前快捷栏槽位（1-9）                     | `var\mySlot\hotbarSlot`  |
+| `itemsOfSlotN` | 槽位 N 中的物品数量（0=副手，1-9=快捷栏） | `var\count\itemsOfSlot2` |
+| `pitch`        | 玩家当前的俯仰角（浮点数）                | `var\myPitch\pitch`      |
+| `yaw`          | 玩家当前的偏航角（浮点数）                | `var\myYaw\yaw`          |
+| `42` 或 `3.14` | 直接数值（整数或浮点数）                  | `var\backup\42`          |
 
 变量可以在任何数值别名中作为参数使用（如 `yaw\myVar`、`slot\mySlot`、`wait\myTicks`）。
 
 **变量相关命令：**
 
-| 命令                            | 用途                     | 示例                                  |
-|--------------------------------|-------------------------|---------------------------------------|
-| `/var <name> <source>`         | 创建或更新变量。            | `/var mySlot hotbarSlot`              |
-| `/unloadCFGVars`               | 移除所有从配置加载的变量。    | `/unloadCFGVars`                      |
+| 命令                   | 用途                       | 示例                     |
+| ---------------------- | -------------------------- | ------------------------ |
+| `/var <name> <source>` | 创建或更新变量。           | `/var mySlot hotbarSlot` |
+| `/unloadCFGVars`       | 移除所有从配置加载的变量。 | `/unloadCFGVars`         |
 
 ### AI 代理 / MCP HTTP 服务器
 
@@ -151,14 +152,14 @@ BindAliasPlus 内置了一个 HTTP 服务器，使 AI 代理（如 Claude、Chat
 
 服务器默认监听 `http://localhost:25567`（可在 `config/bind-alias-plus.cfg` 中配置），提供以下接口：
 
-| 接口               | 方法   | 描述                                                        |
-|--------------------|--------|-----------------------------------------------------------|
-| `/state`           | GET    | 玩家位置、生命值、手持物品、打开容器的内容（压缩格式）              |
-| `/screenshot`      | GET    | 内存 PNG 截图（无聊天刷屏，无文件 I/O）                          |
-| `/runAlias`        | POST   | 远程执行别名链（如 `swapSlot\1\2`）                          |
-| `/defineAlias`     | POST   | 通过 API 定义新别名                                           |
-| `/readCFG`         | GET    | 读取当前配置文件内容                                           |
-| `/writeCFG`        | POST   | 写入配置文件（修改按键绑定、别名、变量）                           |
+| 接口           | 方法 | 描述                                                   |
+| -------------- | ---- | ------------------------------------------------------ |
+| `/state`       | GET  | 玩家位置、生命值、手持物品、打开容器的内容（压缩格式） |
+| `/screenshot`  | GET  | 内存 PNG 截图（无聊天刷屏，无文件 I/O）                |
+| `/runAlias`    | POST | 远程执行别名链（如 `swapSlot\1\2`）                    |
+| `/defineAlias` | POST | 通过 API 定义新别名                                    |
+| `/readCFG`     | GET  | 读取当前配置文件内容                                   |
+| `/writeCFG`    | POST | 写入配置文件（修改按键绑定、别名、变量）               |
 
 **示例代理用法：**
 
@@ -218,18 +219,18 @@ curl http://localhost:25567/screenshot -o screen.png
 
 ## 命令参考
 
-| 命令                               | 用途                                                                                                                                  | 示例                                                       |
-|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
-| `/alias <name> <definition>`     | 创建自定义别名。                                                                                                                            | `/alias myAlias +jump wait\1 -jump`                      |
+| 命令                             | 用途                                                                                                                                                                                                             | 示例                                                  |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `/alias <name> <definition>`     | 创建自定义别名。                                                                                                                                                                                                 | `/alias myAlias +jump wait\1 -jump`                   |
 | `/bind <key> <definition>`       | 将按键绑定到此命令定义的别名序列或现有别名。对于通过分隔符分割的每个定义（双引号内的内容仍为同一块），如果以 + 或 - 开头，它将创建一个相反的别名。例如第一个例子，它还将 -forward 和 +back 绑定到键盘键 g 的释放 | `/bind g +forward wait\10 -back   或   /bind n +drop` |
-| `/bindByAliasName <key> <alias>` | 将按键绑定到现有别名。                                                                                                                         | `/bindByAliasName mouse5 +fly`                           |
-| `/unbind <key>`                  | 移除按键绑定。                                                                                                                             | `/unbind mouse5`                                         |
-| `/reloadCFG`                     | 从文件重新加载配置。                                                                                                                          | `/reloadCFG`                                             |
-| `/var <name> <source>`           | 创建/更新变量。来源：`hotbarSlot`、`itemsOfSlot0-9`、`pitch`、`yaw` 或数字。                                                                        | `/var mySlot hotbarSlot`、`/var angle pitch`             |
-| `/unloadCFGAliases`              | 移除所有从配置加载的别名。                                                                                                                       | `/unloadCFGAliases`                                      |
-| `/unloadCFGBinds`                | 移除所有从配置加载的按键绑定。                                                                                                                     | `/unloadCFGBinds`                                        |
-| `/unloadCFGVars`                 | 移除所有从配置加载的变量。                                                                                                                       | `/unloadCFGVars`                                         |
-| `/unloadCFGAll`                  | 移除所有从配置加载的别名、按键绑定和变量。                                                                                                            | `/unloadCFGAll`                                          |
+| `/bindByAliasName <key> <alias>` | 将按键绑定到现有别名。                                                                                                                                                                                           | `/bindByAliasName mouse5 +fly`                        |
+| `/unbind <key>`                  | 移除按键绑定。                                                                                                                                                                                                   | `/unbind mouse5`                                      |
+| `/reloadCFG`                     | 从文件重新加载配置。                                                                                                                                                                                             | `/reloadCFG`                                          |
+| `/var <name> <source>`           | 创建/更新变量。来源：`hotbarSlot`、`itemsOfSlot0-9`、`pitch`、`yaw` 或数字。                                                                                                                                     | `/var mySlot hotbarSlot`、`/var angle pitch`          |
+| `/unloadCFGAliases`              | 移除所有从配置加载的别名。                                                                                                                                                                                       | `/unloadCFGAliases`                                   |
+| `/unloadCFGBinds`                | 移除所有从配置加载的按键绑定。                                                                                                                                                                                   | `/unloadCFGBinds`                                     |
+| `/unloadCFGVars`                 | 移除所有从配置加载的变量。                                                                                                                                                                                       | `/unloadCFGVars`                                      |
+| `/unloadCFGAll`                  | 移除所有从配置加载的别名、按键绑定和变量。                                                                                                                                                                       | `/unloadCFGAll`                                       |
 
 ## 注意事项
 
@@ -250,4 +251,3 @@ curl http://localhost:25567/screenshot -o screen.png
 ## 许可证
 
 此模组基于 [Creative Commons Zero v1.0 Universal](LICENSE) 许可。
-
