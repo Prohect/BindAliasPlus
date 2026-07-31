@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
 
 /**
@@ -18,7 +18,7 @@ public class SilentAlias extends BuiltinAliasWithBooleanArgs<SilentAlias> {
         parseArgs(args);
         // this is not a game operation, so we don't need to cancel press events from
         // text input screen
-        BindAliasPlusClient.silentMode = flag;
+        BindAliasClient.silentMode = flag;
         return this;
     }
 }

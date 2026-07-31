@@ -1,6 +1,6 @@
 package com.github.prohect.alias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 
 /**
  * consider whether you need to cancel the press event from text input screen
@@ -25,8 +25,7 @@ public abstract class BuiltinAliasWithBooleanArgs<T extends BuiltinAliasWithBool
                 flag = true;
                 break;
             default:
-                BindAliasPlusClient.LOGGER.warn("{}[" + this.builtinAliasName + "]Invalid arguments",
-                        BindAliasPlusClient.tickPrefix());
+                BindAliasClient.LOGGER.warn("{}[" + this.builtinAliasName + "]Invalid arguments", BindAliasClient.tickPrefix());
                 break;
         }
         this.flag = flag;

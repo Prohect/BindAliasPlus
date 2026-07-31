@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
@@ -30,7 +30,7 @@ public class ReapplyAlias extends BuiltinAliasWithArgs<ReapplyAlias> {
     @Override
     public ReapplyAlias run(String args) {
         if (args == null || args.isBlank()) {
-            BindAliasPlusClient.LOGGER.warn("{}[reapply] No action name provided", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[reapply] No action name provided", BindAliasClient.tickPrefix());
             return this;
         }
 
@@ -49,8 +49,8 @@ public class ReapplyAlias extends BuiltinAliasWithArgs<ReapplyAlias> {
         if (alias instanceof BuiltinAliasWithBooleanArgs<?> b && b.flag) {
             b.reapplyToGameKeyMapping();
         } else {
-            BindAliasPlusClient.LOGGER.warn("{}[reapply] '{}' -> '{}' not found or not held", BindAliasPlusClient.tickPrefix(),
-                    args, builtinName);
+            BindAliasClient.LOGGER.warn("{}[reapply] '{}' -> '{}' not found or not held", BindAliasClient.tickPrefix(), args,
+                    builtinName);
         }
         return this;
     }

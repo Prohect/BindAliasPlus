@@ -1,6 +1,6 @@
 package com.github.prohect.alias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.builtinAlias.VarAlias;
 
 public abstract class BuiltinAliasWithDoubleArgs<T extends BuiltinAliasWithDoubleArgs<T>> extends BuiltinAliasWithArgs<T> {
@@ -24,7 +24,7 @@ public abstract class BuiltinAliasWithDoubleArgs<T extends BuiltinAliasWithDoubl
             try {
                 flag = Double.parseDouble(args);
             } catch (NumberFormatException e) {
-                BindAliasPlusClient.LOGGER.error("{}{}", BindAliasPlusClient.tickPrefix(), e.getMessage(), e);
+                BindAliasClient.LOGGER.error("{}{}", BindAliasClient.tickPrefix(), e.getMessage(), e);
             }
         }
         this.flag = flag;

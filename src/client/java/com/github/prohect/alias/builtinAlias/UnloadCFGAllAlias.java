@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.BuiltinAliasWithoutArgs;
 
 /**
@@ -22,8 +22,8 @@ public class UnloadCFGAllAlias extends BuiltinAliasWithoutArgs<UnloadCFGAllAlias
     @Override
     public UnloadCFGAllAlias run(String args) {
         // Use silent mode temporarily to avoid spam
-        boolean originalSilentMode = BindAliasPlusClient.silentMode;
-        BindAliasPlusClient.silentMode = true;
+        boolean originalSilentMode = BindAliasClient.silentMode;
+        BindAliasClient.silentMode = true;
 
         int totalAliases = 0;
         int totalBinds = 0;
@@ -41,8 +41,8 @@ public class UnloadCFGAllAlias extends BuiltinAliasWithoutArgs<UnloadCFGAllAlias
         // Unload bindings
         UnloadCFGBindsAlias unloadBinds = new UnloadCFGBindsAlias();
         unloadBinds.run(args);
-        totalBinds = (int) BindAliasPlusClient.BINDING_PLUS.values().stream().filter(binding -> !binding.fromCFG()).count();
-        totalBinds = BindAliasPlusClient.BINDING_PLUS.size() - totalBinds;
+        totalBinds = (int) BindAliasClient.BINDING_PLUS.values().stream().filter(binding -> !binding.fromCFG()).count();
+        totalBinds = BindAliasClient.BINDING_PLUS.size() - totalBinds;
 
         // Unload variables
         UnloadCFGVarsAlias unloadVars = new UnloadCFGVarsAlias();
@@ -50,11 +50,11 @@ public class UnloadCFGAllAlias extends BuiltinAliasWithoutArgs<UnloadCFGAllAlias
         unloadVars.run(args);
 
         // Restore silent mode
-        BindAliasPlusClient.silentMode = originalSilentMode;
+        BindAliasClient.silentMode = originalSilentMode;
 
         if (!originalSilentMode) {
-            BindAliasPlusClient.LOGGER.info("{}[unloadCFGAll] Removed {} alias(es), {} keybinding(s), {} variable(s)",
-                    BindAliasPlusClient.tickPrefix(), totalAliases, totalBinds, totalVars);
+            BindAliasClient.LOGGER.info("{}[unloadCFGAll] Removed {} alias(es), {} keybinding(s), {} variable(s)",
+                    BindAliasClient.tickPrefix(), totalAliases, totalBinds, totalVars);
         }
 
         return this;

@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.BuiltinAliasWithIntegerArgs;
 import com.github.prohect.alias.UserAlias;
 
@@ -19,8 +19,8 @@ public class WaitAlias extends BuiltinAliasWithIntegerArgs<WaitAlias> {
     public WaitAlias run(String args) {
         parseArgs(args);
         if (flag < 0)
-            BindAliasPlusClient.LOGGER.error("{}Invalid arguments: ticks of waitAlias could only be positive integers.",
-                    BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.error("{}Invalid arguments: ticks of waitAlias could only be positive integers.",
+                    BindAliasClient.tickPrefix());
         return this;
     }
 
@@ -31,7 +31,7 @@ public class WaitAlias extends BuiltinAliasWithIntegerArgs<WaitAlias> {
         else if (flag == 0)
             new UserAlias(definition).run("");
         else
-            BindAliasPlusClient.LOGGER.error("{}Invalid arguments:ticks not expected", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.error("{}Invalid arguments:ticks not expected", BindAliasClient.tickPrefix());
         return this;
     }
 }

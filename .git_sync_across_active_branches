@@ -23,7 +23,37 @@ LICENSE
 ######################
 # MANUAL SYNC:       #
 # docs/en-US/        #
-# src/               #
 # build.gradle       #
 # gradle.properties  #
 ######################
+
+# TEMPORARY — identical src files for rename sync
+src/client/java/com/github/prohect/BindAliasDataGenerator.java
+src/client/java/com/github/prohect/KeyBindingPlus.java
+src/client/java/com/github/prohect/alias/AliasRecord.java
+src/client/java/com/github/prohect/alias/AliasWithArgs.java
+src/client/java/com/github/prohect/alias/AliasWithoutArgs.java
+src/client/java/com/github/prohect/alias/BuiltinAliasWithArgs.java
+src/client/java/com/github/prohect/alias/BuiltinAliasWithBooleanArgs.java
+src/client/java/com/github/prohect/alias/BuiltinAliasWithDoubleArgs.java
+src/client/java/com/github/prohect/alias/BuiltinAliasWithGreedyStringArgs.java
+src/client/java/com/github/prohect/alias/BuiltinAliasWithIntegerArgs.java
+src/client/java/com/github/prohect/alias/BuiltinAliasWithoutArgs.java
+src/client/java/com/github/prohect/alias/UserAlias.java
+src/client/java/com/github/prohect/alias/builtinAlias/LockAlias_OnLock.java
+src/client/java/com/github/prohect/alias/builtinAlias/LockAlias_Unlock.java
+src/client/java/com/github/prohect/alias/builtinAlias/LogAlias.java
+src/client/java/com/github/prohect/alias/builtinAlias/ReapplyAlias.java
+src/client/java/com/github/prohect/alias/builtinAlias/ReloadCFGAlias.java
+src/client/java/com/github/prohect/alias/builtinAlias/RunAliasAlias.java
+src/client/java/com/github/prohect/alias/builtinAlias/SilentAlias.java
+src/client/java/com/github/prohect/alias/builtinAlias/UnloadCFGAliasesAlias.java
+src/client/java/com/github/prohect/alias/builtinAlias/UnloadCFGAllAlias.java
+src/client/java/com/github/prohect/alias/builtinAlias/UnloadCFGVarsAlias.java
+src/client/java/com/github/prohect/alias/builtinAlias/WaitAlias.java
+src/client/java/com/github/prohect/alias/builtinAlias/WaitAliasRecord.java
+src/client/java/com/github/prohect/mcp/GameChannels.java
+src/client/java/com/github/prohect/mcp/ScreenshotCapture.java
+src/main/java/com/github/prohect/BindAlias.java
+src/main/resources/assets/bind-alias/icon.png
+src/main/resources/bind-alias.mixins.json
