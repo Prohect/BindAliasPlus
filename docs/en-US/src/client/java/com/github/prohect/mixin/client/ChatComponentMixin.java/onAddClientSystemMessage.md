@@ -3,19 +3,24 @@
 ## Syntax
 
 ```java
-private void onAddClientSystemMessage(net.minecraft.network.chat.Component, org.spongepowered.asm.mixin.injection.callback.CallbackInfo)
+@Inject(method = "addClientSystemMessage(Lnet/minecraft/network/chat/Component;)V", at = @At("HEAD"))
+private void onAddClientSystemMessage(Component message, CallbackInfo ci)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `message` | `net.minecraft.network.chat.Component` | The client-side system message being added to the HUD |
+| `ci` | `CallbackInfo` | Unused callback |
 
 ## Remarks
+
+Injected at `HEAD` of `ChatComponent#addClientSystemMessage(Component)`. Extracts the plain-text string from the component via `message.getString()` and posts it to [`GameChannels.CHAT`](../../../mcp/GameChannels.java/CHAT.md). Client system messages include game mode change notifications, screenshot confirmations, and other client-local feedback text.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+| [capture](capture.md) | The private helper that posts to the channel |
+| [GameChannels.CHAT](../../../mcp/GameChannels.java/CHAT.md) | Destination channel field |

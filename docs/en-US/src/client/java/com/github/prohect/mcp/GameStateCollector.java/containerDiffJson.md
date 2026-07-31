@@ -3,19 +3,27 @@
 ## Syntax
 
 ```java
-static java.lang.String containerDiffJson(com.github.prohect.mcp.GameStateCollector$ContainerSnapshot, com.github.prohect.mcp.GameStateCollector$ContainerSnapshot)
+static String containerDiffJson(ContainerSnapshot last, ContainerSnapshot cur)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+Diff JSON object string containing only changed slots. An item with value `null` means the slot became empty. Includes `empty_inv` and `grid` only when they changed. Returns `null` when nothing changed.
 
 ## Remarks
+
+Computes a slot-level diff between two container snapshots:
+
+- **Added/changed slots**: slots present in `cur.items` but missing or with a different value in `last.items`.
+- **Removed slots**: slots present in `last.items` but absent in `cur.items` → value is `null`.
+- **empty_inv**: included only when the empty-range string differs.
+- **grid**: included only when the grid representation differs.
+
+Returns `null` when all tracked fields are identical, signaling `StateTracker` to omit the `container` member from the envelope.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+| [containerFullJson](containerFullJson.md) | The full variant |
+| [StateTracker.begin](StateTracker.java/begin.md) | The caller |

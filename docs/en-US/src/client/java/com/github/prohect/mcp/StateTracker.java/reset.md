@@ -6,16 +6,12 @@
 public static synchronized void reset()
 ```
 
-## Parameters
-
-| Name | Type | Description |
-|------|------|-------------|
-
 ## Remarks
+
+Forgets the baseline state snapshot: sets `last` to an empty map, nulls `lastContainer`, `lastHotbarItems`, `lastHotbarEmpty`, and resets `baselineJoinTick` to `Long.MIN_VALUE`. Called on world join/disconnect so the next `begin()` call is forced to full mode (all state members included) regardless of the `full` parameter.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+| [begin](begin.md) | The next call will produce a full snapshot |

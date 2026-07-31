@@ -1,5 +1,7 @@
 # DebugOverlayAlias (src/client/java/com/github/prohect/alias/builtinAlias/DebugOverlayAlias.java)
 
+Builtin alias that shows or hides the debug overlay (F3 screen) — FPS graph, coordinates, entity counts, chunk cache, etc. Inherits the `+name`/`-name` switch pattern from `BuiltinAliasWithBooleanArgs`.
+
 ## Syntax
 
 ```java
@@ -12,10 +14,15 @@ _None._
 
 ## Remarks
 
+Registered as `"builtinDebugOverlay"`. Usage: `+debugOverlay` to show, `-debugOverlay` to hide. Unlike most other key-based aliases, the debug overlay is **not** driven through a vanilla `KeyMapping` — the F3 key is intercepted at the GLFW level before Minecraft's key system sees it. Therefore, this alias bypasses the key binding system entirely and directly sets `Minecraft.debugEntries.setOverlayVisible(flag)`.
+
+Press events are suppressed when a text-input screen is open.
+
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [AdvancementsAlias](../AdvancementsAlias.java/AdvancementsAlias.md) | Key-based toggle |
+| [DebugEntries](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a) | Vanilla class: debug pie, FPS graph, chunk borders, etc. |
 
 *Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
-

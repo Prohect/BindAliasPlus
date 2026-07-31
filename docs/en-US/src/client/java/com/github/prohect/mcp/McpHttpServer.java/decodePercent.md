@@ -3,19 +3,25 @@
 ## Syntax
 
 ```java
-private static java.lang.String decodePercent(java.lang.String)
+private static String decodePercent(String s)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `s` | `String` | The percent-encoded string to decode |
+
+## Return value
+
+The decoded string with `%XX` sequences replaced by their corresponding characters.
 
 ## Remarks
+
+Decodes percent-encoded characters in HTTP query strings. Each `%XX` sequence is converted to a byte and interpreted as a UTF-8 character. Non-encoded characters pass through unchanged.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+| [parseQuery](parseQuery.md) | The caller |

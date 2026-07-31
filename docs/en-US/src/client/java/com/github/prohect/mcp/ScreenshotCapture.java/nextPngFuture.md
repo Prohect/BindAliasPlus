@@ -3,9 +3,16 @@
 ## Syntax
 
 ```java
-public static volatile java.util.concurrent.CompletableFuture<byte[]> nextPngFuture
+public static volatile CompletableFuture<byte[]> nextPngFuture
 ```
 
 ## Remarks
 
-*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+A `CompletableFuture` holding the in-memory PNG bytes of the next screenshot. Set by `McpHttpServer.handleScreenshot` before triggering the vanilla screenshot, and completed by `NativeImageMixin.onWriteToFile` with the PNG byte array. `volatile` because it is written from the main thread and read from the mixin callback on the render thread. One-shot: the mixin sets it to `null` after consuming it.
+
+## See Also
+
+| Item | Description |
+|------|-------------|
+| [McpHttpServer.handleScreenshot](McpHttpServer.java/handleScreenshot.md) | Sets this future |
+| [NativeImageMixin.onWriteToFile](../../mixin/client/NativeImageMixin.java/onWriteToFile.md) | Completes this future |

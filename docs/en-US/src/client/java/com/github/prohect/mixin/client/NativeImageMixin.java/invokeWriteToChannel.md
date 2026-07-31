@@ -3,19 +3,27 @@
 ## Syntax
 
 ```java
-abstract boolean invokeWriteToChannel(java.nio.channels.WritableByteChannel) throws java.io.IOException
+@Invoker("writeToChannel")
+abstract boolean invokeWriteToChannel(WritableByteChannel channel) throws IOException
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `channel` | `java.nio.channels.WritableByteChannel` | The channel to write PNG bytes into |
+
+## Return value
+
+`true` if the PNG was successfully encoded and written; `false` if encoding failed.
 
 ## Remarks
+
+An `@Invoker` access-widened bridge for the `private` method `NativeImage.writeToChannel(WritableByteChannel)`. The mod's access widener removes the `private` flag at compile time, allowing Mixin to generate this invoker. At runtime, the call executes the original STB-image PNG encoder on the `NativeImage` instance (`this`). Used exclusively by [`onWriteToFile`](onWriteToFile.md) to capture PNG bytes in memory before they hit disk.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+| [onWriteToFile](onWriteToFile.md) | The caller that uses this invoker |
+| [ScreenshotCapture](../../../mcp/ScreenshotCapture.java/README.md) | Where the resulting bytes are delivered |

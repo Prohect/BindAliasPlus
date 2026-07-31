@@ -3,19 +3,19 @@
 ## Syntax
 
 ```java
-private static java.lang.String compressRanges(java.util.List<java.lang.Integer>)
+private static String compressRanges(List<Integer> indices)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+Compressed range string. Single indices are comma-separated; runs of 3+ consecutive indices are collapsed to `"start-end"`. Two consecutive indices remain as individual numbers (e.g., `"1,2,5-8,10"`).
 
 ## Remarks
+
+Helper for `hotbarEmptyRanges` and `containerSnapshot`'s `emptyInv` field. Uses a 2-index threshold before collapsing: runs of exactly 2 are kept as separate numbers for readability.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+| [hotbarEmptyRanges](hotbarEmptyRanges.md) | The primary caller |

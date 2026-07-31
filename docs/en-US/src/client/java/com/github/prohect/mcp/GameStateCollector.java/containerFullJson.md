@@ -3,19 +3,20 @@
 ## Syntax
 
 ```java
-static java.lang.String containerFullJson(com.github.prohect.mcp.GameStateCollector$ContainerSnapshot)
+static String containerFullJson(ContainerSnapshot snap)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+Full JSON object string for the container, including `items` (all non-empty slots), `empty_inv` (compressed empty ranges), and optional `grid`.
 
 ## Remarks
+
+Formats a `ContainerSnapshot` as a complete JSON object. Used by `StateTracker.begin` on the first snapshot, on world changes, and when the container menu identity changes. Unlike `containerDiffJson`, includes every non-empty slot.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+| [containerDiffJson](containerDiffJson.md) | The incremental diff variant |
+| [StateTracker.begin](StateTracker.java/begin.md) | The caller |

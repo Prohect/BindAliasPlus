@@ -3,6 +3,7 @@
 ## Syntax
 
 ```java
+@Mixin(ClientPacketListener.class)
 public class com.github.prohect.mixin.client.ClientPacketListenerMixin
 ```
 
@@ -12,10 +13,11 @@ _None._
 
 ## Remarks
 
+Mixes into `net.minecraft.client.multiplayer.ClientPacketListener` to intercept recipe-book-add packets. When the server sends a `ClientboundRecipeBookAddPacket`, this mixin reports each newly-unlocked recipe (those with `Entry#notification() == true`) to the [`GameChannels.RECIPE`](../../../mcp/GameChannels.java/RECIPE.md) channel by its result item's locale display name. The channel is best-effort — any exception during processing is silently swallowed.
+
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
-
+| [GameChannels.RECIPE](../../../mcp/GameChannels.java/RECIPE.md) | Destination channel for recipe unlock notifications |
+| [onRecipeBookAdd](onRecipeBookAdd.md) | The `@Inject` intercepting the packet |

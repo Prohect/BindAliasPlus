@@ -3,19 +3,22 @@
 ## Syntax
 
 ```java
-static void handleState(com.sun.net.httpserver.HttpExchange) throws java.io.IOException
+static void handleState(HttpExchange exchange) throws IOException
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `exchange` | `com.sun.net.httpserver.HttpExchange` | The HTTP exchange; response body receives the full game-state JSON envelope |
 
 ## Remarks
+
+`GET /state` handler. On the main thread, calls `StateTracker.begin(true)` to force a full snapshot (all state members included) and `StateTracker.finish(begun)` to drain channels. Returns the resulting JSON envelope with HTTP 200. The `full = true` parameter ensures every state member is included even if unchanged since the previous snapshot.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+| [StateTracker.begin](StateTracker.java/begin.md) | Begins the envelope (full mode) |
+| [StateTracker.finish](StateTracker.java/finish.md) | Finishes and drains channels |

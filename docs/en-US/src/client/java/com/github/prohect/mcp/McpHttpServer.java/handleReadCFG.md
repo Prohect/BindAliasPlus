@@ -3,19 +3,21 @@
 ## Syntax
 
 ```java
-static void handleReadCFG(com.sun.net.httpserver.HttpExchange) throws java.io.IOException
+static void handleReadCFG(HttpExchange exchange) throws IOException
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `exchange` | `com.sun.net.httpserver.HttpExchange` | The HTTP exchange; response body receives the `content` field with raw CFG text |
 
 ## Remarks
+
+`GET /readCFG` handler. Reads the CFG file from the game directory (`config/bind-alias.cfg`) and returns its contents as a JSON envelope with a `"content"` string member. If the file does not exist, returns an empty string. Does not require the main thread (file I/O only).
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+| [handleWriteCFG](handleWriteCFG.md) | The write counterpart |

@@ -1,5 +1,7 @@
 # ClientPacketListenerMixin
 
+Mixin targeting `net.minecraft.client.multiplayer.ClientPacketListener`. Intercepts recipe-book-add packets to feed the `RECIPE` channel.
+
 ## Fields
 
 | Name | Type | Description |
@@ -9,10 +11,11 @@
 
 | Name | Signature | Description |
 |------|-----------|-------------|
+| [onRecipeBookAdd](onRecipeBookAdd.md) | `void onRecipeBookAdd(ClientboundRecipeBookAddPacket packet, CallbackInfo ci)` | `@Inject` at `HEAD` of `handleRecipeBookAdd` — reports newly unlocked recipe names to the `RECIPE` channel |
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+| [GameChannels.RECIPE](../../../mcp/GameChannels.java/RECIPE.md) | Destination channel for recipe notifications |
+| [RecipeBookHelper](../../../mcp/RecipeBookHelper.java/README.md) | Read side for the `listRecipes`/`applyRecipe` APIs |

@@ -3,19 +3,19 @@
 ## Syntax
 
 ```java
-private static java.lang.String effectsJson(java.util.Collection<net.minecraft.world.effect.MobEffectInstance>)
+private static String effectsJson(Collection<MobEffectInstance> effects)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+JSON array string of active status effects, each with `name` (display name), `amplifier` (0-indexed), and `duration` (formatted as `MM:SS`).
 
 ## Remarks
+
+Iterates the player's active `MobEffectInstance` collection, extracting the display name from the effect's `MobEffect.getDisplayName()` via `Component.getString()`, the amplifier level, and the remaining duration (ticks converted to `MM:SS` via `formatDuration`). Returns `"[]"` when the collection is empty or null.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+| [formatDuration](formatDuration.md) | Tick→MM:SS conversion |

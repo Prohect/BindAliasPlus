@@ -3,19 +3,23 @@
 ## Syntax
 
 ```java
-private static void sendJson(com.sun.net.httpserver.HttpExchange, int, java.lang.String) throws java.io.IOException
+private static void sendJson(HttpExchange exchange, int code, String json) throws IOException
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `exchange` | `HttpExchange` | The HTTP exchange to send the response on |
+| `code` | `int` | HTTP status code (e.g., 200, 400) |
+| `json` | `String` | The JSON response body |
 
 ## Remarks
+
+Sends a JSON HTTP response. Sets `Content-Type: application/json`, writes the status code, and sends the response body. Used by all HTTP handlers for both success and error responses. Errors (IOExceptions during send) are logged.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+| [handleState](handleState.md) | Uses sendJson for all responses |
