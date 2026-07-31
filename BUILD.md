@@ -1,6 +1,6 @@
 # Build
 
-A minimal guide to building BindAliasPlus from source.
+A minimal guide to building BindAlias from source.
 
 ## Prerequisites
 
@@ -10,8 +10,8 @@ A minimal guide to building BindAliasPlus from source.
 ## Quick start
 
 ```bash
-git clone https://github.com/Prohect/BindAliasPlus.git
-cd BindAliasPlus
+git clone https://github.com/Prohect/BindAlias.git
+cd BindAlias
 ./gradlew build
 ```
 
@@ -34,7 +34,7 @@ or
 
 This launches Minecraft with the mod loaded and runTestClient joins a test world
 (`Test_26_2` on the `26.1.2_26.2` branch) automatically. Test config lives in
-`run/config/bind-alias-plus.cfg`.
+`run/config/bind-alias.cfg`.
 
 ## Useful Gradle tasks
 

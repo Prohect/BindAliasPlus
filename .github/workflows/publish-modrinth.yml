@@ -69,10 +69,10 @@ jobs:
         uses: Kir-Antipov/mc-publish@v3
         with:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          modrinth-id: bind-alias-plus
+          modrinth-id: bind-alias
           files: ${{ matrix.jar }}
           loaders: fabric
-          modrinth-name: "BindAliasPlus ${{ steps.tag.outputs.ver }}"
+          modrinth-name: "BindAlias ${{ steps.tag.outputs.ver }}"
           modrinth-version: ${{ steps.tag.outputs.ver }}
           modrinth-version-type: release
           modrinth-changelog-file: ${{ steps.changelog.outputs.file }}
