@@ -25,7 +25,9 @@ The built JAR lands in `build/libs/`.
 ```bash
 ./gradlew runTestClient
 ```
+
 or
+
 ```bash
 ./gradlew runClient
 ```
