@@ -25,4 +25,4 @@ This method may be called from the render thread (via Mixin injection). The `buf
 | [begin](begin.md) | Enables capture (sets active = true) |
 | [ChatComponentMixin.capture](../../mixin/client/ChatComponentMixin.java/capture.md) | Caller — extracts text from Component |
 
-*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAliasPlus/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
+*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAlias/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*

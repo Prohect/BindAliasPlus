@@ -33,4 +33,4 @@ Used by every endpoint handler when embedding strings into JSON responses, inclu
 |------|-------------|
 | [sendJson](sendJson.md) | Sends the final JSON — callers compose strings with this |
 
-*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAliasPlus/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*
+*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAlias/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*

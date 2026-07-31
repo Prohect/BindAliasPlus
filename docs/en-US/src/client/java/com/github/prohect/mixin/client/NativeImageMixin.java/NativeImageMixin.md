@@ -30,4 +30,4 @@ The class is declared `abstract` because it contains an `@Invoker` method withou
 | [onWriteTo](onWriteTo.md) | `@Inject` at `writeTo(Path)` — screenshot capture logic |
 | [ScreenshotCapture](../../../mcp/ScreenshotCapture.java/ScreenshotCapture.md) | Shared state container populated by this mixin |
 
-*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAliasPlus/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*
+*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAlias/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*

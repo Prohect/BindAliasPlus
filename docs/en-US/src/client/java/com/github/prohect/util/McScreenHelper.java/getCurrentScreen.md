@@ -30,6 +30,6 @@ Used by [Alias.getCurrentScreen](../../alias/Alias.java/getCurrentScreen.md) to 
 |------|-------------|
 | [setScreen](setScreen.md) | Companion setter — `McScreenHelper.setScreen(client, screen)` |
 | [Alias.getCurrentScreen](../../alias/Alias.java/getCurrentScreen.md) | Primary caller — screen-aware alias gating |
-| [BindAliasPlusClient.currentScreen](../BindAliasPlusClient.java/currentScreen.md) | Cached screen name string |
+| [BindAliasClient.currentScreen](../BindAliasClient.java/currentScreen.md) | Cached screen name string |
 
-*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAliasPlus/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*
+*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAlias/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*

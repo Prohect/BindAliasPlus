@@ -26,4 +26,4 @@ The method is `static` because it has no dependency on the mixin instance — it
 | [captureMessage](captureMessage.md) | Caller — the `@Inject` hook on `ChatHud.addMessage(Text)` |
 | [ChatCapture.onSystemMessage](../../mcp/ChatCapture.java/onSystemMessage.md) | Called by this method |
 
-*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAliasPlus/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*
+*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAlias/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*

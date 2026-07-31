@@ -16,4 +16,4 @@ A Mixin for `net.minecraft.client.texture.NativeImage` (Yarn) — the equivalent
 | [ScreenshotCapture](../../../mcp/ScreenshotCapture.java/ScreenshotCapture.md) | Consumer — holds `nextPngFuture` and `lastPath`/`lastName` for the MCP HTTP handler |
 | [McpHttpServer](../../../mcp/McpHttpServer.java/McpHttpServer.md) | MCP HTTP server — polls `nextPngFuture` via the screenshot endpoint |
 
-*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAliasPlus/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*
+*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAlias/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*

@@ -41,4 +41,4 @@ On error, returns `{"error": "..."}` with status 500.
 | [buildContainerJson](buildContainerJson.md) | Builds the `container` sub-object |
 | [onMainThread](onMainThread.md) | Thread bridge used to access game state |
 
-*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAliasPlus/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*
+*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAlias/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*

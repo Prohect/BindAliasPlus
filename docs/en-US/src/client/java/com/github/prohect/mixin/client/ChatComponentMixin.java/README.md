@@ -22,4 +22,4 @@
 | [ChatCapture](../../mcp/ChatCapture.java/README.md) | Receives captured messages for command-feedback collection |
 | [ChatCapture.onSystemMessage](../../mcp/ChatCapture.java/onSystemMessage.md) | Called by `capture()` to append text to the capture buffer |
 
-*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAliasPlus/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*
+*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAlias/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*

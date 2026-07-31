@@ -29,4 +29,4 @@ Called by `run()` for each argument token. A `null` return causes the swap to ab
 | [VarAlias.resolveInt](../VarAlias.java/resolveInt.md) | Variable resolution for player inventory slots |
 | [run](run.md) | Entry point that calls this parser |
 
-*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAliasPlus/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
+*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAlias/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*

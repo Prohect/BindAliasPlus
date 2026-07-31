@@ -1,4 +1,4 @@
-# getSuggestions4aliasDefinitionCompletableFuture method (src/client/java/com/github/prohect/BindAliasPlusClient.java)
+# getSuggestions4aliasDefinitionCompletableFuture method (src/client/java/com/github/prohect/BindAliasClient.java)
 
 ## Syntax
 
@@ -18,4 +18,4 @@ private static java.util.concurrent.CompletableFuture<com.mojang.brigadier.sugge
 | Item | Description |
 |------|-------------|
 
-*Documented for Commit: [743d57ceacea66cd8d44f3e76063658cbcc86568](https://github.com/Prohect/BindAliasPlus/tree/743d57ceacea66cd8d44f3e76063658cbcc86568)*
+*Documented for Commit: [743d57ceacea66cd8d44f3e76063658cbcc86568](https://github.com/Prohect/BindAlias/tree/743d57ceacea66cd8d44f3e76063658cbcc86568)*

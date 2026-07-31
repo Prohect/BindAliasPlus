@@ -25,4 +25,4 @@ Logs a stop confirmation message. Called by the JVM shutdown hook registered in 
 | [start](start.md) | Creates and starts the server |
 | [ShutdownAlias](../../alias/builtinAlias/ShutdownAlias.java/ShutdownAlias.md) | Builtin alias that calls `stop()` |
 
-*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAliasPlus/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*
+*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAlias/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*

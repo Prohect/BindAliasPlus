@@ -28,4 +28,4 @@ The `CheckedSupplier<T>` functional interface is a local equivalent of `Callable
 | [handleScreenshot](handleScreenshot.md) | Uses this to trigger the screenshot on the game thread |
 | [handleRunAlias](handleRunAlias.md) | Uses this to execute aliases on the game thread |
 
-*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAliasPlus/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*
+*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAlias/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*

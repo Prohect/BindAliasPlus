@@ -34,4 +34,4 @@ This pipeline cuts screenshot response time from ~500 ms (sleep + filesystem sca
 | [ScreenshotCapture](../../../mcp/ScreenshotCapture.java/ScreenshotCapture.md) | Shared state — `nextPngFuture`, `lastPath`, `lastName` |
 | [ScreenshotCapture.nextPngFuture](../../../mcp/ScreenshotCapture.java/nextPngFuture.md) | The one-shot future consumed here |
 
-*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAliasPlus/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*
+*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAlias/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*

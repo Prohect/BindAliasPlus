@@ -35,4 +35,4 @@ Correspondingly, this mixin provides a single `@Inject` hook (`captureMessage`) 
 | [captureMessage](captureMessage.md) | The `@Inject` hook on `ChatHud.addMessage(Text)` |
 | [capture](capture.md) | Private bridge to `ChatCapture.onSystemMessage()` |
 
-*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAliasPlus/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*
+*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAlias/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*

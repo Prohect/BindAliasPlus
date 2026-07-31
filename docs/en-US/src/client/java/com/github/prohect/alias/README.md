@@ -21,4 +21,4 @@ The alias package defines the entire alias type system. **`Alias.java` is the CO
 | [BuiltinAliasWithoutArgs.java](BuiltinAliasWithoutArgs.java/README.md)                   | Abstract base for all built-in aliases without arguments                                                                                                                                                                                  |
 | [UserAlias.java](UserAlias.java/README.md)                                               | **CRITICAL** — user-defined alias chains. `decodeArgs2Alias` parses config into `AliasRecord` queue, `run()` dispatches with screen-blacklist and WaitAlias special-casing, `runInternal()` handles recursive chains with loop detection. |
 
-_Documented for Commit: [559546bace0e8a52a434e97e41e60e3a76c78989](https://github.com/Prohect/BindAliasPlus/tree/559546bace0e8a52a434e97e41e60e3a76c78989)_
+_Documented for Commit: [559546bace0e8a52a434e97e41e60e3a76c78989](https://github.com/Prohect/BindAlias/tree/559546bace0e8a52a434e97e41e60e3a76c78989)_

@@ -1,4 +1,4 @@
-# onInitialize method (src/main/java/com/github/prohect/BindAliasPlus.java)
+# onInitialize method (src/main/java/com/github/prohect/BindAlias.java)
 
 ## Syntax
 
@@ -18,4 +18,4 @@ public void onInitialize()
 | Item | Description |
 |------|-------------|
 
-*Documented for Commit: [743d57ceacea66cd8d44f3e76063658cbcc86568](https://github.com/Prohect/BindAliasPlus/tree/743d57ceacea66cd8d44f3e76063658cbcc86568)*
+*Documented for Commit: [743d57ceacea66cd8d44f3e76063658cbcc86568](https://github.com/Prohect/BindAlias/tree/743d57ceacea66cd8d44f3e76063658cbcc86568)*

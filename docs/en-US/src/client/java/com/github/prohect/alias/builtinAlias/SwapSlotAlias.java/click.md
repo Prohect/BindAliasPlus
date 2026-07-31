@@ -36,4 +36,4 @@ Called exclusively by `swapInMenu()` for both the SWAP and PICKUP click sequence
 | [swapOff](swapOff.md) | Sends packet-based offhand swaps (no slot click). Used alongside `click` for inventory-only swaps. |
 | [swapButton](swapButton.md) | Determines the `btn` value (hotbar index, offhand 40, or -1 for no SWAP possible). |
 
-*Documented for Commit: [ef1c450870a32bbba509f486207fd6b144527f15](https://github.com/Prohect/BindAliasPlus/tree/ef1c450870a32bbba509f486207fd6b144527f15)*
+*Documented for Commit: [ef1c450870a32bbba509f486207fd6b144527f15](https://github.com/Prohect/BindAlias/tree/ef1c450870a32bbba509f486207fd6b144527f15)*

@@ -14,4 +14,4 @@ Mixin injection points that hook into Minecraft's input handling and client tick
 | [MinecraftClientMixin.java](MinecraftClientMixin.java/README.md) | Injects into client tick to drive WaitAlias (decrementing delay counters) and DropAlias (hold-to-repeat)                              |
 | [MouseMixin.java](MouseMixin.java/README.md)                     | Injects into `Mouse` for mouse button events, cursor-lock reapply, and `FreeCursorAlias` cancelLockCursor injection                   |
 
-_Documented for Commit: [559546b](https://github.com/Prohect/BindAliasPlus/tree/559546bace0e8a52a434e97e41e60e3a76c78989)_
+_Documented for Commit: [559546b](https://github.com/Prohect/BindAlias/tree/559546bace0e8a52a434e97e41e60e3a76c78989)_

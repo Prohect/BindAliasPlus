@@ -1,9 +1,9 @@
-# BindAliasPlusClient (src/client/java/com/github/prohect/BindAliasPlusClient.java)
+# BindAliasClient (src/client/java/com/github/prohect/BindAliasClient.java)
 
 ## Syntax
 
 ```java
-public class com.github.prohect.BindAliasPlusClient implements net.fabricmc.api.ClientModInitializer
+public class com.github.prohect.BindAliasClient implements net.fabricmc.api.ClientModInitializer
 ```
 
 ## Static Initializer
@@ -17,4 +17,4 @@ _None._
 | Item | Description |
 |------|-------------|
 
-*Documented for Commit: [743d57ceacea66cd8d44f3e76063658cbcc86568](https://github.com/Prohect/BindAliasPlus/tree/743d57ceacea66cd8d44f3e76063658cbcc86568)*
+*Documented for Commit: [743d57ceacea66cd8d44f3e76063658cbcc86568](https://github.com/Prohect/BindAlias/tree/743d57ceacea66cd8d44f3e76063658cbcc86568)*

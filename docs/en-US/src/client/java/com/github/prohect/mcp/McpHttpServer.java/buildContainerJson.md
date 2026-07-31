@@ -36,4 +36,4 @@ Builds a compressed, read-only JSON view of an open container menu for the `/sta
 | [handleState](handleState.md) | Calls this to include container data in the state response |
 | [SwapSlotAlias](../../alias/builtinAlias/SwapSlotAlias.java/SwapSlotAlias.md) | Uses the same `cN` addressing convention |
 
-*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAliasPlus/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*
+*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAlias/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*

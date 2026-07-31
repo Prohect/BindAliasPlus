@@ -34,4 +34,4 @@ Returns `{"tick": <N>}` where `tick` is the ticks-since-world-join at the moment
 | [onMainThread](onMainThread.md) | Thread bridge |
 | [handleDefineAlias](handleDefineAlias.md) | Defines aliases via the command pipeline |
 
-*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAliasPlus/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*
+*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAlias/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*

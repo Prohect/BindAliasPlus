@@ -39,4 +39,4 @@ This is a **packet-level offhand swap**, not a slot click. It does not require a
 | [click](click.md) | Sends slot-click packets (used by `swapInMenu`). Contrast with `swapOff` which uses direct packet sends. |
 | [run](run.md) | The entry point that decides between `swapOff` (inventory) and `swapInMenu` (container screen) paths. |
 
-*Documented for Commit: [ef1c450870a32bbba509f486207fd6b144527f15](https://github.com/Prohect/BindAliasPlus/tree/ef1c450870a32bbba509f486207fd6b144527f15)*
+*Documented for Commit: [ef1c450870a32bbba509f486207fd6b144527f15](https://github.com/Prohect/BindAlias/tree/ef1c450870a32bbba509f486207fd6b144527f15)*

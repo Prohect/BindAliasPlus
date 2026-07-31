@@ -35,4 +35,4 @@ On exception, ensures `ChatCapture.end()` is called to reset the capture state, 
 | [ChatComponentMixin](../../mixin/client/ChatComponentMixin.java/ChatComponentMixin.md) | Captures the `sendFeedback` text |
 | [handleRunAlias](handleRunAlias.md) | Executes aliases (separate from defining them) |
 
-*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAliasPlus/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*
+*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAlias/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*
