@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
 
@@ -16,7 +16,7 @@ public class RunAliasAlias extends BuiltinAliasWithGreedyStringArgs<RunAliasAlia
     @Override
     public RunAliasAlias run(String args) {
         if (args == null || args.isBlank()) {
-            BindAliasPlusClient.LOGGER.warn("{}[builtinRunAlias] No alias name provided", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[builtinRunAlias] No alias name provided", BindAliasClient.tickPrefix());
             return this;
         }
 
@@ -47,8 +47,7 @@ public class RunAliasAlias extends BuiltinAliasWithGreedyStringArgs<RunAliasAlia
         if (alias != null) {
             alias.run(extraArgs);
         } else {
-            BindAliasPlusClient.LOGGER.warn("{}[builtinRunAlias] Unknown alias: {}", BindAliasPlusClient.tickPrefix(),
-                    aliasName);
+            BindAliasClient.LOGGER.warn("{}[builtinRunAlias] Unknown alias: {}", BindAliasClient.tickPrefix(), aliasName);
         }
         return this;
     }

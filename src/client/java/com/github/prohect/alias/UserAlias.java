@@ -1,6 +1,6 @@
 package com.github.prohect.alias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.builtinAlias.AliasAlias;
 import com.github.prohect.alias.builtinAlias.BindAlias;
 import com.github.prohect.alias.builtinAlias.UnbindAlias;
@@ -179,8 +179,8 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                 case UserAlias userAlias -> {
                     if (userAliasesCallChains.contains(userAlias)) {
                         // infinite loop is not allowed, ignore them
-                        BindAliasPlusClient.LOGGER.warn("{}[switchSlot]infinite loop detected checking UserAliasesCallChains.",
-                                BindAliasPlusClient.tickPrefix());
+                        BindAliasClient.LOGGER.warn("{}[switchSlot]infinite loop detected checking UserAliasesCallChains.",
+                                BindAliasClient.tickPrefix());
                         continue;
                     }
                     userAlias.runInternal(Stream.concat(userAliasesCallChains.stream(), Stream.of(userAlias)).toList());

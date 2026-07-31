@@ -4,9 +4,9 @@ import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BindAliasPlus implements ModInitializer {
+public class BindAlias implements ModInitializer {
 
-    public static final String MOD_ID = "bind-alias-plus";
+    public static final String MOD_ID = "bind-alias";
 
     // This logger is used to write text to the console and the log file.
     // It is considered best practice to use your mod id as the logger's name.

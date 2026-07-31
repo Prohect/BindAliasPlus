@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithoutArgs;
 import com.github.prohect.alias.UserAlias;
@@ -41,9 +41,9 @@ public class UnloadCFGAliasesAlias extends BuiltinAliasWithoutArgs<UnloadCFGAlia
             count++;
         }
 
-        if (!BindAliasPlusClient.silentMode) {
-            BindAliasPlusClient.LOGGER.info("{}[unloadCFGAliases] Removed {} autoloaded alias(es)",
-                    BindAliasPlusClient.tickPrefix(), count);
+        if (!BindAliasClient.silentMode) {
+            BindAliasClient.LOGGER.info("{}[unloadCFGAliases] Removed {} autoloaded alias(es)", BindAliasClient.tickPrefix(),
+                    count);
         }
 
         return this;
