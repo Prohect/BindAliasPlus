@@ -2,12 +2,12 @@ package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
-import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
+import com.github.prohect.alias.BuiltinAliasWithStringArgs;
 
 /**
  * Executes a registered alias by name. The argument is the alias name (optionally followed by backslash-args).
  */
-public class RunAliasAlias extends BuiltinAliasWithGreedyStringArgs<RunAliasAlias> {
+public class RunAliasAlias extends BuiltinAliasWithStringArgs<RunAliasAlias> {
 
     public RunAliasAlias() {
         super("builtinRunAlias");

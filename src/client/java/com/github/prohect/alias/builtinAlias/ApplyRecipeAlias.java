@@ -1,7 +1,7 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasClient;
-import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
+import com.github.prohect.alias.BuiltinAliasWithStringArgs;
 import com.github.prohect.mcp.RecipeBookHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -17,7 +17,7 @@ import net.minecraft.world.inventory.RecipeBookMenu;
  * locale name ({@code "iron sword"}). Errors (no recipe menu open / not unlocked / missing ingredients) go to the local game
  * chat; success is logged to the mod channel.
  */
-public class ApplyRecipeAlias extends BuiltinAliasWithGreedyStringArgs<ApplyRecipeAlias> {
+public class ApplyRecipeAlias extends BuiltinAliasWithStringArgs<ApplyRecipeAlias> {
 
     public ApplyRecipeAlias() {
         super("applyRecipe");
