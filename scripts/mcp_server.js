@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * MCP stdio bridge for BindAliasPlus mod (Node.js version).
+ * MCP stdio bridge for BindAlias mod (Node.js version).
  *
  * Connects to the mod's HTTP API (default 127.0.0.1:25575; override with
  * `--port N` or `--port=N`) and exposes 7 tools to AI agents via the Model
@@ -35,7 +35,7 @@ function parsePort() {
 const API_BASE = "http://127.0.0.1:" + parsePort();
 
 // ===========================================================================
-// BindAliasPlus alias-language reference.
+// BindAlias alias-language reference.
 // Embedded into the runAlias tool description. Aliases are grouped into four
 // behavior types:
 //   KEY aliases     +x holds a vanilla key, -x releases it (keybind simulation)
@@ -107,7 +107,7 @@ const COMMAND_ALIASES = [
 ];
 
 const RUNALIAS_DESCRIPTION =
-  "Execute a chain of BindAliasPlus aliases (key/macro automation inside the running game). " +
+  "Execute a chain of BindAlias aliases (key/macro automation inside the running game). " +
   ALIAS_RULES.join(" ") +
   " KEY ALIASES: " +
   KEY_ALIASES.join("; ") +
@@ -499,7 +499,7 @@ function handleLine(line) {
       makeResponse(id, {
         protocolVersion: "2024-11-05",
         capabilities: { tools: {} },
-        serverInfo: { name: "bind-alias-plus-mcp", version: "2.0.0" },
+        serverInfo: { name: "bind-alias-mcp", version: "2.0.0" },
       }),
     );
   } else if (method === "ping") {

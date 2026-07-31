@@ -12,7 +12,7 @@ set -e
 
 DOCROOT="docs/en-US"
 COMMIT_SHA=$(git --no-pager log -1 --format="%H" 2>/dev/null || echo "unknown")
-FOOTER="*Documented for Commit: [${COMMIT_SHA}](https://github.com/Prohect/BindAliasPlus/tree/${COMMIT_SHA})*"
+FOOTER="*Documented for Commit: [${COMMIT_SHA}](https://github.com/Prohect/BindAlias/tree/${COMMIT_SHA})*"
 
 CREATED_LOG=$(mktemp)
 trap 'rm -f "$CREATED_LOG"' EXIT

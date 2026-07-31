@@ -1,4 +1,4 @@
-BindAliasPlus\minecraft-decompiled-sources is in .gitignore,
+BindAlias\minecraft-decompiled-sources is in .gitignore,
 search inside:
 
 ```bash

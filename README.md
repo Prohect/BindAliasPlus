@@ -1,9 +1,9 @@
-# BindAliasPlus
+# BindAlias
 
 A Minecraft Fabric client mod that allows creating custom aliases and key bindings to automate complex in-game
 actions with simple key presses. Also enables autonomous AI agent control via an in-game HTTP API — agents can see,
 reason about, and act in Minecraft independently. Use with the
-[BindAliasPlus MCP tool](https://github.com/Prohect/BindAliasPlus-mcp) to let AI play the game.
+[BindAlias MCP tool](https://github.com/Prohect/BindAlias-mcp) to let AI play the game.
 
 <!-- languages -->
 
@@ -12,7 +12,7 @@ reason about, and act in Minecraft independently. Use with the
 
 ## Overview
 
-BindAliasPlus enhances your Minecraft gameplay by letting you define custom aliases for sequences of actions and bind
+BindAlias enhances your Minecraft gameplay by letting you define custom aliases for sequences of actions and bind
 them to keys. Whether you need to quickly swap inventory slots, automate elytra flight, or chain multiple actions (like
 using a bow or placing blocks that not even in your hotbars or second hand), this mod simplifies repetitive tasks through configurable aliases and key bindings.
 
@@ -26,14 +26,14 @@ using a bow or placing blocks that not even in your hotbars or second hand), thi
 - **Config Persistence**: Saves aliases and bindings in a config file, loaded automatically when joining servers.
 - **Chained Actions**: Combine aliases to create complex sequences (e.g., equip elytra → use firework → fly).
 - **AI Agent Support**: Built-in HTTP API (`GET /state`, `GET /screenshot`, `POST /runAlias`, etc.) for AI agent
-  control. Use with the [BindAliasPlus MCP tool](https://github.com/Prohect/BindAliasPlus-mcp) to let AI agents see,
+  control. Use with the [BindAlias MCP tool](https://github.com/Prohect/BindAlias-mcp) to let AI agents see,
   reason about, and act in your Minecraft world.
 
 ## Installation
 
 1. Ensure you have [Fabric Loader](https://fabricmc.net/use/) installed for your Minecraft version.
-2. Download the latest `bind-alias-plus-*.*.*.jar` from
-   the [releases page](https://modrinth.com/mod/bind-alias-plus/versions).
+2. Download the latest `bind-alias-*.*.*.jar` from
+   the [releases page](https://modrinth.com/mod/bind-alias/versions).
 3. Place the JAR file in your Minecraft `mods` folder.
 4. Launch Minecraft with the Fabric loader.
 
@@ -47,7 +47,7 @@ using a bow or placing blocks that not even in your hotbars or second hand), thi
 
 ### Built-in Aliases
 
-BindAliasPlus includes prebuilt aliases for common actions. They are divided into **aliases with arguments** and *
+BindAlias includes prebuilt aliases for common actions. They are divided into **aliases with arguments** and *
 _aliases without arguments_*.
 
 #### Aliases with Arguments
@@ -157,9 +157,9 @@ Variables can then be used as arguments in any numeric alias (e.g., `yaw\myVar`,
 
 ### AI Agent / MCP HTTP Server
 
-BindAliasPlus includes a built-in HTTP server that enables AI agents (such as Claude, ChatGPT, or custom
+BindAlias includes a built-in HTTP server that enables AI agents (such as Claude, ChatGPT, or custom
 automation scripts) to observe and control your Minecraft client. This is the companion mod for the
-[BindAliasPlus MCP tool](https://github.com/Prohect/BindAliasPlus-mcp).
+[BindAlias MCP tool](https://github.com/Prohect/BindAlias-mcp).
 
 The server listens on `http://localhost:25575` (falls back to the next free port, up to +9, when occupied — the chosen port is logged) and provides:
 
@@ -229,7 +229,7 @@ curl http://localhost:25575/screenshot -o screen.png
 
 ## Configuration
 
-- **Config File**: At `config/bind-alias-plus.cfg`. Automatically created if there is not one.
+- **Config File**: At `config/bind-alias.cfg`. Automatically created if there is not one.
 - **Auto-Load**: Aliases and bindings in the config file are loaded automatically when the mod loads.
 - **Manual Edit**: You can directly edit the config file to add/modify aliases/bindings (use the same syntax as in-game
   commands). See the [Example Config](#example-config) section above for a complete real-world config.
@@ -260,7 +260,7 @@ curl http://localhost:25575/screenshot -o screen.png
 - **Safety**: Avoid excessive automation on servers with anti-cheat systems (some actions may be flagged).
 - **MCP Server**: The built-in HTTP API listens on port `25575` by default (falls back to the next free port when
   occupied). Pair with the
-  [BindAliasPlus MCP tool](https://github.com/Prohect/BindAliasPlus-mcp) for AI agent integration.
+  [BindAlias MCP tool](https://github.com/Prohect/BindAlias-mcp) for AI agent integration.
 
 ## Contributing
 
