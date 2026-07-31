@@ -58,4 +58,4 @@ All 49 concrete alias implementations. **Movement aliases** (Attack, Forward, Ba
 | [WaitAliasRecord.java](WaitAliasRecord.java/README.md)             | Low-level — data record for a single wait step: alias name, args, and remaining tick delay                                               |
 | [YawAlias.java](YawAlias.java/README.md)                           | Adjusts player yaw by a relative amount                                                                                                  |
 
-_Documented for Commit: [559546b](https://github.com/Prohect/BindAliasPlus/tree/559546bace0e8a52a434e97e41e60e3a76c78989)_
+_Documented for Commit: [559546b](https://github.com/Prohect/BindAlias/tree/559546bace0e8a52a434e97e41e60e3a76c78989)_

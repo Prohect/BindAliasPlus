@@ -1,4 +1,4 @@
-# cfgPath field (src/client/java/com/github/prohect/BindAliasPlusClient.java)
+# cfgPath field (src/client/java/com/github/prohect/BindAliasClient.java)
 
 ## Syntax
 
@@ -8,4 +8,4 @@ public static final java.nio.file.Path cfgPath
 
 ## Remarks
 
-*Documented for Commit: [d2c580a08b1afe74c3cc22b0bf7cd7736dc08f5c](https://github.com/Prohect/BindAliasPlus/tree/d2c580a08b1afe74c3cc22b0bf7cd7736dc08f5c)*
+*Documented for Commit: [d2c580a08b1afe74c3cc22b0bf7cd7736dc08f5c](https://github.com/Prohect/BindAlias/tree/d2c580a08b1afe74c3cc22b0bf7cd7736dc08f5c)*

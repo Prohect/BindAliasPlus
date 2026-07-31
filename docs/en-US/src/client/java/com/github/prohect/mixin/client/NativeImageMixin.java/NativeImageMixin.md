@@ -31,4 +31,4 @@ The `abstract` modifier is required — Mixin generates the implementation of th
 | [invokeWriteToChannel](invokeWriteToChannel.md) | Access-widened PNG encoder bridge |
 | [onWriteToFile](onWriteToFile.md) | Injection that performs the capture |
 
-*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAliasPlus/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
+*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAlias/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
