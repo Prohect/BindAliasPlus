@@ -135,6 +135,10 @@ public class BindAliasClient implements ClientModInitializer {
 		new UnloadCFGBindsAlias().putToAliasesWithoutArgs();
 		new UnloadCFGVarsAlias().putToAliasesWithoutArgs();
 		new UnloadCFGAllAlias().putToAliasesWithoutArgs();
+		new UnloadUserAliasesAlias().putToAliasesWithoutArgs();
+		new UnloadUserBindsAlias().putToAliasesWithoutArgs();
+		new UnloadUserVarsAlias().putToAliasesWithoutArgs();
+		new UnloadUserAllAlias().putToAliasesWithoutArgs();
 		new UserAlias("builtinAttack\\1", false, true).putToAliasesWithoutArgs("+attack");
 		new UserAlias("builtinAttack\\0", false, true).putToAliasesWithoutArgs("-attack");
 		new UserAlias("builtinUse\\1", false, true).putToAliasesWithoutArgs("+use");
@@ -174,26 +178,6 @@ public class BindAliasClient implements ClientModInitializer {
 		new UserAlias("builtinSetPerspective\\0", false, true).putToAliasesWithoutArgs("FPS");
 		new UserAlias("builtinSetPerspective\\1", false, true).putToAliasesWithoutArgs("TPS");
 		new UserAlias("builtinSetPerspective\\2", false, true).putToAliasesWithoutArgs("TPS2");
-		new UserAlias("builtinOpenInventory\\1").putToAliasesWithoutArgs("+openInventory");
-		new UserAlias("builtinOpenInventory\\0").putToAliasesWithoutArgs("-openInventory");
-		new UserAlias("builtinSilent\\1").putToAliasesWithoutArgs("+silent");
-		new UserAlias("builtinSilent\\0").putToAliasesWithoutArgs("-silent");
-		new UserAlias("builtinSetPerspective\\0").putToAliasesWithoutArgs("FPS");
-		new UserAlias("builtinSetPerspective\\1").putToAliasesWithoutArgs("TPS");
-		new UserAlias("builtinSetPerspective\\2").putToAliasesWithoutArgs("TPS2");
-		// New agent-tooling aliases
-		new UserAlias("builtinFreeCursor\\1").putToAliasesWithoutArgs_notSuggested("+freeCursor");
-		new UserAlias("builtinFreeCursor\\0").putToAliasesWithoutArgs_notSuggested("-freeCursor");
-		new UserAlias("builtinEsc\\1").putToAliasesWithoutArgs("esc");
-		new UserAlias("builtinEsc\\0").putToAliasesWithoutArgs("closeScreen");
-		new UserAlias("builtinAdvancements\\1").putToAliasesWithoutArgs("+advancements");
-		new UserAlias("builtinAdvancements\\0").putToAliasesWithoutArgs("-advancements");
-		new UserAlias("builtinDebugOverlay\\1").putToAliasesWithoutArgs("+debugOverlay");
-		new UserAlias("builtinDebugOverlay\\0").putToAliasesWithoutArgs("-debugOverlay");
-		new UserAlias("builtinScreenshot\\1").putToAliasesWithoutArgs("+screenshot");
-		new UserAlias("builtinScreenshot\\0").putToAliasesWithoutArgs("-screenshot");
-		new UserAlias("builtinPlayerList\\1").putToAliasesWithoutArgs("+playerList");
-		new UserAlias("builtinPlayerList\\0").putToAliasesWithoutArgs("-playerList");
 		// Lock aliases (lock/unlock game actions to prevent user input interference)
 		// +lock\<action> / -lock\<action> — compact arg-based form with suggestions
 		new LockAlias_OnLock().putToAliasesWithArgs();
@@ -398,6 +382,51 @@ public class BindAliasClient implements ClientModInitializer {
 					}
 					return 1;
 				})));
+		// register command unloadUserAliases
+		ClientCommandRegistrationCallback.EVENT.register(
+				(dispatcher, registryAccess) -> dispatcher.register(literal("unloadUserAliases").executes(context -> {
+					if (MinecraftClient.getInstance().player == null)
+						return 0;
+					new UnloadUserAliasesAlias().run("");
+					if (!silentMode) {
+						context.getSource().sendFeedback(Text.literal("§aUnloaded all runtime-defined aliases"));
+					}
+					return 1;
+				})));
+		// register command unloadUserBinds
+		ClientCommandRegistrationCallback.EVENT.register(
+				(dispatcher, registryAccess) -> dispatcher.register(literal("unloadUserBinds").executes(context -> {
+					if (MinecraftClient.getInstance().player == null)
+						return 0;
+					new UnloadUserBindsAlias().run("");
+					if (!silentMode) {
+						context.getSource().sendFeedback(Text.literal("§aUnloaded all runtime-defined keybindings"));
+					}
+					return 1;
+				})));
+		// register command unloadUserVars
+		ClientCommandRegistrationCallback.EVENT.register(
+				(dispatcher, registryAccess) -> dispatcher.register(literal("unloadUserVars").executes(context -> {
+					if (MinecraftClient.getInstance().player == null)
+						return 0;
+					new UnloadUserVarsAlias().run("");
+					if (!silentMode) {
+						context.getSource().sendFeedback(Text.literal("§aUnloaded all runtime-defined variables"));
+					}
+					return 1;
+				})));
+		// register command unloadUserAll
+		ClientCommandRegistrationCallback.EVENT.register(
+				(dispatcher, registryAccess) -> dispatcher.register(literal("unloadUserAll").executes(context -> {
+					if (MinecraftClient.getInstance().player == null)
+						return 0;
+					new UnloadUserAllAlias().run("");
+					if (!silentMode) {
+						context.getSource().sendFeedback(
+								Text.literal("§aUnloaded all runtime-defined aliases, keybindings, and variables"));
+					}
+					return 1;
+				})));
 		// register command var
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher
 				.register(literal("var").then(argument("varName", StringArgumentType.word())
@@ -409,11 +438,9 @@ public class BindAliasClient implements ClientModInitializer {
 		// register command runAlias
 		ClientCommandRegistrationCallback.EVENT
 				.register((dispatcher, registryAccess) -> dispatcher.register(literal("runAlias")
-						.then(argument("definition", StringArgumentType.greedyString()).suggests((context, builder) -> {
-							Alias.aliasesWithoutArgs.keySet().forEach(builder::suggest);
-							Alias.aliasesWithArgs.keySet().forEach(builder::suggest);
-							return builder.buildFuture();
-						}).executes(context -> {
+						.then(argument("definition", StringArgumentType.greedyString())
+								.suggests((context, builder) -> getSuggestions4aliasDefinitionCompletableFuture(builder))
+								.executes(context -> {
 							String input = StringArgumentType.getString(context, "definition");
 							// Use UserAlias to support chaining syntax
 							// (space-separated, \ for args: "slot\2 wait\1 +forward")
@@ -421,13 +448,14 @@ public class BindAliasClient implements ClientModInitializer {
 							return 1;
 						}))));
 
+		// start MCP HTTP server for AI agent control
 		McpHttpServer.start();
 		ClientLifecycleEvents.CLIENT_STOPPING.register(client -> McpHttpServer.stop());
 	}
 
-    /** @return {@code "[tick:{ticks}] "} if joined, {@code "[tick:-1]"} otherwise. */
+    /** @return {@code "[client_tick:{client_ticks}]"} if joined, {@code "[client_tick:-1]"} otherwise. */
     public static String tickPrefix() {
-        return joinTick < 0 ? "[tick:-1]" : "[tick:" + (currentTick - joinTick) + "] ";
+        return joinTick < 0 ? "[client_tick:-1]" : "[client_tick:" + (currentTick - joinTick) + "]";
     }
 
     public void loadCFG() {
@@ -502,11 +530,18 @@ public class BindAliasClient implements ClientModInitializer {
     private int commandVarExecute(String varName, String source, boolean fromAutoload) {
         new VarAlias().run(varName + Alias.divider4AliasArgs + source, fromAutoload);
 
-        // Check if variable was successfully created
+        // Check if variable was successfully created (general or container slot)
         if (VarAlias.GENERAL_VARIABLES.containsKey(varName)) {
             if (!silentMode) {
                 MinecraftClient.getInstance().player.sendMessage(
                         Text.literal("Variable '" + varName + "' set to " + VarAlias.GENERAL_VARIABLES.get(varName)), false);
+            }
+            return 1;
+        } else if (VarAlias.CONTAINER_SLOT_VARIABLES.containsKey(varName)) {
+            if (!silentMode) {
+                MinecraftClient.getInstance().player.sendMessage(
+                        Text.literal("Variable '" + varName + "' set to c" + VarAlias.CONTAINER_SLOT_VARIABLES.get(varName)),
+                        false);
             }
             return 1;
         } else {
@@ -664,17 +699,35 @@ public class BindAliasClient implements ClientModInitializer {
             if (varAlias != null) {
                 boolean intOnly = varAlias instanceof BuiltinAliasWithIntegerArgs;
                 boolean doubleOk = varAlias instanceof BuiltinAliasWithDoubleArgs;
-                if (intOnly || doubleOk) {
+                boolean isSwapSlot = varAlias instanceof SwapSlotAlias;
+                if (intOnly || doubleOk || isSwapSlot) {
                     builder = builder.createOffset(builder.getStart() + a + 1);
                     SuggestionsBuilder finalBuilder2 = builder;
-                    VarAlias.GENERAL_VARIABLES.forEach((varName, value) -> {
-                        if (!varName.startsWith(partialArg))
-                            return;
-                        // Integer aliases only accept Integer-typed variables
-                        if (intOnly && !(value instanceof Integer))
-                            return;
-                        finalBuilder2.suggest(varName, Text.literal("var = " + value));
-                    });
+                    if (intOnly || doubleOk) {
+                        VarAlias.GENERAL_VARIABLES.forEach((varName, value) -> {
+                            if (!varName.startsWith(partialArg))
+                                return;
+                            if (intOnly && !(value instanceof Integer))
+                                return;
+                            finalBuilder2.suggest(varName, Text.literal("var = " + value));
+                        });
+                    }
+                    if (isSwapSlot) {
+                        VarAlias.CONTAINER_SLOT_VARIABLES.forEach((varName, slot) -> {
+                            if (varName.startsWith(partialArg))
+                                finalBuilder2.suggest(varName, Text.literal("cSlot = c" + slot));
+                        });
+                        // swapSlot also accepts general int vars via resolveInt
+                        if (!intOnly && !doubleOk) {
+                            VarAlias.GENERAL_VARIABLES.forEach((varName, value) -> {
+                                if (!varName.startsWith(partialArg))
+                                    return;
+                                if (!(value instanceof Integer))
+                                    return;
+                                finalBuilder2.suggest(varName, Text.literal("var = " + value));
+                            });
+                        }
+                    }
                 }
             }
             return builder.buildFuture();
