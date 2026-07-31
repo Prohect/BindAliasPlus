@@ -461,7 +461,7 @@ public final class GameStateCollector {
 
     /**
      * container_grid array JSON: one row string per grid row (every row ends with {@code \n}). Runs of adjacent container cells
-     * share one {@code |group|} — {@code cNN:*} (occupied), {@code cNN:o} (empty); blank cells are plain padding. Width is
+     * share one {@code |group|} — {@code cNN:X} (occupied), {@code cNN:O} (empty); blank cells are plain padding. Width is
      * {@code cols*6+1} so slot columns line up across rows.
      *
      * @param gridSlots {@code {cIndex, x, y, occupied(0|1)}} per non-player-inventory slot

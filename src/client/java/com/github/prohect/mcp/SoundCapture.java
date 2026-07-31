@@ -12,11 +12,11 @@ import net.minecraft.network.chat.Component;
  * Feeds the {@link GameChannels#SOUND} channel. Registered as a {@link SoundEventListener} on the client {@code SoundManager} —
  * the same hook the vanilla subtitle overlay uses, so exactly the sounds that would show a HUD caption are reported.
  * <p>
- * Message format: {@code "[tick:<tick>] <subtitle> [yaw<±N> pitch<±N> <dist>m]"}, e.g.
- * {@code "[tick:123] Zombie groans [yaw-40 pitch+20 4.2m]"} — the tick uses the same clock as the envelope's {@code "tick"}
- * field; the direction is the yaw/pitch <b>relative to the listener's view at the moment the sound was heard</b>, rounded to
- * 20° steps (turning {@code yaw\<relYaw>} faces the source). Sounds at the listener's own position collapse to
- * {@code here <dist>m}. Repeats of the same sound coalesce (see {@link GameChannels#postCoalescing}).
+ * Message format: {@code "[client_tick:<client_tick>] <subtitle> [yaw<±N> pitch<±N> <dist>m]"}, e.g.
+ * {@code "[client_tick:123] Zombie groans [yaw-40 pitch+20 4.2m]"} — the client_tick uses the same clock as the envelope's
+ * {@code "client_tick"} field; the direction is the yaw/pitch <b>relative to the listener's view at the moment the sound was
+ * heard</b>, rounded to 20° steps (turning {@code yaw\<relYaw>} faces the source). Sounds at the listener's own position
+ * collapse to {@code here <dist>m}. Repeats of the same sound coalesce (see {@link GameChannels#postCoalescing}).
  */
 public final class SoundCapture implements SoundEventListener {
 
@@ -47,17 +47,12 @@ public final class SoundCapture implements SoundEventListener {
             if (!Float.isInfinite(range) && distSq > (double) range * range)
                 return;
             GameChannels.postCoalescing(GameChannels.SOUND, name,
-                    tickPrefix() + name + " [" + directionOf(p, dx, dy, dz) + "]");
+                    BindAliasPlusClient.tickPrefix() + name + " [" + directionOf(p, dx, dy, dz) + "]");
         } catch (Exception ignored) {
             // never break the sound engine
         }
     }
 
-    /** {@code "[tick:N] "} matching the envelope's {@code "tick":N} term; empty when not in a world. */
-    static String tickPrefix() {
-        return BindAliasPlusClient.joinTick < 0 ? ""
-                : "[tick:" + (BindAliasPlusClient.currentTick - BindAliasPlusClient.joinTick) + "] ";
-    }
 
     /** Direction quantization step (degrees) — coarse on purpose, the ear is not a protractor. */
     private static final double DEG_STEP = 20.0;
