@@ -2,21 +2,17 @@
 
 ## Fields
 
-| Name           | Type                                             | Description                                |
-| -------------- | ------------------------------------------------ | ------------------------------------------ |
-| `tasksWaiting` | `public static final ArrayList<WaitAliasRecord>` | Global list of pending deferred executions |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Methods
 
-| Name                  | Signature                                              | Description                                                                        |
-| --------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| [run](run.md)         | `public WaitAlias run(String args)`                    | Deprecated — creates a simple wait record with no deferred definition              |
-| `run(String, String)` | `public WaitAlias run(String args, String definition)` | Creates a wait record that will execute the given alias definition after the delay |
+| Name | Signature | Description |
+|------|-----------|-------------|
 
 ## See Also
 
-| Item                                                 | Description               |
-| ---------------------------------------------------- | ------------------------- |
-| [WaitAliasRecord](../WaitAliasRecord.java/README.md) | Deferred execution record |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

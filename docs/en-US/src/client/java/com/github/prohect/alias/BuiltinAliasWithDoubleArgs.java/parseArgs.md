@@ -8,26 +8,14 @@ public void parseArgs(java.lang.String)
 
 ## Parameters
 
-| Name   | Type     | Description                                                                               |
-| ------ | -------- | ----------------------------------------------------------------------------------------- |
-| `args` | `String` | The argument string. Can be a numeric literal or a `VarAlias` variable name (e.g., `$x`). |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Parses the argument string into the `flag` field as a `double`.
-
-Algorithm:
-
-1. Try `VarAlias.resolveDouble(args)` to resolve a variable reference.
-2. If resolved (non-null), use the resolved value.
-3. Otherwise, attempt `Double.parseDouble(args)` for a literal number.
-4. On `NumberFormatException`, log the error and leave `flag` at `0.0`.
-
 ## See Also
 
-| Item                                                                  | Description                           |
-| --------------------------------------------------------------------- | ------------------------------------- |
-| [flag](flag.md)                                                       | The field this method writes to       |
-| [VarAlias.resolveDouble](builtinAlias/VarAlias.java/resolveDouble.md) | Variable resolution for double values |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

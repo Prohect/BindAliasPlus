@@ -8,13 +8,4 @@ public final java.lang.String builtinAliasName
 
 ## Remarks
 
-The alias name set at construction via the constructor parameter.
-
-Used as:
-
-- The key when registering in `Alias.aliasesWithArgs` or `Alias.aliasesWithArgs_notSuggested`.
-- A log prefix in subclasses that emit warnings (e.g., `"[" + this.builtinAliasName + "]Invalid arguments"`).
-
-Set once at construction, never null (annotated `@NotNull`), never changes.
-
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

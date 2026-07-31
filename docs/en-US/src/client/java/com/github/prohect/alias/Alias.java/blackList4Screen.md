@@ -8,15 +8,4 @@ public static final java.util.List<com.github.prohect.alias.Alias<?>> blackList4
 
 ## Remarks
 
-List of aliases that are restricted when any screen is open.
-
-When a blacklisted alias is dispatched in `UserAlias.run()` or `UserAlias.runInternal()`:
-
-- If no screen is open: executes normally.
-- If a screen is open and `args` is `"0"` (key-up): executes (allows releasing a key).
-- If a screen is open and `args` is not `"0"` (key-down): skipped (suppressed).
-
-Aliases add themselves via `addToScreenBlackList()` during registration.
-Only checked for aliases that are `instanceof BuiltinAliasWithArgs` at dispatch time.
-
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

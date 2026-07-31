@@ -3,29 +3,19 @@
 ## Syntax
 
 ```java
-public com.github.prohect.alias.Alias run(java.lang.String)
+public com.github.prohect.alias.builtinAlias.PickItemAlias run(java.lang.String)
 ```
 
 ## Parameters
 
-| Name   | Type     | Description |
-| ------ | -------- | ----------- |
-| `args` | `String` | Ignored.    |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Triggers vanilla pick-block by firing the `keyPickItem` keybinding.
+## See Also
 
-**Algorithm**:
+| Item | Description |
+|------|-------------|
 
-1. Guard against null player.
-2. Get `options.keyPickItem` from Minecraft.
-3. Call `pickKey.setDown(true)` and `pickKey.clickCount++`.
-
-This increments `clickCount` so that vanilla's key polling processes a pick-block action in the next tick, calling `pickBlockOrEntity()`.
-
-**Side effects**: Modifies vanilla `KeyMapping` state, which triggers pick-block behavior.
-
-**Callers**: Invoked by the alias dispatch system.
-
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

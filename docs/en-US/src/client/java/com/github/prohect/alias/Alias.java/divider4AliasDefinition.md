@@ -8,11 +8,4 @@ public static final char divider4AliasDefinition
 
 ## Remarks
 
-Delimiter character used to separate individual alias definitions within a definition
-string. Defaults to `' '` (space).
-
-Used by `getDefinitions()` to split a raw args string into a list of definitions.
-Double-quoted blocks are respected — a space inside quotes is treated as literal
-text, not a divider.
-
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

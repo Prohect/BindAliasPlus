@@ -2,23 +2,17 @@
 
 ## Fields
 
-| Name                             | Type      | Description                                                                                                         |
-| -------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------- |
-| _(inherited)_ `flag`             | `boolean` | Whether silent mode should be enabled (`true`) or disabled (`false`). Inherited from `BuiltinAliasWithBooleanArgs`. |
-| _(inherited)_ `builtinAliasName` | `String`  | The alias name `"builtinSilent"`. Inherited from `BuiltinAliasWithArgs`.                                            |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Methods
 
-| Name  | Signature                      | Description                                      |
-| ----- | ------------------------------ | ------------------------------------------------ |
-| `run` | `SilentAlias run(String args)` | Enables (`"1"`) or disables (`"0"`) silent mode. |
+| Name | Signature | Description |
+|------|-----------|-------------|
 
 ## See Also
 
-| Item                                                                                                 | Description                              |
-| ---------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| [BuiltinAliasWithBooleanArgs](../../BuiltinAliasWithBooleanArgs.java/BuiltinAliasWithBooleanArgs.md) | Parent class — boolean arg parsing       |
-| [BindAliasClient](../../../BindAliasClient.java/BindAliasClient.md)                      | Main class owning `silentMode`           |
-| [UserAlias](../../UserAlias.java/UserAlias.md)                                                       | Checks `silentMode` to suppress feedback |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

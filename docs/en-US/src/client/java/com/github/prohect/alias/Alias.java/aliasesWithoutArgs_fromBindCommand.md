@@ -8,11 +8,4 @@ public static final java.util.HashMap<java.lang.String, com.github.prohect.alias
 
 ## Remarks
 
-Registry for aliases created via the `/alias bind` command.
-
-Kept separate from the main registries so that bind-command aliases can be managed
-independently (e.g., listed or removed specifically by the bind subcommand).
-Not looked up during normal alias dispatch — used only by the `/alias bind`
-command handler.
-
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

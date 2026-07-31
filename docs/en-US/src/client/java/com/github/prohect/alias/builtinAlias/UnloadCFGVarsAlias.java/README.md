@@ -2,21 +2,17 @@
 
 ## Fields
 
-| Name     | Type | Description         |
-| -------- | ---- | ------------------- |
-| _(none)_ |      | No fields declared. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Methods
 
-| Name          | Signature                                    | Description                                                |
-| ------------- | -------------------------------------------- | ---------------------------------------------------------- |
-| [run](run.md) | `public UnloadCFGVarsAlias run(String args)` | Removes all autoloaded variables from storage and tracking |
+| Name | Signature | Description |
+|------|-----------|-------------|
 
 ## See Also
 
-| Item                                                     | Description                        |
-| -------------------------------------------------------- | ---------------------------------- |
-| [VarAlias](../VarAlias.java/README.md)                   | Variable storage and tracking      |
-| [UnloadCFGAllAlias](../UnloadCFGAllAlias.java/README.md) | Calls this as part of "unload all" |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

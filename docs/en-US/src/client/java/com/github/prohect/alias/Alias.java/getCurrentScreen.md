@@ -6,26 +6,16 @@
 public static net.minecraft.client.gui.screens.Screen getCurrentScreen()
 ```
 
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+
 ## Remarks
-
-Returns the current screen from `BindAliasClient.currentScreen`.
-
-This field is updated by the mod's screen-tracking mixin. Returns `null` when
-no screen is open (i.e., the player is in the game world).
-
-Used by all the screen-type helper methods (`isUnderTextInputScreen`, `isUnderAnyScreen`,
-`isInContainerScreen`, etc.) as well as indirectly by `UserAlias.run()` to check
-the screen blacklist.
-
-## Return value
-
-The current `Screen` instance, or `null` if no screen is open.
 
 ## See Also
 
-| Item                                                | Description                   |
-| --------------------------------------------------- | ----------------------------- |
-| [isUnderAnyScreen](isUnderAnyScreen.md)             | Checks if any screen is open  |
-| [isUnderTextInputScreen](isUnderTextInputScreen.md) | Checks for text-input screens |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

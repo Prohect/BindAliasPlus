@@ -12,22 +12,10 @@ _None._
 
 ## Remarks
 
-User-facing unlock-key alias — inverse of `LockAlias_OnLock`. Registered as `-lockKey`.
-
-**Purpose**: Thin wrapper around `LockAlias.unlockAction()`. Restores a previously locked vanilla game key or alias-bound physical keys.
-
-**Lifecycle**: Singleton — registered once via `Alias.aliasesWithArgs` at startup.
-
-**Thread safety**: Not thread-safe (render-thread only). Delegates all logic to `LockAlias.unlockAction()`.
-
-**Key collaborators**: Delegates to `[LockAlias](LockAlias.java/LockAlias.md)`. Command suggestions mirror those of `LockAlias_OnLock`.
-
 ## See Also
 
-| Item                                                                            | Description                             |
-| ------------------------------------------------------------------------------- | --------------------------------------- |
-| [LockAlias](../LockAlias.java/LockAlias.md)                                     | Core lock implementation with all logic |
-| [LockAlias_OnLock](../LockAlias_OnLock.java/LockAlias_OnLock.md)                | Inverse — lock shortcut (`+lockKey`)    |
-| [BuiltinAliasWithArgs](../../BuiltinAliasWithArgs.java/BuiltinAliasWithArgs.md) | Parent class                            |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+

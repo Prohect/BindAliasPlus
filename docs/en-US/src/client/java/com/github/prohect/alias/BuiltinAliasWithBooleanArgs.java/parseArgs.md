@@ -8,28 +8,14 @@ public void parseArgs(java.lang.String)
 
 ## Parameters
 
-| Name   | Type     | Description                                                               |
-| ------ | -------- | ------------------------------------------------------------------------- |
-| `args` | `String` | The argument string. `"0"` for key-up / false, `"1"` for key-down / true. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Parses the argument string into the `flag` field.
-
-Algorithm:
-
-- `"0"` → sets `flag` to `false` (key-up / release).
-- `"1"` → sets `flag` to `true` (key-down / press).
-- Any other value → logs a warning with the builtin alias name and leaves `flag` at `false`.
-
-The local variable `flag` shadows the field — the field is explicitly set at the
-end of each branch.
-
 ## See Also
 
-| Item                                                  | Description                           |
-| ----------------------------------------------------- | ------------------------------------- |
-| [flag](flag.md)                                       | The field this method writes to       |
-| [reapplyToGameKeyMapping](reapplyToGameKeyMapping.md) | Uses `flag` to conditionally re-apply |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

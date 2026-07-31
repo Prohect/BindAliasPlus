@@ -17,4 +17,5 @@ _None._
 | Item | Description |
 |------|-------------|
 
-*Documented for Commit: [984d03115abff553b7fe1ec7600ac556be3acc19](https://github.com/Prohect/BindAlias/tree/984d03115abff553b7fe1ec7600ac556be3acc19)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+

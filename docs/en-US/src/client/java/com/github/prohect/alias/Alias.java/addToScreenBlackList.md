@@ -6,21 +6,16 @@
 public default T addToScreenBlackList()
 ```
 
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+
 ## Remarks
-
-Registers this alias instance in the `blackList4Screen` list.
-
-Aliases on the blacklist are suppressed when a screen is open (except for key-up
-events, which are allowed so keys can be released). Typically called during
-alias registration in mod initialization.
-
-Returns `this` cast to `T` for fluent chaining.
 
 ## See Also
 
-| Item                                      | Description                                    |
-| ----------------------------------------- | ---------------------------------------------- |
-| [blackList4Screen](blackList4Screen.md)   | The list this method adds to                   |
-| [UserAlias.run](../UserAlias.java/run.md) | Where the blacklist is checked during dispatch |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

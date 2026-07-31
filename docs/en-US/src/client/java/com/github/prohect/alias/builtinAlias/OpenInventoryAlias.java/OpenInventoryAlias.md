@@ -12,18 +12,10 @@ _None._
 
 ## Remarks
 
-Builtin alias to open or close the inventory screen. Registered as `builtinOpenInventory`.
-
-**Purpose**: Programmatically opens the player inventory (both client screen and server packet via `sendOpenInventory()`) or closes any open container screen. Respects text input screens (does not open if one is active). When closing, only acts if a container screen is open.
-
-**Lifecycle**: Singleton — registered once via `Alias.aliasesWithArgs` at startup.
-
-**Thread safety**: Not thread-safe (render-thread only). Interacts with the screen system and network handler.
-
 ## See Also
 
-| Item                                                                                                 | Description                                     |
-| ---------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| [BuiltinAliasWithBooleanArgs](../../BuiltinAliasWithBooleanArgs.java/BuiltinAliasWithBooleanArgs.md) | Parent class providing `flag` and `parseArgs()` |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+

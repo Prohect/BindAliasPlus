@@ -3,34 +3,19 @@
 ## Syntax
 
 ```java
-public com.github.prohect.alias.Alias run(java.lang.String)
+public com.github.prohect.alias.builtinAlias.CyclePerspectiveAlias run(java.lang.String)
 ```
 
 ## Parameters
 
-| Name   | Type     | Description |
-| ------ | -------- | ----------- |
-| `args` | `String` | Ignored.    |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Cycles the camera perspective to the next mode using `CameraType.cycle()`.
-
-**Algorithm**:
-
-1. Guard against null `options`.
-2. Get current `CameraType` and call `currentPerspective.cycle()` to get the next.
-3. Call `options.setCameraType(nextPerspective)`.
-4. If switching between first and third person, update `minecraftClient.setCameraEntity()`.
-
-**Side effects**: Changes the camera perspective (client-side only).
-
-**Callers**: Invoked by the alias dispatch system.
-
 ## See Also
 
-| Item                                                          | Description         |
-| ------------------------------------------------------------- | ------------------- |
-| [SetPerspectiveAlias.run](../SetPerspectiveAlias.java/run.md) | Set a specific mode |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

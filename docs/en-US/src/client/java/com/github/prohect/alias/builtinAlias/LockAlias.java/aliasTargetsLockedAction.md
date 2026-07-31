@@ -8,35 +8,14 @@ private static boolean aliasTargetsLockedAction(java.lang.String, java.util.List
 
 ## Parameters
 
-| Name        | Type           | Description                                                                              |
-| ----------- | -------------- | ---------------------------------------------------------------------------------------- |
-| `aliasName` | `String`       | The alias name to check. May be null/empty.                                              |
-| `patterns`  | `List<String>` | Action alias patterns (e.g. `["+attack", "-attack", "builtinAttack"]`) to match against. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Determines whether a given alias name targets one of the specified action patterns. This is used during lock/unlock of mod-bound keys to decide whether a `KeyBindingPlus` entry should be blocked.
-
-**Algorithm**:
-
-1. If `aliasName` is null or empty, return `false`.
-2. If `patterns` directly contains `aliasName`, return `true`.
-3. Look up the alias in `Alias.aliasesWithoutArgs` and `Alias.aliasesWithoutArgs_fromBindCommand`.
-4. If the alias is a `UserAlias`: split its definition string by the alias definition divider, then check each token:
-   - If the token is `+lockKey` or `-lockKey`, extract the lock action name and compare to bare pattern names (stripped of `+`/`-` prefix).
-   - If the token itself matches any pattern, return `true`.
-
-**Side effects**: None (pure function — only reads static state).
-
-**Callers**: `lockModBoundKeys()` and `unlockModBoundKeys()`.
-
-Return value: `true` if the alias targets (directly or transitively via UserAlias definition) one of the given patterns.
-
 ## See Also
 
-| Item                                        | Description |
-| ------------------------------------------- | ----------- |
-| [lockModBoundKeys](lockModBoundKeys.md)     | Caller      |
-| [unlockModBoundKeys](unlockModBoundKeys.md) | Caller      |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

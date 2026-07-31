@@ -12,18 +12,10 @@ _None._
 
 ## Remarks
 
-Builtin alias to trigger vanilla pick-block behavior. Registered as `pickItem`.
-
-**Purpose**: Fires the `keyPickItem` keybinding, which causes Minecraft to call `pickBlockOrEntity()` in the next polling cycle. This picks the block/entity the player is looking at and selects the corresponding item in the hotbar (creative mode) or swaps it in (survival).
-
-**Lifecycle**: Singleton — registered once via `Alias.aliasesWithoutArgs` at startup.
-
-**Thread safety**: Not thread-safe (render-thread only).
-
 ## See Also
 
-| Item                                                                                     | Description  |
-| ---------------------------------------------------------------------------------------- | ------------ |
-| [BuiltinAliasWithoutArgs](../../BuiltinAliasWithoutArgs.java/BuiltinAliasWithoutArgs.md) | Parent class |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+

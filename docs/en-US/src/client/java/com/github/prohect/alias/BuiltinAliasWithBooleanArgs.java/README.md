@@ -2,23 +2,17 @@
 
 ## Fields
 
-| Name   | Type      | Description                                                                                 |
-| ------ | --------- | ------------------------------------------------------------------------------------------- |
-| `flag` | `boolean` | Parsed boolean value from the last `parseArgs()` call. `true` = key-down, `false` = key-up. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Methods
 
-| Name                      | Signature                        | Description                                                                                                  |
-| ------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `parseArgs`               | `void parseArgs(String)`         | Parses `"0"` as `false` (key-up) and `"1"` as `true` (key-down).                                             |
-| `reapplyToGameKeyMapping` | `void reapplyToGameKeyMapping()` | If `flag` is `true`, re-runs the alias with `"1"` to restore the key-down state into the game's key mapping. |
+| Name | Signature | Description |
+|------|-----------|-------------|
 
 ## See Also
 
-| Item                                                                                              | Description               |
-| ------------------------------------------------------------------------------------------------- | ------------------------- |
-| [BuiltinAliasWithArgs](../BuiltinAliasWithArgs.java/BuiltinAliasWithArgs.md)                      | Parent class              |
-| [BuiltinAliasWithIntegerArgs](../BuiltinAliasWithIntegerArgs.java/BuiltinAliasWithIntegerArgs.md) | Sibling for integer flags |
-| [BuiltinAliasWithDoubleArgs](../BuiltinAliasWithDoubleArgs.java/BuiltinAliasWithDoubleArgs.md)    | Sibling for double flags  |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

@@ -8,30 +8,14 @@ static void unlockAliasByName(java.lang.String)
 
 ## Parameters
 
-| Name        | Type     | Description                                             |
-| ----------- | -------- | ------------------------------------------------------- |
-| `aliasName` | `String` | Name of the alias whose locked keys should be restored. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Restores physical keyboard/mouse keys that were previously locked for the given alias name.
-
-**Algorithm**:
-
-1. Remove the entry from `LOCKED_ALIAS_KEYS`. If null (alias was not locked), log a warning and return.
-2. Remove all associated keys from `LOCKED_PHYSICAL_KEYS`.
-
-**Side effects**: Removes entries from `LOCKED_PHYSICAL_KEYS` and `LOCKED_ALIAS_KEYS`. Logs info/warn messages.
-
-**Callers**: `unlockAction()` (when actionType is not a recognized vanilla key), `clearAllLocks()`.
-
-**Error handling**: Logs warning if the alias was not locked (null return from `LOCKED_ALIAS_KEYS.remove()`).
-
 ## See Also
 
-| Item                                  | Description                                         |
-| ------------------------------------- | --------------------------------------------------- |
-| [lockAliasByName](lockAliasByName.md) | Inverse operation                                   |
-| [unlockAction](unlockAction.md)       | Caller — falls back to this for non-vanilla actions |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

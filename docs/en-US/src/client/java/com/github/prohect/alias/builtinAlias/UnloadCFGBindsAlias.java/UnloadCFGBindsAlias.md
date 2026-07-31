@@ -12,19 +12,10 @@ _None._
 
 ## Remarks
 
-Builtin alias to remove all keybindings that were loaded from the config file. Registered as `unloadCFGBinds`.
-
-**Purpose**: Selectively removes only bindings with `fromAutoload=true` from `BindAliasClient.BINDING_PLUS`. Also cleans up associated aliases from `Alias.aliasesWithoutArgs_fromBindCommand`. Runtime-created bindings (via `/bind` or `/bindByAliasName`) are not affected.
-
-**Lifecycle**: Singleton — registered once via `Alias.aliasesWithoutArgs` at startup.
-
-**Thread safety**: Not thread-safe (render-thread only).
-
 ## See Also
 
-| Item                                                                                     | Description                        |
-| ---------------------------------------------------------------------------------------- | ---------------------------------- |
-| [UnloadCFGAllAlias](../UnloadCFGAllAlias.java/UnloadCFGAllAlias.md)                      | Calls this as part of "unload all" |
-| [BuiltinAliasWithoutArgs](../../BuiltinAliasWithoutArgs.java/BuiltinAliasWithoutArgs.md) | Parent class                       |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+

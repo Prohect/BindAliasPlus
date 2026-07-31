@@ -2,29 +2,17 @@
 
 ## Fields
 
-_All fields are private static final; initialized in the `static` block._
-
-| Name                   | Type      | Description                                                                                               |
-| ---------------------- | --------- | --------------------------------------------------------------------------------------------------------- |
-| `GUI_HAS_SCREEN`       | `boolean` | `true` if the `Gui` class exposes `screen()` (MC 26.2+); `false` if using Minecraft directly (MC 26.1.x). |
-| `GUI_FIELD`            | `Field`   | Reflected `Minecraft.gui` field.                                                                          |
-| `GUI_SCREEN`           | `Method`  | Reflected `Gui.screen()` method (26.2+ path).                                                             |
-| `GUI_SET_SCREEN`       | `Method`  | Reflected `Gui.setScreen(Screen)` method (26.2+ path).                                                    |
-| `MINECRAFT_SCREEN`     | `Field`   | Reflected `Minecraft.screen` field (26.1.x fallback).                                                     |
-| `MINECRAFT_SET_SCREEN` | `Method`  | Reflected `Minecraft.setScreen(Screen)` method (26.1.x fallback).                                         |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Methods
 
-| Name               | Signature                                   | Description                                                          |
-| ------------------ | ------------------------------------------- | -------------------------------------------------------------------- |
-| `getCurrentScreen` | `static Screen getCurrentScreen(Minecraft)` | Returns the current open screen via the appropriate reflection path. |
-| `setScreen`        | `static void setScreen(Minecraft, Screen)`  | Sets the current screen via the appropriate reflection path.         |
+| Name | Signature | Description |
+|------|-----------|-------------|
 
 ## See Also
 
-| Item                                                        | Description                                 |
-| ----------------------------------------------------------- | ------------------------------------------- |
-| [static-init](static-init.md)                               | One-time reflection field/method resolution |
-| [Alias.getCurrentScreen](../Alias.java/getCurrentScreen.md) | Convenience wrapper around this helper      |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

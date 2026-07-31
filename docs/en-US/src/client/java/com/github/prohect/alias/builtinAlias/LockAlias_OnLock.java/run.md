@@ -3,31 +3,19 @@
 ## Syntax
 
 ```java
-public com.github.prohect.alias.Alias run(java.lang.String)
+public com.github.prohect.alias.builtinAlias.LockAlias_OnLock run(java.lang.String)
 ```
 
 ## Parameters
 
-| Name         | Type     | Description                                                                                                                           |
-| ------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `actionType` | `String` | The action to lock — either a `gameKey:`-prefixed vanilla action (e.g. `gameKey:attack`) or a custom UserAlias name (e.g. `myAlias`). |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Locks the specified action by delegating to `LockAlias.lockAction(actionType)`. The entire argument string is passed as-is to the shared lock logic.
-
-**Algorithm**: Single delegation call — `LockAlias.lockAction(actionType)`.
-
-**Side effects**: See `[LockAlias.lockAction](../LockAlias.java/lockAction.md)` — may replace vanilla `KeyMapping` keys with a sentinel, block physical keys in `LOCKED_PHYSICAL_KEYS`, and/or lock mod-bound keys.
-
-**Callers**: Invoked by the alias dispatch system when a user types `+lockKey\gameKey:attack` or when a UserAlias definition contains `+lockKey\someAction`.
-
-**Error handling**: All validation and error handling is inside `LockAlias.lockAction()`.
-
 ## See Also
 
-| Item                                                    | Description              |
-| ------------------------------------------------------- | ------------------------ |
-| [LockAlias.lockAction](../LockAlias.java/lockAction.md) | Delegated implementation |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

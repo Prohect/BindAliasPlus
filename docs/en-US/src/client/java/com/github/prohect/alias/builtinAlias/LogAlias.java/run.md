@@ -3,36 +3,19 @@
 ## Syntax
 
 ```java
-public com.github.prohect.alias.Alias run(java.lang.String)
+public com.github.prohect.alias.builtinAlias.LogAlias run(java.lang.String)
 ```
 
 ## Parameters
 
-| Name   | Type     | Description                                                      |
-| ------ | -------- | ---------------------------------------------------------------- |
-| `args` | `String` | The message to log at INFO level. Passed directly to the logger. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Logs the args string to the mod's logger at INFO level, useful for debugging alias chains.
-
-Algorithm:
-
-1. Calls `BindAliasClient.LOGGER.info(args)` passing the full args string.
-
-Side effects: writes a line to the game log output.
-
-Callers: dispatched by [UserAlias](../../UserAlias.java/UserAlias.md) when the alias name `"log"` matches an AliasRecord. Also called from `AliasAlias` and other internal aliases for logging.
-
-Error handling: none. Any string (including null) is passed directly to the logger (null-safe by SLF4J convention).
-
 ## See Also
 
-| Item                                                                      | Description                       |
-| ------------------------------------------------------------------------- | --------------------------------- |
-| [LogAlias](LogAlias.md)                                                   | Owning class                      |
-| [BindAliasClient.LOGGER](../../../BindAliasClient.java/LOGGER.md) | The logger this method writes to  |
-| [LocalSayAlias.run](../LocalSayAlias.java/run.md)                         | Displays messages in chat instead |
-| [SayAlias.run](../SayAlias.java/run.md)                                   | Sends chat to server              |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

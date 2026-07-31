@@ -8,20 +8,14 @@ private boolean isValidVarName(java.lang.String)
 
 ## Parameters
 
-| Name      | Type     | Description                              |
-| --------- | -------- | ---------------------------------------- |
-| `varName` | `String` | The candidate variable name to validate. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Validates that a variable name is acceptable. The only restriction is that the name must not start with a digit (0-9), enforced via the precompiled `Pattern` `STARTS_WITH_NUMBER`. Null or empty names are also rejected.
+## See Also
 
-This restriction exists because `resolveValue()` tries literal number parsing before variable lookup — a variable named `"5"` would be shadowed by the integer 5 and never resolvable as a variable.
+| Item | Description |
+|------|-------------|
 
-**Side effects**: None (pure predicate).
-
-**Callers**: `run()` and `run(String, boolean)` — called before storing a variable.
-
-Return value: `true` if the name is non-null, non-empty, and does not start with a digit.
-
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

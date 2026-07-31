@@ -8,27 +8,14 @@ public static net.minecraft.client.gui.screens.Screen getCurrentScreen(net.minec
 
 ## Parameters
 
-| Name     | Type        | Description                                                  |
-| -------- | ----------- | ------------------------------------------------------------ |
-| `client` | `Minecraft` | The Minecraft client instance from which to read the screen. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Returns the currently open `Screen`, or `null` if no screen is open.
-
-Algorithm:
-
-1. If `GUI_HAS_SCREEN` (MC 26.2+): reflectively get the `Gui` object via
-   `GUI_FIELD`, then invoke `GUI_SCREEN` on it.
-2. Otherwise (MC 26.1.x): reflectively read `MINECRAFT_SCREEN` from `client`.
-
-Throws `RuntimeException` wrapping any reflection failure.
-
 ## See Also
 
-| Item                          | Description                              |
-| ----------------------------- | ---------------------------------------- |
-| [setScreen](setScreen.md)     | The setter counterpart                   |
-| [static-init](static-init.md) | Where the reflection fields are resolved |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

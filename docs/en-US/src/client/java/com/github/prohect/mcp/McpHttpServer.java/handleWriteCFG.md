@@ -3,34 +3,19 @@
 ## Syntax
 
 ```java
-static void handleWriteCFG(HttpExchange exchange) throws IOException
+static void handleWriteCFG(com.sun.net.httpserver.HttpExchange) throws java.io.IOException
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `exchange` | `HttpExchange` | The HTTP exchange for `POST /writeCFG`. |
 
 ## Remarks
-
-`POST /writeCFG` — overwrites the config file on disk and triggers a reload of all aliases, binds, and variables.
-
-**Input**: Accepts content via query parameter (`?content=...`) or JSON body (`{"content": "..."}`). The JSON body path handles escaped characters (`\n`, `\r`, `\t`, `\\`, `\"`). Returns 400 if no content is found.
-
-**Pipeline**:
-1. Writes the content to `BindAliasClient.cfgPath` via `Files.writeString()`.
-2. Calls `BindAliasClient.INSTANCE.loadCFG()` on the main thread via `onMainThread()` to reload all aliases, binds, and variables from the updated file.
-
-Returns `{"ok": true}` on success. Returns `{"error": "..."}` with status 500 on I/O or reload failure.
-
-**Security**: No authentication. The server binds to `127.0.0.1` only, so only local processes can reach it.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-| [handleReadCFG](handleReadCFG.md) | Reads config |
-| [BindAliasClient.loadCFG](../../BindAliasClient.java/loadCFG.md) | Called after write to reload |
 
-*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAlias/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

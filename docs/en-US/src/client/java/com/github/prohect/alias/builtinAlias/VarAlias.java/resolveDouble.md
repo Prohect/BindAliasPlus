@@ -8,27 +8,14 @@ public static java.lang.Double resolveDouble(java.lang.String)
 
 ## Parameters
 
-| Name    | Type     | Description                                            |
-| ------- | -------- | ------------------------------------------------------ |
-| `input` | `String` | A string to resolve — literal number or variable name. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Convenience method that resolves a string to a `Double` by calling `resolveValue(input)` and returning `n.doubleValue()`. If `resolveValue` returns `null`, this returns `null`.
-
-Useful for aliases that need floating-point values (e.g. pitch/yaw angles, coordinates). Note that even integer variable values (stored as `Integer`) will be widened to `double` by `Number.doubleValue()`.
-
-**Side effects**: None (pure delegation).
-
-**Callers**: Any alias needing double-precision variable resolution.
-
-Return value: The `doubleValue()` of the resolved `Number`, or `null` if unresolvable.
-
 ## See Also
 
-| Item                            | Description                 |
-| ------------------------------- | --------------------------- |
-| [resolveValue](resolveValue.md) | Underlying resolution logic |
-| [resolveInt](resolveInt.md)     | Integer variant             |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

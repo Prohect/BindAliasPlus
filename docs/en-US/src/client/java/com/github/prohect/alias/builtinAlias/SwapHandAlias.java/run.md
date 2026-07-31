@@ -3,26 +3,19 @@
 ## Syntax
 
 ```java
-public com.github.prohect.alias.Alias run(java.lang.String)
+public com.github.prohect.alias.builtinAlias.SwapHandAlias run(java.lang.String)
 ```
 
 ## Parameters
 
-| Name   | Type     | Description |
-| ------ | -------- | ----------- |
-| `args` | `String` | Ignored.    |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Sends an offhand swap packet to the server.
+## See Also
 
-**Algorithm**:
+| Item | Description |
+|------|-------------|
 
-1. Guard against null network handler; log warning if null.
-2. Send `ServerboundPlayerActionPacket(SWAP_ITEM_WITH_OFFHAND, BlockPos.ZERO, Direction.DOWN)`.
-
-**Side effects**: Sends a network packet. The server swaps the player's main hand and offhand items.
-
-**Callers**: Invoked by the alias dispatch system.
-
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

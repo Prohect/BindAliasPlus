@@ -6,21 +6,16 @@
 public void reapplyToGameKeyMapping()
 ```
 
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+
 ## Remarks
-
-Re-applies the key-down state to the game's key mapping if `flag` is `true`.
-
-When a text-input screen intercepts a key-press event, the game may lose track of
-the key being held down. This method calls `run("1")` to re-assert the key-down
-state, restoring the game's key mapping to match the alias state.
-
-If `flag` is `false`, does nothing.
 
 ## See Also
 
-| Item                      | Description                      |
-| ------------------------- | -------------------------------- |
-| [flag](flag.md)           | The field checked by this method |
-| [parseArgs](parseArgs.md) | Sets the `flag` field            |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

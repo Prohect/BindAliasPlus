@@ -2,24 +2,17 @@
 
 ## Fields
 
-| Name                             | Type     | Description                                                                       |
-| -------------------------------- | -------- | --------------------------------------------------------------------------------- |
-| _(inherited)_ `flag`             | `double` | The absolute pitch value in degrees. Inherited from `BuiltinAliasWithDoubleArgs`. |
-| _(inherited)_ `builtinAliasName` | `String` | The alias name `"setPitch"`. Inherited from `BuiltinAliasWithArgs`.               |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Methods
 
-| Name  | Signature                        | Description                                        |
-| ----- | -------------------------------- | -------------------------------------------------- |
-| `run` | `SetPitchAlias run(String args)` | Sets player pitch to the absolute value in `args`. |
+| Name | Signature | Description |
+|------|-----------|-------------|
 
 ## See Also
 
-| Item                                                                                              | Description                       |
-| ------------------------------------------------------------------------------------------------- | --------------------------------- |
-| [BuiltinAliasWithDoubleArgs](../../BuiltinAliasWithDoubleArgs.java/BuiltinAliasWithDoubleArgs.md) | Parent class — double arg parsing |
-| [PitchAlias](../PitchAlias.java/PitchAlias.md)                                                    | Relative pitch adjustment         |
-| [SetYawAlias](../SetYawAlias.java/SetYawAlias.md)                                                 | Sets absolute yaw                 |
-| [YawAlias](../YawAlias.java/YawAlias.md)                                                          | Relative yaw adjustment           |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

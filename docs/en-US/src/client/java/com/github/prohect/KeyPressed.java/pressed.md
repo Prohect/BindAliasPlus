@@ -6,12 +6,16 @@
 public boolean pressed()
 ```
 
-## Remarks
+## Parameters
 
-Record accessor. Returns `true` if the key was pressed down, `false` if released.
-The mod dispatches `aliasNameOnKeyPressed` from [KeyBindingPlus](../KeyBindingPlus.java/KeyBindingPlus.md)
-when `pressed` is `true`, and `aliasNameOnKeyReleased` when `false`.
+| Name | Type | Description |
+|------|------|-------------|
+
+## Remarks
 
 ## See Also
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+| Item | Description |
+|------|-------------|
+
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

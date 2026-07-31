@@ -6,24 +6,16 @@
 public java.lang.String aliasName()
 ```
 
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+
 ## Remarks
-
-Record accessor for the alias name component of this entry.
-
-This is the key used to look up the alias implementation in the static registries
-(`Alias.aliasesWithoutArgs`, `Alias.aliasesWithArgs`, etc.) during dispatch.
-
-The value is never null (annotated `@NotNull`).
-
-## Return value
-
-The alias name string, never null.
 
 ## See Also
 
-| Item                            | Description                                             |
-| ------------------------------- | ------------------------------------------------------- |
-| [args](args.md)                 | The paired accessor for the arguments                   |
-| [Alias](../Alias.java/Alias.md) | Interface holding the registries looked up by this name |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

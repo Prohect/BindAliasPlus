@@ -1,21 +1,18 @@
 # KeyPressed
 
-## Fields (Record Components)
+## Fields
 
-| Name      | Type                 | Description                                                       |
-| --------- | -------------------- | ----------------------------------------------------------------- |
-| `key`     | `InputConstants.Key` | The keyboard or mouse key that was pressed or released. Non-null. |
-| `pressed` | `boolean`            | `true` if the key was pressed down; `false` if released.          |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Methods
 
-_Record accessor and auto-generated methods only (`equals`, `hashCode`, `toString`)._
+| Name | Signature | Description |
+|------|-----------|-------------|
 
 ## See Also
 
-| Item                                                       | Description                                      |
-| ---------------------------------------------------------- | ------------------------------------------------ |
-| [KeyBindingPlus](../KeyBindingPlus.java/KeyBindingPlus.md) | Maps a key to alias names triggered by it        |
-| [KEY_QUEUE](../BindAliasClient.java/KEY_QUEUE.md)      | Queue of `KeyPressed` events consumed by the mod |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

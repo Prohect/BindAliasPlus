@@ -3,38 +3,19 @@
 ## Syntax
 
 ```java
-public com.github.prohect.alias.Alias run(java.lang.String)
+public com.github.prohect.alias.builtinAlias.SilentAlias run(java.lang.String)
 ```
 
 ## Parameters
 
-| Name   | Type     | Description                                                                |
-| ------ | -------- | -------------------------------------------------------------------------- |
-| `args` | `String` | `"0"` to disable silent mode, `"1"` to enable it. Parsed by `parseArgs()`. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Sets `BindAliasClient.silentMode` to the boolean `flag` value parsed from `args`.
-
-Algorithm:
-
-1. Calls `parseArgs(args)` to set the inherited `flag` field (`true` for `"1"`, `false` for `"0"`).
-2. Assigns `flag` to `BindAliasClient.silentMode`.
-
-Unlike movement aliases, this does not gate on `Alias.isUnderTextInputScreen()` because toggling silent mode is not a game input operation.
-
-Side effects: modifies `BindAliasClient.silentMode`, a static boolean that controls whether feedback messages are suppressed during alias execution.
-
-Callers: dispatched by [UserAlias](../../UserAlias.java/UserAlias.md) when the alias name `"builtinSilent"` matches an `AliasRecord`. Also invoked via `+silent`/`-silent` shortcuts.
-
-Error handling: `parseArgs()` logs a warning for invalid args (not `"0"` or `"1"`) via `BindAliasClient.LOGGER`.
-
 ## See Also
 
-| Item                                                                                         | Description                    |
-| -------------------------------------------------------------------------------------------- | ------------------------------ |
-| [SilentAlias](SilentAlias.md)                                                                | Owning class                   |
-| [BuiltinAliasWithBooleanArgs.parseArgs](../../BuiltinAliasWithBooleanArgs.java/parseArgs.md) | Parses `"0"`/`"1"` into `flag` |
-| [BindAliasClient.silentMode](../../../BindAliasClient.java/silentMode.md)            | The field this method modifies |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

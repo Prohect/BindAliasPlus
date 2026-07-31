@@ -3,7 +3,7 @@
 ## Syntax
 
 ```java
-public com.github.prohect.alias.Alias run(java.lang.String)
+public com.github.prohect.alias.builtinAlias.OpenInventoryAlias run(java.lang.String)
 ```
 
 ## Parameters
@@ -15,4 +15,7 @@ public com.github.prohect.alias.Alias run(java.lang.String)
 
 ## See Also
 
-*Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)*
+| Item | Description |
+|------|-------------|
+
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

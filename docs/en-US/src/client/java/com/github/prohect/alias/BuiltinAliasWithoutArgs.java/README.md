@@ -2,22 +2,17 @@
 
 ## Fields
 
-| Name               | Type     | Description                                                   |
-| ------------------ | -------- | ------------------------------------------------------------- |
-| `builtinAliasName` | `String` | The alias name set at construction. Used as the registry key. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Methods
 
-| Name                                   | Signature                                  | Description                                                                                          |
-| -------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| `putToAliasesWithoutArgs`              | `T putToAliasesWithoutArgs()`              | Registers this alias in `Alias.aliasesWithoutArgs` using `builtinAliasName` as the key.              |
-| `putToAliasesWithoutArgs_notSuggested` | `T putToAliasesWithoutArgs_notSuggested()` | Registers this alias in `Alias.aliasesWithoutArgs_notSuggested` using `builtinAliasName` as the key. |
+| Name | Signature | Description |
+|------|-----------|-------------|
 
 ## See Also
 
-| Item                                                                         | Description                         |
-| ---------------------------------------------------------------------------- | ----------------------------------- |
-| [AliasWithoutArgs](../AliasWithoutArgs.java/AliasWithoutArgs.md)             | Interface this class implements     |
-| [BuiltinAliasWithArgs](../BuiltinAliasWithArgs.java/BuiltinAliasWithArgs.md) | Sibling class for aliases with args |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

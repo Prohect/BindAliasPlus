@@ -2,24 +2,17 @@
 
 ## Fields
 
-| Name                             | Type     | Description                                                                     |
-| -------------------------------- | -------- | ------------------------------------------------------------------------------- |
-| _(inherited)_ `flag`             | `double` | The relative yaw delta in degrees. Inherited from `BuiltinAliasWithDoubleArgs`. |
-| _(inherited)_ `builtinAliasName` | `String` | The alias name `"yaw"`. Inherited from `BuiltinAliasWithArgs`.                  |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Methods
 
-| Name  | Signature                   | Description                                          |
-| ----- | --------------------------- | ---------------------------------------------------- |
-| `run` | `YawAlias run(String args)` | Adjusts player yaw by the relative amount in `args`. |
+| Name | Signature | Description |
+|------|-----------|-------------|
 
 ## See Also
 
-| Item                                                                                              | Description                       |
-| ------------------------------------------------------------------------------------------------- | --------------------------------- |
-| [BuiltinAliasWithDoubleArgs](../../BuiltinAliasWithDoubleArgs.java/BuiltinAliasWithDoubleArgs.md) | Parent class — double arg parsing |
-| [SetYawAlias](../SetYawAlias.java/SetYawAlias.md)                                                 | Sets absolute yaw                 |
-| [PitchAlias](../PitchAlias.java/PitchAlias.md)                                                    | Relative pitch adjustment         |
-| [SetPitchAlias](../SetPitchAlias.java/SetPitchAlias.md)                                           | Sets absolute pitch               |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

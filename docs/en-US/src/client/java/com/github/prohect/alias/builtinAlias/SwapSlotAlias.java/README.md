@@ -2,24 +2,17 @@
 
 ## Fields
 
-| Name     | Type | Description                             |
-| -------- | ---- | --------------------------------------- |
-| _(none)_ |      | No fields declared beyond parent class. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Methods
 
-| Name                                  | Signature                                                                                     | Description                                                 |
-| ------------------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| [run](run.md)                         | `public SwapSlotAlias run(String args)`                                                       | Parses slot arguments and performs the swap                 |
-| [clickSlot](clickSlot.md)             | `private static void clickSlot(MultiPlayerGameMode, InventoryScreen, Slot, int, LocalPlayer)` | Simulates a slot click via the interaction manager          |
-| [swapSlotOffhand](swapSlotOffhand.md) | `private static void swapSlotOffhand(ClientPacketListener, int)`                              | Swaps an item with the offhand via network packets          |
-| [getSlot](getSlot.md)                 | `private static Slot getSlot(InventoryScreen, int)`                                           | Finds a slot by its container index in the inventory screen |
+| Name | Signature | Description |
+|------|-----------|-------------|
 
 ## See Also
 
-| Item                                     | Description                            |
-| ---------------------------------------- | -------------------------------------- |
-| [VarAlias](../VarAlias.java/README.md)   | Variable resolution for slot arguments |
-| [SlotAlias](../SlotAlias.java/README.md) | Simple hotbar slot selection           |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

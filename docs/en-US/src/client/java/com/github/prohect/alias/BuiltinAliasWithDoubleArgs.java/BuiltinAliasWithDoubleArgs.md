@@ -12,18 +12,10 @@ _None._
 
 ## Remarks
 
-Abstract base for built-in aliases that take a `double` value as their argument.
-
-Parsing attempts variable resolution via `VarAlias.resolveDouble()` first,
-then falls back to `Double.parseDouble()`. This allows the args string to be
-a variable name (e.g., `$myValue`) instead of a literal number.
-
 ## See Also
 
-| Item                                                                         | Description         |
-| ---------------------------------------------------------------------------- | ------------------- |
-| [BuiltinAliasWithArgs](../BuiltinAliasWithArgs.java/BuiltinAliasWithArgs.md) | Parent class        |
-| [parseArgs](parseArgs.md)                                                    | Parsing logic       |
-| [VarAlias](builtinAlias/VarAlias.java/VarAlias.md)                           | Variable resolution |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+

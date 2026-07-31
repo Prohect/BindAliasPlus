@@ -4,8 +4,12 @@
 
 | Name | Description |
 |------|-------------|
-| [ChatCapture.java](ChatCapture.java/README.md) | Shared state for capturing chat messages during MCP command-feedback windows |
-| [McpHttpServer.java](McpHttpServer.java/README.md) | HTTP server that exposes MCP endpoints (`/screenshot`, `/command-feedback`, etc.) for AI agent control |
-| [ScreenshotCapture.java](ScreenshotCapture.java/README.md) | Shared state container for the screenshot capture pipeline between mixin and HTTP handler |
+| [GameChannels.java](GameChannels.java/README.md) | |
+| [GameStateCollector.java](GameStateCollector.java/README.md) | |
+| [McpHttpServer.java](McpHttpServer.java/README.md) | |
+| [RecipeBookHelper.java](RecipeBookHelper.java/README.md) | |
+| [ScreenshotCapture.java](ScreenshotCapture.java/README.md) | |
+| [SoundCapture.java](SoundCapture.java/README.md) | |
+| [StateTracker.java](StateTracker.java/README.md) | |
 
-*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAlias/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

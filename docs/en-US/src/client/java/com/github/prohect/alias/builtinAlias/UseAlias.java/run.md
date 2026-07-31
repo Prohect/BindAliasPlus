@@ -3,28 +3,19 @@
 ## Syntax
 
 ```java
-public com.github.prohect.alias.Alias run(java.lang.String)
+public com.github.prohect.alias.builtinAlias.UseAlias run(java.lang.String)
 ```
 
 ## Parameters
 
-| Name   | Type     | Description                                              |
-| ------ | -------- | -------------------------------------------------------- |
-| `args` | `String` | `"1"` to press (use item/place block), `"0"` to release. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Controls the vanilla use key via `keyUse.setDown(flag)` and increments `clickCount` when pressed.
+## See Also
 
-**Algorithm**:
+| Item | Description |
+|------|-------------|
 
-1. Parse `args` via switch: `"0"` sets flag to false, `"1"` sets flag to true, default logs warning.
-2. Get `options.keyUse` from Minecraft.
-3. Call `attackKey.setDown(flag)`.
-4. If flag is true, increment `attackKey.clickCount++` (triggers one immediate use action).
-
-**Side effects**: Modifies vanilla `KeyMapping` state, which triggers use/place behavior in the next game tick.
-
-**Callers**: Invoked by the alias dispatch system.
-
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

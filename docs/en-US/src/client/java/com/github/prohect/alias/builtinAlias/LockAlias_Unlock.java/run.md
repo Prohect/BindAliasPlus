@@ -3,31 +3,19 @@
 ## Syntax
 
 ```java
-public com.github.prohect.alias.Alias run(java.lang.String)
+public com.github.prohect.alias.builtinAlias.LockAlias_Unlock run(java.lang.String)
 ```
 
 ## Parameters
 
-| Name         | Type     | Description                                                        |
-| ------------ | -------- | ------------------------------------------------------------------ |
-| `actionType` | `String` | The action to unlock — same value previously passed to `+lockKey`. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Unlocks the specified action by delegating to `LockAlias.unlockAction(actionType)`. Restores vanilla `KeyMapping` bindings and/or removes physical keys from the blocked set.
-
-**Algorithm**: Single delegation call — `LockAlias.unlockAction(actionType)`.
-
-**Side effects**: See `[LockAlias.unlockAction](../LockAlias.java/unlockAction.md)` — restores original `KeyMapping` keys, calls `KeyMapping.resetMapping()`, removes keys from `LOCKED_PHYSICAL_KEYS`.
-
-**Callers**: Invoked by the alias dispatch system when a user types `-lockKey\gameKey:attack` or when a UserAlias definition contains `-lockKey\someAction`.
-
-**Error handling**: All validation and error handling is inside `LockAlias.unlockAction()`. If the action was not locked, the call is a no-op.
-
 ## See Also
 
-| Item                                                        | Description              |
-| ----------------------------------------------------------- | ------------------------ |
-| [LockAlias.unlockAction](../LockAlias.java/unlockAction.md) | Delegated implementation |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

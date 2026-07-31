@@ -8,28 +8,14 @@ public static void setScreen(net.minecraft.client.Minecraft, net.minecraft.clien
 
 ## Parameters
 
-| Name     | Type        | Description                                               |
-| -------- | ----------- | --------------------------------------------------------- |
-| `client` | `Minecraft` | The Minecraft client instance on which to set the screen. |
-| `screen` | `Screen`    | The screen to open. `null` to close the current screen.   |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Sets the current screen using the appropriate API path for the detected MC version.
-
-Algorithm:
-
-1. If `GUI_HAS_SCREEN` (MC 26.2+): reflectively get the `Gui` object via
-   `GUI_FIELD`, then invoke `GUI_SET_SCREEN` with `screen`.
-2. Otherwise (MC 26.1.x): reflectively invoke `MINECRAFT_SET_SCREEN` on `client`.
-
-Throws `RuntimeException` wrapping any reflection failure.
-
 ## See Also
 
-| Item                                    | Description                              |
-| --------------------------------------- | ---------------------------------------- |
-| [getCurrentScreen](getCurrentScreen.md) | The getter counterpart                   |
-| [static-init](static-init.md)           | Where the reflection fields are resolved |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

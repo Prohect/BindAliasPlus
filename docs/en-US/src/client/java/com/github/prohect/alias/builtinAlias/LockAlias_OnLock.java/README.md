@@ -2,21 +2,17 @@
 
 ## Fields
 
-| Name     | Type | Description                             |
-| -------- | ---- | --------------------------------------- |
-| _(none)_ |      | No fields declared beyond parent class. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Methods
 
-| Name          | Signature                                        | Description                                                          |
-| ------------- | ------------------------------------------------ | -------------------------------------------------------------------- |
-| [run](run.md) | `public LockAlias_OnLock run(String actionType)` | Locks the specified action by delegating to `LockAlias.lockAction()` |
+| Name | Signature | Description |
+|------|-----------|-------------|
 
 ## See Also
 
-| Item                                                   | Description               |
-| ------------------------------------------------------ | ------------------------- |
-| [LockAlias](../LockAlias.java/README.md)               | Core lock implementation  |
-| [LockAlias_Unlock](../LockAlias_Unlock.java/README.md) | Inverse — unlock shortcut |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

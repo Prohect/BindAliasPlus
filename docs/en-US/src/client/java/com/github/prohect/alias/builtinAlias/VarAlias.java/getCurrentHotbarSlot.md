@@ -8,20 +8,14 @@ private java.lang.Integer getCurrentHotbarSlot()
 
 ## Parameters
 
-| Name     | Type | Description |
-| -------- | ---- | ----------- |
-| _(none)_ |      |             |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Returns the player's currently selected hotbar slot as a 1-based integer (1-9), matching the mod's user-facing convention. Internally calls `player.getInventory().getSelectedSlot()` which returns 0-8, then adds 1.
+## See Also
 
-Returns `null` if the player or inventory is null (e.g., not in a world).
+| Item | Description |
+|------|-------------|
 
-**Side effects**: None (reads game state).
-
-**Callers**: `getValueFromSource()` when source is `"hotbarSlot"` or `"selectedSlot"`.
-
-Return value: The hotbar slot number (1-9), or `null` if unavailable.
-
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

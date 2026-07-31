@@ -3,36 +3,19 @@
 ## Syntax
 
 ```java
-public com.github.prohect.alias.Alias run(java.lang.String)
+public com.github.prohect.alias.builtinAlias.ShutdownAlias run(java.lang.String)
 ```
 
 ## Parameters
 
-| Name   | Type     | Description                                                      |
-| ------ | -------- | ---------------------------------------------------------------- |
-| `args` | `String` | Unused. ShutdownAlias takes no arguments; the string is ignored. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Initiates a graceful game shutdown by calling `Minecraft.getInstance().stop()`. Logs the shutdown message via `BindAliasClient.LOGGER.info`.
-
-Algorithm:
-
-1. Logs `"[shutdown] Shutting down..."` to the mod's logger.
-2. Calls `Minecraft.getInstance().stop()` which schedules a clean stop on the next tick.
-
-Side effects: initiates game shutdown; the client will exit after the current tick completes. This is a graceful stop, not a forced `System.exit()`.
-
-Callers: dispatched by [UserAlias](../../UserAlias.java/UserAlias.md) when the alias name `"builtinShutdown"` matches an `AliasRecord`. Typically used at the end of an autoload CFG script.
-
-Error handling: none. The `stop()` method is a fire-and-forget scheduling call.
-
 ## See Also
 
-| Item                                                                      | Description                       |
-| ------------------------------------------------------------------------- | --------------------------------- |
-| [ShutdownAlias](ShutdownAlias.md)                                         | Owning class                      |
-| [BindAliasClient.LOGGER](../../../BindAliasClient.java/LOGGER.md) | Logger used for shutdown message  |
-| [ReloadCFGAlias.run](../ReloadCFGAlias.java/run.md)                       | Another no-arg utility run method |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

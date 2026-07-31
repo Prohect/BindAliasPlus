@@ -8,9 +8,4 @@ public int flag
 
 ## Remarks
 
-The parsed `int` value set by `parseArgs()`.
-
-Defaults to `0` if parsing fails (unresolved variable and `NumberFormatException`).
-Public so subclasses can read the parsed value directly.
-
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

@@ -6,24 +6,16 @@
 public static boolean isInInventoryScreen()
 ```
 
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+
 ## Remarks
-
-Checks whether the current screen is specifically the player inventory screen
-(`InventoryScreen`).
-
-Note that `InventoryScreen` extends `AbstractContainerScreen`, so both
-`isInContainerScreen()` and `isInInventoryScreen()` return `true` when the
-inventory is open.
-
-## Return value
-
-`true` if the player inventory screen is open.
 
 ## See Also
 
-| Item                                          | Description                            |
-| --------------------------------------------- | -------------------------------------- |
-| [getCurrentScreen](getCurrentScreen.md)       | Provides the current screen instance   |
-| [isInContainerScreen](isInContainerScreen.md) | Broader check for any container screen |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

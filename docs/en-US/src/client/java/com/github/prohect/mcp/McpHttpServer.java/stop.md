@@ -10,19 +10,12 @@ public static void stop()
 
 | Name | Type | Description |
 |------|------|-------------|
-| _(none)_ | | |
 
 ## Remarks
-
-Stops the MCP HTTP server with a 0-second grace period — all active connections are immediately terminated. Sets `server = null` so a subsequent `start()` call can create a fresh instance.
-
-Logs a stop confirmation message. Called by the JVM shutdown hook registered in `start()`, and also callable programmatically via the `/alias shutdownMCP` command (builtin `ShutdownAlias`).
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-| [start](start.md) | Creates and starts the server |
-| [ShutdownAlias](../../alias/builtinAlias/ShutdownAlias.java/ShutdownAlias.md) | Builtin alias that calls `stop()` |
 
-*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAlias/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

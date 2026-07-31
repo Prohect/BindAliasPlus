@@ -12,21 +12,10 @@ _None._
 
 ## Remarks
 
-Builtin alias to hold-to-repeat item dropping. Registered as `builtinDrop`.
-
-**Purpose**: Simulates continuous dropping while a key is held, matching vanilla behavior. Supports both 3D game dropping (via `keyDrop.clickCount++`) and container-screen dropping (via `slotClicked(…, THROW)`). Also supports Ctrl+drop (whole stack) in container screens.
-
-**Lifecycle**: Singleton — registered once via `Alias.aliasesWithArgs` at startup. Instance field `ticksHeld` tracks the hold duration per-instance.
-
-**Thread safety**: Not thread-safe (render-thread only). `ticksHeld` is mutated from the render thread without synchronization.
-
-**Key collaborators**: Called from a mixin (`MinecraftClientMixin`) every client tick via `tickDrop()` while `flag` is true. `reapplyToGameKeyMapping()` is called when the cursor is re-locked to maintain `KeyMapping` state.
-
 ## See Also
 
-| Item                                                                                                 | Description                                     |
-| ---------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| [BuiltinAliasWithBooleanArgs](../../BuiltinAliasWithBooleanArgs.java/BuiltinAliasWithBooleanArgs.md) | Parent class providing `flag` and `parseArgs()` |
-| [ReapplyAlias](../ReapplyAlias.java/ReapplyAlias.md)                                                 | Can reapply drop state after screen transitions |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+

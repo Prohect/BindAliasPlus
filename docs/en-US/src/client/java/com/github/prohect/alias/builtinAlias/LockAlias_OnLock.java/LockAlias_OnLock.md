@@ -12,22 +12,10 @@ _None._
 
 ## Remarks
 
-User-facing lock-key alias providing a friendlier syntax than the raw `builtinLock` command. Registered as `+lockKey`.
-
-**Purpose**: Thin wrapper around `LockAlias.lockAction()`. Accepts either a `gameKey:`-prefixed vanilla action (e.g. `gameKey:attack`) or a custom UserAlias name (e.g. `myAlias`).
-
-**Lifecycle**: Singleton — registered once via `Alias.aliasesWithArgs` at startup.
-
-**Thread safety**: Not thread-safe (render-thread only). Delegates all logic to `LockAlias.lockAction()`.
-
-**Key collaborators**: Delegates to `[LockAlias](LockAlias.java/LockAlias.md)`. Command suggestions are provided for both `gameKey:*` actions (`LockAlias.SUPPORTED_ACTIONS`) and UserAlias names.
-
 ## See Also
 
-| Item                                                                            | Description                             |
-| ------------------------------------------------------------------------------- | --------------------------------------- |
-| [LockAlias](../LockAlias.java/LockAlias.md)                                     | Core lock implementation with all logic |
-| [LockAlias_Unlock](../LockAlias_Unlock.java/LockAlias_Unlock.md)                | Inverse — unlock shortcut (`-lockKey`)  |
-| [BuiltinAliasWithArgs](../../BuiltinAliasWithArgs.java/BuiltinAliasWithArgs.md) | Parent class                            |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+

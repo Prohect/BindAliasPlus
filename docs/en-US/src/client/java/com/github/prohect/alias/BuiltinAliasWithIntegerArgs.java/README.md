@@ -2,22 +2,17 @@
 
 ## Fields
 
-| Name   | Type  | Description                                            |
-| ------ | ----- | ------------------------------------------------------ |
-| `flag` | `int` | Parsed integer value from the last `parseArgs()` call. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Methods
 
-| Name        | Signature                | Description                                                                    |
-| ----------- | ------------------------ | ------------------------------------------------------------------------------ |
-| `parseArgs` | `void parseArgs(String)` | Parses args into an `int` value, with `VarAlias` variable resolution fallback. |
+| Name | Signature | Description |
+|------|-----------|-------------|
 
 ## See Also
 
-| Item                                                                                           | Description                         |
-| ---------------------------------------------------------------------------------------------- | ----------------------------------- |
-| [BuiltinAliasWithArgs](../BuiltinAliasWithArgs.java/BuiltinAliasWithArgs.md)                   | Parent class                        |
-| [BuiltinAliasWithDoubleArgs](../BuiltinAliasWithDoubleArgs.java/BuiltinAliasWithDoubleArgs.md) | Sibling for double flags            |
-| [VarAlias](builtinAlias/VarAlias.java/VarAlias.md)                                             | Variable resolution used in parsing |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

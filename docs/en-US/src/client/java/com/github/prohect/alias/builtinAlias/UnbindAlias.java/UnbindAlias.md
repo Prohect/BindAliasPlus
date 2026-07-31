@@ -3,7 +3,7 @@
 ## Syntax
 
 ```java
-public class com.github.prohect.alias.builtinAlias.UnbindAlias extends com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs<com.github.prohect.alias.builtinAlias.UnbindAlias>
+public class com.github.prohect.alias.builtinAlias.UnbindAlias extends com.github.prohect.alias.BuiltinAliasWithStringArgs<com.github.prohect.alias.builtinAlias.UnbindAlias>
 ```
 
 ## Static Initializer
@@ -12,20 +12,10 @@ _None._
 
 ## Remarks
 
-Builtin alias that sends an `/unbind` command to the server. Registered as `unbind`.
-
-**Purpose**: Allows programmatic keybinding removal from within alias definitions. Constructs a command string `unbind\definition` and sends it via `player.connection.sendCommand()`.
-
-**Lifecycle**: Singleton — registered once via `Alias.aliasesWithArgs` at startup.
-
-**Thread safety**: Not thread-safe (render-thread only).
-
 ## See Also
 
-| Item                                                                                                                | Description          |
-| ------------------------------------------------------------------------------------------------------------------- | -------------------- |
-| [BindAlias](../BindAlias.java/BindAlias.md)                                                                         | `/bind` counterpart  |
-| [AliasAlias](../AliasAlias.java/AliasAlias.md)                                                                      | `/alias` counterpart |
-| [BuiltinAliasWithGreedyStringArgs](../../BuiltinAliasWithGreedyStringArgs.java/BuiltinAliasWithGreedyStringArgs.md) | Parent class         |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+

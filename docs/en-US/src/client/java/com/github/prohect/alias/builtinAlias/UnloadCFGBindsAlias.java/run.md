@@ -3,29 +3,19 @@
 ## Syntax
 
 ```java
-public com.github.prohect.alias.Alias run(java.lang.String)
+public com.github.prohect.alias.builtinAlias.UnloadCFGBindsAlias run(java.lang.String)
 ```
 
 ## Parameters
 
-| Name   | Type     | Description |
-| ------ | -------- | ----------- |
-| `args` | `String` | Ignored.    |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Remarks
 
-Removes all autoloaded keybindings from `BindAliasClient.BINDING_PLUS` and cleans up associated command-created aliases.
+## See Also
 
-**Algorithm**:
+| Item | Description |
+|------|-------------|
 
-1. Iterate `BINDING_PLUS`, collecting keys where `binding.fromAutoload()` is true.
-2. Also track alias names from `aliasNameOnKeyPressed()` and `aliasNameOnKeyReleased()` for cleanup.
-3. Remove collected keys from `BINDING_PLUS`.
-4. Remove tracked alias names from `Alias.aliasesWithoutArgs_fromBindCommand`.
-5. Log the removal count unless `silentMode` is active.
-
-**Side effects**: Removes entries from `BindAliasClient.BINDING_PLUS` and `Alias.aliasesWithoutArgs_fromBindCommand`.
-
-**Callers**: Invoked by the alias dispatch system and by `UnloadCFGAllAlias.run()`.
-
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

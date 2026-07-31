@@ -12,21 +12,10 @@ _None._
 
 ## Remarks
 
-Sub-interface of `Alias` for aliases that do not accept arguments.
-
-Both built-in aliases without args (`BuiltinAliasWithoutArgs`) and user-defined
-aliases (`UserAlias`) implement this interface.
-
-Provides two registration methods that insert `this` into the appropriate static
-registry in `Alias`. The type parameter `T` enables fluent chaining.
-
 ## See Also
 
-| Item                                                                                  | Description                                          |
-| ------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| [Alias](../Alias.java/Alias.md)                                                       | Parent interface                                     |
-| [AliasWithArgs](../AliasWithArgs.java/AliasWithArgs.md)                               | Sibling interface for aliases with args              |
-| [BuiltinAliasWithoutArgs](../BuiltinAliasWithoutArgs.java/BuiltinAliasWithoutArgs.md) | Abstract base class implementing this interface      |
-| [UserAlias](../UserAlias.java/UserAlias.md)                                           | User-defined alias chain implementing this interface |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+

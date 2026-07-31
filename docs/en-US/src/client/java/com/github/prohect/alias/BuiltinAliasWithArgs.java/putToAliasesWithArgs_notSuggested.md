@@ -6,24 +6,16 @@
 public T putToAliasesWithArgs_notSuggested()
 ```
 
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+
 ## Remarks
-
-Registers this alias in `Alias.aliasesWithArgs_notSuggested` using `builtinAliasName` as the key.
-
-Unlike the interface default `AliasWithArgs.putToAliasesWithArgs_notSuggested(String)`,
-this no-arg overload uses the stored `builtinAliasName` field.
-
-Returns `this` cast to `T` for fluent chaining during registration.
-
-## Return value
-
-This alias instance, cast to `T`.
 
 ## See Also
 
-| Item                                                                                | Description                   |
-| ----------------------------------------------------------------------------------- | ----------------------------- |
-| [builtinAliasName](builtinAliasName.md)                                             | The key used for registration |
-| [Alias.aliasesWithArgs_notSuggested](../Alias.java/aliasesWithArgs_notSuggested.md) | The target registry           |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

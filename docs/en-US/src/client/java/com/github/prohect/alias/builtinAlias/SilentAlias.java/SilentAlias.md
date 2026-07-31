@@ -12,23 +12,10 @@ _None._
 
 ## Remarks
 
-Builtin alias that toggles silent mode, suppressing feedback messages (e.g., success confirmations) in chat.
-
-Lifecycle: singleton — instantiated once during `onInitializeClient()`, registered via `putToAliasesWithArgs()` into `Alias.aliasesWithArgs`, and reused for every invocation.
-
-Thread safety: not thread-safe; runs on the render thread. Sets `BindAliasClient.silentMode` which is read by other aliases during dispatch.
-
-Key collaborators: extends [BuiltinAliasWithBooleanArgs](../../BuiltinAliasWithBooleanArgs.java/BuiltinAliasWithBooleanArgs.md) which provides `parseArgs()` for `"0"`/`"1"` parsing and `flag` field. Writes to `BindAliasClient.silentMode`. Unlike movement aliases, does not gate on `Alias.isUnderTextInputScreen()` because this is not a game operation.
-
-Shortcuts: `+silent` enables silent mode, `-silent` disables it (resolved by the config parser).
-
 ## See Also
 
-| Item                                                                                                 | Description                                       |
-| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| [BuiltinAliasWithBooleanArgs](../../BuiltinAliasWithBooleanArgs.java/BuiltinAliasWithBooleanArgs.md) | Parent class providing boolean arg parsing        |
-| [BindAliasClient](../../../BindAliasClient.java/BindAliasClient.md)                      | Owns the `silentMode` field                       |
-| [UserAlias](../../UserAlias.java/UserAlias.md)                                                       | Checks `silentMode` to suppress feedback messages |
-| [run](run.md)                                                                                        | The `run` method that sets silent mode            |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+

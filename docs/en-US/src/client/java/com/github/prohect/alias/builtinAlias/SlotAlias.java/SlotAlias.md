@@ -12,22 +12,10 @@ _None._
 
 ## Remarks
 
-Builtin alias to select a hotbar slot. Registered as `slot`.
-
-**Purpose**: Switches the player's active hotbar slot to the specified number (1-9). Also sends a `ServerboundSetCarriedItemPacket` to sync the change with the server. Accepts variable names resolved via `VarAlias.resolveInt()`.
-
-**Lifecycle**: Singleton — registered once via `Alias.aliasesWithArgs` at startup.
-
-**Thread safety**: Not thread-safe (render-thread only). Interacts with the player's inventory and network handler.
-
-**Key collaborators**: Uses `[VarAlias.resolveInt](VarAlias.java/resolveInt.md)` to support variable references. Sends packets via `Minecraft.getInstance().getConnection()`.
-
 ## See Also
 
-| Item                                                                            | Description                                    |
-| ------------------------------------------------------------------------------- | ---------------------------------------------- |
-| [VarAlias.resolveInt](../VarAlias.java/resolveInt.md)                           | Variable resolution for slot number            |
-| [SwapSlotAlias](../SwapSlotAlias.java/SwapSlotAlias.md)                         | Swaps items between slots (not just selection) |
-| [BuiltinAliasWithArgs](../../BuiltinAliasWithArgs.java/BuiltinAliasWithArgs.md) | Parent class                                   |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
+

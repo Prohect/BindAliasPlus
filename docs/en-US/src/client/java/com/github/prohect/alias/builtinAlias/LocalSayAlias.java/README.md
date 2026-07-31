@@ -2,24 +2,17 @@
 
 ## Fields
 
-| Name                                    | Type     | Description                                                                                 |
-| --------------------------------------- | -------- | ------------------------------------------------------------------------------------------- |
-| _(inherited)_ `builtinAliasName`        | `String` | The alias name `"localSay"`. Inherited from `BuiltinAliasWithArgs`.                         |
-| _(inherited)_ `divider4AliasDefinition` | `char`   | The `';'` divider for alias definitions. Inherited from `BuiltinAliasWithGreedyStringArgs`. |
+| Name | Type | Description |
+|------|------|-------------|
 
 ## Methods
 
-| Name  | Signature                        | Description                                    |
-| ----- | -------------------------------- | ---------------------------------------------- |
-| `run` | `LocalSayAlias run(String args)` | Displays `args` as a client-side chat message. |
+| Name | Signature | Description |
+|------|-----------|-------------|
 
 ## See Also
 
-| Item                                                                                                                | Description                       |
-| ------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| [BuiltinAliasWithGreedyStringArgs](../../BuiltinAliasWithGreedyStringArgs.java/BuiltinAliasWithGreedyStringArgs.md) | Parent class — greedy string args |
-| [SayAlias](../SayAlias.java/SayAlias.md)                                                                            | Sends chat to server              |
-| [SendCommandAlias](../SendCommandAlias.java/SendCommandAlias.md)                                                    | Sends commands to server          |
-| [LogAlias](../LogAlias.java/LogAlias.md)                                                                            | Logs to mod logger                |
+| Item | Description |
+|------|-------------|
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
