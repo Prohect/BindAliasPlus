@@ -15,15 +15,15 @@ scripts/*
 !(*/*).md
 
 formatter.xml
+gradlew
+gradlew.bat
+settings.gradle
 LICENSE
 
 ######################
 # MANUAL SYNC:       #
-# docs/en-US         #
+# docs/en-US/        #
 # src/               #
 # build.gradle       #
 # gradle.properties  #
-# gradlew            #
-# gradlew.bat        #
-# settings.gradle    #
 ######################
