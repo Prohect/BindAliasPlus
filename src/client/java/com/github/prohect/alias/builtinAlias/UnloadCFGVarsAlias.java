@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.BuiltinAliasWithoutArgs;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +36,9 @@ public class UnloadCFGVarsAlias extends BuiltinAliasWithoutArgs<UnloadCFGVarsAli
             count++;
         }
 
-        if (!BindAliasPlusClient.silentMode) {
-            BindAliasPlusClient.LOGGER.info("{}[unloadCFGVars] Removed {} autoloaded variable(s)",
-                    BindAliasPlusClient.tickPrefix(), count);
+        if (!BindAliasClient.silentMode) {
+            BindAliasClient.LOGGER.info("{}[unloadCFGVars] Removed {} autoloaded variable(s)", BindAliasClient.tickPrefix(),
+                    count);
         }
 
         return this;
