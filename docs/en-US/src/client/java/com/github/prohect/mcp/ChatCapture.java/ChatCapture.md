@@ -29,4 +29,4 @@ Thread-safety: `active` is a `volatile boolean` for visibility across threads. `
 | [McpHttpServer](../McpHttpServer.java/McpHttpServer.md) | Consumer — calls `begin()`/`end()` around command execution |
 | [ScreenshotCapture](../ScreenshotCapture.java/ScreenshotCapture.md) | Companion capture class for screenshots |
 
-*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAliasPlus/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
+*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAlias/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*

@@ -14,6 +14,6 @@ A utility class bridging Yarn's `MinecraftClient`/`Screen` naming conventions. P
 | Item | Description |
 |------|-------------|
 | [Alias.getCurrentScreen](../../alias/Alias.java/getCurrentScreen.md) | Caller — used to check if a screen is open before executing aliases |
-| [BindAliasPlusClient.currentScreen](../BindAliasPlusClient.java/currentScreen.md) | Tracks the current screen name string for lock/unlock logic |
+| [BindAliasClient.currentScreen](../BindAliasClient.java/currentScreen.md) | Tracks the current screen name string for lock/unlock logic |
 
-*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAliasPlus/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*
+*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAlias/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*

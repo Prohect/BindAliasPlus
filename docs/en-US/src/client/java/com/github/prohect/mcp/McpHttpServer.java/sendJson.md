@@ -26,4 +26,4 @@ Called by all endpoint handlers to return results. The `json` parameter is expec
 |------|-------------|
 | [jsonEscape](jsonEscape.md) | Escapes strings before embedding in JSON |
 
-*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAliasPlus/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
+*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAlias/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*

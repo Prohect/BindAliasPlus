@@ -24,4 +24,4 @@ Deliberately placed **outside** the `mixin` package — Mixin does not transform
 | [McpHttpServer](../McpHttpServer.java/McpHttpServer.md) | Consumer — reads `nextPngFuture` to serve screenshot bytes over HTTP |
 | [ChatCapture](../ChatCapture.java/ChatCapture.md) | Companion capture class for chat messages |
 
-*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAliasPlus/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
+*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAlias/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*

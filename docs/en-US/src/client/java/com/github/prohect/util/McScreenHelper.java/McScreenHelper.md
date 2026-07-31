@@ -30,4 +30,4 @@ It is used primarily by [Alias.getCurrentScreen](../../alias/Alias.java/getCurre
 | [setScreen](setScreen.md) | `static void setScreen(MinecraftClient, Screen)` |
 | [Alias.getCurrentScreen](../../alias/Alias.java/getCurrentScreen.md) | Primary caller |
 
-*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAliasPlus/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*
+*Documented for Commit: [6c62e00c173ab8ceb4be73871bf00ca3c1b63b32](https://github.com/Prohect/BindAlias/tree/6c62e00c173ab8ceb4be73871bf00ca3c1b63b32)*

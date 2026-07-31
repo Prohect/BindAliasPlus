@@ -1,19 +1,19 @@
 # prohect
 
-The root package of BindAliasPlus. **`BindAliasPlusClient.java` is THE entry point** — it implements `ClientModInitializer`, registers all aliases and keybindings, and wires everything together (~43KB). The `alias/` sub-package contains the core alias interface hierarchy and all alias implementations, `mixin/` holds Minecraft injection points, and `util/` provides reflection-based helpers. `KeyBindingPlus.java` and `KeyPressed.java` are simple records that form the key→alias binding system. `BindAliasPlusDataGenerator.java` is minimal boilerplate.
+The root package of BindAlias. **`BindAliasClient.java` is THE entry point** — it implements `ClientModInitializer`, registers all aliases and keybindings, and wires everything together (~43KB). The `alias/` sub-package contains the core alias interface hierarchy and all alias implementations, `mixin/` holds Minecraft injection points, and `util/` provides reflection-based helpers. `KeyBindingPlus.java` and `KeyPressed.java` are simple records that form the key→alias binding system. `BindAliasDataGenerator.java` is minimal boilerplate.
 
-**Reading order:** BindAliasPlusClient → alias/Alias.java → KeyBindingPlus → KeyPressed → alias/UserAlias → mixins.
+**Reading order:** BindAliasClient → alias/Alias.java → KeyBindingPlus → KeyPressed → alias/UserAlias → mixins.
 
 ## Contents
 
 | Name                                                                         | Description                                                                                                        |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | [alias](alias/README.md)                                                     | **Core alias interface hierarchy, all alias implementations, and the user-defined alias chain system**             |
-| [BindAliasPlusClient.java](BindAliasPlusClient.java/README.md)               | **THE entry point** — `ClientModInitializer`, registers all aliases, keybindings, and networking callbacks (~43KB) |
-| [BindAliasPlusDataGenerator.java](BindAliasPlusDataGenerator.java/README.md) | Minimal boilerplate data generator entry point                                                                     |
+| [BindAliasClient.java](BindAliasClient.java/README.md)               | **THE entry point** — `ClientModInitializer`, registers all aliases, keybindings, and networking callbacks (~43KB) |
+| [BindAliasDataGenerator.java](BindAliasDataGenerator.java/README.md) | Minimal boilerplate data generator entry point                                                                     |
 | [KeyBindingPlus.java](KeyBindingPlus.java/README.md)                         | Simple record linking a key combination to an alias name — the binding definition                                  |
 | [KeyPressed.java](KeyPressed.java/README.md)                                 | Simple record representing a pressed key with modifiers — feeds into the KEY_QUEUE                                 |
 | mixin/                                                                       | **Minecraft injection points** for keyboard, mouse, screen, and client tick hooks                                  |
 | util/                                                                        | Reflection-based helpers (e.g., `McScreenHelper` for screen access)                                                |
 
-_Documented for Commit: [559546bace0e8a52a434e97e41e60e3a76c78989](https://github.com/Prohect/BindAliasPlus/tree/559546bace0e8a52a434e97e41e60e3a76c78989)_
+_Documented for Commit: [559546bace0e8a52a434e97e41e60e3a76c78989](https://github.com/Prohect/BindAlias/tree/559546bace0e8a52a434e97e41e60e3a76c78989)_

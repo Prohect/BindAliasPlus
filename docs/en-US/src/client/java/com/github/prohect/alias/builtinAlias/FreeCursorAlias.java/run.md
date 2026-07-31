@@ -25,4 +25,4 @@ The flag is read by `MouseMixin.cancelGrabMouse()` each time Minecraft attempts 
 | [FreeCursorAlias](FreeCursorAlias.md) | Class documentation |
 | [freeCursor](freeCursor.md) | The static flag field |
 
-_Documented for Commit: [2003c5c](https://github.com/Prohect/BindAliasPlus/tree/2003c5c648f2214e6b8c099a0db1ec96a130246b)_
+_Documented for Commit: [2003c5c](https://github.com/Prohect/BindAlias/tree/2003c5c648f2214e6b8c099a0db1ec96a130246b)_

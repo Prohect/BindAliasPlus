@@ -34,6 +34,6 @@ Lightweight HTTP server embedded in the Minecraft client for AI agent control vi
 | [onMainThread](onMainThread.md) | Thread bridge to the game loop |
 | [ScreenshotCapture](../ScreenshotCapture.java/ScreenshotCapture.md) | Screenshot state shared with NativeImageMixin |
 | [ChatCapture](../ChatCapture.java/ChatCapture.md) | Command feedback capture used by defineAlias |
-| [BindAliasPlusClient](../../BindAliasPlusClient.java/BindAliasPlusClient.md) | Client entry point that calls `start()` |
+| [BindAliasClient](../../BindAliasClient.java/BindAliasClient.md) | Client entry point that calls `start()` |
 
-*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAliasPlus/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
+*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAlias/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*

@@ -26,4 +26,4 @@ The screenshot is saved to the game's screenshot directory with a timestamped fi
 |------|-------------|
 | [run](run.md) | Entry point for alias execution |
 
-_Documented for Commit: [2003c5c](https://github.com/Prohect/BindAliasPlus/tree/2003c5c648f2214e6b8c099a0db1ec96a130246b)_
+_Documented for Commit: [2003c5c](https://github.com/Prohect/BindAlias/tree/2003c5c648f2214e6b8c099a0db1ec96a130246b)_

@@ -21,4 +21,4 @@ Captures a Minecraft screenshot via the built-in screenshot facility, equivalent
 |------|-------------|
 | [BuiltinAliasWithBooleanArgs](../../BuiltinAliasWithBooleanArgs.java/README.md) | Base class for boolean-toggle aliases |
 
-_Documented for Commit: [2003c5c](https://github.com/Prohect/BindAliasPlus/tree/2003c5c648f2214e6b8c099a0db1ec96a130246b)_
+_Documented for Commit: [2003c5c](https://github.com/Prohect/BindAlias/tree/2003c5c648f2214e6b8c099a0db1ec96a130246b)_

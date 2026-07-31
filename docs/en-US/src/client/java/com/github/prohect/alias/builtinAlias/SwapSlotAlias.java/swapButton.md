@@ -29,4 +29,4 @@ A return of `-1` means `swapInMenu` must use the PICKUP click sequence instead o
 | [swapInMenu](swapInMenu.md) | Uses the button index for SWAP-clicks |
 | [resolveSlot](resolveSlot.md) | Resolves the slot before determining its button |
 
-*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAliasPlus/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
+*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAlias/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*

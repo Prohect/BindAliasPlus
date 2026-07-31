@@ -1,4 +1,4 @@
-# onInitializeDataGenerator method (src/client/java/com/github/prohect/BindAliasPlusDataGenerator.java)
+# onInitializeDataGenerator method (src/client/java/com/github/prohect/BindAliasDataGenerator.java)
 
 ## Syntax
 
@@ -18,4 +18,4 @@ public void onInitializeDataGenerator(net.fabricmc.fabric.api.datagen.v1.FabricD
 | Item | Description |
 |------|-------------|
 
-*Documented for Commit: [ec8e636d69a0711efc7eafe6bb229fb3fa089e3e](https://github.com/Prohect/BindAliasPlus/tree/ec8e636d69a0711efc7eafe6bb229fb3fa089e3e)*
+*Documented for Commit: [ec8e636d69a0711efc7eafe6bb229fb3fa089e3e](https://github.com/Prohect/BindAlias/tree/ec8e636d69a0711efc7eafe6bb229fb3fa089e3e)*
