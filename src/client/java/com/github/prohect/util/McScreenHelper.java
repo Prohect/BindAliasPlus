@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 
 public final class McScreenHelper {
+
     public static Screen getCurrentScreen(MinecraftClient client) {
         return client.currentScreen;
     }
