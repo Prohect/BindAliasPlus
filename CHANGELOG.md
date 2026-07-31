@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to BindAliasPlus will be documented in this file.
+All notable changes to BindAlias will be documented in this file.
 
 ## [1.8.3] - 2026-07-31
 
@@ -39,7 +39,7 @@ All notable changes to BindAliasPlus will be documented in this file.
 ### Changed
 
 - **Bridge** — `mcp_server.js` revisions around the unified state envelope; tool instructions trimmed.
-- **post-checkout hook** — caches Eclipse config per branch to skip Gradle on re-checkout; cache invalidated when build config files change; `.launch` cleanup scoped to the `BindAliasPlus_` prefix.
+- **post-checkout hook** — caches Eclipse config per branch to skip Gradle on re-checkout; cache invalidated when build config files change; `.launch` cleanup scoped to the `BindAlias_` prefix.
 
 ## [1.7.0] - 2026-07-29
 
@@ -114,7 +114,7 @@ All notable changes to BindAliasPlus will be documented in this file.
 ### Fixed
 
 - **WriteCFG endpoint truncates JSON bodies at escaped quotes** — the naive body parser stopped at the first `\"` instead of honoring JSON string escapes, corrupting any cfg that contained quoted alias args (e.g. `say\"...\",` `sendCommand\"...\"`). Now uses an escape-aware single-pass string extractor.
-- **Mod logs not reaching `latest.log` after world join** — the `ChatCapture` Log4j appender registered its child `LoggerConfig` inheriting the ROOT's `additivity=false`, which swallowed every `bind-alias-plus` log line after the capture appender was installed on world join. Now registers it with `additive=true` so normal console/file output keeps flowing alongside the capture buffer.
+- **Mod logs not reaching `latest.log` after world join** — the `ChatCapture` Log4j appender registered its child `LoggerConfig` inheriting the ROOT's `additivity=false`, which swallowed every `bind-alias` log line after the capture appender was installed on world join. Now registers it with `additive=true` so normal console/file output keeps flowing alongside the capture buffer.
 
 ## [1.5.3] - 2026-07-25
 
@@ -139,7 +139,7 @@ All notable changes to BindAliasPlus will be documented in this file.
 ### Added
 
 - **`getLogDiff` MCP tool** — game log diff for AI agents:
-  - Captures mod log output (`log\...` alias, CFG autoload, variable setup) via scoped Log4j appender on `"bind-alias-plus"` logger
+  - Captures mod log output (`log\...` alias, CFG autoload, variable setup) via scoped Log4j appender on `"bind-alias"` logger
   - Captures chat messages (player chat, system messages, command feedback) via `ChatComponentMixin`
   - Persistent ring buffer (200 msg) with diff cursor tracking — returns only new messages since last call
   - Log capture starts at world join, diff resets on each join to skip startup noise
@@ -154,7 +154,7 @@ All notable changes to BindAliasPlus will be documented in this file.
   - `GET /screenshot` — in-memory PNG screenshot via native `Screenshot.grab()` (no chat spam)
   - `POST /runAlias` — execute alias chains remotely (pre-checks alias existence, returns error for unknowns)
   - `POST /defineAlias` — define new aliases via API
-  - `GET /readCFG` / `POST /writeCFG` — read/write `bind-alias-plus.cfg` remotely
+  - `GET /readCFG` / `POST /writeCFG` — read/write `bind-alias.cfg` remotely
 - **`swapSlot` expanded to any container screen** — works in chests, crafting tables, furnaces, anvils, enchanting tables, and all other `AbstractContainerScreen` subtypes.
   - New `cN` slot syntax (1-based index into the open menu's slot list) alongside existing player slots 1–41 and variables.
   - Hotbar/offhand-addressable slots use a single SWAP click; other pairs use a guarded PICKUP sequence.
@@ -236,7 +236,7 @@ All notable changes to BindAliasPlus will be documented in this file.
 - **Initial delay before continuous drops** (3 ticks) to match the OS
   key-repeat gap vanilla relies on, preventing accidental double-drops
   from quick taps.
-- **Cached screen reference** — `BindAliasPlusClient.currentScreen` is
+- **Cached screen reference** — `BindAliasClient.currentScreen` is
   now updated by `GuiMixin` on every screen change, replacing expensive
   `McScreenHelper.getCurrentScreen()` reflection calls everywhere.
 - **Screen-type helper methods** on `Alias` — `isUnderTextInputScreen()`,
@@ -252,7 +252,7 @@ All notable changes to BindAliasPlus will be documented in this file.
 
 ### Changed
 
-- **`GuiMixin` simplified** to a single line (`BindAliasPlusClient.currentScreen = screen`).
+- **`GuiMixin` simplified** to a single line (`BindAliasClient.currentScreen = screen`).
 - **Access widener** extended with `AbstractContainerScreen.hoveredSlot`
   and `slotClicked()` for container drop support.
 
@@ -468,9 +468,9 @@ All notable changes to BindAliasPlus will be documented in this file.
 
 ## Links
 
-- **Modrinth**: https://modrinth.com/mod/bind-alias-plus
-- **GitHub**: https://github.com/Prohect/BindAliasPlus
-- **Issues**: https://github.com/Prohect/BindAliasPlus/issues
+- **Modrinth**: https://modrinth.com/mod/bind-alias
+- **GitHub**: https://github.com/Prohect/BindAlias
+- **Issues**: https://github.com/Prohect/BindAlias/issues
 
 ---
 

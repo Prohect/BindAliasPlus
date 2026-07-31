@@ -1,4 +1,4 @@
-# Contributing to BindAliasPlus
+# Contributing to BindAlias
 
 Welcome! This guide covers how to set up your environment and contribute.
 
@@ -7,13 +7,13 @@ Welcome! This guide covers how to set up your environment and contribute.
 - Your change **builds** — `./gradlew build` passes on your branch
 - Your change **works** — test with `./gradlew runTestClient`
 - If your change adds a feature, add a **test alias** in
-  `run/config/bind-alias-plus.cfg` so others can verify it
+  `run/config/bind-alias.cfg` so others can verify it
 - If you touch files in `.git_sync_across_active_branches`, make sure
   the same logic applies across branches (mapping differences, see below)
 
 ## Branches
 
-BindAliasPlus targets multiple Minecraft versions simultaneously. Each
+BindAlias targets multiple Minecraft versions simultaneously. Each
 branch maps to a specific MC version range and mappings flavor:
 
 | Branch           | MC      | Mappings |
@@ -50,14 +50,14 @@ When porting code between Mojang and Yarn branches:
 src/
 ├── main/                          # Shared code (loaded on both client & server)
 │   ├── java/com/github/prohect/
-│   │   └── BindAliasPlus.java     # ModInitializer entrypoint
+│   │   └── BindAlias.java     # ModInitializer entrypoint
 │   └── resources/
 │       ├── fabric.mod.json
-│       └── bind-alias-plus.mixins.json
+│       └── bind-alias.mixins.json
 │
 └── client/                        # Client-only code (split source set)
     ├── java/com/github/prohect/
-    │   ├── BindAliasPlusClient.java   # Client entrypoint + alias registration
+    │   ├── BindAliasClient.java   # Client entrypoint + alias registration
     │   ├── KeyBindingPlus.java        # Key binding record
     │   ├── KeyPressed.java            # Key-press tick tracker
     │   ├── alias/
@@ -76,15 +76,15 @@ src/
     │   └── util/
     │       └── McScreenHelper.java   # Cross-version screen access helpers
     └── resources/
-        ├── bind-alias-plus.client.mixins.json
-        └── bind-alias-plus-client.accesswidener
+        ├── bind-alias.client.mixins.json
+        └── bind-alias-client.accesswidener
 ```
 
 ## Codebase guide
 
 ### Architecture
 
-The core of BindAliasPlus is a **chain of aliases**. Every alias
+The core of BindAlias is a **chain of aliases**. Every alias
 implements `Alias<T>` (the `run(String args)` method). When the user
 presses a key, `UserAlias.run()` parses the config line into a sequence
 of alias names and dispatches each one by looking it up in a global
@@ -136,7 +136,7 @@ Alias<T>  (interface)
    }
    ```
 
-2. **Register it** in `BindAliasPlusClient.onInitializeClient()`.
+2. **Register it** in `BindAliasClient.onInitializeClient()`.
    Choose the right registration method:
 
    | Method                                    | When to use                                                    |
@@ -160,10 +160,10 @@ Alias<T>  (interface)
 ### Adding a mixin
 
 1. Create the mixin class in `src/client/java/com/github/prohect/mixin/client/`.
-2. Register it in `src/client/resources/bind-alias-plus.client.mixins.json`
+2. Register it in `src/client/resources/bind-alias.client.mixins.json`
    under the `"client"` array.
 3. If you need to access private Minecraft fields/methods, add entries
-   to `src/client/resources/bind-alias-plus-client.accesswidener`.
+   to `src/client/resources/bind-alias-client.accesswidener`.
 
 ### Key files to read
 
@@ -171,7 +171,7 @@ Alias<T>  (interface)
 | ------------------------------------------------------ | ------------------------------------------------------------------------------ |
 | `Alias.java`                                           | Global registries, screen-type helpers, alias parsing                          |
 | `UserAlias.java`                                       | How user-defined alias sequences are dispatched                                |
-| `BindAliasPlusClient.java`                             | Entrypoint, alias registration, command definitions, config loading            |
+| `BindAliasClient.java`                             | Entrypoint, alias registration, command definitions, config loading            |
 | `BuiltinAliasWithBooleanArgs.java`                     | Base class for +/- toggles — see `parseArgs()` and `reapplyToGameKeyMapping()` |
 | `SneakAlias.java` / `SayAlias.java` / `WaitAlias.java` | Reference implementations (boolean, string, integer)                           |
 | `GuiMixin.java` / `KeyboardInputMixin.java`            | Examples of how mixins integrate with the alias system                         |
