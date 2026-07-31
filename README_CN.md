@@ -1,7 +1,7 @@
-# BindAliasPlus
+# BindAlias
 
 一个 Minecraft Fabric 客户端模组，允许创建自定义别名和按键绑定，通过简单的按键操作来自动化复杂的游戏内动作。同时通过内置 HTTP API 支持 AI 代理自主控制——代理可以独立
-观察、推理并操作 Minecraft。配合 [BindAliasPlus MCP 工具](https://github.com/Prohect/BindAliasPlus-mcp)
+观察、推理并操作 Minecraft。配合 [BindAlias MCP 工具](https://github.com/Prohect/BindAlias-mcp)
 让 AI 来玩游戏。
 
 <!-- languages -->
@@ -11,7 +11,7 @@
 
 ## 概述
 
-BindAliasPlus 通过让你定义自定义别名来执行一系列动作并将其绑定到按键上，从而增强你的 Minecraft 游戏体验。无论你需要快速交换物品栏槽位、自动化鞘翅飞行，还是链接多个动作（比如使用不在快捷栏或副手中的弓或放置方块），这个模组都能通过可配置的别名和按键绑定来简化重复性任务。
+BindAlias 通过让你定义自定义别名来执行一系列动作并将其绑定到按键上，从而增强你的 Minecraft 游戏体验。无论你需要快速交换物品栏槽位、自动化鞘翅飞行，还是链接多个动作（比如使用不在快捷栏或副手中的弓或放置方块），这个模组都能通过可配置的别名和按键绑定来简化重复性任务。
 
 ## 特性
 
@@ -22,13 +22,13 @@ BindAliasPlus 通过让你定义自定义别名来执行一系列动作并将其
 - **配置持久化**：将别名和绑定保存在配置文件中，加入服务器时自动加载。
 - **链式动作**：组合别名来创建复杂的序列（例如：装备鞘翅 → 使用烟花 → 飞行）。
 - **AI 代理支持**：内置 HTTP API（`GET /state`、`GET /screenshot`、`POST /runAlias` 等）用于 AI 代理
-  控制。配合 [BindAliasPlus MCP 工具](https://github.com/Prohect/BindAliasPlus-mcp) 让 AI 代理观察、
+  控制。配合 [BindAlias MCP 工具](https://github.com/Prohect/BindAlias-mcp) 让 AI 代理观察、
   推理并操作你的 Minecraft 世界。
 
 ## 安装
 
 1. 确保你已为你的 Minecraft 版本安装了 [Fabric Loader](https://fabricmc.net/use/)。
-2. 从[发布页面](https://modrinth.com/mod/bind-alias-plus/versions)下载最新的 `bind-alias-plus-*.*.*.jar`。
+2. 从[发布页面](https://modrinth.com/mod/bind-alias/versions)下载最新的 `bind-alias-*.*.*.jar`。
 3. 将 JAR 文件放入你的 Minecraft `mods` 文件夹。
 4. 使用 Fabric loader 启动 Minecraft。
 
@@ -41,7 +41,7 @@ BindAliasPlus 通过让你定义自定义别名来执行一系列动作并将其
 
 ### 内置别名
 
-BindAliasPlus 包含常见动作的预构建别名。它们分为**带参数的别名**和**不带参数的别名**。
+BindAlias 包含常见动作的预构建别名。它们分为**带参数的别名**和**不带参数的别名**。
 
 #### 带参数的别名
 
@@ -147,10 +147,10 @@ _注意：槽位遵循 Minecraft 的内部编号：_
 
 ### AI 代理 / MCP HTTP 服务器
 
-BindAliasPlus 内置了一个 HTTP 服务器，使 AI 代理（如 Claude、ChatGPT 或自定义自动化脚本）能够观察和控制你的 Minecraft 客户端。这是
-[BindAliasPlus MCP 工具](https://github.com/Prohect/BindAliasPlus-mcp) 的配套模组。
+BindAlias 内置了一个 HTTP 服务器，使 AI 代理（如 Claude、ChatGPT 或自定义自动化脚本）能够观察和控制你的 Minecraft 客户端。这是
+[BindAlias MCP 工具](https://github.com/Prohect/BindAlias-mcp) 的配套模组。
 
-服务器默认监听 `http://localhost:25567`（可在 `config/bind-alias-plus.cfg` 中配置），提供以下接口：
+服务器默认监听 `http://localhost:25567`（可在 `config/bind-alias.cfg` 中配置），提供以下接口：
 
 | 接口           | 方法 | 描述                                                   |
 | -------------- | ---- | ------------------------------------------------------ |
@@ -176,7 +176,7 @@ curl http://localhost:25567/screenshot -o screen.png
 
 ### 示例配置
 
-这是一个真实的配置文件 (`config/bind-alias-plus.cfg`)，展示了所有核心功能的实际用法：
+这是一个真实的配置文件 (`config/bind-alias.cfg`)，展示了所有核心功能的实际用法：
 
 ```cfg
 /var offHand 41
@@ -212,7 +212,7 @@ curl http://localhost:25567/screenshot -o screen.png
 
 ## 配置
 
-- **配置文件**：位于 `config/bind-alias-plus.cfg`。如果不存在会自动创建。
+- **配置文件**：位于 `config/bind-alias.cfg`。如果不存在会自动创建。
 - **自动加载**：配置文件中的别名和绑定在模组加载时自动加载。
 - **手动编辑**：你可以直接编辑配置文件来添加/修改别名/绑定（使用与游戏内命令相同的语法）。
   参见上方[示例配置](#示例配置)部分了解完整的真实配置。
@@ -240,8 +240,8 @@ curl http://localhost:25567/screenshot -o screen.png
 - **变量**：支持整数和浮点数值。数值别名（`yaw`、`pitch`、`setYaw`、`setPitch`、`slot`、`swapSlot`、`wait`、
   `setPerspective`）接受变量名代替原始数字。
 - **安全性**：避免在带有反作弊系统的服务器上过度自动化（某些动作可能会被标记）。
-- **MCP 服务器**：内置 HTTP API 默认监听 `25567` 端口。如端口冲突，可在 `config/bind-alias-plus.cfg`
-  中修改 `mcpPort`。配合 [BindAliasPlus MCP 工具](https://github.com/Prohect/BindAliasPlus-mcp)
+- **MCP 服务器**：内置 HTTP API 默认监听 `25567` 端口。如端口冲突，可在 `config/bind-alias.cfg`
+  中修改 `mcpPort`。配合 [BindAlias MCP 工具](https://github.com/Prohect/BindAlias-mcp)
   实现 AI 代理集成。
 
 ## 贡献
