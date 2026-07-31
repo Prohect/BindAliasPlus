@@ -3,7 +3,7 @@
 ## Syntax
 
 ```java
-private static void clickSlot(net.minecraft.client.network.ClientPlayerInteractionManager, net.minecraft.client.gui.screen.ingame.InventoryScreen, net.minecraft.screen.slot.Slot, int, net.minecraft.client.network.ClientPlayerEntity)
+private static void clickSlot(net.minecraft.client.network.ClientPlayerInteractionManager, net.minecraft.screen.ScreenHandler, net.minecraft.screen.slot.Slot, int, net.minecraft.screen.slot.SlotActionType, net.minecraft.client.network.ClientPlayerEntity)
 ```
 
 ## Parameters
@@ -18,4 +18,4 @@ private static void clickSlot(net.minecraft.client.network.ClientPlayerInteracti
 | Item | Description |
 |------|-------------|
 
-*Documented for Commit: [ec8e636d69a0711efc7eafe6bb229fb3fa089e3e](https://github.com/Prohect/BindAlias/tree/ec8e636d69a0711efc7eafe6bb229fb3fa089e3e)*
+*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*

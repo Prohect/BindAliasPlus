@@ -12,28 +12,10 @@ _None._
 
 ## Remarks
 
-Lightweight HTTP server embedded in the Minecraft client for AI agent control via MCP (Model Context Protocol). Listens on `127.0.0.1:25575` and exposes REST endpoints for game state inspection, alias execution, config management, and screenshot capture.
-
-**Threading model**: The server uses a daemon `CachedThreadPool` for HTTP handlers. Operations that touch Minecraft state (player, world, screens) are dispatched to the main game thread via `onMainThread()` with a 5-second timeout.
-
-**Endpoints**:
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/state` | Full game state snapshot (player pos, health, held item, screen, container) |
-| GET | `/screenshot` | Triggers screenshot and returns base64-encoded PNG with path/name metadata |
-| POST | `/runAlias?def=...` | Executes alias chain and returns result |
-| POST | `/defineAlias?name=...&def=...` | Defines alias via command pipeline, captures feedback |
-| GET | `/readCFG` | Returns raw config file content |
-| POST | `/writeCFG` | Overwrites config and reloads |
-
 ## See Also
 
 | Item | Description |
 |------|-------------|
-| [start](start.md) | Lifecycle — creates server and registers endpoints |
-| [onMainThread](onMainThread.md) | Thread bridge to the game loop |
-| [ScreenshotCapture](../ScreenshotCapture.java/ScreenshotCapture.md) | Screenshot state shared with NativeImageMixin |
-| [ChatCapture](../ChatCapture.java/ChatCapture.md) | Command feedback capture used by defineAlias |
-| [BindAliasClient](../../BindAliasClient.java/BindAliasClient.md) | Client entry point that calls `start()` |
 
-*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAlias/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
+*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+
