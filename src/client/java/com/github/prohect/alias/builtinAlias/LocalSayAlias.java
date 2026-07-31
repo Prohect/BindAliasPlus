@@ -1,10 +1,10 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
+import com.github.prohect.alias.BuiltinAliasWithStringArgs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
-public class LocalSayAlias extends BuiltinAliasWithGreedyStringArgs<LocalSayAlias> {
+public class LocalSayAlias extends BuiltinAliasWithStringArgs<LocalSayAlias> {
 
     public LocalSayAlias() {
         super("localSay");

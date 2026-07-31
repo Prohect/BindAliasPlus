@@ -131,7 +131,7 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                             String argsStr = aliasRecord1.args();
                             var _alias = Alias.aliasesWithArgs.get(aliasRecord1.aliasName());
                             if (_alias instanceof AliasAlias || _alias instanceof BindAlias || _alias instanceof UnbindAlias) {
-                                definitionLeft.append(argsStr.replace(BuiltinAliasWithGreedyStringArgs.divider4AliasDefinition,
+                                definitionLeft.append(argsStr.replace(BuiltinAliasWithStringArgs.divider4AliasDefinition,
                                         Alias.divider4AliasDefinition));
                             } else if (argsStr.contains(String.valueOf(Alias.divider4AliasDefinition))) {
                                 definitionLeft.append('"').append(argsStr).append('"');
@@ -200,7 +200,7 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                             String argsStr = aliasRecord1.args();
                             var _alias = Alias.aliasesWithArgs.get(aliasRecord1.aliasName());
                             if (_alias instanceof AliasAlias || _alias instanceof BindAlias || _alias instanceof UnbindAlias) {
-                                definitionLeft.append(argsStr.replace(BuiltinAliasWithGreedyStringArgs.divider4AliasDefinition,
+                                definitionLeft.append(argsStr.replace(BuiltinAliasWithStringArgs.divider4AliasDefinition,
                                         Alias.divider4AliasDefinition));
                             } else if (argsStr.contains(String.valueOf(Alias.divider4AliasDefinition))) {
                                 definitionLeft.append('"').append(argsStr).append('"');
@@ -226,9 +226,8 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                                 var _alias = Alias.aliasesWithArgs.get(aliasRecord1.aliasName());
                                 if (_alias instanceof AliasAlias || _alias instanceof BindAlias
                                         || _alias instanceof UnbindAlias) {
-                                    definitionLeft
-                                            .append(argsStr.replace(BuiltinAliasWithGreedyStringArgs.divider4AliasDefinition,
-                                                    Alias.divider4AliasDefinition));
+                                    definitionLeft.append(argsStr.replace(BuiltinAliasWithStringArgs.divider4AliasDefinition,
+                                            Alias.divider4AliasDefinition));
                                 } else if (argsStr.contains(String.valueOf(Alias.divider4AliasDefinition))) {
                                     definitionLeft.append('"').append(argsStr).append('"');
                                 } else {

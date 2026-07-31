@@ -2,12 +2,12 @@ package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
-import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
+import com.github.prohect.alias.BuiltinAliasWithStringArgs;
 import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 
-public class AliasAlias extends BuiltinAliasWithGreedyStringArgs<AliasAlias> {
+public class AliasAlias extends BuiltinAliasWithStringArgs<AliasAlias> {
 
     public AliasAlias() {
         super("alias");
