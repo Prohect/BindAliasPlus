@@ -484,10 +484,10 @@ public class BindAliasPlusClient implements ClientModInitializer {
         new VarAlias().run(varName + Alias.divider4AliasArgs + source, fromAutoload);
 
         // Check if variable was successfully created
-        if (VarAlias.VARIABLES.containsKey(varName)) {
+        if (VarAlias.GENERAL_VARIABLES.containsKey(varName)) {
             if (!silentMode) {
                 MinecraftClient.getInstance().player.sendMessage(
-                        Text.literal("Variable '" + varName + "' set to " + VarAlias.VARIABLES.get(varName)), false);
+                        Text.literal("Variable '" + varName + "' set to " + VarAlias.GENERAL_VARIABLES.get(varName)), false);
             }
             return 1;
         } else {
@@ -648,7 +648,7 @@ public class BindAliasPlusClient implements ClientModInitializer {
                 if (intOnly || doubleOk) {
                     builder = builder.createOffset(builder.getStart() + a + 1);
                     SuggestionsBuilder finalBuilder2 = builder;
-                    VarAlias.VARIABLES.forEach((varName, value) -> {
+                    VarAlias.GENERAL_VARIABLES.forEach((varName, value) -> {
                         if (!varName.startsWith(partialArg))
                             return;
                         // Integer aliases only accept Integer-typed variables

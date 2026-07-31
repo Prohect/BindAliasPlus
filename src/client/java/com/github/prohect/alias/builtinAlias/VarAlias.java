@@ -33,14 +33,15 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
     }
 
     // Global variable storage
-    public static final Map<String, Number> VARIABLES = new HashMap<>();
-
-    // Track which variables were loaded from config file
-    public static final java.util.Set<String> AUTOLOADED_VARIABLES = new java.util.HashSet<>();
+    public static final Map<String, Number> GENERAL_VARIABLES = new HashMap<>();
 
     // Map variable name -> container slot number (1-based), set via cN source (e.g. var\mySlot\c5).
     // Only SwapSlotAlias reads this to distinguish container slot references from plain player slot numbers.
     public static final Map<String, Integer> CONTAINER_SLOT_VARIABLES = new HashMap<>();
+
+    // Track which variables were loaded from config file
+    public static final java.util.Set<String> CFG_VARIABLES = new java.util.HashSet<>();
+    public static final java.util.Set<String> CFG_CONTAINER_SLOT_VARIABLES = new java.util.HashSet<>();
 
     // Reserved sentinel returned by fromContainerSlotSource when parsing fails.
     // Chosen to be hard to guess and impossible to collide with a real slot index.
@@ -79,11 +80,11 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         }
 
         // Store variable
-        VARIABLES.put(varName, value);
+        GENERAL_VARIABLES.put(varName, value);
 
         // Track container slot references (cN source) for swapSlot compatibility
         int cSlot = fromContainerSlotSource(source);
-        if (cSlot >= 1) {
+        if (cSlot != CONTAINER_SLOT_PARSE_ERR) {
             CONTAINER_SLOT_VARIABLES.put(varName, cSlot);
         } else {
             CONTAINER_SLOT_VARIABLES.remove(varName);
@@ -126,22 +127,22 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         }
 
         // Store variable
-        VARIABLES.put(varName, value);
 
         // Track container slot references (cN source) for swapSlot compatibility
         int cSlot = fromContainerSlotSource(source);
-        if (cSlot >= 1) {
+        if (cSlot != CONTAINER_SLOT_PARSE_ERR) {
             CONTAINER_SLOT_VARIABLES.put(varName, cSlot);
+            if (fromAutoload)
+                CFG_CONTAINER_SLOT_VARIABLES.add(varName);
         } else {
-            CONTAINER_SLOT_VARIABLES.remove(varName);
+            GENERAL_VARIABLES.put(varName, value);
+            if (fromAutoload)
+                CFG_VARIABLES.add(varName);
+
         }
 
         // Track if from autoload
-        if (fromAutoload) {
-            AUTOLOADED_VARIABLES.add(varName);
-        } else {
-            AUTOLOADED_VARIABLES.remove(varName);
-        }
+
 
         BindAliasPlusClient.LOGGER.info("{}[var] Variable '{}' set to {}", BindAliasPlusClient.tickPrefix(), varName, value);
 
@@ -199,7 +200,7 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
 
         // Check for cN pattern (container slot reference, e.g. c1, c5, c12).
         int cSlot = fromContainerSlotSource(source);
-        if (cSlot >= 1) {
+        if (cSlot != CONTAINER_SLOT_PARSE_ERR) {
             return cSlot;
         }
 
@@ -348,8 +349,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         }
 
         // Try to resolve as variable
-        if (VARIABLES.containsKey(trimmed)) {
-            return VARIABLES.get(trimmed);
+        if (GENERAL_VARIABLES.containsKey(trimmed)) {
+            return GENERAL_VARIABLES.get(trimmed);
         }
 
         // Not a number and not a variable
@@ -381,6 +382,6 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         if (input == null || input.isEmpty()) {
             return false;
         }
-        return VARIABLES.containsKey(input.trim());
+        return GENERAL_VARIABLES.containsKey(input.trim());
     }
 }
