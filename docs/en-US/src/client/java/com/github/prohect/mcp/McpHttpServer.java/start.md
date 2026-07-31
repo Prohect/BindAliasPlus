@@ -10,26 +10,12 @@ public static void start()
 
 | Name | Type | Description |
 |------|------|-------------|
-| _(none)_ | | |
 
 ## Remarks
-
-Initializes and starts the MCP HTTP server on `127.0.0.1:25575`. Idempotent — if the server is already running (`server != null`), returns immediately without creating a duplicate.
-
-**Setup**:
-1. Creates an `HttpServer` bound to localhost only (not accessible from other machines).
-2. Registers 6 context handlers: `/state`, `/screenshot`, `/runAlias`, `/defineAlias`, `/readCFG`, `/writeCFG`.
-3. Configures a daemon `CachedThreadPool` executor — threads are named `BindAlias-MCP` and won't prevent JVM shutdown.
-4. Registers a shutdown hook to call `stop()` on JVM exit.
-5. Logs startup confirmation.
-
-Called by `BindAliasClient.onInitializeClient()` during mod initialization. Exceptions during startup are caught and logged but don't crash the client.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-| [stop](stop.md) | Shuts down the server |
-| [BindAliasClient.onInitializeClient](../../BindAliasClient.java/onInitializeClient.md) | Caller |
 
-*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAlias/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*
+*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*

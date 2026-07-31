@@ -3,28 +3,19 @@
 ## Syntax
 
 ```java
-static void handleReadCFG(HttpExchange exchange) throws IOException
+static void handleReadCFG(com.sun.net.httpserver.HttpExchange) throws java.io.IOException
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `exchange` | `HttpExchange` | The HTTP exchange for `GET /readCFG`. |
 
 ## Remarks
-
-`GET /readCFG` — reads the raw config file from disk and returns its content as a JSON string. The file path is `BindAliasClient.cfgPath` (typically `<minecraft>/config/bind-alias.cfg`).
-
-Returns `{"content": "<file contents>"}` on success. On `IOException`, returns `{"error": "failed to read: ..."}` with status 500.
-
-Does not require main-thread access — file I/O is safe from any thread.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-| [handleWriteCFG](handleWriteCFG.md) | Writes config and reloads |
-| [BindAliasClient.loadCFG](../../BindAliasClient.java/loadCFG.md) | Reloads config after write |
 
-*Documented for Commit: [719c5aa51ed1bed2dcd073d67f38a68c1e097f0c](https://github.com/Prohect/BindAlias/tree/719c5aa51ed1bed2dcd073d67f38a68c1e097f0c)*
+*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*

@@ -1,24 +1,20 @@
 # alias
 
-The alias package defines the entire alias type system. **`Alias.java` is the CORE interface — read it first.** It holds all registries (`aliasesWithArgs`, `aliasesWithoutArgs`, etc.), the config definition parsers (`getDefinitions`, `getDefinitionSplits`), and screen helper methods. `AliasWithArgs` / `AliasWithoutArgs` are sub-interfaces that auto-register into those registries. `AliasRecord` is a simple data carrier. The `BuiltinAlias*` abstract classes provide argument-parsing bases for all concrete aliases, and `UserAlias.java` is **critical** — it handles user-defined alias chains, `decodeArgs2Alias` (config string → alias queue), screen-blacklist checking, WaitAlias dispatch, and recursive chain execution with loop detection. All concrete implementations live in `builtinAlias/`.
-
-**Reading order:** **Alias** → AliasWithArgs / AliasWithoutArgs → AliasRecord → **BuiltinAliasWithArgs** → **UserAlias** → builtinAlias/.
-
 ## Contents
 
-| Name                                                                                     | Description                                                                                                                                                                                                                               |
-| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Alias.java](Alias.java/README.md)                                                       | **CORE interface** — global registries, config definition parser, screen helpers. Read first.                                                                                                                                             |
-| [AliasRecord.java](AliasRecord.java/README.md)                                           | Simple data carrier record for serialized alias entries                                                                                                                                                                                   |
-| [AliasWithArgs.java](AliasWithArgs.java/README.md)                                       | Sub-interface for aliases that accept arguments; self-registers into `aliasesWithArgs`                                                                                                                                                    |
-| [AliasWithoutArgs.java](AliasWithoutArgs.java/README.md)                                 | Sub-interface for aliases without arguments; self-registers into `aliasesWithoutArgs`                                                                                                                                                     |
-| [builtinAlias](builtinAlias/README.md)                                                   | **All 43 concrete alias implementations** — movement, chat, variable system, config management, etc.                                                                                                                                      |
-| [BuiltinAliasWithArgs.java](BuiltinAliasWithArgs.java/README.md)                         | Abstract base for all built-in aliases that take arguments                                                                                                                                                                                |
-| [BuiltinAliasWithBooleanArgs.java](BuiltinAliasWithBooleanArgs.java/README.md)           | Parses `"0"`/`"1"` into boolean; has `reapplyToGameKeyMapping()`. Most movement aliases extend this.                                                                                                                                      |
-| [BuiltinAliasWithDoubleArgs.java](BuiltinAliasWithDoubleArgs.java/README.md)             | Abstract base for aliases with double arguments (pitch, yaw)                                                                                                                                                                              |
-| [BuiltinAliasWithGreedyStringArgs.java](BuiltinAliasWithGreedyStringArgs.java/README.md) | Abstract base for aliases consuming the entire arg string (chat messages, commands)                                                                                                                                                       |
-| [BuiltinAliasWithIntegerArgs.java](BuiltinAliasWithIntegerArgs.java/README.md)           | Abstract base for aliases with integer arguments                                                                                                                                                                                          |
-| [BuiltinAliasWithoutArgs.java](BuiltinAliasWithoutArgs.java/README.md)                   | Abstract base for all built-in aliases without arguments                                                                                                                                                                                  |
-| [UserAlias.java](UserAlias.java/README.md)                                               | **CRITICAL** — user-defined alias chains. `decodeArgs2Alias` parses config into `AliasRecord` queue, `run()` dispatches with screen-blacklist and WaitAlias special-casing, `runInternal()` handles recursive chains with loop detection. |
+| Name | Description |
+|------|-------------|
+| [Alias.java](Alias.java/README.md) | |
+| [AliasRecord.java](AliasRecord.java/README.md) | |
+| [AliasWithArgs.java](AliasWithArgs.java/README.md) | |
+| [AliasWithoutArgs.java](AliasWithoutArgs.java/README.md) | |
+| [builtinAlias](builtinAlias/README.md) | |
+| [BuiltinAliasWithArgs.java](BuiltinAliasWithArgs.java/README.md) | |
+| [BuiltinAliasWithBooleanArgs.java](BuiltinAliasWithBooleanArgs.java/README.md) | |
+| [BuiltinAliasWithDoubleArgs.java](BuiltinAliasWithDoubleArgs.java/README.md) | |
+| [BuiltinAliasWithIntegerArgs.java](BuiltinAliasWithIntegerArgs.java/README.md) | |
+| [BuiltinAliasWithoutArgs.java](BuiltinAliasWithoutArgs.java/README.md) | |
+| [BuiltinAliasWithStringArgs.java](BuiltinAliasWithStringArgs.java/README.md) | |
+| [UserAlias.java](UserAlias.java/README.md) | |
 
-_Documented for Commit: [559546bace0e8a52a434e97e41e60e3a76c78989](https://github.com/Prohect/BindAlias/tree/559546bace0e8a52a434e97e41e60e3a76c78989)_
+*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*

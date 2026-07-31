@@ -3,7 +3,7 @@
 ## Syntax
 
 ```java
-private void onKey(long, int, int, int, int, org.spongepowered.asm.mixin.injection.callback.CallbackInfo)
+private void onKey(long, int, net.minecraft.client.input.KeyEvent, org.spongepowered.asm.mixin.injection.callback.CallbackInfo)
 ```
 
 ## Parameters
@@ -18,4 +18,4 @@ private void onKey(long, int, int, int, int, org.spongepowered.asm.mixin.injecti
 | Item | Description |
 |------|-------------|
 
-*Documented for Commit: [743d57ceacea66cd8d44f3e76063658cbcc86568](https://github.com/Prohect/BindAlias/tree/743d57ceacea66cd8d44f3e76063658cbcc86568)*
+*Documented for Commit: [7560eeea61820ae4db1314f3e3132a9576194d5a](https://github.com/Prohect/BindAlias/tree/7560eeea61820ae4db1314f3e3132a9576194d5a)*
