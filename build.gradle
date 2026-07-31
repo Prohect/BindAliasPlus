@@ -21,7 +21,7 @@ repositories {
 
 loom {
 
-    accessWidenerPath = file("src/client/resources/bind-alias-plus-client.accesswidener")
+    accessWidenerPath = file("src/client/resources/bind-alias-client.accesswidener")
     splitEnvironmentSourceSets()
 
     runs {
@@ -32,7 +32,7 @@ loom {
     }
 
     mods {
-        "bind-alias-plus" {
+        "bind-alias" {
             sourceSet sourceSets.main
             sourceSet sourceSets.client
         }

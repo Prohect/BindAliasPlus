@@ -1,6 +1,6 @@
 package com.github.prohect.mcp;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,19 +53,19 @@ public final class StateTracker {
      * @param full true for getState (always every member), false for the changed-members diff
      */
     public static synchronized String begin(boolean full) {
-        if (BindAliasPlusClient.joinTick != baselineJoinTick) {
+        if (BindAliasClient.joinTick != baselineJoinTick) {
             last = Map.of();
             lastContainer = null;
             lastHotbarItems = null;
             lastHotbarEmpty = null;
-            baselineJoinTick = BindAliasPlusClient.joinTick;
+            baselineJoinTick = BindAliasClient.joinTick;
             full = true;
         }
         LinkedHashMap<String, String> current = GameStateCollector.collect();
 
         StringBuilder jsonBuilder = new StringBuilder(2048);
-        jsonBuilder.append("{\"client_tick\":").append(
-                BindAliasPlusClient.joinTick < 0 ? -1 : (BindAliasPlusClient.currentTick - BindAliasPlusClient.joinTick));
+        jsonBuilder.append("{\"client_tick\":")
+                .append(BindAliasClient.joinTick < 0 ? -1 : (BindAliasClient.currentTick - BindAliasClient.joinTick));
 
         StringBuilder state = new StringBuilder();
         for (Map.Entry<String, String> e : current.entrySet()) {

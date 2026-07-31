@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.BuiltinAliasWithIntegerArgs;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -23,15 +23,15 @@ public class SetPerspectiveAlias extends BuiltinAliasWithIntegerArgs<SetPerspect
         Options options = minecraftClient.options;
 
         if (options == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[SetPerspective]Options is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[SetPerspective]Options is null", BindAliasClient.tickPrefix());
             return this;
         }
 
         // Validate input range
         if (flag < 0 || flag > 2) {
-            BindAliasPlusClient.LOGGER.warn(
+            BindAliasClient.LOGGER.warn(
                     "{}[SetPerspective]Invalid perspective value: {}. Must be 0 (first-person), 1 (third-person back), or 2 (third-person front)",
-                    BindAliasPlusClient.tickPrefix(), flag);
+                    BindAliasClient.tickPrefix(), flag);
             return this;
         }
 

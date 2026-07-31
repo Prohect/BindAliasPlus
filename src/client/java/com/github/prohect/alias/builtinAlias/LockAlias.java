@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.KeyBindingPlus;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.AliasWithoutArgs;
@@ -105,19 +105,19 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         if (LOCKED_ALIAS_KEYS.containsKey(aliasName))
             return; // already locked
         Set<InputConstants.Key> keys = new HashSet<>();
-        BindAliasPlusClient.BINDING_PLUS.forEach((key, binding) -> {
+        BindAliasClient.BINDING_PLUS.forEach((key, binding) -> {
             if (aliasName.equals(binding.aliasNameOnKeyPressed()) || aliasName.equals(binding.aliasNameOnKeyReleased())) {
                 keys.add(key);
             }
         });
         if (keys.isEmpty()) {
-            BindAliasPlusClient.LOGGER.warn("{}[Lock]No keys bound to alias: {}", BindAliasPlusClient.tickPrefix(), aliasName);
+            BindAliasClient.LOGGER.warn("{}[Lock]No keys bound to alias: {}", BindAliasClient.tickPrefix(), aliasName);
             return;
         }
         LOCKED_PHYSICAL_KEYS.addAll(keys);
         LOCKED_ALIAS_KEYS.put(aliasName, keys);
-        BindAliasPlusClient.LOGGER.info("{}[Lock]Locked alias '{}' — {} key(s) blocked", BindAliasPlusClient.tickPrefix(),
-                aliasName, keys.size());
+        BindAliasClient.LOGGER.info("{}[Lock]Locked alias '{}' — {} key(s) blocked", BindAliasClient.tickPrefix(), aliasName,
+                keys.size());
     }
 
     /**
@@ -126,12 +126,12 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
     static void unlockAliasByName(String aliasName) {
         Set<InputConstants.Key> keys = LOCKED_ALIAS_KEYS.remove(aliasName);
         if (keys == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[Lock]Alias not locked: {}", BindAliasPlusClient.tickPrefix(), aliasName);
+            BindAliasClient.LOGGER.warn("{}[Lock]Alias not locked: {}", BindAliasClient.tickPrefix(), aliasName);
             return;
         }
         LOCKED_PHYSICAL_KEYS.removeAll(keys);
-        BindAliasPlusClient.LOGGER.info("{}[Lock]Unlocked alias '{}' — {} key(s) restored", BindAliasPlusClient.tickPrefix(),
-                aliasName, keys.size());
+        BindAliasClient.LOGGER.info("{}[Lock]Unlocked alias '{}' — {} key(s) restored", BindAliasClient.tickPrefix(), aliasName,
+                keys.size());
     }
 
     // ── instance ──────────────────────────────────────────────────────
@@ -140,7 +140,7 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
     public LockAlias run(String args) {
         String[] parts = args.split(Pattern.quote(String.valueOf(Alias.divider4AliasArgs)));
         if (parts.length != 2) {
-            BindAliasPlusClient.LOGGER.warn("{}[Lock]Invalid arguments: {}", BindAliasPlusClient.tickPrefix(), args);
+            BindAliasClient.LOGGER.warn("{}[Lock]Invalid arguments: {}", BindAliasClient.tickPrefix(), args);
             return this;
         }
         String actionType = parts[0];
@@ -196,7 +196,7 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
         if (patterns == null)
             return;
 
-        BindAliasPlusClient.BINDING_PLUS.forEach((key, binding) -> {
+        BindAliasClient.BINDING_PLUS.forEach((key, binding) -> {
             if (aliasTargetsLockedAction(binding.aliasNameOnKeyPressed(), patterns)
                     || aliasTargetsLockedAction(binding.aliasNameOnKeyReleased(), patterns)) {
                 LOCKED_PHYSICAL_KEYS.add(key);
@@ -210,7 +210,7 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
             return;
 
         Set<InputConstants.Key> keysToRemove = new HashSet<>();
-        BindAliasPlusClient.BINDING_PLUS.forEach((key, binding) -> {
+        BindAliasClient.BINDING_PLUS.forEach((key, binding) -> {
             if (aliasTargetsLockedAction(binding.aliasNameOnKeyPressed(), patterns)
                     || aliasTargetsLockedAction(binding.aliasNameOnKeyReleased(), patterns)) {
                 keysToRemove.add(key);
@@ -225,7 +225,7 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
                 List<String> otherPatterns = ACTION_ALIAS_PATTERNS.get(otherAction);
                 if (otherPatterns == null)
                     continue;
-                KeyBindingPlus binding = BindAliasPlusClient.BINDING_PLUS.get(key);
+                KeyBindingPlus binding = BindAliasClient.BINDING_PLUS.get(key);
                 if (binding != null && (aliasTargetsLockedAction(binding.aliasNameOnKeyPressed(), otherPatterns)
                         || aliasTargetsLockedAction(binding.aliasNameOnKeyReleased(), otherPatterns))) {
                     stillNeeded = true;

@@ -1,6 +1,6 @@
 package com.github.prohect.mcp;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.UserAlias;
 import com.github.prohect.util.McScreenHelper;
@@ -33,7 +33,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
  * non-envelope endpoint (raw file text). All game-thread access goes through {@link Minecraft#execute(Runnable)} with a timeout
  * to keep HTTP threads from blocking forever.
  * <p>
- * Started from {@link BindAliasPlusClient#onInitializeClient()}.
+ * Started from {@link BindAliasClient#onInitializeClient()}.
  */
 public final class McpHttpServer {
 
@@ -62,13 +62,13 @@ public final class McpHttpServer {
                 port = candidate;
                 break;
             } catch (IOException e) {
-                BindAliasPlusClient.LOGGER.warn("{}[MCP] Port {} unavailable, trying next", BindAliasPlusClient.tickPrefix(),
+                BindAliasClient.LOGGER.warn("{}[MCP] Port {} unavailable, trying next", BindAliasClient.tickPrefix(),
                         candidate);
             }
         }
         if (server == null) {
-            BindAliasPlusClient.LOGGER.error("{}[MCP] Failed to start HTTP server: no free port in {}-{}",
-                    BindAliasPlusClient.tickPrefix(), DEFAULT_PORT, DEFAULT_PORT + MAX_PORT_ATTEMPTS - 1);
+            BindAliasClient.LOGGER.error("{}[MCP] Failed to start HTTP server: no free port in {}-{}",
+                    BindAliasClient.tickPrefix(), DEFAULT_PORT, DEFAULT_PORT + MAX_PORT_ATTEMPTS - 1);
             return;
         }
         server.createContext("/state", McpHttpServer::handleState);
@@ -79,13 +79,13 @@ public final class McpHttpServer {
         server.createContext("/writeCFG", McpHttpServer::handleWriteCFG);
         server.createContext("/listRecipes", McpHttpServer::handleListRecipes);
         server.setExecutor(Executors.newCachedThreadPool(r -> {
-            Thread t = new Thread(r, "BindAliasPlus-MCP");
+            Thread t = new Thread(r, "BindAlias-MCP");
             t.setDaemon(true);
             return t;
         }));
         server.start();
-        Runtime.getRuntime().addShutdownHook(new Thread(McpHttpServer::stop, "BindAliasPlus-MCP-Shutdown"));
-        BindAliasPlusClient.LOGGER.info("{}[MCP] HTTP server started on 127.0.0.1:{}", BindAliasPlusClient.tickPrefix(), port);
+        Runtime.getRuntime().addShutdownHook(new Thread(McpHttpServer::stop, "BindAlias-MCP-Shutdown"));
+        BindAliasClient.LOGGER.info("{}[MCP] HTTP server started on 127.0.0.1:{}", BindAliasClient.tickPrefix(), port);
     }
 
     /** Stop the HTTP server with a 0-second grace period. */
@@ -93,7 +93,7 @@ public final class McpHttpServer {
         if (server != null) {
             server.stop(0);
             server = null;
-            BindAliasPlusClient.LOGGER.info("{}[MCP] HTTP server stopped", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.info("{}[MCP] HTTP server stopped", BindAliasClient.tickPrefix());
         }
     }
 
@@ -402,7 +402,7 @@ public final class McpHttpServer {
     /** GET /readCFG — return the raw config file content (the only non-envelope endpoint). */
     static void handleReadCFG(HttpExchange exchange) throws IOException {
         try {
-            String content = Files.readString(BindAliasPlusClient.cfgPath);
+            String content = Files.readString(BindAliasClient.cfgPath);
             sendJson(exchange, 200, "{\"content\":" + GameStateCollector.jsonEscape(content) + "}");
         } catch (IOException e) {
             sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape("failed to read: " + e.getMessage()) + "}");
@@ -431,10 +431,10 @@ public final class McpHttpServer {
         }
 
         try {
-            Files.writeString(BindAliasPlusClient.cfgPath, content);
+            Files.writeString(BindAliasClient.cfgPath, content);
             String result = onMainThread(() -> {
                 String begun = StateTracker.begin(false);
-                BindAliasPlusClient.INSTANCE.loadCFG();
+                BindAliasClient.INSTANCE.loadCFG();
                 return StateTracker.finish(begun);
             });
             sendJson(exchange, 200, result);

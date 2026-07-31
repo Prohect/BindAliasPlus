@@ -1,6 +1,6 @@
 package com.github.prohect.mixin.client;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.KeyPressed;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithBooleanArgs;
@@ -72,15 +72,15 @@ public class MouseMixin {
         // Skip mod-bound keys whose action is currently locked
         if (LockAlias.LOCKED_PHYSICAL_KEYS.contains(key))
             return;
-        if (BindAliasPlusClient.BINDING_PLUS.containsKey(key)) {
+        if (BindAliasClient.BINDING_PLUS.containsKey(key)) {
             // switch action because 0 -> release 1 -> down 2 -> pressing, and 2 is
             // triggered constantly
             switch (action) {
                 case 0:
-                    BindAliasPlusClient.KEY_QUEUE.add(new KeyPressed(key, false));
+                    BindAliasClient.KEY_QUEUE.add(new KeyPressed(key, false));
                     break;
                 case 1:
-                    BindAliasPlusClient.KEY_QUEUE.add(new KeyPressed(key, true));
+                    BindAliasClient.KEY_QUEUE.add(new KeyPressed(key, true));
                     break;
             }
         }

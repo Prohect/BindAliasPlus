@@ -1,30 +1,30 @@
 {
   "schemaVersion": 1,
-  "id": "bind-alias-plus",
+  "id": "bind-alias",
   "version": "${version}",
   "name": "bind Alias Plus",
   "description": "be like cfg pro in counter strike!",
   "authors": ["prohect!"],
   "contact": {
-    "homepage": "https://modrinth.com/mod/bind-alias-plus",
-    "sources": "https://github.com/Prohect/BindAliasPlus"
+    "homepage": "https://modrinth.com/mod/bind-alias",
+    "sources": "https://github.com/Prohect/BindAlias"
   },
   "license": "CC0-1.0",
-  "icon": "assets/bind-alias-plus/icon.png",
+  "icon": "assets/bind-alias/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": ["com.github.prohect.BindAliasPlus"],
-    "client": ["com.github.prohect.BindAliasPlusClient"],
-    "fabric-datagen": ["com.github.prohect.BindAliasPlusDataGenerator"]
+    "main": ["com.github.prohect.BindAlias"],
+    "client": ["com.github.prohect.BindAliasClient"],
+    "fabric-datagen": ["com.github.prohect.BindAliasDataGenerator"]
   },
   "mixins": [
-    "bind-alias-plus.mixins.json",
+    "bind-alias.mixins.json",
     {
-      "config": "bind-alias-plus.client.mixins.json",
+      "config": "bind-alias.client.mixins.json",
       "environment": "client"
     }
   ],
-  "accessWidener": "bind-alias-plus-client.accesswidener",
+  "accessWidener": "bind-alias-client.accesswidener",
   "depends": {
     "fabricloader": ">=0.19.3",
     "minecraft": ">=26.1 <=26.1.1",
