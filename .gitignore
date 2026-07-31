@@ -2,34 +2,17 @@
 .gradle/
 bin/
 build/
-
-# zed
-.zed/
-
-# eclipse
 .classpath
 .project
 
-# idea
-.idea/
-*.iml
-*.ipr
-*.iws
-
-# vscode
-.settings/
-.vscode/
-
-# macos
-*.DS_Store
 # do not commit decompiled sources, that's against the EULA of Minecraft
 minecraft-decompiled-sources/
 
-# all under run/ except run/config/bind-alias-plus.cfg, test purpose
+# all under run/ except test cfg,  test
 run/*
 !run/config/
 run/config/*
-!run/config/bind-alias-plus.cfg
+!run/config/*.cfg
 
 # custom
 # please add your custom gitignored files/directories to .git/info/exclude
