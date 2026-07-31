@@ -7,4 +7,3 @@ accessible field net/minecraft/client/gui/screen/ingame/HandledScreen focusedSlo
 accessible method net/minecraft/client/gui/screen/ingame/HandledScreen onMouseClick (Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V
 accessible field net/minecraft/screen/slot/Slot index I
 accessible field net/minecraft/entity/player/PlayerInventory selectedSlot I
-accessible field net/minecraft/client/gui/hud/debug/DebugHudProfile f3Enabled Z
