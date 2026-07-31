@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
 import com.github.prohect.util.McScreenHelper;
@@ -41,18 +41,18 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
         MinecraftClient mc = MinecraftClient.getInstance();
         ClientPlayerEntity p = mc.player;
         if (p == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[switchSlot]Player is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[switchSlot]Player is null", BindAliasClient.tickPrefix());
             return this;
         }
         PlayerInventory inv = p.getInventory();
         if (inv == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[switchSlot]Inventory is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[switchSlot]Inventory is null", BindAliasClient.tickPrefix());
             return this;
         }
         int sel = inv.getSelectedSlot();
         ClientPlayNetworkHandler net = mc.getNetworkHandler();
         if (net == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[SwitchSlot]network handler is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[SwitchSlot]network handler is null", BindAliasClient.tickPrefix());
             return this;
         }
 
@@ -63,16 +63,16 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
         else if (ss.length == 2)
             sr = new SlotRef[] {parseSlotRef(ss[0]), parseSlotRef(ss[1])};
         else {
-            BindAliasPlusClient.LOGGER.warn("{}[SwitchSlot]Invalid arguments", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[SwitchSlot]Invalid arguments", BindAliasClient.tickPrefix());
             return this;
         }
         for (int i = 0; i < sr.length; i++)
             if (sr[i] == null) {
-                BindAliasPlusClient.LOGGER.warn("{}[SwitchSlot]Invalid '{}'", BindAliasPlusClient.tickPrefix(), ss[i]);
+                BindAliasClient.LOGGER.warn("{}[SwitchSlot]Invalid '{}'", BindAliasClient.tickPrefix(), ss[i]);
                 return this;
             }
         if (sr[0].equals(sr[1])) {
-            BindAliasPlusClient.LOGGER.warn("{}[SwitchSlot]same slot", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[SwitchSlot]same slot", BindAliasClient.tickPrefix());
             return this;
         }
 
@@ -122,15 +122,15 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                     if (s0 != null && s1 != null)
                         swapInMenu(im, menu, s0, s1, p);
                     else
-                        BindAliasPlusClient.LOGGER.warn("{}[SwitchSlot]slot not found", BindAliasPlusClient.tickPrefix());
+                        BindAliasClient.LOGGER.warn("{}[SwitchSlot]slot not found", BindAliasClient.tickPrefix());
                 } else
-                    BindAliasPlusClient.LOGGER.warn("{}[SwitchSlot]interactionManager null", BindAliasPlusClient.tickPrefix());
+                    BindAliasClient.LOGGER.warn("{}[SwitchSlot]interactionManager null", BindAliasClient.tickPrefix());
             } finally {
                 if (iscr != null && !inInv)
                     iscr.close();
             }
         } catch (Exception e) {
-            BindAliasPlusClient.LOGGER.error("{}[SwitchSlot]Failed", BindAliasPlusClient.tickPrefix(), e);
+            BindAliasClient.LOGGER.error("{}[SwitchSlot]Failed", BindAliasClient.tickPrefix(), e);
         }
         return this;
     }
@@ -197,7 +197,7 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
         if (!menu.getCursorStack().isEmpty())
             click(im, menu, s1, 0, SlotActionType.PICKUP, p);
         if (!menu.getCursorStack().isEmpty())
-            BindAliasPlusClient.LOGGER.warn("{}[switchSlot]item on cursor", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[switchSlot]item on cursor", BindAliasClient.tickPrefix());
     }
 
     private static void click(ClientPlayerInteractionManager im, ScreenHandler menu, Slot s, int btn, SlotActionType act,

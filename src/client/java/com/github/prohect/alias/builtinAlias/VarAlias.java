@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
 import java.util.ArrayList;
@@ -55,9 +55,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         ArrayList<String> argsList = Alias.getDefinitionSplits(args);
 
         if (argsList.size() < 2) {
-            BindAliasPlusClient.LOGGER.error(
-                    "{}[var] Invalid arguments: expected varName and source. Usage: var\\varName\\source",
-                    BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.error("{}[var] Invalid arguments: expected varName and source. Usage: var\\varName\\source",
+                    BindAliasClient.tickPrefix());
             return this;
         }
 
@@ -66,16 +65,15 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
 
         // Validate variable name
         if (!isValidVarName(varName)) {
-            BindAliasPlusClient.LOGGER.error("{}[var] Invalid variable name '{}': variable names cannot start with a number",
-                    BindAliasPlusClient.tickPrefix(), varName);
+            BindAliasClient.LOGGER.error("{}[var] Invalid variable name '{}': variable names cannot start with a number",
+                    BindAliasClient.tickPrefix(), varName);
             return this;
         }
 
         // Get value from source
         Number value = getValueFromSource(source);
         if (value == null) {
-            BindAliasPlusClient.LOGGER.error("{}[var] Failed to get value from source '{}'", BindAliasPlusClient.tickPrefix(),
-                    source);
+            BindAliasClient.LOGGER.error("{}[var] Failed to get value from source '{}'", BindAliasClient.tickPrefix(), source);
             return this;
         }
 
@@ -90,7 +88,7 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
             CONTAINER_SLOT_VARIABLES.remove(varName);
         }
 
-        BindAliasPlusClient.LOGGER.info("{}[var] Variable '{}' set to {}", BindAliasPlusClient.tickPrefix(), varName, value);
+        BindAliasClient.LOGGER.info("{}[var] Variable '{}' set to {}", BindAliasClient.tickPrefix(), varName, value);
 
         return this;
     }
@@ -102,9 +100,8 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         ArrayList<String> argsList = Alias.getDefinitionSplits(args);
 
         if (argsList.size() < 2) {
-            BindAliasPlusClient.LOGGER.error(
-                    "{}[var] Invalid arguments: expected varName and source. Usage: var\\varName\\source",
-                    BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.error("{}[var] Invalid arguments: expected varName and source. Usage: var\\varName\\source",
+                    BindAliasClient.tickPrefix());
             return this;
         }
 
@@ -113,16 +110,15 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
 
         // Validate variable name
         if (!isValidVarName(varName)) {
-            BindAliasPlusClient.LOGGER.error("{}[var] Invalid variable name '{}': variable names cannot start with a number",
-                    BindAliasPlusClient.tickPrefix(), varName);
+            BindAliasClient.LOGGER.error("{}[var] Invalid variable name '{}': variable names cannot start with a number",
+                    BindAliasClient.tickPrefix(), varName);
             return this;
         }
 
         // Get value from source
         Number value = getValueFromSource(source);
         if (value == null) {
-            BindAliasPlusClient.LOGGER.error("{}[var] Failed to get value from source '{}'", BindAliasPlusClient.tickPrefix(),
-                    source);
+            BindAliasClient.LOGGER.error("{}[var] Failed to get value from source '{}'", BindAliasClient.tickPrefix(), source);
             return this;
         }
 
@@ -144,7 +140,7 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         // Track if from autoload
 
 
-        BindAliasPlusClient.LOGGER.info("{}[var] Variable '{}' set to {}", BindAliasPlusClient.tickPrefix(), varName, value);
+        BindAliasClient.LOGGER.info("{}[var] Variable '{}' set to {}", BindAliasClient.tickPrefix(), varName, value);
 
         return this;
     }
@@ -211,9 +207,9 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
             try {
                 return Double.parseDouble(source);
             } catch (NumberFormatException e2) {
-                BindAliasPlusClient.LOGGER.error(
+                BindAliasClient.LOGGER.error(
                         "{}[var] Unknown source '{}' - expected 'hotbarSlot', 'selectedSlot', 'itemsOfSlot0-9', 'pitch', 'yaw', 'cN', or a number",
-                        BindAliasPlusClient.tickPrefix(), source);
+                        BindAliasClient.tickPrefix(), source);
                 return null;
             }
         }
@@ -227,13 +223,13 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         ClientPlayerEntity player = client.player;
 
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[var] Player is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[var] Player is null", BindAliasClient.tickPrefix());
             return null;
         }
 
         PlayerInventory inventory = player.getInventory();
         if (inventory == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[var] Inventory is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[var] Inventory is null", BindAliasClient.tickPrefix());
             return null;
         }
 
@@ -249,13 +245,13 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         ClientPlayerEntity player = client.player;
 
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[var] Player is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[var] Player is null", BindAliasClient.tickPrefix());
             return null;
         }
 
         PlayerInventory inventory = player.getInventory();
         if (inventory == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[var] Inventory is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[var] Inventory is null", BindAliasClient.tickPrefix());
             return null;
         }
 
@@ -265,15 +261,15 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         try {
             slotIndex = Integer.parseInt(slotStr);
         } catch (NumberFormatException e) {
-            BindAliasPlusClient.LOGGER.error("{}[var] Invalid slot number in '{}' - expected itemsOfSlot0 to itemsOfSlot9",
-                    BindAliasPlusClient.tickPrefix(), source);
+            BindAliasClient.LOGGER.error("{}[var] Invalid slot number in '{}' - expected itemsOfSlot0 to itemsOfSlot9",
+                    BindAliasClient.tickPrefix(), source);
             return null;
         }
 
         // Validate slot range (0 for offhand, 1-9 for hotbar)
         if (slotIndex < 0 || slotIndex > 9) {
-            BindAliasPlusClient.LOGGER.error("{}[var] Slot number out of range in '{}' - must be 0-9 (0=offhand, 1-9=hotbar)",
-                    BindAliasPlusClient.tickPrefix(), source);
+            BindAliasClient.LOGGER.error("{}[var] Slot number out of range in '{}' - must be 0-9 (0=offhand, 1-9=hotbar)",
+                    BindAliasClient.tickPrefix(), source);
             return null;
         }
 
@@ -300,7 +296,7 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         ClientPlayerEntity player = client.player;
 
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[var] Player is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[var] Player is null", BindAliasClient.tickPrefix());
             return null;
         }
 
@@ -315,7 +311,7 @@ public class VarAlias extends BuiltinAliasWithArgs<VarAlias> {
         ClientPlayerEntity player = client.player;
 
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[var] Player is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[var] Player is null", BindAliasClient.tickPrefix());
             return null;
         }
 

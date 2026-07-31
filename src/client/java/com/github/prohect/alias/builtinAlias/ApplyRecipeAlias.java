@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
 import com.github.prohect.mcp.RecipeBookHelper;
 import net.minecraft.client.MinecraftClient;
@@ -28,7 +28,7 @@ public class ApplyRecipeAlias extends BuiltinAliasWithGreedyStringArgs<ApplyReci
         MinecraftClient mc = MinecraftClient.getInstance();
         ClientPlayerEntity player = mc.player;
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[applyRecipe]player is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[applyRecipe]player is null", BindAliasClient.tickPrefix());
             return this;
         }
         String query = args == null ? "" : args.trim();
@@ -50,7 +50,7 @@ public class ApplyRecipeAlias extends BuiltinAliasWithGreedyStringArgs<ApplyReci
             return this;
         }
         mc.interactionManager.clickRecipe(menu.syncId, recipe.displayId(), false);
-        BindAliasPlusClient.LOGGER.info("{}[applyRecipe] applied {}", BindAliasPlusClient.tickPrefix(), recipe.name());
+        BindAliasClient.LOGGER.info("{}[applyRecipe] applied {}", BindAliasClient.tickPrefix(), recipe.name());
         return this;
     }
 

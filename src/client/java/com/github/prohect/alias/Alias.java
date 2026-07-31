@@ -109,10 +109,10 @@ public interface Alias<T extends Alias<T>> {
         return (T) this;
     }
 
-    // ---- Screen-type helpers (backed by BindAliasPlusClient.currentScreen) ----
+    // ---- Screen-type helpers (backed by BindAliasClient.currentScreen) ----
 
     static Screen getCurrentScreen() {
-        return com.github.prohect.BindAliasPlusClient.currentScreen;
+        return com.github.prohect.BindAliasClient.currentScreen;
     }
 
     static boolean isUnderTextInputScreen() {
