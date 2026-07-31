@@ -24,15 +24,15 @@ public class UnloadCFGVarsAlias extends BuiltinAliasWithoutArgs<UnloadCFGVarsAli
         List<String> toRemove = new ArrayList<>();
 
         // Find all autoloaded variables
-        for (String varName : VarAlias.AUTOLOADED_VARIABLES) {
+        for (String varName : VarAlias.CFG_VARIABLES) {
             toRemove.add(varName);
         }
 
         // Remove them
         int count = 0;
         for (String varName : toRemove) {
-            VarAlias.VARIABLES.remove(varName);
-            VarAlias.AUTOLOADED_VARIABLES.remove(varName);
+            VarAlias.GENERAL_VARIABLES.remove(varName);
+            VarAlias.CFG_VARIABLES.remove(varName);
             count++;
         }
 

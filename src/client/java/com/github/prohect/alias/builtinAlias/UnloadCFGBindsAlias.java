@@ -30,7 +30,7 @@ public class UnloadCFGBindsAlias extends BuiltinAliasWithoutArgs<UnloadCFGBindsA
 
         // Find all autoloaded bindings
         BindAliasPlusClient.BINDING_PLUS.forEach((key, binding) -> {
-            if (binding.fromAutoload()) {
+            if (binding.fromCFG()) {
                 toRemove.add(key);
                 // Track associated aliases for cleanup
                 if (!binding.aliasNameOnKeyPressed().isEmpty()) {
