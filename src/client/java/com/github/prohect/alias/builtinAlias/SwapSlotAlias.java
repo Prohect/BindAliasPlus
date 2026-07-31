@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
 import com.github.prohect.util.McScreenHelper;
@@ -56,18 +56,18 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         ClientPlayerEntity player = minecraftClient.player;
         if (player == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[switchSlot]Player is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[switchSlot]Player is null", BindAliasClient.tickPrefix());
             return this;
         }
         PlayerInventory inventory = player.getInventory();
         if (inventory == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[switchSlot]Inventory is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[switchSlot]Inventory is null", BindAliasClient.tickPrefix());
             return this;
         }
         int selectedSlot = inventory.getSelectedSlot();
         ClientPlayNetworkHandler networkHandler = minecraftClient.getNetworkHandler();
         if (networkHandler == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[SwitchSlot]network handler is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[SwitchSlot]network handler is null", BindAliasClient.tickPrefix());
             return this;
         }
 
@@ -79,23 +79,22 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
         } else if (strings.length == 2) {
             slots = new SlotRef[] {parseSlotRef(strings[0]), parseSlotRef(strings[1]),};
         } else {
-            BindAliasPlusClient.LOGGER.warn("{}[SwitchSlot]Invalid arguments:args pattern not expected",
-                    BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[SwitchSlot]Invalid arguments:args pattern not expected",
+                    BindAliasClient.tickPrefix());
             return this;
         }
 
         for (int i = 0; i < slots.length; i++) {
             if (slots[i] == null) {
-                BindAliasPlusClient.LOGGER.warn(
-                        "{}[SwitchSlot]Invalid arguments: '{}' is not a valid slot (1-41, cN, or variable)",
-                        BindAliasPlusClient.tickPrefix(), strings[i]);
+                BindAliasClient.LOGGER.warn("{}[SwitchSlot]Invalid arguments: '{}' is not a valid slot (1-41, cN, or variable)",
+                        BindAliasClient.tickPrefix(), strings[i]);
                 return this;
             }
         }
 
         if (slots[0].equals(slots[1])) {
-            BindAliasPlusClient.LOGGER.warn("{}[SwitchSlot]Invalid arguments: slot index1 equals to slot index2",
-                    BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[SwitchSlot]Invalid arguments: slot index1 equals to slot index2",
+                    BindAliasClient.tickPrefix());
             return this;
         }
 
@@ -157,21 +156,20 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
                         if (slot1 != null) {
                             swapInMenu(interactionManager, menu, slot0, slot1, player);
                         } else
-                            BindAliasPlusClient.LOGGER.warn("{}[SwitchSlot]slot1 {} not found in current menu",
-                                    BindAliasPlusClient.tickPrefix(), strings.length == 2 ? strings[1] : "");
+                            BindAliasClient.LOGGER.warn("{}[SwitchSlot]slot1 {} not found in current menu",
+                                    BindAliasClient.tickPrefix(), strings.length == 2 ? strings[1] : "");
                     } else
-                        BindAliasPlusClient.LOGGER.warn("{}[SwitchSlot]slot0 {} not found in current menu",
-                                BindAliasPlusClient.tickPrefix(), strings[0]);
+                        BindAliasClient.LOGGER.warn("{}[SwitchSlot]slot0 {} not found in current menu",
+                                BindAliasClient.tickPrefix(), strings[0]);
                 } else
-                    BindAliasPlusClient.LOGGER.warn("{}[SwitchSlot]interactionManager is null",
-                            BindAliasPlusClient.tickPrefix());
+                    BindAliasClient.LOGGER.warn("{}[SwitchSlot]interactionManager is null", BindAliasClient.tickPrefix());
             } finally {
                 if (inventoryScreen != null && !inInventory)
                     inventoryScreen.close();
             }
         } catch (Exception e) {
-            BindAliasPlusClient.LOGGER.error("{}[SwitchSlot]Failed to swap slots with args {}.",
-                    BindAliasPlusClient.tickPrefix(), args, e);
+            BindAliasClient.LOGGER.error("{}[SwitchSlot]Failed to swap slots with args {}.", BindAliasClient.tickPrefix(), args,
+                    e);
         }
 
         return this;
@@ -278,8 +276,8 @@ public class SwapSlotAlias extends BuiltinAliasWithArgs<SwapSlotAlias> {
             clickSlot(interactionManager, menu, slot1, 0, SlotActionType.PICKUP, player);
         }
         if (!menu.getCursorStack().isEmpty()) {
-            BindAliasPlusClient.LOGGER.warn("{}[switchSlot]An item stack remains on the cursor; click any slot to place it",
-                    BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[switchSlot]An item stack remains on the cursor; click any slot to place it",
+                    BindAliasClient.tickPrefix());
         }
     }
 

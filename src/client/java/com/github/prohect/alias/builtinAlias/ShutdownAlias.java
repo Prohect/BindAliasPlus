@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.BuiltinAliasWithoutArgs;
 import net.minecraft.client.MinecraftClient;
 
@@ -16,7 +16,7 @@ public class ShutdownAlias extends BuiltinAliasWithoutArgs<ShutdownAlias> {
 
     @Override
     public ShutdownAlias run(String args) {
-        BindAliasPlusClient.LOGGER.info("{}[shutdown] Shutting down...", BindAliasPlusClient.tickPrefix());
+        BindAliasClient.LOGGER.info("{}[shutdown] Shutting down...", BindAliasClient.tickPrefix());
         MinecraftClient.getInstance().scheduleStop();
         return this;
     }

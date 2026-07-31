@@ -1,6 +1,6 @@
 package com.github.prohect.mcp;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -105,9 +105,9 @@ public final class RecipeBookHelper {
      * the reported set as a side effect.
      */
     public static synchronized List<RecipeInfo> onlyNew(List<RecipeInfo> all) {
-        if (BindAliasPlusClient.joinTick != baselineJoinTick) {
+        if (BindAliasClient.joinTick != baselineJoinTick) {
             reportedDisplayIds.clear();
-            baselineJoinTick = BindAliasPlusClient.joinTick;
+            baselineJoinTick = BindAliasClient.joinTick;
         }
         List<RecipeInfo> fresh = new ArrayList<>();
         for (RecipeInfo r : all)

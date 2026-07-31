@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithoutArgs;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class UnloadCFGBindsAlias extends BuiltinAliasWithoutArgs<UnloadCFGBindsA
         List<String> aliasesToRemove = new ArrayList<>();
 
         // Find all autoloaded bindings
-        BindAliasPlusClient.BINDING_PLUS.forEach((key, binding) -> {
+        BindAliasClient.BINDING_PLUS.forEach((key, binding) -> {
             if (binding.fromCFG()) {
                 toRemove.add(key);
                 // Track associated aliases for cleanup
@@ -45,7 +45,7 @@ public class UnloadCFGBindsAlias extends BuiltinAliasWithoutArgs<UnloadCFGBindsA
         // Remove bindings
         int count = 0;
         for (InputUtil.Key key : toRemove) {
-            BindAliasPlusClient.BINDING_PLUS.remove(key);
+            BindAliasClient.BINDING_PLUS.remove(key);
             count++;
         }
 
@@ -54,9 +54,9 @@ public class UnloadCFGBindsAlias extends BuiltinAliasWithoutArgs<UnloadCFGBindsA
             Alias.aliasesWithoutArgs_fromBindCommand.remove(aliasName);
         }
 
-        if (!BindAliasPlusClient.silentMode) {
-            BindAliasPlusClient.LOGGER.info("{}[unloadCFGBinds] Removed {} autoloaded keybinding(s)",
-                    BindAliasPlusClient.tickPrefix(), count);
+        if (!BindAliasClient.silentMode) {
+            BindAliasClient.LOGGER.info("{}[unloadCFGBinds] Removed {} autoloaded keybinding(s)", BindAliasClient.tickPrefix(),
+                    count);
         }
 
         return this;

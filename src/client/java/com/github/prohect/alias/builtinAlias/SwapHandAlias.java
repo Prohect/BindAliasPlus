@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithoutArgs;
 import net.minecraft.client.MinecraftClient;
@@ -25,7 +25,7 @@ public class SwapHandAlias extends BuiltinAliasWithoutArgs<SwapHandAlias> {
             return this;
         ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
         if (networkHandler == null) {
-            BindAliasPlusClient.LOGGER.warn("{}[SwapHand] Network handler is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[SwapHand] Network handler is null", BindAliasClient.tickPrefix());
             return this;
         }
         networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND,

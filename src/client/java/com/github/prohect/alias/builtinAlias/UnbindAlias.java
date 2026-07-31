@@ -1,6 +1,6 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.BindAliasPlusClient;
+import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
 import java.util.regex.Pattern;
@@ -20,7 +20,7 @@ public class UnbindAlias extends BuiltinAliasWithGreedyStringArgs<UnbindAlias> {
                         String.valueOf(Alias.divider4AliasDefinition)).trim();
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null)
-            BindAliasPlusClient.LOGGER.warn("{}[UnbindAlias]player is null", BindAliasPlusClient.tickPrefix());
+            BindAliasClient.LOGGER.warn("{}[UnbindAlias]player is null", BindAliasClient.tickPrefix());
         else
             player.networkHandler.sendChatCommand(line);
         return this;
