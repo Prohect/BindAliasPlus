@@ -17,7 +17,7 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
 
     final ArrayDeque<AliasRecord> aliases = new ArrayDeque<>();
     final String args;
-    private boolean fromAutoload = false;
+    private boolean fromCFG = false;
     private boolean predefined = false;
 
     public UserAlias(String args) {
@@ -26,26 +26,26 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
 
     public UserAlias(String args, boolean fromAutoload) {
         this.args = args;
-        this.fromAutoload = fromAutoload;
+        this.fromCFG = fromAutoload;
     }
 
     /** Construct a predefined (protected) user alias that cannot be overwritten. */
-    public UserAlias(String args, boolean fromAutoload, boolean predefined) {
+    public UserAlias(String args, boolean fromCFG, boolean predefined) {
         this.args = args;
-        this.fromAutoload = fromAutoload;
+        this.fromCFG = fromCFG;
         this.predefined = predefined;
     }
 
-    public boolean isFromAutoload() {
-        return fromAutoload;
+    public boolean isFromCFG() {
+        return fromCFG;
     }
 
     public boolean isPredefined() {
         return predefined;
     }
 
-    public void setFromAutoload(boolean fromAutoload) {
-        this.fromAutoload = fromAutoload;
+    public void setFromCFG(boolean fromAutoload) {
+        this.fromCFG = fromAutoload;
     }
 
     /** @return the raw definition string used to create this alias */

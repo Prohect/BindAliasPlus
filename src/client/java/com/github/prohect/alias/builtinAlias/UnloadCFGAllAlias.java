@@ -34,20 +34,19 @@ public class UnloadCFGAllAlias extends BuiltinAliasWithoutArgs<UnloadCFGAllAlias
         unloadAliases.run(args);
         // Count removed aliases manually since we're in silent mode
         totalAliases = (int) com.github.prohect.alias.Alias.aliasesWithoutArgs.values().stream()
-                .filter(alias -> alias instanceof com.github.prohect.alias.UserAlias ua && !ua.isFromAutoload()).count();
+                .filter(alias -> alias instanceof com.github.prohect.alias.UserAlias ua && !ua.isFromCFG()).count();
         totalAliases = com.github.prohect.alias.Alias.aliasesWithoutArgs.values().stream()
                 .filter(alias -> alias instanceof com.github.prohect.alias.UserAlias).toList().size() - totalAliases;
 
         // Unload bindings
         UnloadCFGBindsAlias unloadBinds = new UnloadCFGBindsAlias();
         unloadBinds.run(args);
-        totalBinds =
-                (int) BindAliasPlusClient.BINDING_PLUS.values().stream().filter(binding -> !binding.fromAutoload()).count();
+        totalBinds = (int) BindAliasPlusClient.BINDING_PLUS.values().stream().filter(binding -> !binding.fromCFG()).count();
         totalBinds = BindAliasPlusClient.BINDING_PLUS.size() - totalBinds;
 
         // Unload variables
         UnloadCFGVarsAlias unloadVars = new UnloadCFGVarsAlias();
-        totalVars = VarAlias.AUTOLOADED_VARIABLES.size();
+        totalVars = VarAlias.CFG_VARIABLES.size();
         unloadVars.run(args);
 
         // Restore silent mode

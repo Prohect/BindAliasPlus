@@ -28,7 +28,7 @@ public class UnloadCFGAliasesAlias extends BuiltinAliasWithoutArgs<UnloadCFGAlia
         // Find all autoloaded user aliases
         Alias.aliasesWithoutArgs.forEach((name, alias) -> {
             if (alias instanceof UserAlias userAlias) {
-                if (userAlias.isFromAutoload()) {
+                if (userAlias.isFromCFG()) {
                     toRemove.add(name);
                 }
             }
