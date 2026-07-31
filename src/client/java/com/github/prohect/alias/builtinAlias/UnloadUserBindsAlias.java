@@ -3,7 +3,7 @@ package com.github.prohect.alias.builtinAlias;
 import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.BuiltinAliasWithoutArgs;
-import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.util.InputUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class UnloadUserBindsAlias extends BuiltinAliasWithoutArgs<UnloadUserBind
 
     @Override
     public UnloadUserBindsAlias run(String args) {
-        List<InputConstants.Key> toRemove = new ArrayList<>();
+        List<InputUtil.Key> toRemove = new ArrayList<>();
         List<String> aliasesToRemove = new ArrayList<>();
 
         // Find all runtime-defined bindings (not from CFG)
@@ -44,7 +44,7 @@ public class UnloadUserBindsAlias extends BuiltinAliasWithoutArgs<UnloadUserBind
 
         // Remove bindings
         int count = 0;
-        for (InputConstants.Key key : toRemove) {
+        for (InputUtil.Key key : toRemove) {
             BindAliasClient.BINDING_PLUS.remove(key);
             count++;
         }
