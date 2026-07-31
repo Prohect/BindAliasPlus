@@ -1,26 +1,17 @@
-# sync config itself
-.git_active_branches
-.git_sync_across_active_branches
-scripts/*
-
-# docs
-!(*/*).md
-docs/README.md
+.github/workflows/*.yml
 docs/JAVA_DOC_GUIDE.md
-
-# test cfg
+docs/README.md
 run/config/*.cfg
 
-# mcp
-MCP/mcp_server.js
+# sync config itself
+scripts/*
+.git_active_branches
+.git_sync_across_active_branches
 
-# repo config
 .gitattributes
 .gitignore
 
-# IDE / editor
-formatter.xml
-setup-jdtls.sh
+# root markdown
+!(*/*).md
 
-# CI
-.github/workflows/*.yml
+formatter.xml
