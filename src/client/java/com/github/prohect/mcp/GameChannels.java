@@ -20,7 +20,7 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
  * <ul>
  * <li>{@link #CHAT} — game chat (server/system/player messages), fed by {@code ChatComponentMixin}.</li>
  * <li>{@link #MOD} — this mod's log output (alias feedback, errors, {@code log\} messages), fed by a Log4j appender on the
- * {@code "bind-alias-plus"} logger.</li>
+ * {@code "bind-alias"} logger.</li>
  * <li>{@link #SOUND} — sound events (subtitle-audible sounds only) with precise direction and distance, fed by
  * {@link SoundCapture}. Repeats of the same sound coalesce <b>by key</b> (even when interleaved with other sounds) into one
  * updating line with an {@code " xN"} counter, until drained.</li>
@@ -162,7 +162,7 @@ public final class GameChannels {
 
     // ---- Log4j appender (one-time init, feeds the MOD channel) ----
 
-    private static final String LOGGER_NAME = "bind-alias-plus";
+    private static final String LOGGER_NAME = "bind-alias";
     private static final Object initLock = new Object();
     private static boolean initialized;
 
@@ -175,7 +175,7 @@ public final class GameChannels {
         }
         try {
             LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-            Appender appender = new AbstractAppender("BindAliasPlus-LogCapture", null, null, false, null) {
+            Appender appender = new AbstractAppender("BindAlias-LogCapture", null, null, false, null) {
                 @Override
                 public void append(LogEvent event) {
                     String msg = event.getMessage().getFormattedMessage();
@@ -187,7 +187,7 @@ public final class GameChannels {
             // Register on our mod's logger only — skips Fabric/mixin/rendering noise from root.
             // NOTE: logger.addAppender() (AbstractConfiguration.addLoggerAppender) would create the
             // child LoggerConfig inheriting the ROOT's additivity — false for the root logger — which
-            // swallows all bind-alias-plus logs so they never reach console/latest.log again.
+            // swallows all bind-alias logs so they never reach console/latest.log again.
             // Build the child LoggerConfig with additive=true so normal output keeps flowing.
             Configuration config = ctx.getConfiguration();
             LoggerConfig lc = config.getLoggerConfig(LOGGER_NAME);
