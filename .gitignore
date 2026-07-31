@@ -5,6 +5,7 @@ bin/
 build/
 .classpath
 .project
+*.launch
 
 # do not commit decompiled sources, that's against the EULA of Minecraft
 minecraft-decompiled-sources/
