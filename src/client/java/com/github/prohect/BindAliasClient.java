@@ -426,11 +426,9 @@ public class BindAliasClient implements ClientModInitializer {
 		// register command runAlias
 		ClientCommandRegistrationCallback.EVENT
 				.register((dispatcher, registryAccess) -> dispatcher.register(literal("runAlias")
-						.then(argument("definition", StringArgumentType.greedyString()).suggests((context, builder) -> {
-							Alias.aliasesWithoutArgs.keySet().forEach(builder::suggest);
-							Alias.aliasesWithArgs.keySet().forEach(builder::suggest);
-							return builder.buildFuture();
-						}).executes(context -> {
+						.then(argument("definition", StringArgumentType.greedyString())
+								.suggests((context, builder) -> getSuggestions4aliasDefinitionCompletableFuture(builder))
+								.executes(context -> {
 							String input = StringArgumentType.getString(context, "definition");
 							// Use UserAlias to support chaining syntax
 							// (space-separated, \ for args: "slot\2 wait\1 +forward")
@@ -524,11 +522,17 @@ public class BindAliasClient implements ClientModInitializer {
     private int commandVarExecute(String varName, String source, boolean fromAutoload) {
         new VarAlias().run(varName + Alias.divider4AliasArgs + source, fromAutoload);
 
-        // Check if variable was successfully created
+        // Check if variable was successfully created (general or container slot)
         if (VarAlias.GENERAL_VARIABLES.containsKey(varName)) {
             if (!silentMode) {
                 Minecraft.getInstance().player.sendSystemMessage(
                         Component.literal("Variable '" + varName + "' set to " + VarAlias.GENERAL_VARIABLES.get(varName)));
+            }
+            return 1;
+        } else if (VarAlias.CONTAINER_SLOT_VARIABLES.containsKey(varName)) {
+            if (!silentMode) {
+                Minecraft.getInstance().player.sendSystemMessage(Component
+                        .literal("Variable '" + varName + "' set to c" + VarAlias.CONTAINER_SLOT_VARIABLES.get(varName)));
             }
             return 1;
         } else {
@@ -686,16 +690,35 @@ public class BindAliasClient implements ClientModInitializer {
             if (varAlias != null) {
                 boolean intOnly = varAlias instanceof BuiltinAliasWithIntegerArgs;
                 boolean doubleOk = varAlias instanceof BuiltinAliasWithDoubleArgs;
-                if (intOnly || doubleOk) {
+                boolean isSwapSlot = varAlias instanceof SwapSlotAlias;
+                if (intOnly || doubleOk || isSwapSlot) {
                     builder = builder.createOffset(builder.getStart() + a + 1);
                     SuggestionsBuilder finalBuilder2 = builder;
-                    VarAlias.GENERAL_VARIABLES.forEach((varName, value) -> {
-                        if (!varName.startsWith(partialArg))
-                            return;
-                        if (intOnly && !(value instanceof Integer))
-                            return;
-                        finalBuilder2.suggest(varName, Component.literal("var = " + value));
-                    });
+                    if (intOnly || doubleOk) {
+                        VarAlias.GENERAL_VARIABLES.forEach((varName, value) -> {
+                            if (!varName.startsWith(partialArg))
+                                return;
+                            if (intOnly && !(value instanceof Integer))
+                                return;
+                            finalBuilder2.suggest(varName, Component.literal("var = " + value));
+                        });
+                    }
+                    if (isSwapSlot) {
+                        VarAlias.CONTAINER_SLOT_VARIABLES.forEach((varName, slot) -> {
+                            if (varName.startsWith(partialArg))
+                                finalBuilder2.suggest(varName, Component.literal("cSlot = c" + slot));
+                        });
+                        // swapSlot also accepts general int vars via resolveInt
+                        if (!intOnly && !doubleOk) {
+                            VarAlias.GENERAL_VARIABLES.forEach((varName, value) -> {
+                                if (!varName.startsWith(partialArg))
+                                    return;
+                                if (!(value instanceof Integer))
+                                    return;
+                                finalBuilder2.suggest(varName, Component.literal("var = " + value));
+                            });
+                        }
+                    }
                 }
             }
             return builder.buildFuture();
