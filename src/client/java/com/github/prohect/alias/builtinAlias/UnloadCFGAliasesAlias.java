@@ -42,7 +42,8 @@ public class UnloadCFGAliasesAlias extends BuiltinAliasWithoutArgs<UnloadCFGAlia
         }
 
         if (!BindAliasPlusClient.silentMode) {
-            BindAliasPlusClient.LOGGER.info("[unloadCFGAliases] Removed {} autoloaded alias(es)", count);
+            BindAliasPlusClient.LOGGER.info("{}[unloadCFGAliases] Removed {} autoloaded alias(es)",
+                    BindAliasPlusClient.tickPrefix(), count);
         }
 
         return this;

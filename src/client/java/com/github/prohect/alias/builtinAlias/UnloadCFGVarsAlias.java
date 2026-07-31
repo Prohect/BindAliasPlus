@@ -37,7 +37,8 @@ public class UnloadCFGVarsAlias extends BuiltinAliasWithoutArgs<UnloadCFGVarsAli
         }
 
         if (!BindAliasPlusClient.silentMode) {
-            BindAliasPlusClient.LOGGER.info("[unloadCFGVars] Removed {} autoloaded variable(s)", count);
+            BindAliasPlusClient.LOGGER.info("{}[unloadCFGVars] Removed {} autoloaded variable(s)",
+                    BindAliasPlusClient.tickPrefix(), count);
         }
 
         return this;

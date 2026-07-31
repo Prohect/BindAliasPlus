@@ -53,8 +53,8 @@ public class UnloadCFGAllAlias extends BuiltinAliasWithoutArgs<UnloadCFGAllAlias
         BindAliasPlusClient.silentMode = originalSilentMode;
 
         if (!originalSilentMode) {
-            BindAliasPlusClient.LOGGER.info("[unloadCFGAll] Removed {} alias(es), {} keybinding(s), {} variable(s)",
-                    totalAliases, totalBinds, totalVars);
+            BindAliasPlusClient.LOGGER.info("{}[unloadCFGAll] Removed {} alias(es), {} keybinding(s), {} variable(s)",
+                    BindAliasPlusClient.tickPrefix(), totalAliases, totalBinds, totalVars);
         }
 
         return this;
