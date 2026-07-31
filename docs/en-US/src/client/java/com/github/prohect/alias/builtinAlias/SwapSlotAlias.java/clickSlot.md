@@ -3,7 +3,7 @@
 ## Syntax
 
 ```java
-private static void clickSlot(net.minecraft.client.multiplayer.MultiPlayerGameMode, net.minecraft.client.gui.screens.inventory.InventoryScreen, net.minecraft.world.inventory.Slot, int, net.minecraft.client.player.LocalPlayer)
+private static void clickSlot(net.minecraft.client.multiplayer.MultiPlayerGameMode, net.minecraft.world.inventory.AbstractContainerMenu, net.minecraft.world.inventory.Slot, int, net.minecraft.world.inventory.ContainerInput, net.minecraft.client.player.LocalPlayer)
 ```
 
 ## Parameters
@@ -18,4 +18,4 @@ private static void clickSlot(net.minecraft.client.multiplayer.MultiPlayerGameMo
 | Item | Description |
 |------|-------------|
 
-*Documented for Commit: [d2c580a08b1afe74c3cc22b0bf7cd7736dc08f5c](https://github.com/Prohect/BindAlias/tree/d2c580a08b1afe74c3cc22b0bf7cd7736dc08f5c)*
+*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*

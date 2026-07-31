@@ -3,7 +3,7 @@
 ## Syntax
 
 ```java
-public class com.github.prohect.alias.builtinAlias.SayAlias extends com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs<com.github.prohect.alias.builtinAlias.SayAlias>
+public class com.github.prohect.alias.builtinAlias.SayAlias extends com.github.prohect.alias.BuiltinAliasWithStringArgs<com.github.prohect.alias.builtinAlias.SayAlias>
 ```
 
 ## Static Initializer
@@ -17,4 +17,5 @@ _None._
 | Item | Description |
 |------|-------------|
 
-*Documented for Commit: [d2c580a08b1afe74c3cc22b0bf7cd7736dc08f5c](https://github.com/Prohect/BindAlias/tree/d2c580a08b1afe74c3cc22b0bf7cd7736dc08f5c)*
+*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+
