@@ -83,7 +83,8 @@ const ACTION_ALIASES = [
   "`swapHand` — swap main hand and offhand items",
   "`pickItem` — select the hotbar slot if one matches the targeted block/entity, otherwise try move(by SWAP) an item stack that matches the targeted block/entity in your inventory to the selected slot",
   "`reloadCFG` — reload the cfg file",
-  "`unloadCFGAliases` / `unloadCFGVars` / `unloadCFGAll` — unload aliases / variables previously autoloaded from the cfg (runtime-created ones are kept)",
+  "`unloadCFGAliases` / `unloadCFGVars` / `unloadCFGAll` — unload aliases / variables previously autoloaded from the cfg (user-created and builtin ones are kept)",
+  "`unloadUserAliases` / `unloadUserVars` / `unloadUserAll` — unload aliases / variables that were created at runtime (cfg-loaded and builtin ones are kept)",
   "`builtinShutdown` — shut the game down",
 ];
 
@@ -190,7 +191,7 @@ const TOOLS = [
     name: "writeCFG",
     description:
       "Overwrite the cfg file with new content and immediately reload it. " +
-      "Same line format as 'readCFG'. NOTE: reloading only adds/overwrites. Put \"runAlias unloadCFGAll +freeCursor\" as the " +
+      "Same line format as 'readCFG'. NOTE: reloading only adds/overwrites. Put \"runAlias unloadCFGAll unloadUserAll +freeCursor\" as the " +
       "first line, then the cfg content to write. " +
       "Returns the standard envelope.",
     inputSchema: {
