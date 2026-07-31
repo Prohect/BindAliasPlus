@@ -122,6 +122,10 @@ public class BindAliasClient implements ClientModInitializer {
 		new UnloadCFGBindsAlias().putToAliasesWithoutArgs();
 		new UnloadCFGVarsAlias().putToAliasesWithoutArgs();
 		new UnloadCFGAllAlias().putToAliasesWithoutArgs();
+		new UnloadUserAliasesAlias().putToAliasesWithoutArgs();
+		new UnloadUserBindsAlias().putToAliasesWithoutArgs();
+		new UnloadUserVarsAlias().putToAliasesWithoutArgs();
+		new UnloadUserAllAlias().putToAliasesWithoutArgs();
 		new UserAlias("builtinAttack\\1", false, true).putToAliasesWithoutArgs("+attack");
 		new UserAlias("builtinAttack\\0", false, true).putToAliasesWithoutArgs("-attack");
 		new UserAlias("builtinUse\\1", false, true).putToAliasesWithoutArgs("+use");
@@ -363,6 +367,51 @@ public class BindAliasClient implements ClientModInitializer {
 					if (!silentMode) {
 						context.getSource().sendFeedback(
 								Component.literal("§aUnloaded all autoloaded aliases, keybindings, and variables"));
+					}
+					return 1;
+				})));
+		// register command unloadUserAliases
+		ClientCommandRegistrationCallback.EVENT.register(
+				(dispatcher, registryAccess) -> dispatcher.register(literal("unloadUserAliases").executes(context -> {
+					if (Minecraft.getInstance().player == null)
+						return 0;
+					new UnloadUserAliasesAlias().run("");
+					if (!silentMode) {
+						context.getSource().sendFeedback(Component.literal("§aUnloaded all runtime-defined aliases"));
+					}
+					return 1;
+				})));
+		// register command unloadUserBinds
+		ClientCommandRegistrationCallback.EVENT.register(
+				(dispatcher, registryAccess) -> dispatcher.register(literal("unloadUserBinds").executes(context -> {
+					if (Minecraft.getInstance().player == null)
+						return 0;
+					new UnloadUserBindsAlias().run("");
+					if (!silentMode) {
+						context.getSource().sendFeedback(Component.literal("§aUnloaded all runtime-defined keybindings"));
+					}
+					return 1;
+				})));
+		// register command unloadUserVars
+		ClientCommandRegistrationCallback.EVENT.register(
+				(dispatcher, registryAccess) -> dispatcher.register(literal("unloadUserVars").executes(context -> {
+					if (Minecraft.getInstance().player == null)
+						return 0;
+					new UnloadUserVarsAlias().run("");
+					if (!silentMode) {
+						context.getSource().sendFeedback(Component.literal("§aUnloaded all runtime-defined variables"));
+					}
+					return 1;
+				})));
+		// register command unloadUserAll
+		ClientCommandRegistrationCallback.EVENT.register(
+				(dispatcher, registryAccess) -> dispatcher.register(literal("unloadUserAll").executes(context -> {
+					if (Minecraft.getInstance().player == null)
+						return 0;
+					new UnloadUserAllAlias().run("");
+					if (!silentMode) {
+						context.getSource().sendFeedback(
+								Component.literal("§aUnloaded all runtime-defined aliases, keybindings, and variables"));
 					}
 					return 1;
 				})));
