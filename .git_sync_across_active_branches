@@ -9,7 +9,7 @@ docs/README.md
 docs/JAVA_DOC_GUIDE.md
 
 # test cfg
-run/config/bind-alias-plus.cfg
+run/config/*.cfg
 
 # mcp
 MCP/mcp_server.js
