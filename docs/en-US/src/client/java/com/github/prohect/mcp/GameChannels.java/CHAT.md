@@ -3,9 +3,18 @@
 ## Syntax
 
 ```java
-public static final java.lang.String CHAT
+public static final String CHAT = "chat"
 ```
 
 ## Remarks
 
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+Channel name constant for game chat messages (server, system, and player messages). Fed by [`ChatComponentMixin`](../../mixin/client/ChatComponentMixin.java/README.md) which captures all three `ChatComponent` message-entry points. Messages are plain-text strings as returned by `Component.getString()`. Non-coalescing: each message is a separate entry.
+
+## See Also
+
+| Item | Description |
+|------|-------------|
+| [ChatComponentMixin](../../mixin/client/ChatComponentMixin.java/README.md) | Feeder of this channel |
+| [MOD](MOD.md) | The mod-log channel |
+| [SOUND](SOUND.md) | The sound-event channel |
+| [RECIPE](RECIPE.md) | The recipe-unlock channel |

@@ -2,6 +2,23 @@
 
 ## Remarks
 
-Executed once when the class is loaded. See source for content.
+Executed once when the `GameStateCollector` class is loaded. Initializes the `HELD_KEY_NAMES` map with mappings from alias names to human-readable held-key names used in the `held_keys` state member:
 
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+- `"forward"` → `"forward"`
+- `"back"` → `"back"`
+- `"left"` → `"left"`
+- `"right"` → `"right"`
+- `"jump"` → `"jump"`
+- `"sneak"` → `"sneak"`
+- `"sprint"` → `"sprint"`
+- `"attack"` → `"attack"`
+- `"use"` → `"use"`
+- `"drop"` → `"drop"`
+
+This map is read by `heldKeysJson` to determine which currently-held aliases are reported in the envelope.
+
+## See Also
+
+| Item | Description |
+|------|-------------|
+| [heldKeysJson](heldKeysJson.md) | The reader of this map |

@@ -3,9 +3,15 @@
 ## Syntax
 
 ```java
-public static final java.lang.String MOD_ID
+public static final String MOD_ID = "bind-alias"
 ```
 
 ## Remarks
 
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+The mod's unique identifier string. Used as the logger name, the CFG file name (`config/bind-alias.cfg`), and is referenced by `fabric.mod.json` for mod registration. Follows Fabric convention of using lowercase hyphenated names.
+
+## See Also
+
+| Item | Description |
+|------|-------------|
+| [LOGGER](LOGGER.md) | Logger initialized with this ID |

@@ -8,4 +8,6 @@ public static final org.slf4j.Logger LOGGER
 
 ## Remarks
 
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+SLF4J logger named `"bind-alias"`. Used throughout the entire mod (not just this class) for info-level lifecycle logging (`loadCFG`, server start/stop) and error/warn-level diagnostics. The `tickPrefix()` method provides a consistent `[client_tick:N]` prefix for log messages.
+
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

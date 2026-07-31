@@ -3,19 +3,19 @@
 ## Syntax
 
 ```java
-private static java.lang.String playersJson(net.minecraft.client.Minecraft, net.minecraft.client.player.LocalPlayer)
+private static String playersJson(Minecraft mc, LocalPlayer p)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+JSON array string of nearby players with `name`, `pos`, `dim`, and directional info using the same format as `SoundCapture.directionOf`.
 
 ## Remarks
+
+Iterates all players in the current level. Excludes the local player. For each remote player, includes display name, position, and directional info (yaw/pitch relative to the local player's view + distance) via `SoundCapture.directionOf`. Players in different dimensions are noted with their dimension name.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+| [SoundCapture.directionOf](SoundCapture.java/directionOf.md) | The shared directional formatter |

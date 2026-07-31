@@ -6,16 +6,12 @@
 public static void stop()
 ```
 
-## Parameters
-
-| Name | Type | Description |
-|------|------|-------------|
-
 ## Remarks
+
+Stops the HTTP server with a 2-second grace period. Cancels all pending nap tasks by setting their `cancelled` flag to `true`. Called during mod shutdown.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+| [start](start.md) | Server startup |

@@ -3,19 +3,19 @@
 ## Syntax
 
 ```java
-static java.lang.String fmt2(double)
+static String fmt2(double v)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+The double value formatted to 2 decimal places (e.g., `"123.46"`). Uses `Locale.ROOT` for consistent decimal separator.
 
 ## Remarks
+
+Shared formatting helper used for player orientation angles (yaw/pitch). Equivalent to `String.format(Locale.ROOT, "%.2f", v)`.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+| [fmt1](fmt1.md) | 1-decimal-place variant |

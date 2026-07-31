@@ -3,19 +3,19 @@
 ## Syntax
 
 ```java
-static java.lang.String jsonEscape(java.lang.String)
+static String jsonEscape(String s)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+The input string escaped per JSON rules and wrapped in double quotes, or `"null"` if the input is `null`.
 
 ## Remarks
+
+Shared JSON string escaping utility. Escapes backslashes, double quotes, newlines, carriage returns, and tabs. Wraps the result in double quotes so callers can append it directly as a JSON string value. Null input produces the literal `"null"` (for JSON null). Used by nearly every method in this class and by `RecipeBookHelper.recipesJson`.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+| [RecipeBookHelper.recipesJson](RecipeBookHelper.java/recipesJson.md) | External caller |

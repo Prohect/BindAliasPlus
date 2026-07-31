@@ -3,19 +3,19 @@
 ## Syntax
 
 ```java
-private static java.lang.String formatDuration(int)
+private static String formatDuration(int ticks)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+Duration formatted as `"MM:SS"` (minutes and seconds from game ticks at 20 ticks/second).
 
 ## Remarks
+
+Converts a tick count to a human-readable `MM:SS` string. Used for status effect durations and any other tick-based timer display.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+| [effectsJson](effectsJson.md) | The primary caller |

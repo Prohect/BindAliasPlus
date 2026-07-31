@@ -3,19 +3,25 @@
 ## Syntax
 
 ```java
-private static void appendTooltipIfValuable(net.minecraft.client.Minecraft, net.minecraft.client.player.LocalPlayer, net.minecraft.world.item.ItemStack, java.lang.StringBuilder)
+private static void appendTooltipIfValuable(Minecraft mc, LocalPlayer p, ItemStack stack, StringBuilder sb)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `mc` | `Minecraft` | The Minecraft client instance |
+| `p` | `LocalPlayer` | The local player |
+| `stack` | `ItemStack` | The item stack to describe |
+| `sb` | `StringBuilder` | The builder to append the description to |
 
 ## Remarks
+
+Formats an item stack description for use in inventory/hotbar/container item entries. Appends the stack's display name and count. For items with valuable properties (enchantments, custom name, lore, durability warnings), appends additional tooltip details similar to the vanilla item tooltip.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+| [hotbarItems](hotbarItems.md) | Primary caller for hotbar items |
+| [containerSnapshot](containerSnapshot.md) | Caller for container items |

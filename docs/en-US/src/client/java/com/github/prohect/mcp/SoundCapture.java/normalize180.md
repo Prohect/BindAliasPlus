@@ -3,19 +3,26 @@
 ## Syntax
 
 ```java
-private static double normalize180(double)
+private static double normalize180(double deg)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `deg` | `double` | The angle in degrees to normalize |
+
+## Return value
+
+The angle wrapped to the range (-180, 180].
 
 ## Remarks
+
+Normalizes an angle to the range (-180, 180] by first taking `deg % 360.0` and then adjusting values > 180 or ≤ -180 into the target range. Used for relative yaw/pitch angles before rounding.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+| [directionOf](directionOf.md) | The caller |
+| [clamp](clamp.md) | Post-processing step |

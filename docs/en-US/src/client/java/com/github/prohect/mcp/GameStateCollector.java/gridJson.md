@@ -3,19 +3,20 @@
 ## Syntax
 
 ```java
-private static java.lang.String gridJson(java.util.List<int[]>)
+private static String gridJson(List<int[]> grid)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+JSON string representing the crafting grid layout, including slot indices and dimensions. Returns `null` when the grid list is empty or null.
 
 ## Remarks
+
+Extracted from the container menu's crafting slots and the recipe book component. Each grid entry is an `int[]` of slot indices comprising one row. Formats as JSON with `rows` and `cols` metadata plus an array of row patterns (slot indices separated by spaces, e.g., `"0 1"`, `"3 4"` for a 2×2 grid).
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+| [buildGridRow](buildGridRow.md) | Row formatting helper |
+| [containerSnapshot](containerSnapshot.md) | The caller |

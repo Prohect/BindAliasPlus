@@ -23,41 +23,41 @@
 | [LockAlias_OnLock.java](LockAlias_OnLock.java/README.md) | |
 | [LockAlias_Unlock.java](LockAlias_Unlock.java/README.md) | |
 | [LogAlias.java](LogAlias.java/README.md) | |
-| [OpenInventoryAlias.java](OpenInventoryAlias.java/README.md) | |
-| [PickItemAlias.java](PickItemAlias.java/README.md) | |
-| [PitchAlias.java](PitchAlias.java/README.md) | |
-| [PlayerListAlias.java](PlayerListAlias.java/README.md) | |
-| [ReapplyAlias.java](ReapplyAlias.java/README.md) | |
-| [ReloadCFGAlias.java](ReloadCFGAlias.java/README.md) | |
-| [RightAlias.java](RightAlias.java/README.md) | |
-| [RunAliasAlias.java](RunAliasAlias.java/README.md) | |
-| [SayAlias.java](SayAlias.java/README.md) | |
-| [ScreenshotAlias.java](ScreenshotAlias.java/README.md) | |
-| [SendCommandAlias.java](SendCommandAlias.java/README.md) | |
-| [SetPerspectiveAlias.java](SetPerspectiveAlias.java/README.md) | |
-| [SetPitchAlias.java](SetPitchAlias.java/README.md) | |
-| [SetYawAlias.java](SetYawAlias.java/README.md) | |
-| [ShutdownAlias.java](ShutdownAlias.java/README.md) | |
-| [SilentAlias.java](SilentAlias.java/README.md) | |
-| [SlotAlias.java](SlotAlias.java/README.md) | |
-| [SneakAlias.java](SneakAlias.java/README.md) | |
-| [SprintAlias.java](SprintAlias.java/README.md) | |
-| [SwapHandAlias.java](SwapHandAlias.java/README.md) | |
-| [SwapSlotAlias.java](SwapSlotAlias.java/README.md) | |
-| [ToggleInventoryAlias.java](ToggleInventoryAlias.java/README.md) | |
-| [UnbindAlias.java](UnbindAlias.java/README.md) | |
-| [UnloadCFGAliasesAlias.java](UnloadCFGAliasesAlias.java/README.md) | |
-| [UnloadCFGAllAlias.java](UnloadCFGAllAlias.java/README.md) | |
-| [UnloadCFGBindsAlias.java](UnloadCFGBindsAlias.java/README.md) | |
-| [UnloadCFGVarsAlias.java](UnloadCFGVarsAlias.java/README.md) | |
-| [UnloadUserAliasesAlias.java](UnloadUserAliasesAlias.java/README.md) | |
-| [UnloadUserAllAlias.java](UnloadUserAllAlias.java/README.md) | |
-| [UnloadUserBindsAlias.java](UnloadUserBindsAlias.java/README.md) | |
-| [UnloadUserVarsAlias.java](UnloadUserVarsAlias.java/README.md) | |
-| [UseAlias.java](UseAlias.java/README.md) | |
-| [VarAlias.java](VarAlias.java/README.md) | |
-| [WaitAlias.java](WaitAlias.java/README.md) | |
-| [WaitAliasRecord.java](WaitAliasRecord.java/README.md) | |
-| [YawAlias.java](YawAlias.java/README.md) | |
+| [OpenInventoryAlias.java](OpenInventoryAlias.java/README.md) | Switch alias (+/−) that opens or closes the player inventory screen |
+| [PickItemAlias.java](PickItemAlias.java/README.md) | One-shot: triggers vanilla pick-block behavior (middle-click) |
+| [PitchAlias.java](PitchAlias.java/README.md) | Double-arg: relative pitch rotation `pitch\deg` |
+| [PlayerListAlias.java](PlayerListAlias.java/README.md) | Switch alias (+/−) that shows the online-player overlay (Tab) |
+| [ReapplyAlias.java](ReapplyAlias.java/README.md) | String-arg: re-assert a held key after screen transition `reapply\action` |
+| [ReloadCFGAlias.java](ReloadCFGAlias.java/README.md) | One-shot: reloads the configuration file at runtime |
+| [RightAlias.java](RightAlias.java/README.md) | Switch alias (+/−) for strafe-right movement (D key) |
+| [RunAliasAlias.java](RunAliasAlias.java/README.md) | String-arg: execute a registered alias by name `builtinRunAlias\name` |
+| [SayAlias.java](SayAlias.java/README.md) | String-arg: send a chat message to the server `say\text` |
+| [ScreenshotAlias.java](ScreenshotAlias.java/README.md) | Switch alias (+): take a screenshot via vanilla F2 codepath |
+| [SendCommandAlias.java](SendCommandAlias.java/README.md) | String-arg: send a server command (no leading `/`) |
+| [SetPerspectiveAlias.java](SetPerspectiveAlias.java/README.md) | Integer-arg: set camera perspective 0=FPS, 1=TPS, 2=TPS2 |
+| [SetPitchAlias.java](SetPitchAlias.java/README.md) | Double-arg: absolute pitch setter `setPitch\deg` |
+| [SetYawAlias.java](SetYawAlias.java/README.md) | Double-arg: absolute yaw setter `setYaw\deg` |
+| [ShutdownAlias.java](ShutdownAlias.java/README.md) | One-shot: cleanly shuts down the game `builtinShutdown` |
+| [SilentAlias.java](SilentAlias.java/README.md) | Switch alias (+/−) that toggles silent mode (suppress mod feedback) |
+| [SlotAlias.java](SlotAlias.java/README.md) | Integer-arg: select hotbar slot 1-9 `slot\N` |
+| [SneakAlias.java](SneakAlias.java/README.md) | Switch alias (+/−) for sneaking/crouching (Shift key) |
+| [SprintAlias.java](SprintAlias.java/README.md) | Switch alias (+/−) for sprinting (Ctrl key, requires +forward) |
+| [SwapHandAlias.java](SwapHandAlias.java/README.md) | One-shot: swaps main hand and offhand items via packet |
+| [SwapSlotAlias.java](SwapSlotAlias.java/README.md) | Multi-arg: swap items between any two inventory/container slots |
+| [ToggleInventoryAlias.java](ToggleInventoryAlias.java/README.md) | One-shot: toggle inventory screen open/close |
+| [UnbindAlias.java](UnbindAlias.java/README.md) | String-arg: sends an unbind command to the server |
+| [UnloadCFGAliasesAlias.java](UnloadCFGAliasesAlias.java/README.md) | One-shot: removes CFG-loaded user aliases |
+| [UnloadCFGAllAlias.java](UnloadCFGAllAlias.java/README.md) | One-shot: removes all CFG-loaded items (aliases + binds + vars) |
+| [UnloadCFGBindsAlias.java](UnloadCFGBindsAlias.java/README.md) | One-shot: removes CFG-loaded keybindings |
+| [UnloadCFGVarsAlias.java](UnloadCFGVarsAlias.java/README.md) | One-shot: removes CFG-loaded general variables |
+| [UnloadUserAliasesAlias.java](UnloadUserAliasesAlias.java/README.md) | One-shot: removes runtime-created user aliases |
+| [UnloadUserAllAlias.java](UnloadUserAllAlias.java/README.md) | One-shot: removes all runtime-created items (aliases + binds + vars) |
+| [UnloadUserBindsAlias.java](UnloadUserBindsAlias.java/README.md) | One-shot: removes runtime-created keybindings |
+| [UnloadUserVarsAlias.java](UnloadUserVarsAlias.java/README.md) | One-shot: removes runtime-created variables (general + container) |
+| [UseAlias.java](UseAlias.java/README.md) | Switch alias (+/−) for using items / right-click interaction |
+| [VarAlias.java](VarAlias.java/README.md) | Multi-arg: store/inspect variables; central resolution system for other aliases |
+| [WaitAlias.java](WaitAlias.java/README.md) | Integer-arg: defer alias chain execution by N ticks `wait\N` |
+| [WaitAliasRecord.java](WaitAliasRecord.java/README.md) | Deferred-task record holding countdown ticks and definition string |
+| [YawAlias.java](YawAlias.java/README.md) | Double-arg: relative yaw rotation `yaw\deg` |
 
 *Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*

@@ -6,16 +6,13 @@
 public static void register()
 ```
 
-## Parameters
-
-| Name | Type | Description |
-|------|------|-------------|
-
 ## Remarks
+
+Registers the singleton `SoundCapture` instance on the client `SoundManager` via `Minecraft.getInstance().getSoundManager().addListener(INSTANCE)`. Safe to call multiple times — the `SoundManager` deduplicates by listener identity. Called from `BindAliasClient.onInitializeClient()` during mod initialization.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+| [onPlaySound](onPlaySound.md) | The callback invoked for each sound |
+| [SoundCapture](SoundCapture.md) | The class doc |

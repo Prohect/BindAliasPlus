@@ -3,9 +3,15 @@
 ## Syntax
 
 ```java
-public static final java.util.HashMap<java.lang.String, com.github.prohect.alias.AliasWithoutArgs<?>> aliasesWithoutArgs_fromBindCommand
+public static final HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs_fromBindCommand
 ```
+
+Map of user aliases created specifically by the `bind` command. Keys are alias names assigned via `bind\key\aliasName`. These aliases are used by `BindAliasKeyBinding` to look up the alias to execute when a bound key is pressed.
 
 ## Remarks
 
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+Separate from `aliasesWithoutArgs` because the `bind` command creates aliases that should only be triggered by key events, not by name in alias chains. The `unbind` command removes entries from this map.
+
+Populated by the `BindAlias` builtin alias. Read by `BindAliasKeyBinding.onKeyPressed()` to dispatch key presses to the corresponding user alias.
+
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

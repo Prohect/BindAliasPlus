@@ -8,4 +8,6 @@ public static final java.util.Map<com.mojang.blaze3d.platform.InputConstants$Key
 
 ## Remarks
 
-*Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
+All active key→alias bindings. Keyed by Minecraft's `InputConstants.Key` (representing a keyboard key or mouse button). Each value is a `BindAliasKeyBinding` specifying which alias name to invoke on press and which on release. Populated by CFG autoload (`bind` / `bindByAliasName` lines) and runtime `/bind` commands. Consumed by `MinecraftClientMixin`'s tick loop to dispatch `KEY_QUEUE` events. Entries with `fromCFG=true` are removable by `unloadCFGBinds`.
+
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

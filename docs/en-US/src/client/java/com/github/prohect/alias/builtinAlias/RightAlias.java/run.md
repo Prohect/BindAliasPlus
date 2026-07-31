@@ -1,5 +1,7 @@
 # run method (src/client/java/com/github/prohect/alias/builtinAlias/RightAlias.java)
 
+Parses +/- boolean args and presses or releases the strafe-right key (D).
+
 ## Syntax
 
 ```java
@@ -10,12 +12,28 @@ public com.github.prohect.alias.builtinAlias.RightAlias run(java.lang.String)
 
 | Name | Type | Description |
 |------|------|-------------|
+| args | String | `"1"` to strafe right (press D), `"0"` to stop (release D) |
 
 ## Remarks
+
+**Algorithm:**
+
+1. Parse `args` via `parseArgs(args)` — sets `this.flag` (true for "1", false for "0").
+2. If a text-input screen is open AND flag is true (pressing), return immediately — don't move while typing.
+3. Get the vanilla `keyRight` keybinding.
+4. Call `key.setDown(flag)` to press or release the key.
+5. If pressing (flag=true), increment `clickCount` so the game registers the initial press event.
+
+**Movement injection:** Because the keybinding is set via `setDown(flag)` directly (not through the vanilla key-press queue), the `KeyboardInputMixin` intercepts it each tick and applies the lateral movement impulse. This works even without window focus.
+
+**Screen suppression:** Press is suppressed on text-input screens. Release is never suppressed.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [RightAlias](RightAlias.md) | Class overview |
+| [LeftAlias](../LeftAlias.java/run.md) | Opposite horizontal movement |
+| [ReapplyAlias](../ReapplyAlias.java/run.md) | Reapply after screen transitions |
 
 *Documented for Commit: [28c13970494133bbf3880d2d2e3f8d6153a484fd](https://github.com/Prohect/BindAlias/tree/28c13970494133bbf3880d2d2e3f8d6153a484fd)*
