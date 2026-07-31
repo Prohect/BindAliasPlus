@@ -78,7 +78,7 @@ public final class StateTracker {
                 state.append('"').append(key).append("\":").append(value);
             }
         }
-        // members that disappeared since the previous snapshot 鈫� explicit null
+        // members that disappeared since the previous snapshot → explicit null
         for (String key : last.keySet()) {
             if (!current.containsKey(key)) {
                 if (state.length() > 0)
@@ -87,7 +87,7 @@ public final class StateTracker {
             }
         }
 
-        // container 鈥� diffed at slot granularity (full on getState / open / menu change)
+        // container — diffed at slot granularity (full on getState / open / menu change)
         net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
         GameStateCollector.ContainerSnapshot snap = GameStateCollector.containerSnapshot(mc, mc.player);
         if (snap == null) {
@@ -112,7 +112,7 @@ public final class StateTracker {
             lastContainer = snap;
         }
 
-        // hotbar 鈥� diffed at slot granularity (full on getState / world change)
+        // hotbar — diffed at slot granularity (full on getState / world change)
         if (mc.player != null) {
             Map<String, String> curHotbar = GameStateCollector.hotbarItems(mc.player);
             String curEmpty = GameStateCollector.hotbarEmptyRanges(mc.player);
