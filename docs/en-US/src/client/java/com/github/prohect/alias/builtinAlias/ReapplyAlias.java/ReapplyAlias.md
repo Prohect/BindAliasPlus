@@ -30,4 +30,4 @@ Builtin alias to manually re-assert a single held-down boolean alias after a scr
 | [DropAlias.reapplyToGameKeyMapping](../DropAlias.java/reapplyToGameKeyMapping.md)                    | Example reapply implementation |
 | [BuiltinAliasWithArgs](../../BuiltinAliasWithArgs.java/BuiltinAliasWithArgs.md)                      | Parent class                   |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

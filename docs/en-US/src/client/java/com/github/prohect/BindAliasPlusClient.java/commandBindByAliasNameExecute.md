@@ -1,4 +1,4 @@
-# commandBindByAliasNameExecute method (src/client/java/com/github/prohect/BindAliasPlusClient.java)
+# commandBindByAliasNameExecute method (src/client/java/com/github/prohect/BindAliasClient.java)
 
 ## Syntax
 
@@ -55,4 +55,4 @@ The two-arg overload delegates with `fromAutoload = false`.
 | [KeyBindingPlus](../KeyBindingPlus.java/KeyBindingPlus.md)            | The mapping stored in `BINDING_PLUS`                  |
 | [Alias.aliasesWithoutArgs](../alias/Alias.java/aliasesWithoutArgs.md) | Registry looked up by alias name                      |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

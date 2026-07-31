@@ -20,7 +20,7 @@ Convenience builtin alias that removes all config-loaded aliases, keybindings, a
 
 **Thread safety**: Not thread-safe (render-thread only).
 
-**Key collaborators**: Delegates to [UnloadCFGAliasesAlias](UnloadCFGAliasesAlias.java/UnloadCFGAliasesAlias.md), [UnloadCFGBindsAlias](UnloadCFGBindsAlias.java/UnloadCFGBindsAlias.md), and [UnloadCFGVarsAlias](UnloadCFGVarsAlias.java/UnloadCFGVarsAlias.md). Uses `BindAliasPlusClient.silentMode` to suppress intermediate logging.
+**Key collaborators**: Delegates to [UnloadCFGAliasesAlias](UnloadCFGAliasesAlias.java/UnloadCFGAliasesAlias.md), [UnloadCFGBindsAlias](UnloadCFGBindsAlias.java/UnloadCFGBindsAlias.md), and [UnloadCFGVarsAlias](UnloadCFGVarsAlias.java/UnloadCFGVarsAlias.md). Uses `BindAliasClient.silentMode` to suppress intermediate logging.
 
 ## See Also
 
@@ -31,4 +31,4 @@ Convenience builtin alias that removes all config-loaded aliases, keybindings, a
 | [UnloadCFGVarsAlias](../UnloadCFGVarsAlias.java/UnloadCFGVarsAlias.md)                   | Removes autoloaded variables   |
 | [BuiltinAliasWithoutArgs](../../BuiltinAliasWithoutArgs.java/BuiltinAliasWithoutArgs.md) | Parent class                   |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

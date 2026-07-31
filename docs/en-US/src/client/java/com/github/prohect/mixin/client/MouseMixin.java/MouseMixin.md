@@ -29,10 +29,10 @@ Mixin that injects into `net.minecraft.client.MouseHandler` for two purposes:
 | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | [KeyBoardMixin](../KeyBoardMixin.java/KeyBoardMixin.md)                                                                           | Same pattern for keyboard events          |
 | [KeyboardInputMixin](../KeyboardInputMixin.java/KeyboardInputMixin.md)                                                            | Consumes the queue                        |
-| [BindAliasPlusClient.KEY_QUEUE](../../../BindAliasPlusClient.java/KEY_QUEUE.md)                                                   | Queue for mouse events                    |
+| [BindAliasClient.KEY_QUEUE](../../../BindAliasClient.java/KEY_QUEUE.md)                                                   | Queue for mouse events                    |
 | [BuiltinAliasWithBooleanArgs.reapplyToGameKeyMapping](../../../alias/BuiltinAliasWithBooleanArgs.java/reapplyToGameKeyMapping.md) | Re-applies held key states                |
 | [LockAlias](../../../alias/builtinAlias/LockAlias.java/LockAlias.md)                                                              | Lock mechanism checked in `onMouseButton` |
 | [onMouseButton](onMouseButton.md)                                                                                                 | Injected mouse button handler             |
 | [lockCursor](lockCursor.md)                                                                                                       | Injected cursor grab handler              |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

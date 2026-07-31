@@ -16,7 +16,7 @@ public void setFromAutoload(boolean)
 
 Sets whether this alias was loaded from the auto-loaded config file.
 
-Called by `loadCFG()` when creating aliases from `bind-alias-plus.cfg` to
+Called by `loadCFG()` when creating aliases from `bind-alias.cfg` to
 distinguish them from aliases created by the user at runtime.
 
 ## See Also
@@ -25,4 +25,4 @@ distinguish them from aliases created by the user at runtime.
 | ----------------------------------- | --------------- |
 | [isFromAutoload](isFromAutoload.md) | Reads this flag |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

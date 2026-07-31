@@ -34,4 +34,4 @@ Restores physical keyboard/mouse keys that were previously locked for the given 
 | [lockAliasByName](lockAliasByName.md) | Inverse operation                                   |
 | [unlockAction](unlockAction.md)       | Caller — falls back to this for non-vanilla actions |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

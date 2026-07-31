@@ -1,4 +1,4 @@
-# currentScreen field (src/client/java/com/github/prohect/BindAliasPlusClient.java)
+# currentScreen field (src/client/java/com/github/prohect/BindAliasClient.java)
 
 ## Syntax
 
@@ -23,4 +23,4 @@ Thread safety: read/written on render thread only.
 | Item                                                              | Description                              |
 | ----------------------------------------------------------------- | ---------------------------------------- |
 | [Alias.getCurrentScreen](../alias/Alias.java/getCurrentScreen.md) | Reads this field                         |
-| [Alias.blackList4Screen](../alias/Alias.java/blackList4Screen.md) | Aliases suppressed when a screen is open | [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)* |
+| [Alias.blackList4Screen](../alias/Alias.java/blackList4Screen.md) | Aliases suppressed when a screen is open | [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)* |

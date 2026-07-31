@@ -41,4 +41,4 @@ A non-null list of definition strings. May be empty if the input is blank.
 | [divider4AliasDefinition](divider4AliasDefinition.md)     | The delimiter used by this method              |
 | [decodeArgs2Alias](../UserAlias.java/decodeArgs2Alias.md) | Consumes the output                            |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

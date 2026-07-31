@@ -1,4 +1,4 @@
-# commandBindExecute method (src/client/java/com/github/prohect/BindAliasPlusClient.java)
+# commandBindExecute method (src/client/java/com/github/prohect/BindAliasClient.java)
 
 ## Syntax
 
@@ -50,4 +50,4 @@ The three-arg overload delegates with `fromAutoload = false`.
 | [Alias.getOppositeDefinition](../alias/Alias.java/getOppositeDefinition.md) | Computes release alias               |
 | [KeyBindingPlus](../KeyBindingPlus.java/KeyBindingPlus.md)                  | The mapping stored in `BINDING_PLUS` |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

@@ -27,7 +27,7 @@ Side effects: replaces the player's X rotation (pitch). The new pitch is clamped
 
 Callers: dispatched by [UserAlias](../../UserAlias.java/UserAlias.md) when the alias name `"setPitch"` matches an `AliasRecord`.
 
-Error handling: if player is null, logs a warning via `BindAliasPlusClient.LOGGER` and returns early. If `args` is not a valid double, `parseArgs()` logs an error and `flag` remains 0 (sets pitch to 0/horizontal). Supports variable resolution via `VarAlias.resolveDouble()`.
+Error handling: if player is null, logs a warning via `BindAliasClient.LOGGER` and returns early. If `args` is not a valid double, `parseArgs()` logs an error and `flag` remains 0 (sets pitch to 0/horizontal). Supports variable resolution via `VarAlias.resolveDouble()`.
 
 ## See Also
 
@@ -39,4 +39,4 @@ Error handling: if player is null, logs a warning via `BindAliasPlusClient.LOGGE
 | [SetYawAlias.run](../SetYawAlias.java/run.md)                                              | Sets absolute yaw                         |
 | [VarAlias](../VarAlias.java/VarAlias.md)                                                   | Variable resolution used by `parseArgs()` |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

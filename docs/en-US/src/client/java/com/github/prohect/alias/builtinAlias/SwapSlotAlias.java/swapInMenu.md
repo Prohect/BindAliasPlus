@@ -40,4 +40,4 @@ This guarded sequence gracefully handles slots that accept items only in one dir
 | [resolveSlot](resolveSlot.md) | Resolves slot references before swap |
 | [clickSlot](clickSlot.md) | Sends individual click packets |
 
-*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAliasPlus/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
+*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAlias/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*

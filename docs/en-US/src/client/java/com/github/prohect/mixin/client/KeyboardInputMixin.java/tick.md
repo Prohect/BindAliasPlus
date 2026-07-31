@@ -14,11 +14,11 @@ private static void tick(org.spongepowered.asm.mixin.injection.callback.Callback
 
 ## Remarks
 
-Processes all pending key/mouse events from `BindAliasPlusClient.KEY_QUEUE` and dispatches matching `AliasWithoutArgs` instances.
+Processes all pending key/mouse events from `BindAliasClient.KEY_QUEUE` and dispatches matching `AliasWithoutArgs` instances.
 
 Algorithm (per queued `KeyPressed`):
 
-1. Poll `BindAliasPlusClient.KEY_QUEUE.poll()` in a loop until the queue is empty.
+1. Poll `BindAliasClient.KEY_QUEUE.poll()` in a loop until the queue is empty.
 2. Look up the `KeyBindingPlus` from `BINDING_PLUS` by the `InputConstants.Key` code.
 3. If no binding exists for this key, skip it.
 4. Determine the alias name: `aliasNameOnKeyPressed()` if the key was pressed, `aliasNameOnKeyReleased()` if released.
@@ -36,7 +36,7 @@ Side effects: drains the `KEY_QUEUE` and executes bound aliases. Can trigger any
 | [KeyboardInputMixin](KeyboardInputMixin.md)                                           | Owning mixin class       |
 | [KeyBoardMixin.onKey](../KeyBoardMixin.java/onKey.md)                                 | Enqueues keyboard events |
 | [MouseMixin.onMouseButton](../MouseMixin.java/onMouseButton.md)                       | Enqueues mouse events    |
-| [BindAliasPlusClient.KEY_QUEUE](../../../BindAliasPlusClient.java/KEY_QUEUE.md)       | Queue consumed here      |
-| [BindAliasPlusClient.BINDING_PLUS](../../../BindAliasPlusClient.java/BINDING_PLUS.md) | Key-to-binding map       |
+| [BindAliasClient.KEY_QUEUE](../../../BindAliasClient.java/KEY_QUEUE.md)       | Queue consumed here      |
+| [BindAliasClient.BINDING_PLUS](../../../BindAliasClient.java/BINDING_PLUS.md) | Key-to-binding map       |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

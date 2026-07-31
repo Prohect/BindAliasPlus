@@ -26,4 +26,4 @@ The alias name string, never null.
 | [args](args.md)                 | The paired accessor for the arguments                   |
 | [Alias](../Alias.java/Alias.md) | Interface holding the registries looked up by this name |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

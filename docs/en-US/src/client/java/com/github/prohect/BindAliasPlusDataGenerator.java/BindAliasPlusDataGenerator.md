@@ -1,9 +1,9 @@
-# BindAliasPlusDataGenerator (src/client/java/com/github/prohect/BindAliasPlusDataGenerator.java)
+# BindAliasDataGenerator (src/client/java/com/github/prohect/BindAliasDataGenerator.java)
 
 ## Syntax
 
 ```java
-public class com.github.prohect.BindAliasPlusDataGenerator implements net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint
+public class com.github.prohect.BindAliasDataGenerator implements net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint
 ```
 
 ## Static Initializer
@@ -22,7 +22,7 @@ No state; stateless utility class.
 
 | Item                                                                | Description                            |
 | ------------------------------------------------------------------- | -------------------------------------- |
-| [BindAliasPlus](../BindAliasPlusClient.java/BindAliasPlusClient.md) | Client mod initializer with real logic |
+| [BindAlias](../BindAliasClient.java/BindAliasClient.md) | Client mod initializer with real logic |
 | [onInitializeDataGenerator](onInitializeDataGenerator.md)           | The single entry-point method          |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

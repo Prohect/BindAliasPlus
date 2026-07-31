@@ -18,7 +18,7 @@ Logs the args string to the mod's logger at INFO level, useful for debugging ali
 
 Algorithm:
 
-1. Calls `BindAliasPlusClient.LOGGER.info(args)` passing the full args string.
+1. Calls `BindAliasClient.LOGGER.info(args)` passing the full args string.
 
 Side effects: writes a line to the game log output.
 
@@ -31,8 +31,8 @@ Error handling: none. Any string (including null) is passed directly to the logg
 | Item                                                                      | Description                       |
 | ------------------------------------------------------------------------- | --------------------------------- |
 | [LogAlias](LogAlias.md)                                                   | Owning class                      |
-| [BindAliasPlusClient.LOGGER](../../../BindAliasPlusClient.java/LOGGER.md) | The logger this method writes to  |
+| [BindAliasClient.LOGGER](../../../BindAliasClient.java/LOGGER.md) | The logger this method writes to  |
 | [LocalSayAlias.run](../LocalSayAlias.java/run.md)                         | Displays messages in chat instead |
 | [SayAlias.run](../SayAlias.java/run.md)                                   | Sends chat to server              |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

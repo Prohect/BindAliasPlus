@@ -15,4 +15,4 @@ Used by `getDefinitions()` to split a raw args string into a list of definitions
 Double-quoted blocks are respected — a space inside quotes is treated as literal
 text, not a divider.
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

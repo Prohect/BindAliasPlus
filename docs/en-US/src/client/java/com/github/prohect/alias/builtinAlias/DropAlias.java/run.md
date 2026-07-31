@@ -38,4 +38,4 @@ Handles the press/release lifecycle for hold-to-repeat dropping.
 | [tickDrop](tickDrop.md)                               | Per-tick continuous dropping           |
 | [reapplyToGameKeyMapping](reapplyToGameKeyMapping.md) | Re-asserts key state after cursor lock |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

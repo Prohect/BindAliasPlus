@@ -29,4 +29,4 @@ Returns `null` if no matching slot is found (invalid index or slot not present i
 | [parseSlotRef](parseSlotRef.md) | Parses the raw argument into a `SlotRef` |
 | [swapInMenu](swapInMenu.md) | Uses the resolved slots to perform the swap |
 
-*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAliasPlus/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*
+*Documented for Commit: [3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833](https://github.com/Prohect/BindAlias/tree/3c3ca2d09e6dd6a483ade9730a29d42bb1ee5833)*

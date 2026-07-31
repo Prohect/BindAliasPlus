@@ -28,4 +28,4 @@ This is the same packet sequence vanilla Minecraft uses when the player presses 
 
 **Callers**: `run()` — used for the fast path when both slots involved are in the hotbar/offhand range.
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

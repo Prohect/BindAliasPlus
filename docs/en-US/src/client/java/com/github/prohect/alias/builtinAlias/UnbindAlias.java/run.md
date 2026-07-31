@@ -32,4 +32,4 @@ Constructs and sends an `/unbind` command to the server for keybinding removal.
 | ----------------------------------------- | ------------------- |
 | [BindAlias.run](../BindAlias.java/run.md) | `/bind` counterpart |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

@@ -14,7 +14,7 @@ private static void lockModBoundKeys(java.lang.String)
 
 ## Remarks
 
-Locks all mod-registered keys (in `BindAliasPlusClient.BINDING_PLUS`) whose bound alias targets the given action type. This ensures that when a vanilla key like "attack" is locked, any custom keybinding that also triggers attack (directly or through `+attack`/`builtinAttack` aliases) is also blocked.
+Locks all mod-registered keys (in `BindAliasClient.BINDING_PLUS`) whose bound alias targets the given action type. This ensures that when a vanilla key like "attack" is locked, any custom keybinding that also triggers attack (directly or through `+attack`/`builtinAttack` aliases) is also blocked.
 
 **Algorithm**:
 
@@ -35,4 +35,4 @@ Locks all mod-registered keys (in `BindAliasPlusClient.BINDING_PLUS`) whose boun
 | [unlockModBoundKeys](unlockModBoundKeys.md)             | Inverse operation                                      |
 | [aliasTargetsLockedAction](aliasTargetsLockedAction.md) | Determines whether a binding targets the locked action |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

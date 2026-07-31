@@ -29,4 +29,4 @@ registry in `Alias`. The type parameter `T` enables fluent chaining.
 | [BuiltinAliasWithoutArgs](../BuiltinAliasWithoutArgs.java/BuiltinAliasWithoutArgs.md) | Abstract base class implementing this interface      |
 | [UserAlias](../UserAlias.java/UserAlias.md)                                           | User-defined alias chain implementing this interface |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

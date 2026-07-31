@@ -42,4 +42,4 @@ Return value: The resolved `Number` (Integer or Double), or `null` if unresolvab
 | [isVariable](isVariable.md)       | Check if a string names a variable |
 | [VARIABLES](VARIABLES.md)         | Storage map                        |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

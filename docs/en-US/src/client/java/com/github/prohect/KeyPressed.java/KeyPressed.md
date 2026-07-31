@@ -13,7 +13,7 @@ _None._
 ## Remarks
 
 Immutable record representing a single key input event (press or release).
-Instances are pushed to [KEY_QUEUE](../BindAliasPlusClient.java/KEY_QUEUE.md)
+Instances are pushed to [KEY_QUEUE](../BindAliasClient.java/KEY_QUEUE.md)
 by the key-mixin hook and consumed by the mod's tick handler to dispatch
 alias chains.
 
@@ -24,6 +24,6 @@ Not thread-safe (intended for the render thread only).
 | Item                                                       | Description                                       |
 | ---------------------------------------------------------- | ------------------------------------------------- |
 | [KeyBindingPlus](../KeyBindingPlus.java/KeyBindingPlus.md) | Binds a key to aliases triggered on press/release |
-| [KEY_QUEUE](../BindAliasPlusClient.java/KEY_QUEUE.md)      | The queue that holds these events                 |
+| [KEY_QUEUE](../BindAliasClient.java/KEY_QUEUE.md)      | The queue that holds these events                 |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

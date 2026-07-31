@@ -29,4 +29,4 @@ to verify the correct screen context.
 | [getCurrentScreen](getCurrentScreen.md)       | Provides the current screen instance    |
 | [isInInventoryScreen](isInInventoryScreen.md) | Specific check for the player inventory |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

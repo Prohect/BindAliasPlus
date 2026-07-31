@@ -16,7 +16,7 @@ Mixin that injects into `net.minecraft.client.player.KeyboardInput.tick()` to pr
 
 **Injection point**: `@Inject(at = @At("HEAD"), method = "tick")` — fires at the start of every keyboard input tick, before vanilla input processing.
 
-**Purpose**: polls `BindAliasPlusClient.KEY_QUEUE` (populated by `KeyBoardMixin` and `MouseMixin`) and dispatches matching `AliasWithoutArgs` instances. This is the bridge between raw key/mouse events and alias execution.
+**Purpose**: polls `BindAliasClient.KEY_QUEUE` (populated by `KeyBoardMixin` and `MouseMixin`) and dispatches matching `AliasWithoutArgs` instances. This is the bridge between raw key/mouse events and alias execution.
 
 The tick method is static — it does not need access to the `KeyboardInput` instance, only the global state maps.
 
@@ -33,9 +33,9 @@ The tick method is static — it does not need access to the `KeyboardInput` ins
 | ------------------------------------------------------------------------------------- | --------------------------------------------- |
 | [KeyBoardMixin](../KeyBoardMixin.java/KeyBoardMixin.md)                               | Enqueues keyboard events into `KEY_QUEUE`     |
 | [MouseMixin](../MouseMixin.java/MouseMixin.md)                                        | Enqueues mouse button events into `KEY_QUEUE` |
-| [BindAliasPlusClient.KEY_QUEUE](../../../BindAliasPlusClient.java/KEY_QUEUE.md)       | The queue consumed here                       |
-| [BindAliasPlusClient.BINDING_PLUS](../../../BindAliasPlusClient.java/BINDING_PLUS.md) | Key-to-alias binding map                      |
+| [BindAliasClient.KEY_QUEUE](../../../BindAliasClient.java/KEY_QUEUE.md)       | The queue consumed here                       |
+| [BindAliasClient.BINDING_PLUS](../../../BindAliasClient.java/BINDING_PLUS.md) | Key-to-alias binding map                      |
 | [Alias.aliasesWithoutArgs](../../../alias/Alias.java/aliasesWithoutArgs.md)           | Alias registry for dispatch                   |
 | [tick](tick.md)                                                                       | The injected callback method                  |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

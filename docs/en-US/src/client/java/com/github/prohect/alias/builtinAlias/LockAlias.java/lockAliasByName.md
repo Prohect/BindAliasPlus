@@ -14,7 +14,7 @@ static void lockAliasByName(java.lang.String)
 
 ## Remarks
 
-Locks all physical keyboard/mouse keys that are bound to the given alias name in `BindAliasPlusClient.BINDING_PLUS`. The alias can still be triggered programmatically via `runAlias` — only physical input is blocked.
+Locks all physical keyboard/mouse keys that are bound to the given alias name in `BindAliasClient.BINDING_PLUS`. The alias can still be triggered programmatically via `runAlias` — only physical input is blocked.
 
 **Algorithm**:
 
@@ -36,4 +36,4 @@ Locks all physical keyboard/mouse keys that are bound to the given alias name in
 | [unlockAliasByName](unlockAliasByName.md) | Inverse operation                                   |
 | [lockAction](lockAction.md)               | Caller — falls back to this for non-vanilla actions |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

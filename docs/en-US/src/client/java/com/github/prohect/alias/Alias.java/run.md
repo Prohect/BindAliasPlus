@@ -34,4 +34,4 @@ For built-in aliases dispatched by `UserAlias.run()`, the args come from the
 | [UserAlias.run](../UserAlias.java/run.md)                 | Concrete implementation for user-defined aliases |
 | [decodeArgs2Alias](../UserAlias.java/decodeArgs2Alias.md) | Parses definition string before dispatch         |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

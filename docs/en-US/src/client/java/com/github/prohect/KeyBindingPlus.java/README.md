@@ -6,7 +6,7 @@
 | ------------------------ | --------- | ----------------------------------------------------------------------- |
 | `aliasNameOnKeyPressed`  | `String`  | Alias name dispatched when the bound key is pressed down. May be empty. |
 | `aliasNameOnKeyReleased` | `String`  | Alias name dispatched when the bound key is released. May be empty.     |
-| `fromAutoload`           | `boolean` | `true` if this binding was loaded from `bind-alias-plus.cfg`.           |
+| `fromAutoload`           | `boolean` | `true` if this binding was loaded from `bind-alias.cfg`.           |
 
 ## Methods
 
@@ -21,6 +21,6 @@ _Auto-generated: `equals`, `hashCode`, `toString`, and accessor methods._
 | Item                                                        | Description                                           |
 | ----------------------------------------------------------- | ----------------------------------------------------- |
 | [KeyPressed](../KeyPressed.java/KeyPressed.md)              | The key event that triggers this binding              |
-| [BINDING_PLUS](../BindAliasPlusClient.java/BINDING_PLUS.md) | The map that stores `Key` → `KeyBindingPlus` mappings |
+| [BINDING_PLUS](../BindAliasClient.java/BINDING_PLUS.md) | The map that stores `Key` → `KeyBindingPlus` mappings |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

@@ -32,4 +32,4 @@ Mixin that injects into `net.minecraft.client.Minecraft.tick()` to drive per-tic
 | [KeyboardInputMixin](../KeyboardInputMixin.java/KeyboardInputMixin.md)                          | Key dispatch on the same tick      |
 | [tick](tick.md)                                                                                 | The injected callback method       |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

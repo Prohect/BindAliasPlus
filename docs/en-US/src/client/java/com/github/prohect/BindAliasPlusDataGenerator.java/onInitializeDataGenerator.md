@@ -1,4 +1,4 @@
-# onInitializeDataGenerator method (src/client/java/com/github/prohect/BindAliasPlusDataGenerator.java)
+# onInitializeDataGenerator method (src/client/java/com/github/prohect/BindAliasDataGenerator.java)
 
 ## Syntax
 
@@ -22,6 +22,6 @@ or recipes are generated.
 
 | Item                                                        | Description  |
 | ----------------------------------------------------------- | ------------ |
-| [BindAliasPlusDataGenerator](BindAliasPlusDataGenerator.md) | Owning class |
+| [BindAliasDataGenerator](BindAliasDataGenerator.md) | Owning class |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

@@ -17,7 +17,7 @@ private void onMouseButton(long, net.minecraft.client.input.MouseButtonInfo, int
 
 ## Remarks
 
-Intercepts raw mouse button events and enqueues `KeyPressed` records for mod-bound mouse buttons into `BindAliasPlusClient.KEY_QUEUE`.
+Intercepts raw mouse button events and enqueues `KeyPressed` records for mod-bound mouse buttons into `BindAliasClient.KEY_QUEUE`.
 
 Algorithm:
 
@@ -42,8 +42,8 @@ Callers: called by the Mixin framework whenever a mouse button event fires.
 | [MouseMixin](MouseMixin.md)                                                         | Owning mixin class        |
 | [KeyBoardMixin.onKey](../KeyBoardMixin.java/onKey.md)                               | Same pattern for keyboard |
 | [KeyboardInputMixin.tick](../KeyboardInputMixin.java/tick.md)                       | Consumes the queue        |
-| [BindAliasPlusClient.KEY_QUEUE](../../../BindAliasPlusClient.java/KEY_QUEUE.md)     | Target queue              |
+| [BindAliasClient.KEY_QUEUE](../../../BindAliasClient.java/KEY_QUEUE.md)     | Target queue              |
 | [Alias.isUnderTextInputScreen](../../../alias/Alias.java/isUnderTextInputScreen.md) | Extra guard for mouse     |
 | [LockAlias](../../../alias/builtinAlias/LockAlias.java/LockAlias.md)                | Lock check                |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

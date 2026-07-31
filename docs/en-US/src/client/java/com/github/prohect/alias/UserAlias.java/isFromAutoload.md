@@ -9,7 +9,7 @@ public boolean isFromAutoload()
 ## Remarks
 
 Returns whether this alias was loaded from the auto-loaded config file
-(`bind-alias-plus.cfg`).
+(`bind-alias.cfg`).
 
 This flag helps distinguish aliases created by the user via commands from
 those loaded automatically when joining a world, which can affect behavior
@@ -25,4 +25,4 @@ such as whether the alias is persisted in the config.
 | ------------------------------------- | -------------- |
 | [setFromAutoload](setFromAutoload.md) | Sets this flag |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

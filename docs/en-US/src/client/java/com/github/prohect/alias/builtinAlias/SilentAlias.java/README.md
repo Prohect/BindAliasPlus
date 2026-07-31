@@ -18,7 +18,7 @@
 | Item                                                                                                 | Description                              |
 | ---------------------------------------------------------------------------------------------------- | ---------------------------------------- |
 | [BuiltinAliasWithBooleanArgs](../../BuiltinAliasWithBooleanArgs.java/BuiltinAliasWithBooleanArgs.md) | Parent class — boolean arg parsing       |
-| [BindAliasPlusClient](../../../BindAliasPlusClient.java/BindAliasPlusClient.md)                      | Main class owning `silentMode`           |
+| [BindAliasClient](../../../BindAliasClient.java/BindAliasClient.md)                      | Main class owning `silentMode`           |
 | [UserAlias](../../UserAlias.java/UserAlias.md)                                                       | Checks `silentMode` to suppress feedback |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

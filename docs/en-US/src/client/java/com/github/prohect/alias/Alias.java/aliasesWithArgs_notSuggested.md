@@ -16,4 +16,4 @@ Looked up third in `UserAlias.run()` and `UserAlias.runInternal()` dispatch,
 after both `aliasesWithoutArgs_*` registries but before the suggested
 `aliasesWithArgs` registry.
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

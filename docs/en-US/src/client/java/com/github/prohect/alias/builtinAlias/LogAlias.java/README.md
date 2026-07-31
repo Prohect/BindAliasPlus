@@ -10,14 +10,14 @@
 
 | Name  | Signature                   | Description                                                |
 | ----- | --------------------------- | ---------------------------------------------------------- |
-| `run` | `LogAlias run(String args)` | Logs `args` to `BindAliasPlusClient.LOGGER` at INFO level. |
+| `run` | `LogAlias run(String args)` | Logs `args` to `BindAliasClient.LOGGER` at INFO level. |
 
 ## See Also
 
 | Item                                                                            | Description                              |
 | ------------------------------------------------------------------------------- | ---------------------------------------- |
 | [BuiltinAliasWithArgs](../../BuiltinAliasWithArgs.java/BuiltinAliasWithArgs.md) | Parent class — raw string arg alias base |
-| [BindAliasPlusClient](../../../BindAliasPlusClient.java/BindAliasPlusClient.md) | Main class providing LOGGER              |
+| [BindAliasClient](../../../BindAliasClient.java/BindAliasClient.md) | Main class providing LOGGER              |
 | [LocalSayAlias](../LocalSayAlias.java/LocalSayAlias.md)                         | Client-side chat message alias           |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

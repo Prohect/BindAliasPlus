@@ -36,4 +36,4 @@ Returns `null` for unrecognized actions (which triggers alias-name locking fallb
 
 Return value: The matching `KeyMapping`, or `null` if the action type is not a recognized vanilla key.
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

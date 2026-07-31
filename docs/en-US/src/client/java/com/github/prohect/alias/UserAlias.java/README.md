@@ -6,7 +6,7 @@
 | -------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `aliases`      | `ArrayDeque<AliasRecord>` | Queue of parsed alias entries. Populated by `decodeArgs2Alias()`, consumed by `run()` and `runInternal()`. Package-private.                     |
 | `args`         | `String`                  | The raw definition string passed at construction. Used by `decodeArgs2Alias()` and returned by `getDefinitionString()`. Package-private, final. |
-| `fromAutoload` | `boolean`                 | Whether this alias was loaded from the auto-loaded config (`bind-alias-plus.cfg`). `false` by default.                                          |
+| `fromAutoload` | `boolean`                 | Whether this alias was loaded from the auto-loaded config (`bind-alias.cfg`). `false` by default.                                          |
 
 ## Methods
 
@@ -30,4 +30,4 @@
 | [AliasRecord](../AliasRecord.java/AliasRecord.md)                | Entries stored in the `aliases` deque                |
 | [WaitAlias](builtinAlias/WaitAlias.java/WaitAlias.md)            | Special-cased during dispatch                        |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

@@ -14,7 +14,7 @@ public com.github.prohect.alias.Alias run(java.lang.String)
 
 ## Remarks
 
-Removes all autoloaded keybindings from `BindAliasPlusClient.BINDING_PLUS` and cleans up associated command-created aliases.
+Removes all autoloaded keybindings from `BindAliasClient.BINDING_PLUS` and cleans up associated command-created aliases.
 
 **Algorithm**:
 
@@ -24,8 +24,8 @@ Removes all autoloaded keybindings from `BindAliasPlusClient.BINDING_PLUS` and c
 4. Remove tracked alias names from `Alias.aliasesWithoutArgs_fromBindCommand`.
 5. Log the removal count unless `silentMode` is active.
 
-**Side effects**: Removes entries from `BindAliasPlusClient.BINDING_PLUS` and `Alias.aliasesWithoutArgs_fromBindCommand`.
+**Side effects**: Removes entries from `BindAliasClient.BINDING_PLUS` and `Alias.aliasesWithoutArgs_fromBindCommand`.
 
 **Callers**: Invoked by the alias dispatch system and by `UnloadCFGAllAlias.run()`.
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

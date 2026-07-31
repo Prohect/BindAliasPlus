@@ -36,4 +36,4 @@ Restores a previously locked game action or alias to its original state.
 | [unlockAliasByName](unlockAliasByName.md)   | Fallback for non-vanilla actions        |
 | [unlockModBoundKeys](unlockModBoundKeys.md) | Unblocks mod-bound keys for this action |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

@@ -1,4 +1,4 @@
-# KEY_QUEUE field (src/client/java/com/github/prohect/BindAliasPlusClient.java)
+# KEY_QUEUE field (src/client/java/com/github/prohect/BindAliasClient.java)
 
 ## Syntax
 
@@ -21,4 +21,4 @@ Cleared on disconnect.
 
 | Item                                           | Description                          |
 | ---------------------------------------------- | ------------------------------------ |
-| [KeyPressed](../KeyPressed.java/KeyPressed.md) | The record type stored in this queue | [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)* |
+| [KeyPressed](../KeyPressed.java/KeyPressed.md) | The record type stored in this queue | [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)* |

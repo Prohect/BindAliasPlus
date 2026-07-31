@@ -17,7 +17,7 @@
 | Item                                                                                     | Description                      |
 | ---------------------------------------------------------------------------------------- | -------------------------------- |
 | [BuiltinAliasWithoutArgs](../../BuiltinAliasWithoutArgs.java/BuiltinAliasWithoutArgs.md) | Parent class — no-arg alias base |
-| [BindAliasPlusClient](../../../BindAliasPlusClient.java/BindAliasPlusClient.md)          | Main class providing LOGGER      |
+| [BindAliasClient](../../../BindAliasClient.java/BindAliasClient.md)          | Main class providing LOGGER      |
 | [ReloadCFGAlias](../ReloadCFGAlias.java/ReloadCFGAlias.md)                               | Another no-arg utility alias     |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

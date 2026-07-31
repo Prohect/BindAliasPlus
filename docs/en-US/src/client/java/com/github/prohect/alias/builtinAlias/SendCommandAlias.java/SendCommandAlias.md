@@ -29,4 +29,4 @@ Key collaborators: extends [BuiltinAliasWithGreedyStringArgs](../../BuiltinAlias
 | [LocalSayAlias](../LocalSayAlias.java/LocalSayAlias.md)                                                             | Displays client-side message             |
 | [run](run.md)                                                                                                       | The `run` method that sends the command  |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

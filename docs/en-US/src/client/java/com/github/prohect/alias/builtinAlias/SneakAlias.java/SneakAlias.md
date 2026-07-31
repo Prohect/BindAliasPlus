@@ -31,4 +31,4 @@ Key collaborators: extends [BuiltinAliasWithBooleanArgs](../../BuiltinAliasWithB
 | [JumpAlias](../JumpAlias.java/JumpAlias.md)                                                          | Same pattern for `keyJump`                       |
 | [run](run.md)                                                                                        | The `run` method that dispatches the key event   |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

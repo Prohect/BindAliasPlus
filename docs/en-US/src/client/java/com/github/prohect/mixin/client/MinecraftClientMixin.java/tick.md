@@ -37,4 +37,4 @@ Callers: called by the Mixin framework at the start of every `Minecraft.tick()`,
 | [DropAlias.tickDrop](../../../alias/builtinAlias/DropAlias.java/DropAlias.md)     | Continuous drop logic          |
 | [WaitAlias.tasksWaiting](../../../alias/builtinAlias/WaitAlias.java/WaitAlias.md) | The task list consumed here    |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

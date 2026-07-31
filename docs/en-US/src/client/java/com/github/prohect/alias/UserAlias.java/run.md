@@ -52,4 +52,4 @@ Returns `this` for fluent chaining.
 | [Alias.blackList4Screen](../Alias.java/blackList4Screen.md) | Screen blacklist checked during dispatch                               |
 | [WaitAlias](builtinAlias/WaitAlias.java/WaitAlias.md)       | Special-cased alias that short-circuits dispatch                       |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

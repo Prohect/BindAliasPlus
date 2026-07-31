@@ -16,7 +16,7 @@ Mixin that injects into `net.minecraft.client.KeyboardHandler.keyPress()` to enq
 
 **Injection point**: `@Inject(at = @At("HEAD"), method = "keyPress")` — fires at the start of key press handling, before vanilla processing.
 
-**Purpose**: intercepts raw key events from GLFW, filters for mod-bound keys (those in `BINDING_PLUS`), and enqueues `KeyPressed` records into `BindAliasPlusClient.KEY_QUEUE`. The queue is later processed by `KeyboardInputMixin.tick()`.
+**Purpose**: intercepts raw key events from GLFW, filters for mod-bound keys (those in `BINDING_PLUS`), and enqueues `KeyPressed` records into `BindAliasClient.KEY_QUEUE`. The queue is later processed by `KeyboardInputMixin.tick()`.
 
 **Guards**:
 
@@ -30,10 +30,10 @@ Mixin that injects into `net.minecraft.client.KeyboardHandler.keyPress()` to enq
 | ------------------------------------------------------------------------------------- | ------------------------------------------------- |
 | [KeyboardInputMixin](../KeyboardInputMixin.java/KeyboardInputMixin.md)                | Consumes the queue this mixin fills               |
 | [MouseMixin](../MouseMixin.java/MouseMixin.md)                                        | Same pattern for mouse button events              |
-| [BindAliasPlusClient.KEY_QUEUE](../../../BindAliasPlusClient.java/KEY_QUEUE.md)       | The queue where `KeyPressed` records are enqueued |
-| [BindAliasPlusClient.BINDING_PLUS](../../../BindAliasPlusClient.java/BINDING_PLUS.md) | Map checked for mod-bound keys                    |
+| [BindAliasClient.KEY_QUEUE](../../../BindAliasClient.java/KEY_QUEUE.md)       | The queue where `KeyPressed` records are enqueued |
+| [BindAliasClient.BINDING_PLUS](../../../BindAliasClient.java/BINDING_PLUS.md) | Map checked for mod-bound keys                    |
 | [LockAlias](../../../alias/builtinAlias/LockAlias.java/LockAlias.md)                  | Lock mechanism that blocks certain keys           |
 | [KeyPressed](../../../KeyPressed.java/KeyPressed.md)                                  | The record enqueued for each key event            |
 | [onKey](onKey.md)                                                                     | The injected callback method                      |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

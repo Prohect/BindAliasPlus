@@ -12,7 +12,7 @@ _None._
 
 ## Remarks
 
-Core interface for all alias types in BindAliasPlus. Defines the static registries that
+Core interface for all alias types in BindAlias. Defines the static registries that
 hold all registered aliases, the definition-parsing utilities, and screen-type helper
 methods.
 
@@ -50,4 +50,4 @@ through even when a screen is open.
 | [AliasRecord](../AliasRecord.java/AliasRecord.md)                | Record produced by parsing                      |
 | [UserAlias](../UserAlias.java/UserAlias.md)                      | Consumes the registries and parsing utilities   |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

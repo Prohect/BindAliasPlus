@@ -22,4 +22,4 @@ May be an empty string if no release alias is configured.
 | [aliasNameOnKeyPressed](aliasNameOnKeyPressed.md)                           | The press counterpart                                  |
 | [Alias.getOppositeDefinition](../alias/Alias.java/getOppositeDefinition.md) | Computes the release alias for typical boolean actions |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

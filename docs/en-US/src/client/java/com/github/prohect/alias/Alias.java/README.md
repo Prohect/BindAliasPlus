@@ -22,7 +22,7 @@
 | `getDefinitionSplits`         | `static ArrayList<String> getDefinitionSplits(String)` | Splits a single definition into tokens using `divider4AliasArgs`.                  |
 | `run`                         | `T run(String)`                                        | Abstract: executes the alias with the given arguments string.                      |
 | `addToScreenBlackList`        | `default T addToScreenBlackList()`                     | Registers this alias in `blackList4Screen`.                                        |
-| `getCurrentScreen`            | `static Screen getCurrentScreen()`                     | Returns the current screen from `BindAliasPlusClient.currentScreen`.               |
+| `getCurrentScreen`            | `static Screen getCurrentScreen()`                     | Returns the current screen from `BindAliasClient.currentScreen`.               |
 | `isUnderTextInputScreen`      | `static boolean isUnderTextInputScreen()`              | Checks if the current screen accepts text input (chat, command block, sign, book). |
 | `isUnderAnyScreen`            | `static boolean isUnderAnyScreen()`                    | Checks if any screen is currently open.                                            |
 | `isInContainerScreen`         | `static boolean isInContainerScreen()`                 | Checks if the current screen is an `AbstractContainerScreen`.                      |
@@ -38,4 +38,4 @@
 | [AliasWithoutArgs](../AliasWithoutArgs.java/AliasWithoutArgs.md) | Sub-interface for aliases without arguments                       |
 | [UserAlias](../UserAlias.java/UserAlias.md)                      | User-defined alias chain that dispatches against these registries |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

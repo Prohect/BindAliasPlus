@@ -29,4 +29,4 @@ Builtin alias to hold-to-repeat item dropping. Registered as `builtinDrop`.
 | [BuiltinAliasWithBooleanArgs](../../BuiltinAliasWithBooleanArgs.java/BuiltinAliasWithBooleanArgs.md) | Parent class providing `flag` and `parseArgs()` |
 | [ReapplyAlias](../ReapplyAlias.java/ReapplyAlias.md)                                                 | Can reapply drop state after screen transitions |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

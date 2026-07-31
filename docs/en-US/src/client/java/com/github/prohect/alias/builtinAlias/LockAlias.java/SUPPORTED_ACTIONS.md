@@ -14,4 +14,4 @@ Used by the static initializer to build `ACTION_ALIAS_PATTERNS` (mapping bare ac
 
 Read-only after class loading. No thread-safety concerns.
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

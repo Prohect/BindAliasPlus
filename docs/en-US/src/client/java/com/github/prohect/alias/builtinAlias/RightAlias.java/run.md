@@ -28,7 +28,7 @@ Side effects: modifies `keyRight.setDown` and `keyRight.clickCount` on the game'
 
 Callers: dispatched by [UserAlias](../../UserAlias.java/UserAlias.md) when the alias name `"builtinRight"` matches an `AliasRecord`.
 
-Error handling: `parseArgs()` logs a warning for invalid args (not `"0"` or `"1"`) via `BindAliasPlusClient.LOGGER`.
+Error handling: `parseArgs()` logs a warning for invalid args (not `"0"` or `"1"`) via `BindAliasClient.LOGGER`.
 
 ## See Also
 
@@ -40,4 +40,4 @@ Error handling: `parseArgs()` logs a warning for invalid args (not `"0"` or `"1"
 | [LeftAlias.run](../LeftAlias.java/run.md)                                                    | Same pattern for `keyLeft`                |
 | [ForwardAlias.run](../ForwardAlias.java/run.md)                                              | Same pattern for `keyUp`                  |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

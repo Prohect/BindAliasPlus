@@ -1,4 +1,4 @@
-# MOD_ID field (src/main/java/com/github/prohect/BindAliasPlus.java)
+# MOD_ID field (src/main/java/com/github/prohect/BindAlias.java)
 
 ## Syntax
 
@@ -8,11 +8,11 @@ public static final java.lang.String MOD_ID
 
 ## Remarks
 
-The mod's namespace identifier: `"bind-alias-plus"`. Used as:
+The mod's namespace identifier: `"bind-alias"`. Used as:
 
-- The SLF4J logger name in both `BindAliasPlus` and `BindAliasPlusClient`.
+- The SLF4J logger name in both `BindAlias` and `BindAliasClient`.
 - The config file path segment (`FabricLoader.getConfigDir().resolve(MOD_ID + ".cfg")`).
 
 Read-only constant. Set at class load time.
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

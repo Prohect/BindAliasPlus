@@ -18,7 +18,7 @@ Lifecycle: singleton — instantiated once during `onInitializeClient()`, regist
 
 Thread safety: not thread-safe; runs on the render thread. Scheduling a stop triggers a graceful shutdown sequence.
 
-Key collaborators: extends [BuiltinAliasWithoutArgs](../../BuiltinAliasWithoutArgs.java/BuiltinAliasWithoutArgs.md). Uses `Minecraft.getInstance().stop()` to schedule a graceful stop. Logs the shutdown via `BindAliasPlusClient.LOGGER`.
+Key collaborators: extends [BuiltinAliasWithoutArgs](../../BuiltinAliasWithoutArgs.java/BuiltinAliasWithoutArgs.md). Uses `Minecraft.getInstance().stop()` to schedule a graceful stop. Logs the shutdown via `BindAliasClient.LOGGER`.
 
 Primary use case: automated test workflows in the autoload CFG — define test aliases, run them, then call `shutdown` to exit cleanly without user intervention.
 
@@ -27,8 +27,8 @@ Primary use case: automated test workflows in the autoload CFG — define test a
 | Item                                                                                     | Description                              |
 | ---------------------------------------------------------------------------------------- | ---------------------------------------- |
 | [BuiltinAliasWithoutArgs](../../BuiltinAliasWithoutArgs.java/BuiltinAliasWithoutArgs.md) | Parent class — no-arg alias base         |
-| [BindAliasPlusClient](../../../BindAliasPlusClient.java/BindAliasPlusClient.md)          | LOGGER used for shutdown message         |
+| [BindAliasClient](../../../BindAliasClient.java/BindAliasClient.md)          | LOGGER used for shutdown message         |
 | [ReloadCFGAlias](../ReloadCFGAlias.java/ReloadCFGAlias.md)                               | Another no-arg utility alias             |
 | [run](run.md)                                                                            | The `run` method that initiates shutdown |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

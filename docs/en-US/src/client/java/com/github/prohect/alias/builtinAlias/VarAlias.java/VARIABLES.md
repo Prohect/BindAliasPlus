@@ -14,4 +14,4 @@ Populated by `run()` and `run(String, boolean)`. Read by `resolveValue()`, `reso
 
 Declared `final` (the reference is immutable) but the map contents are mutable. Not thread-safe.
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

@@ -35,4 +35,4 @@ compiler.
 | [UserAlias](../UserAlias.java/UserAlias.md)               | Creates and consumes `AliasRecord` instances                 |
 | [decodeArgs2Alias](../UserAlias.java/decodeArgs2Alias.md) | Method that produces `AliasRecord` entries                   |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

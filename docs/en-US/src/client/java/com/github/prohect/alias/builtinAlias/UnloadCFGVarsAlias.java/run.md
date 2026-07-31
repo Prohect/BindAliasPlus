@@ -20,7 +20,7 @@ Removes all autoloaded variables from `VarAlias.VARIABLES` and `VarAlias.AUTOLOA
 
 1. Collect all names from `VarAlias.AUTOLOADED_VARIABLES` into a snapshot list.
 2. For each name, remove from both `VarAlias.VARIABLES` and `VarAlias.AUTOLOADED_VARIABLES`.
-3. Log the removal count unless `BindAliasPlusClient.silentMode` is active.
+3. Log the removal count unless `BindAliasClient.silentMode` is active.
 
 **Side effects**: Removes entries from the two static collections in `VarAlias`.
 
@@ -33,4 +33,4 @@ Removes all autoloaded variables from `VarAlias.VARIABLES` and `VarAlias.AUTOLOA
 | [VarAlias.VARIABLES](../VarAlias.java/VARIABLES.md)                       | The storage map  |
 | [VarAlias.AUTOLOADED_VARIABLES](../VarAlias.java/AUTOLOADED_VARIABLES.md) | The tracking set |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

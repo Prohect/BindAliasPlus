@@ -39,4 +39,4 @@ Return value: `true` if the alias targets (directly or transitively via UserAlia
 | [lockModBoundKeys](lockModBoundKeys.md)     | Caller      |
 | [unlockModBoundKeys](unlockModBoundKeys.md) | Caller      |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

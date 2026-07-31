@@ -1,14 +1,14 @@
-# BindAliasPlusClient
+# BindAliasClient
 
 ## Fields
 
 | Name            | Type                                      | Description                                                                                               |
 | --------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `INSTANCE`      | `BindAliasPlusClient`                     | Eager singleton instance. Used to access the class from mixins and built-in aliases.                      |
-| `cfgPath`       | `Path`                                    | Path to `bind-alias-plus.cfg` in the Minecraft config directory. Created on init if absent.               |
+| `INSTANCE`      | `BindAliasClient`                     | Eager singleton instance. Used to access the class from mixins and built-in aliases.                      |
+| `cfgPath`       | `Path`                                    | Path to `bind-alias.cfg` in the Minecraft config directory. Created on init if absent.               |
 | `KEY_QUEUE`     | `ArrayDeque<KeyPressed>`                  | Thread-unsafe FIFO queue of pending key events, consumed by the tick handler.                             |
 | `BINDING_PLUS`  | `Map<InputConstants.Key, KeyBindingPlus>` | Global key-binding map. Looked up on every key event to find which aliases to dispatch.                   |
-| `LOGGER`        | `Logger`                                  | SLF4J logger for the client source set. Named `"bind-alias-plus"`.                                        |
+| `LOGGER`        | `Logger`                                  | SLF4J logger for the client source set. Named `"bind-alias"`.                                        |
 | `silentMode`    | `boolean`                                 | When `true`, suppresses chat feedback messages. Toggled by `SilentAlias`. Reset to `false` on disconnect. |
 | `currentScreen` | `Screen`                                  | Cached current screen, updated by `GuiMixin` on every screen change. `null` when no screen is open.       |
 
@@ -19,7 +19,7 @@
 | Name                 | Signature                   | Description                                                                                                 |
 | -------------------- | --------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `onInitializeClient` | `void onInitializeClient()` | Full client init: registers built-in aliases, commands, autoload hooks, and disconnect cleanup.             |
-| `loadCFG`            | `void loadCFG()`            | Reads `bind-alias-plus.cfg`, parses each line, and delegates to the corresponding `command*Execute` method. |
+| `loadCFG`            | `void loadCFG()`            | Reads `bind-alias.cfg`, parses each line, and delegates to the corresponding `command*Execute` method. |
 
 ### Command Handlers (private helpers)
 
@@ -42,9 +42,9 @@
 
 | Item                                                                                          | Description                            |
 | --------------------------------------------------------------------------------------------- | -------------------------------------- |
-| [BindAliasPlus](../../../../main/java/com/github/prohect/BindAliasPlus.java/BindAliasPlus.md) | Common-side mod entry point            |
+| [BindAlias](../../../../main/java/com/github/prohect/BindAlias.java/BindAlias.md) | Common-side mod entry point            |
 | [Alias](../alias/Alias.java/Alias.md)                                                         | Core alias interface and registries    |
 | [KeyBindingPlus](../KeyBindingPlus.java/KeyBindingPlus.md)                                    | Key-to-alias mapping record            |
 | [KeyPressed](../KeyPressed.java/KeyPressed.md)                                                | Key event record stored in `KEY_QUEUE` |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

@@ -30,4 +30,4 @@ Builtin alias to select a hotbar slot. Registered as `slot`.
 | [SwapSlotAlias](../SwapSlotAlias.java/SwapSlotAlias.md)                         | Swaps items between slots (not just selection) |
 | [BuiltinAliasWithArgs](../../BuiltinAliasWithArgs.java/BuiltinAliasWithArgs.md) | Parent class                                   |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

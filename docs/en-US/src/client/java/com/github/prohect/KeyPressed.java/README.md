@@ -16,6 +16,6 @@ _Record accessor and auto-generated methods only (`equals`, `hashCode`, `toStrin
 | Item                                                       | Description                                      |
 | ---------------------------------------------------------- | ------------------------------------------------ |
 | [KeyBindingPlus](../KeyBindingPlus.java/KeyBindingPlus.md) | Maps a key to alias names triggered by it        |
-| [KEY_QUEUE](../BindAliasPlusClient.java/KEY_QUEUE.md)      | Queue of `KeyPressed` events consumed by the mod |
+| [KEY_QUEUE](../BindAliasClient.java/KEY_QUEUE.md)      | Queue of `KeyPressed` events consumed by the mod |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

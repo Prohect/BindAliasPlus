@@ -26,4 +26,4 @@ a variable name (e.g., `$slot`) instead of a literal number.
 | [parseArgs](parseArgs.md)                                                    | Parsing logic       |
 | [VarAlias](builtinAlias/VarAlias.java/VarAlias.md)                           | Variable resolution |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

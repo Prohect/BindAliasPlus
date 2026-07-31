@@ -27,4 +27,4 @@ _All fields are private static final; initialized in the `static` block._
 | [static-init](static-init.md)                               | One-time reflection field/method resolution |
 | [Alias.getCurrentScreen](../Alias.java/getCurrentScreen.md) | Convenience wrapper around this helper      |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

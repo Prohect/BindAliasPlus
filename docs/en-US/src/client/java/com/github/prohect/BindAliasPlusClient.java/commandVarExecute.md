@@ -1,4 +1,4 @@
-# commandVarExecute method (src/client/java/com/github/prohect/BindAliasPlusClient.java)
+# commandVarExecute method (src/client/java/com/github/prohect/BindAliasClient.java)
 
 ## Syntax
 
@@ -38,4 +38,4 @@ The two-arg overload delegates to this method with `fromAutoload = false`.
 | [VarAlias](../alias/builtinAlias/VarAlias.java/VarAlias.md)         | The alias that performs the actual variable set/update |
 | [Alias.divider4AliasArgs](../alias/Alias.java/divider4AliasArgs.md) | Delimiter used to combine varName and source           |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

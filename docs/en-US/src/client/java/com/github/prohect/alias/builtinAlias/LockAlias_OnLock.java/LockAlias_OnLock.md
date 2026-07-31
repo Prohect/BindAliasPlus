@@ -30,4 +30,4 @@ User-facing lock-key alias providing a friendlier syntax than the raw `builtinLo
 | [LockAlias_Unlock](../LockAlias_Unlock.java/LockAlias_Unlock.md)                | Inverse — unlock shortcut (`-lockKey`)  |
 | [BuiltinAliasWithArgs](../../BuiltinAliasWithArgs.java/BuiltinAliasWithArgs.md) | Parent class                            |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

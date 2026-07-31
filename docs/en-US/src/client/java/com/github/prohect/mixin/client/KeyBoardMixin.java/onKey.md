@@ -17,7 +17,7 @@ private void onKey(long, int, net.minecraft.client.input.KeyEvent, org.spongepow
 
 ## Remarks
 
-Intercepts raw keyboard events and enqueues `KeyPressed` records for mod-bound keys into `BindAliasPlusClient.KEY_QUEUE`.
+Intercepts raw keyboard events and enqueues `KeyPressed` records for mod-bound keys into `BindAliasClient.KEY_QUEUE`.
 
 Algorithm:
 
@@ -39,8 +39,8 @@ Callers: called by the Mixin framework whenever a key event fires. The `Keyboard
 | [KeyBoardMixin](KeyBoardMixin.md)                                               | Owning mixin class     |
 | [KeyboardInputMixin.tick](../KeyboardInputMixin.java/tick.md)                   | Consumes the queue     |
 | [MouseMixin.onMouseButton](../MouseMixin.java/onMouseButton.md)                 | Same pattern for mouse |
-| [BindAliasPlusClient.KEY_QUEUE](../../../BindAliasPlusClient.java/KEY_QUEUE.md) | Target queue           |
+| [BindAliasClient.KEY_QUEUE](../../../BindAliasClient.java/KEY_QUEUE.md) | Target queue           |
 | [KeyPressed](../../../KeyPressed.java/KeyPressed.md)                            | Record type enqueued   |
 | [LockAlias](../../../alias/builtinAlias/LockAlias.java/LockAlias.md)            | Lock check             |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

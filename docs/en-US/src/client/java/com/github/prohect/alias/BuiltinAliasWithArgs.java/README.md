@@ -24,4 +24,4 @@
 | [BuiltinAliasWithIntegerArgs](../BuiltinAliasWithIntegerArgs.java/BuiltinAliasWithIntegerArgs.md)                | Subclass for integer-flag aliases      |
 | [BuiltinAliasWithGreedyStringArgs](../BuiltinAliasWithGreedyStringArgs.java/BuiltinAliasWithGreedyStringArgs.md) | Subclass for greedy string aliases     |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

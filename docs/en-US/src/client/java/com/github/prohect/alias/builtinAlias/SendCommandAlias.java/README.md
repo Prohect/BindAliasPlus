@@ -22,4 +22,4 @@
 | [LocalSayAlias](../LocalSayAlias.java/LocalSayAlias.md)                                                             | Client-side message alias         |
 | [LogAlias](../LogAlias.java/LogAlias.md)                                                                            | Logs to mod logger                |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

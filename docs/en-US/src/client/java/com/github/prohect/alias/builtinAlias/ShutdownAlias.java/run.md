@@ -14,7 +14,7 @@ public com.github.prohect.alias.Alias run(java.lang.String)
 
 ## Remarks
 
-Initiates a graceful game shutdown by calling `Minecraft.getInstance().stop()`. Logs the shutdown message via `BindAliasPlusClient.LOGGER.info`.
+Initiates a graceful game shutdown by calling `Minecraft.getInstance().stop()`. Logs the shutdown message via `BindAliasClient.LOGGER.info`.
 
 Algorithm:
 
@@ -32,7 +32,7 @@ Error handling: none. The `stop()` method is a fire-and-forget scheduling call.
 | Item                                                                      | Description                       |
 | ------------------------------------------------------------------------- | --------------------------------- |
 | [ShutdownAlias](ShutdownAlias.md)                                         | Owning class                      |
-| [BindAliasPlusClient.LOGGER](../../../BindAliasPlusClient.java/LOGGER.md) | Logger used for shutdown message  |
+| [BindAliasClient.LOGGER](../../../BindAliasClient.java/LOGGER.md) | Logger used for shutdown message  |
 | [ReloadCFGAlias.run](../ReloadCFGAlias.java/run.md)                       | Another no-arg utility run method |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

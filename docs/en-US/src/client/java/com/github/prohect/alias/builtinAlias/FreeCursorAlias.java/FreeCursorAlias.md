@@ -31,4 +31,4 @@ This is hidden from command suggestions since it's an agent tool, not something 
 | [run](run.md) | Entry point |
 | [freeCursor](freeCursor.md) | Static flag field |
 
-_Documented for Commit: [2003c5c](https://github.com/Prohect/BindAliasPlus/tree/2003c5c648f2214e6b8c099a0db1ec96a130246b)_
+_Documented for Commit: [2003c5c](https://github.com/Prohect/BindAlias/tree/2003c5c648f2214e6b8c099a0db1ec96a130246b)_

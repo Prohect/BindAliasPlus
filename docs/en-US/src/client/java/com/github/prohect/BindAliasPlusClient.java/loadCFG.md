@@ -1,4 +1,4 @@
-# loadCFG method (src/client/java/com/github/prohect/BindAliasPlusClient.java)
+# loadCFG method (src/client/java/com/github/prohect/BindAliasClient.java)
 
 ## Syntax
 
@@ -52,4 +52,4 @@ logged; the method returns early if the file can't be opened.
 | [commandVarExecute](commandVarExecute.md)                                              | Handles `var` lines               |
 | [UnloadCFGAllAlias](../alias/builtinAlias/UnloadCFGAllAlias.java/UnloadCFGAllAlias.md) | Clears all autoloaded state       |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

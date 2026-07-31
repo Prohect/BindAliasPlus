@@ -12,4 +12,4 @@ An immutable list of action names accepted by `ReapplyAlias` for command suggest
 
 Each name maps to a `builtin*` alias (e.g. `forward` → `builtinForward`) via the capitalization logic in `run()`. Read-only after class loading.
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_

@@ -17,7 +17,7 @@
 | Item                                                                                     | Description                            |
 | ---------------------------------------------------------------------------------------- | -------------------------------------- |
 | [BuiltinAliasWithoutArgs](../../BuiltinAliasWithoutArgs.java/BuiltinAliasWithoutArgs.md) | Parent class — no-arg alias base       |
-| [BindAliasPlusClient](../../../BindAliasPlusClient.java/BindAliasPlusClient.md)          | Main class whose `loadCFG()` is called |
+| [BindAliasClient](../../../BindAliasClient.java/BindAliasClient.md)          | Main class whose `loadCFG()` is called |
 | [ShutdownAlias](../ShutdownAlias.java/ShutdownAlias.md)                                  | Another no-arg utility alias           |
 
-_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAliasPlus/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
+_Documented for Commit: [7c41e9ab8bab207ec351187cabc3c260c9087925](https://github.com/Prohect/BindAlias/tree/7c41e9ab8bab207ec351187cabc3c260c9087925)_
