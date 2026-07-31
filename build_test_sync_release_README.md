@@ -39,6 +39,15 @@ zed-reload --settle 15 --wait 30 \
 6. **Verify** → `unzip -p <jar> fabric.mod.json` — read and check the **full unzipped JSON** (do NOT use `grep` — you must see every field). Verify `version`, `depends.minecraft` range, and `entrypoints` match the target branch.
 7. **Release** → first `git push` **all** branches. Then `gh release create` with **only the main JARs** (no sources, no dev JARs) as assets. Do NOT create the release until EVERY branch is built, verified, release jar collected and pushed.
 
+### parallel sub-agents: never for cross-branch edits
+
+Spawning sub-agents that write to the same working tree on different git branches causes undefined behaviour:
+- `git checkout` between branches interleaved with sub-agent writes corrupts the working tree — untracked files leak across branches, tracked files become stale from wrong branch.
+- The Gradle daemon caches Loom state (mappings, access widener remapping). Switching branches without `./gradlew --stop` causes stale cache hits and phantom build failures (e.g. access widener silently ignored).
+- `build/` persists across `git checkout`. `./gradlew clean` is not enough — always `rm -rf build/libs` before building on a switched branch.
+
+**Rule**: sync branches sequentially. Per branch: `checkout` → `rm -rf build/libs` → `./gradlew --stop` → `build` → `runTestClient` → verify → commit. Only then move to the next branch.
+
 ## active branches
 
 | Branch           | MC      | Mappings |
