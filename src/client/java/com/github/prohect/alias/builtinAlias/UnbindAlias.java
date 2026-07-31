@@ -2,12 +2,12 @@ package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasClient;
 import com.github.prohect.alias.Alias;
-import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
+import com.github.prohect.alias.BuiltinAliasWithStringArgs;
 import java.util.regex.Pattern;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 
-public class UnbindAlias extends BuiltinAliasWithGreedyStringArgs<UnbindAlias> {
+public class UnbindAlias extends BuiltinAliasWithStringArgs<UnbindAlias> {
 
     public UnbindAlias() {
         super("unbind");

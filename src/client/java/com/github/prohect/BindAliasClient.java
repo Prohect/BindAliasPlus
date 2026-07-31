@@ -47,7 +47,7 @@ public class BindAliasClient implements ClientModInitializer {
     public static final Path cfgPath = FabricLoader.getInstance().getConfigDir().resolve(MOD_ID + ".cfg");
 
     public static final ArrayDeque<KeyPressed> KEY_QUEUE = new ArrayDeque<>();
-    public static final Map<InputUtil.Key, KeyBindingPlus> BINDING_PLUS = new HashMap<>();
+    public static final Map<InputUtil.Key, BindAliasKeyBinding> BINDING_PLUS = new HashMap<>();
 
     public static final Logger LOGGER = LoggerFactory.getLogger("bind-alias");
 
@@ -551,7 +551,7 @@ public class BindAliasClient implements ClientModInitializer {
         if (!oppositeDefinition.isBlank())
             Alias.aliasesWithoutArgs_fromBindCommand.put(String.valueOf(aliasName1),
                     new UserAlias(oppositeDefinition, fromAutoload));
-        BINDING_PLUS.put(key, new KeyBindingPlus(aliasName.toString(),
+        BINDING_PLUS.put(key, new BindAliasKeyBinding(aliasName.toString(),
                 oppositeDefinition.isBlank() ? "" : aliasName1.toString(), fromAutoload));
         return 3;
     }
@@ -618,8 +618,8 @@ public class BindAliasClient implements ClientModInitializer {
         } else
             aliasNameFinalExtra = "";
 
-        BINDING_PLUS.put(key, flag ? new KeyBindingPlus(aliasNameFinal, aliasNameFinalExtra, fromAutoload)
-                : new KeyBindingPlus(aliasNameFinalExtra, aliasNameFinal, fromAutoload));
+        BINDING_PLUS.put(key, flag ? new BindAliasKeyBinding(aliasNameFinal, aliasNameFinalExtra, fromAutoload)
+                : new BindAliasKeyBinding(aliasNameFinalExtra, aliasNameFinal, fromAutoload));
 
         return 1;
     }
