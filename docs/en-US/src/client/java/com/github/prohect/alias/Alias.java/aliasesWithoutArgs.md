@@ -3,9 +3,15 @@
 ## Syntax
 
 ```java
-public static final java.util.HashMap<java.lang.String, com.github.prohect.alias.AliasWithoutArgs<?>> aliasesWithoutArgs
+public static final HashMap<String, AliasWithoutArgs<?>> aliasesWithoutArgs
 ```
+
+Global map of all aliases that take no arguments and are suggested to the user. Keys are alias names (e.g. `"esc"`, `"toggleInventory"`, `"swapHand"`). Populated by `BuiltinAliasWithoutArgs.putToAliasesWithoutArgs()` during client initialization, and by `AliasAlias` when the user defines a new `UserAlias`.
 
 ## Remarks
 
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+This is the **first** map checked during alias-chain execution in `UserAlias.run()`. If an alias is found here, its `run("")` is called (empty args for `AliasWithoutArgs`).
+
+**Readers**: `UserAlias.run()`, `KeyBoardMixin` (key-event routing), the `bind` command (suggestion lookup).
+
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

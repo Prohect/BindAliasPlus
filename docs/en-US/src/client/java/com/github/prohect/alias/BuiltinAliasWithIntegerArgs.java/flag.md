@@ -6,6 +6,17 @@
 public int flag
 ```
 
+Stores the parsed `int` value from the args string. Read by concrete subclass `run()` methods to select a hotbar slot (`slot`), defer execution (`wait`), or rotate camera (`yaw`, `pitch`).
+
 ## Remarks
 
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+Set by `parseArgs(args)` via `VarAlias.resolveInt()` or `Integer.parseInt()`. Default value is `0`.
+
+## See Also
+
+| Item | Description |
+|------|-------------|
+| [parseArgs](parseArgs.md) | Sets this field from args string |
+| [BuiltinAliasWithDoubleArgs.flag](BuiltinAliasWithDoubleArgs.java/flag.md) | Double counterpart |
+
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

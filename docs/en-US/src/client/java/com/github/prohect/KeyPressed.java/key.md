@@ -3,19 +3,21 @@
 ## Syntax
 
 ```java
-public net.minecraft.client.util.InputUtil$Key key()
+public net.minecraft.client.util.InputUtil.Key key()
 ```
 
 ## Parameters
 
-| Name | Type | Description |
-|------|------|-------------|
+_None._
 
 ## Remarks
+
+Record accessor for the key/button involved in this event. Never null (annotated `@NotNull`). This is the first component of the record.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [pressed](pressed.md) | Whether the key was pressed or released |
 
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

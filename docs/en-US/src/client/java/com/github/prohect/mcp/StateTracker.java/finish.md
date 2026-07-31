@@ -3,19 +3,26 @@
 ## Syntax
 
 ```java
-public static java.lang.String finish(java.lang.String)
+public static String finish(String begun)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `begun` | `String` | The partial envelope from `begin()` |
+
+## Return value
+
+The completed JSON envelope string, including channel messages: `{"client_tick":N, "state":{...}, "chat":[...], ...}`.
 
 ## Remarks
+
+Thread-safe (calls `GameChannels.drain()` which is internally synchronized). Appends drained channel messages to the partial envelope: inserts `"chat"`, `"mod"`, `"sound"`, and `"recipe"` arrays containing new messages since the previous drain. Empty channels are omitted. Closes the JSON object with `}`.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+| [begin](begin.md) | The first phase |
+| [GameChannels.drain](GameChannels.java/drain.md) | Channel message drain |

@@ -3,19 +3,31 @@
 ## Syntax
 
 ```java
-public default T putToAliasesWithoutArgs_notSuggested(java.lang.String)
+public default T putToAliasesWithoutArgs_notSuggested(String key)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `key` | `String` | The alias name to register under |
+
+## Return value
+
+Returns `this` for fluent builder chaining.
 
 ## Remarks
+
+Same as `putToAliasesWithoutArgs` but registers into `Alias.aliasesWithoutArgs_notSuggested` instead. Aliases in this map are **not** shown in command suggestions but are checked second in `UserAlias.run()` lookup order.
+
+Use this for internal / view-switching aliases like `FPS`, `TPS`, `TPS2`, and lock wrappers.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [putToAliasesWithoutArgs](putToAliasesWithoutArgs.md) | Suggested variant |
+| [BuiltinAliasWithoutArgs.putToAliasesWithoutArgs_notSuggested](BuiltinAliasWithoutArgs.java/putToAliasesWithoutArgs_notSuggested.md) | Keyless overload |
+| [aliasesWithoutArgs_notSuggested](Alias.java/aliasesWithoutArgs_notSuggested.md) | The map this method writes to |
 
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

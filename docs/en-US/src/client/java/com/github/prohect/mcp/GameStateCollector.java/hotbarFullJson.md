@@ -3,19 +3,20 @@
 ## Syntax
 
 ```java
-static java.lang.String hotbarFullJson(java.util.Map<java.lang.String, java.lang.String>)
+static String hotbarFullJson(Map<String, String> items)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+Full JSON object string for hotbar slots 1-9, each keyed by the slot number. Empty slots produce `null` values.
 
 ## Remarks
+
+Formats the hotbar item map as a complete JSON object with all 9 slots. Used by `StateTracker.begin` on the first snapshot and world changes.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+| [hotbarDiffJson](hotbarDiffJson.md) | The incremental diff variant |
+| [StateTracker.begin](StateTracker.java/begin.md) | The caller |

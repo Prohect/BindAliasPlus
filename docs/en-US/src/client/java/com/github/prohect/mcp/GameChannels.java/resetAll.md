@@ -6,16 +6,13 @@
 public static void resetAll()
 ```
 
-## Parameters
-
-| Name | Type | Description |
-|------|------|-------------|
-
 ## Remarks
+
+Marks every channel as read by advancing each channel's `lastSent` cursor to match its current `cursor`. Additionally clears all coalescing `byKey` maps. This is called on world join so that stale title-screen noise accumulated before the player entered the world is not delivered to the MCP caller. Thread-safe.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+| [drain](drain.md) | The normal drain that returns messages |
+| [StateTracker.reset](StateTracker.java/reset.md) | Also resets state tracking on world join |

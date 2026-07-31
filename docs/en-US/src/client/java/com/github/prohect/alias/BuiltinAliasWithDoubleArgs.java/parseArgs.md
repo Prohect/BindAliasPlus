@@ -3,19 +3,30 @@
 ## Syntax
 
 ```java
-public void parseArgs(java.lang.String)
+public void parseArgs(String args)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `args` | `String` | A numeric string (e.g. `"90.5"`) or a variable name resolvable by `VarAlias.resolveDouble()` |
 
 ## Remarks
+
+Sets the `flag` field via a two-step resolution:
+
+1. **Variable lookup**: Calls `VarAlias.resolveDouble(args)`. If a variable with that name exists and holds a `Double` value, uses it.
+2. **Literal parse**: Falls back to `Double.parseDouble(args)`. On `NumberFormatException`, logs an error via `BindAliasClient.LOGGER` and leaves `flag` at `0.0`.
+
+This allows both literal values (`setYaw\90.5`) and variable-driven values (`var\myYaw\90.5` then `setYaw\myYaw`).
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [flag](flag.md) | The field set by this method |
+| [VarAlias.resolveDouble](builtinAlias/VarAlias.java/resolveDouble.md) | Variable-resolution step |
+| [BuiltinAliasWithIntegerArgs.parseArgs](BuiltinAliasWithIntegerArgs.java/parseArgs.md) | Integer counterpart |
 
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

@@ -3,19 +3,19 @@
 ## Syntax
 
 ```java
-private static java.lang.String buildGridRow(java.lang.String[], int)
+private static String buildGridRow(String[] cells, int width)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+A formatted grid row string with slot indices separated by spaces. Cells not present are represented as appropriate visual spacers.
 
 ## Remarks
+
+Builds a textual representation of a single row in a crafting grid, used by `gridJson`. Cells that are `null` or empty are rendered as appropriate filler.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+| [gridJson](gridJson.md) | The caller |

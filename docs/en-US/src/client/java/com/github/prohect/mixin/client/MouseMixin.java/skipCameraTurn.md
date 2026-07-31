@@ -3,19 +3,25 @@
 ## Syntax
 
 ```java
-private void skipCameraTurn(org.spongepowered.asm.mixin.injection.callback.CallbackInfo)
+@Inject(at = @At("HEAD"), method = "updateMouse", cancellable = true)
+private void skipCameraTurn(CallbackInfo ci)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `ci` | `CallbackInfo` | Cancelled when freeCursor is active |
 
 ## Remarks
+
+Injected at `HEAD` of `Mouse#updateMouse()`. When `FreeCursorAlias.freeCursor` is `true`, cancels the method entirely so physical mouse delta movements do not rotate the player's camera. This is necessary because freeCursor allows the logical mouse-grab to remain in effect (for mining continuity), which would otherwise re-enable camera turning when the mouse moves over the focused window. Camera control during freeCursor is exclusively via the `yaw`/`pitch`/`setYaw`/`setPitch` aliases. (Yarn: `updateMouse()`; Mojang: `turnPlayer()`)
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+| [FreeCursorAlias.freeCursor](../../../alias/builtinAlias/FreeCursorAlias.java/freeCursor.md) | The flag gating this injection |
+| [skipOsCursorGrab](skipOsCursorGrab.md) | Suppresses the OS-level cursor grab |
+| [YawAlias](../../../alias/builtinAlias/YawAlias.java/README.md) | The `yaw` alias for camera rotation |
+| [PitchAlias](../../../alias/builtinAlias/PitchAlias.java/README.md) | The `pitch` alias for camera rotation |

@@ -6,16 +6,16 @@
 public static int port()
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+The actual port the server is bound to, or `-1` if the server failed to start.
 
 ## Remarks
+
+Returns the port assigned during `start()`. May differ from the configured default if the initial port was occupied and a fallback port was used.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+| [start](start.md) | Where the port is assigned |

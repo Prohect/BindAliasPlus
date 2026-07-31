@@ -3,7 +3,7 @@
 ## Syntax
 
 ```java
-public final class com.github.prohect.mcp.SoundCapture implements net.minecraft.client.sound.SoundInstanceListener
+public final class SoundCapture implements net.minecraft.client.sound.SoundInstanceListener
 ```
 
 ## Static Initializer
@@ -12,10 +12,18 @@ _None._
 
 ## Remarks
 
+Feeds the [`GameChannels.SOUND`](GameChannels.java/SOUND.md) channel. Implements `SoundInstanceListener` and is registered on the client `SoundManager` — the same hook the vanilla subtitle overlay uses, so exactly the sounds that would show a HUD caption are reported.
+
+Message format: `[client_tick:N] SoundName [yaw±N pitch±N D.Dm]`, e.g., `[client_tick:123] Zombie groans [yaw-40 pitch+20 4.2m]`. The direction is the yaw/pitch of the sound source **relative to the listener's view at the moment the sound was heard**, rounded to 20° steps (coarse on purpose — the ear is not a protractor). Sounds at the listener's own position collapse to `here D.Dm`. Repeats of the same sound coalesce via `GameChannels.postCoalescing`.
+
+The `directionOf` method is also reused by `GameStateCollector.playersJson` for player directional formatting.
+
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
-
+| [GameChannels.SOUND](GameChannels.java/SOUND.md) | Destination channel |
+| [GameChannels.postCoalescing](GameChannels.java/postCoalescing.md) | Coalescing post for repeating sounds |
+| [register](register.md) | Registers on the sound manager |
+| [onSoundPlayed](onSoundPlayed.md) | The event listener callback |
+| [directionOf](directionOf.md) | 3D direction formatter (also used by `playersJson`) |

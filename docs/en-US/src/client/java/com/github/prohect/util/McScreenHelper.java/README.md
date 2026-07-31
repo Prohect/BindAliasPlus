@@ -1,18 +1,20 @@
 # McScreenHelper
 
+Simple static utility wrapping direct access to `MinecraftClient.currentScreen` and `MinecraftClient.setScreen()`.
+
 ## Fields
 
-| Name | Type | Description |
-|------|------|-------------|
+_(none — no reflection fields on this branch)_
 
 ## Methods
 
 | Name | Signature | Description |
 |------|-----------|-------------|
+| [getCurrentScreen](getCurrentScreen.md) | `static Screen getCurrentScreen(MinecraftClient client)` | Returns `client.currentScreen` |
+| [setScreen](setScreen.md) | `static void setScreen(MinecraftClient client, Screen screen)` | Delegates to `client.setScreen(screen)` |
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+| [MinecraftClientMixin](../../mixin/client/MinecraftClientMixin.java/README.md) | Primary caller — tracks `currentScreen` every tick |

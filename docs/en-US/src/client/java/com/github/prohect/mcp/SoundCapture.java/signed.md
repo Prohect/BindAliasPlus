@@ -3,19 +3,25 @@
 ## Syntax
 
 ```java
-private static java.lang.String signed(int)
+private static String signed(int v)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `v` | `int` | The integer value to format |
+
+## Return value
+
+The value prefixed with `"+"` for non-negative, `"-"` for negative. Zero returns `"+0"`.
 
 ## Remarks
+
+Always-signed integer formatting for yaw/pitch in directional strings (e.g., `"yaw-40"`, `"pitch+20"`). The explicit sign makes the output unambiguous for parsing.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+| [directionOf](directionOf.md) | The caller |

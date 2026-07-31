@@ -3,19 +3,19 @@
 ## Syntax
 
 ```java
-private static java.lang.String worldName(net.minecraft.client.MinecraftClient)
+private static String worldName(MinecraftClient mc)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+The dimension registry key path as a string (e.g., `"minecraft:overworld"`, `"minecraft:the_nether"`, `"minecraft:the_end"`), or `null` if the player or level is null.
 
 ## Remarks
+
+Extracts the world/dimension name from the player's current level via `mc.player.level().dimension().location().toString()`. Returns `null` when not in a world.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+| [collect](collect.md) | The caller |

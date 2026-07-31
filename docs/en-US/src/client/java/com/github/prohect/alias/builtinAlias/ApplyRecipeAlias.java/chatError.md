@@ -1,21 +1,30 @@
 # chatError method (src/client/java/com/github/prohect/alias/builtinAlias/ApplyRecipeAlias.java)
 
+Sends an error message to the player's local game chat (client-side only, visible on HUD and in chat channel).
+
 ## Syntax
 
 ```java
-private static void chatError(net.minecraft.client.network.ClientPlayerEntity, java.lang.String)
+private static void chatError(net.minecraft.client.player.ClientPlayerEntity, java.lang.String)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `player` | `ClientPlayerEntity` | The local player to send the message to |
+| `message` | `String` | The error message text |
 
 ## Remarks
+
+Uses `player.sendMessage(Text.literal(message), false)` to display the message client-side only — it is **not** sent to the server. This is appropriate for alias-level errors (invalid args, missing menus, unknown recipes) that only the local player needs to see. (Yarn: `Text`; Mojang: `Component`)
+
+All `ApplyRecipeAlias` errors are routed through this helper. The message prefix `[applyRecipe]` is included by the callers.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [ApplyRecipeAlias.run()](run.md) | All error paths use this helper |
 
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

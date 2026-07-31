@@ -8,4 +8,6 @@ public static net.minecraft.client.gui.screen.Screen currentScreen
 
 ## Remarks
 
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+Cached reference to the currently open `Screen`, or `null` when none is open. Updated every tick by `MinecraftClientMixin` via `MinecraftClient.getInstance().currentScreen`. Read by alias run logic to decide screen suppression behavior, and by `Alias.isUnderAnyScreen()` / `Alias.isUnderTextInputScreen()` / `Alias.isInContainerScreen()`. Must only be accessed on the game thread.
+
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

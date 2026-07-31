@@ -3,19 +3,19 @@
 ## Syntax
 
 ```java
-private static java.lang.String targetJson(net.minecraft.client.MinecraftClient, net.minecraft.client.network.ClientPlayerEntity)
+private static String targetJson(MinecraftClient mc, ClientPlayerEntity p)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+JSON object string: `{"type":"...","name":"...","pos":{...}}` for the entity the player is looking at, or `null` if no entity is targeted.
 
 ## Remarks
+
+Uses the player's `HitResult` (from `mc.hitResult`). If the hit result is an `EntityHitResult`, extracts the entity type (registry key), display name, and position. Returns `null` for block hit results or when no target exists.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+| [posJson](posJson.md) | Shared position formatting |

@@ -1,21 +1,28 @@
-# args method (src/client/java/com/github/prohect/alias/AliasRecord.java)
+# args field (src/client/java/com/github/prohect/alias/AliasRecord.java)
 
 ## Syntax
 
 ```java
-public java.lang.String args()
+public String args()
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+The arguments string for this alias invocation, or `""` for no-arg aliases. Already split by `Alias.divider4AliasArgs` — does not include the alias name or backslash dividers.
 
 ## Remarks
+
+This is a record component accessor. For a definition like `swapSlot\1\c2`, the `aliasName` is `"swapSlot"` and `args` is `"1\c2"` (the raw remaining tokens joined by `\`). For a no-arg alias like `esc`, `args` is `""`.
+
+Only `AliasWithArgs` instances use this value. When an `AliasWithoutArgs` is looked up, `UserAlias.run()` always passes `""`.
+
+When `UserAlias` reconstructs deferred chains after a `WaitAlias`, it re-joins `aliasName` and `args` with the `Alias.divider4AliasArgs` backslash.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [aliasName](aliasName.md) | The corresponding alias name |
+| [AliasRecord](AliasRecord.md) | The enclosing record type |
 
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

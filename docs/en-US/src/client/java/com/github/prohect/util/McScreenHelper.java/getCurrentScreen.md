@@ -3,19 +3,27 @@
 ## Syntax
 
 ```java
-public static net.minecraft.client.gui.screen.Screen getCurrentScreen(net.minecraft.client.MinecraftClient)
+public static Screen getCurrentScreen(MinecraftClient client)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `client` | `MinecraftClient` | The Minecraft client instance |
+
+## Return value
+
+The currently open `Screen`, or `null` if no screen is open.
 
 ## Remarks
+
+Returns `client.currentScreen` directly — a public field on `MinecraftClient` in Yarn mappings (equivalent to `Minecraft.screen` in Mojang mappings). Called by `MinecraftClientMixin.tick()` to update `BindAliasClient.currentScreen` every frame.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+| [setScreen](setScreen.md) | The setter counterpart |
+| [static-init](static-init.md) | Where `GUI_HAS_SCREEN` and the cached `Field`/`Method` handles are initialized |
+| [MinecraftClientMixin.tick](../../mixin/client/MinecraftClientMixin.java/tick.md) | The primary caller |

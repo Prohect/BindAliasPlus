@@ -3,19 +3,27 @@
 ## Syntax
 
 ```java
-public static java.util.List<com.github.prohect.mcp.RecipeBookHelper$RecipeInfo> unlocked(net.minecraft.client.MinecraftClient)
+public static List<RecipeInfo> unlocked(MinecraftClient mc)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `mc` | `MinecraftClient` | The Minecraft client instance |
+
+## Return value
+
+A list of `RecipeInfo` records for all currently unlocked recipes, deduplicated by `(itemId, displayName)`. Returns an empty list when no player or level is active.
 
 ## Remarks
+
+Enumerates all `RecipeCollection` entries in the player's recipe book. For each `RecipeDisplayEntry`, computes the result items (via `SlotDisplayContext.fromLevel`) and builds a `RecipeInfo` with the first result's display name, registry ID, craftability (via `entry.canCraft(stacked)`), and display ID. Craftability accounts for the player's entire inventory plus any crafting slots in an open `RecipeBookMenu`. Works with or without an open screen.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+| [find](find.md) | Search wrapper around `unlocked` |
+| [onlyNew](onlyNew.md) | Diff filter for no-query `listRecipes` |
+| [McpHttpServer.handleListRecipes](McpHttpServer.java/handleListRecipes.md) | The MCP endpoint |

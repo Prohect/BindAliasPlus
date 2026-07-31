@@ -6,16 +6,19 @@
 public static boolean isInCreativeInventoryScreen()
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+`true` if the current screen is a `CreativeInventoryScreen` (the creative-mode item selection screen). Otherwise `false`.
 
 ## Remarks
+
+Used by aliases that need to distinguish creative-mode inventory behavior from survival-mode. Creative inventory has different slot layouts and mechanics (e.g. the destroy-item slot).
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [isInInventoryScreen](isInInventoryScreen.md) | Survival-mode inventory variant |
+| [isInContainerScreen](isInContainerScreen.md) | Broader — any container screen |
 
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

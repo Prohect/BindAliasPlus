@@ -3,9 +3,15 @@
 ## Syntax
 
 ```java
-public static final java.util.HashMap<java.lang.String, com.github.prohect.alias.AliasWithArgs<?>> aliasesWithArgs
+public static final HashMap<String, AliasWithArgs<?>> aliasesWithArgs
 ```
+
+Global map of all builtin aliases that accept arguments. Keys are the `builtinAliasName` strings (e.g. `"slot"`, `"yaw"`, `"var"`, `"say"`). Populated by `BuiltinAliasWithArgs.putToAliasesWithArgs()` during client initialization in `BindAliasClient.onInitializeClient()`.
 
 ## Remarks
 
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+This is the **primary** args-accepting map — from which command suggestions are derived. Aliases here are suggested to the user.
+
+**Readers**: `UserAlias.run()` and `UserAlias.runInternal()` look up aliases from this map when executing alias chains (checked last in the lookup order). The `reapply` alias iterates all boolean-arg aliases across both this and `aliasesWithArgs_notSuggested`. The `KeyBoardMixin` routes key events to aliases found in this and the `withoutArgs` maps.
+
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

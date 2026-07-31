@@ -8,4 +8,6 @@ public static boolean silentMode
 
 ## Remarks
 
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+When `true`, suppresses all alias feedback messages in chat (the mod's `sendFeedback` calls and `log` alias output). Toggled by the `+silent` / `-silent` switch aliases. Checked before every `context.getSource().sendFeedback(...)` call in command handlers. Reset to `false` on disconnect. Used by `ChatComponentMixin` to filter chat rendering.
+
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

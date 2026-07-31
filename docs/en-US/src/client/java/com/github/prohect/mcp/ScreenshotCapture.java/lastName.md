@@ -3,9 +3,16 @@
 ## Syntax
 
 ```java
-public static volatile java.lang.String lastName
+public static volatile String lastName
 ```
 
 ## Remarks
 
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+File name (without path) of the last captured screenshot. Populated by `NativeImageMixin.onWriteToFile` alongside the PNG byte delivery. Included in the MCP screenshot JSON response under the `"name"` key. `volatile` for cross-thread visibility.
+
+## See Also
+
+| Item | Description |
+|------|-------------|
+| [lastPath](lastPath.md) | The corresponding full path |
+| [NativeImageMixin.onWriteToFile](../../mixin/client/NativeImageMixin.java/onWriteToFile.md) | Populates this field |

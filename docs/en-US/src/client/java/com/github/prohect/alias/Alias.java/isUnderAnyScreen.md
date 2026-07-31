@@ -6,16 +6,23 @@
 public static boolean isUnderAnyScreen()
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+`true` if any screen is currently open (i.e., `getCurrentScreen() != null`). Otherwise `false`.
 
 ## Remarks
+
+Used in conjunction with the screen blacklist (`blackList4Screen`) to suppress aliases when a GUI is open. Aliases also use this independently — for example, `+freeCursor` bypasses the vanilla mouse grab logic only when a screen is open, and `toggleInventory` checks this to decide whether to open or close the inventory.
+
+**Key distinction from `isUnderTextInputScreen()`**: This returns `true` for *all* screens including inventory, crafting, and container screens. `isUnderTextInputScreen()` is a stricter subset that only catches text-entry screens.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
+| [isUnderTextInputScreen](isUnderTextInputScreen.md) | Stricter — only text-input screens |
+| [blackList4Screen](blackList4Screen.md) | Aliases suppressed when this returns `true` |
+| [isInContainerScreen](isInContainerScreen.md) | Narrower — only container screens |
+| [isInInventoryScreen](isInInventoryScreen.md) | Narrower — only player inventory screen |
 
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*

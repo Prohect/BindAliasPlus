@@ -3,19 +3,25 @@
 ## Syntax
 
 ```java
-private static java.util.Map<java.lang.String, java.lang.String> parseQuery(java.lang.String)
+private static Map<String, String> parseQuery(String query)
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
+| `query` | `String` | The raw query string from the HTTP request URI (after `?`) |
+
+## Return value
+
+A map of decoded query parameter name → value. Percent-encoded characters are decoded via `decodePercent`.
 
 ## Remarks
+
+Parses an HTTP query string (e.g., `"nap=5&def=slot%5C1"`) into a map of key-value pairs. Handles empty values (key with no `=`) by storing an empty string. Uses `decodePercent` for percent-decoding.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+| [decodePercent](decodePercent.md) | Percent-decoding helper |

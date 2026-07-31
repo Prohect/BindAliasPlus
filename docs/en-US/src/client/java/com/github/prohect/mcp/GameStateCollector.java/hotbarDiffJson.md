@@ -3,19 +3,21 @@
 ## Syntax
 
 ```java
-static java.lang.String hotbarDiffJson(java.util.Map<java.lang.String, java.lang.String>, java.util.Map<java.lang.String, java.lang.String>)
+static String hotbarDiffJson(Map<String, String> last, Map<String, String> cur)
 ```
 
-## Parameters
+## Return value
 
-| Name | Type | Description |
-|------|------|-------------|
+Diff JSON object string containing only changed hotbar slots. An item with value `null` means the slot became empty. Returns `null` when nothing changed.
 
 ## Remarks
+
+Computes a per-slot diff between current and previous hotbar item maps. Same logic as `containerDiffJson`: added/changed slots emit the new value, removed slots emit `null`.
 
 ## See Also
 
 | Item | Description |
 |------|-------------|
-
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+| [hotbarFullJson](hotbarFullJson.md) | The full variant |
+| [containerDiffJson](containerDiffJson.md) | The analogous container diff |
+| [StateTracker.begin](StateTracker.java/begin.md) | The caller |

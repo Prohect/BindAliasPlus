@@ -8,4 +8,6 @@ public static final java.nio.file.Path cfgPath
 
 ## Remarks
 
-*Documented for Commit: [e362b854e625d38ca0ef45aee6429637e1695b44](https://github.com/Prohect/BindAlias/tree/e362b854e625d38ca0ef45aee6429637e1695b44)*
+Resolved via `FabricLoader.getInstance().getConfigDir().resolve(MOD_ID + ".cfg")` at class-load time. Typically points to `config/bindaliasplus.cfg`. Created if absent during `onInitializeClient` and `loadCFG`. Read line-by-line in `loadCFG` to restore persistent alias/bind/var definitions.
+
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
