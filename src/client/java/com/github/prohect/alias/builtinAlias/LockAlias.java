@@ -1,7 +1,7 @@
 package com.github.prohect.alias.builtinAlias;
 
 import com.github.prohect.BindAliasClient;
-import com.github.prohect.KeyBindingPlus;
+import com.github.prohect.BindAliasKeyBinding;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.AliasWithoutArgs;
 import com.github.prohect.alias.BuiltinAliasWithArgs;
@@ -233,7 +233,7 @@ public class LockAlias extends BuiltinAliasWithArgs<LockAlias> {
                 List<String> otherPatterns = ACTION_ALIAS_PATTERNS.get(otherAction);
                 if (otherPatterns == null)
                     continue;
-                KeyBindingPlus binding = BindAliasClient.BINDING_PLUS.get(key);
+                BindAliasKeyBinding binding = BindAliasClient.BINDING_PLUS.get(key);
                 if (binding != null && (aliasTargetsLockedAction(binding.aliasNameOnKeyPressed(), otherPatterns)
                         || aliasTargetsLockedAction(binding.aliasNameOnKeyReleased(), otherPatterns))) {
                     stillNeeded = true;

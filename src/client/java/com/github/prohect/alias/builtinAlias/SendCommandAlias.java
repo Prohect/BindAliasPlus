@@ -1,10 +1,10 @@
 package com.github.prohect.alias.builtinAlias;
 
-import com.github.prohect.alias.BuiltinAliasWithGreedyStringArgs;
+import com.github.prohect.alias.BuiltinAliasWithStringArgs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 
-public class SendCommandAlias extends BuiltinAliasWithGreedyStringArgs<SendCommandAlias> {
+public class SendCommandAlias extends BuiltinAliasWithStringArgs<SendCommandAlias> {
 
     public SendCommandAlias() {
         super("sendCommand");

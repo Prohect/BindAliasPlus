@@ -11,11 +11,11 @@ package com.github.prohect;
  * @param fromCFG
  *            true if this binding was loaded from config file
  */
-public record KeyBindingPlus(String aliasNameOnKeyPressed, String aliasNameOnKeyReleased, boolean fromCFG) {
+public record BindAliasKeyBinding(String aliasNameOnKeyPressed, String aliasNameOnKeyReleased, boolean fromCFG) {
 	/**
 	 * Convenience constructor for runtime-created bindings (not from autoload)
 	 */
-	public KeyBindingPlus(String aliasNameOnKeyPressed, String aliasNameOnKeyReleased) {
+	public BindAliasKeyBinding(String aliasNameOnKeyPressed, String aliasNameOnKeyReleased) {
 		this(aliasNameOnKeyPressed, aliasNameOnKeyReleased, false);
 	}
 }

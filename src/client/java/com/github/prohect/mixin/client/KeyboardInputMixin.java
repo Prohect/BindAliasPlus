@@ -1,7 +1,7 @@
 package com.github.prohect.mixin.client;
 
 import com.github.prohect.BindAliasClient;
-import com.github.prohect.KeyBindingPlus;
+import com.github.prohect.BindAliasKeyBinding;
 import com.github.prohect.KeyPressed;
 import com.github.prohect.alias.Alias;
 import com.github.prohect.alias.AliasWithoutArgs;
@@ -19,7 +19,7 @@ public class KeyboardInputMixin {
         KeyPressed keyPressed;
         while ((keyPressed = BindAliasClient.KEY_QUEUE.poll()) != null) {
             // should only be aliasWithoutArgs, so the args would be an empty string
-            KeyBindingPlus keyBindingPlus;
+            BindAliasKeyBinding keyBindingPlus;
             if ((keyBindingPlus = BindAliasClient.BINDING_PLUS.get(keyPressed.key())) != null) {
                 AliasWithoutArgs<?> aliasWithoutArgs =
                         keyPressed.pressed() ? Alias.aliasesWithoutArgs.get(keyBindingPlus.aliasNameOnKeyPressed())
