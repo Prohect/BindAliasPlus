@@ -185,17 +185,17 @@ public final class GameStateCollector {
             return null;
         Vec3 hitPos = hit.getLocation();
         double distance = hitPos.distanceTo(p.getEyePosition());
-        String posJson = "{\"x\":" + fmt2(hitPos.x) + ",\"y\":" + fmt2(hitPos.y) + ",\"z\":" + fmt2(hitPos.z) + '}';
+        String rayHitJson = "{\"x\":" + fmt2(hitPos.x) + ",\"y\":" + fmt2(hitPos.y) + ",\"z\":" + fmt2(hitPos.z) + '}';
         if (hit instanceof BlockHitResult blockHit) {
             BlockState state = p.level().getBlockState(blockHit.getBlockPos());
             return "{\"class\":\"block\",\"name\":" + jsonEscape(state.getBlock().getName().getString()) + ",\"distance\":"
-                    + fmt1(distance) + ",\"pos\":" + posJson + '}';
+                    + fmt1(distance) + ",\"ray_hit\":" + rayHitJson + '}';
         }
         if (hit instanceof EntityHitResult entityHit) {
             Entity e = entityHit.getEntity();
             String kind = e instanceof Player ? "player" : "entity";
             return "{\"class\":\"" + kind + "\",\"name\":" + jsonEscape(e.getName().getString()) + ",\"distance\":"
-                    + fmt1(distance) + ",\"pos\":" + posJson + '}';
+                    + fmt1(distance) + ",\"ray_hit\":" + rayHitJson + '}';
         }
         return null;
     }

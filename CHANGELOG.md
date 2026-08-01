@@ -8,7 +8,7 @@ All notable changes to BindAlias will be documented in this file.
 
 - **MCP envelope channel rename** — the recipe-unlock channel `recipe` is renamed to `unlocked_recipe`.
 - **MCP state `held_item` refactored** — `held_item` (string) / `held_item_count` / `selected_hotbar_slot` / top-level `durability` collapse into a single item-stack obj `held_item` (same shape as container/hotbar entries: `item`, `name`, `count` plus optional `durability` / `enchanted` / `tooltip`; `null` when the hand is empty).
-- **MCP state `target` extended** — field `kind` renamed to `class`; added `pos` obj ({`x`, `y`, `z`}) with the exact crosshair hit position.
+- **MCP state `target` extended** — field `kind` renamed to `class`; added `ray_hit` obj ({`x`, `y`, `z`}) with the exact crosshair ray hit position.
 - **`/tick` family without cheats** — the vanilla `/tick` command family no longer requires admin permission, so it works in singleplayer worlds with cheats off; `tick rate` valid range expanded to [0.1, 10000] (the internal 1.0 clamp was lifted to match).
 
 ## [1.8.4] - 2026-07-31
