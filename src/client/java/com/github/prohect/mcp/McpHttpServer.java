@@ -28,10 +28,10 @@ import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
  * chosen port is logged).
  * <p>
  * Every game-interacting endpoint returns the same <b>envelope</b> assembled by {@link StateTracker}: {@code {"client_tick":N,
- * "state":{...}, "chat":[...], "mod":[...], "sound":[...], "recipe":[...]}} — changed-state diff (full for {@code /state}) plus
- * freshly drained message channels, so callers never need a separate poll for feedback. {@code /readCFG} is the only
- * non-envelope endpoint (raw file text). All game-thread access goes through {@link Minecraft#execute(Runnable)} with a timeout
- * to keep HTTP threads from blocking forever.
+ * "state":{...}, "chat":[...], "mod":[...], "sound":[...], "unlocked_recipe":[...]}} — changed-state diff (full for
+ * {@code /state}) plus freshly drained message channels, so callers never need a separate poll for feedback. {@code /readCFG}
+ * is the only non-envelope endpoint (raw file text). All game-thread access goes through {@link Minecraft#execute(Runnable)}
+ * with a timeout to keep HTTP threads from blocking forever.
  * <p>
  * Started from {@link BindAliasClient#onInitializeClient()}.
  */

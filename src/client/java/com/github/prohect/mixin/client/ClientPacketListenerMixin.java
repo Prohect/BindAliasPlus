@@ -34,7 +34,7 @@ public class ClientPacketListenerMixin {
                     continue;
                 List<ItemStack> results = entry.contents().resultItems(context);
                 if (!results.isEmpty())
-                    GameChannels.post(GameChannels.RECIPE, results.get(0).getHoverName().getString());
+                    GameChannels.post(GameChannels.UNLOCKED_RECIPE, results.get(0).getHoverName().getString());
             }
         } catch (Exception ignored) {
             // recipe channel is best-effort
