@@ -2,6 +2,26 @@
 
 All notable changes to BindAlias will be documented in this file.
 
+## TODO
+
+- recipe obj rename to unlocked_recipe obj
+- ```json
+  "held_item": "minecraft:cobblestone",
+  "held_item_count": 64,
+  "selected_hotbar_slot": 5,
+  "durability": null
+  ```
+  -> held_item obj which is a item stack obj (stay consistent with other item stack objs)
+- ```json
+  "target": {
+        "kind": "block",
+        "name": "Stone",
+        "distance": 0.3
+  },
+  ```
+  -> field `kind` rename to `class` & add target `pos` field obj that holds the target position `x`, `y`, `z`.
+- expand vanilla tick rate's valid range to [0.1, 10000], allow tick series commands in no cheat mode.
+
 ## [1.8.4] - 2026-07-31
 
 ### Added
