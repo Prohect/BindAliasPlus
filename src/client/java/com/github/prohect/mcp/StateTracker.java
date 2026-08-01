@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Tracks the last state snapshot sent to the MCP caller and assembles the response envelope:
  *
- * <pre>{@code {"client_tick":N, "state":{...}, "chat":[...], "mod":[...], "sound":[...], "recipe":[...]}}</pre>
+ * <pre>{@code {"client_tick":N, "state":{...}, "chat":[...], "mod":[...], "sound":[...], "unlocked_recipe":[...]}}</pre>
  * <p>
  * {@code state} is the FULL snapshot for {@code getState} and only the <b>changed</b> members for every other tool (a member
  * serialized as {@code null} means it disappeared — e.g. the container screen closed). {@code state} is omitted entirely when

@@ -10,7 +10,9 @@
     "NativeImageMixin",
     "ChatComponentMixin",
     "HandledScreenMixin",
-    "ClientPacketListenerMixin"
+    "ClientPacketListenerMixin",
+    "TickCommandMixin",
+    "TickRateManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

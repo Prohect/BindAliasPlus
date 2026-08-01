@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 /**
- * Feeds the {@link GameChannels#RECIPE} channel: every recipe unlock that pops a vanilla toast notification
+ * Feeds the {@link GameChannels#UNLOCKED_RECIPE} channel: every recipe unlock that pops a vanilla toast notification
  * ({@code RecipeBookAddS2CPacket.Entry#shouldShowNotification()}) is reported by its result item's locale name — the same name
  * the toast shows.
  */
@@ -34,7 +34,7 @@ public class ClientPacketListenerMixin {
                     continue;
                 List<ItemStack> results = entry.contents().getStacks(context);
                 if (!results.isEmpty())
-                    GameChannels.post(GameChannels.RECIPE, results.get(0).getName().getString());
+                    GameChannels.post(GameChannels.UNLOCKED_RECIPE, results.get(0).getName().getString());
             }
         } catch (Exception ignored) {
             // recipe channel is best-effort

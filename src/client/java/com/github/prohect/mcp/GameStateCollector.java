@@ -35,6 +35,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Vec3d;
 
 /**
  * Builds the canonical game-state snapshot for the MCP envelope. Every field maps to something visible on the vanilla HUD (or
@@ -118,21 +119,7 @@ public final class GameStateCollector {
         if (heldKeys != null)
             out.put("held_keys", heldKeys);
 
-        ItemStack held = p.getMainHandStack();
-        if (held != null && !held.isEmpty()) {
-            out.put("held_item", jsonEscape(Registries.ITEM.getId(held.getItem()).toString()));
-            out.put("held_item_count", String.valueOf(held.getCount()));
-        } else {
-            out.put("held_item", "null");
-            out.put("held_item_count", "0");
-        }
-
-        int selectedSlot = p.getInventory().getSelectedSlot();
-        out.put("selected_hotbar_slot", String.valueOf(selectedSlot + 1));
-        ItemStack selectedItem = p.getInventory().getStack(selectedSlot);
-        if (selectedItem.isDamageable())
-            out.put("durability", "{\"remaining\":" + (selectedItem.getMaxDamage() - selectedItem.getDamage()) + ",\"max\":"
-                    + selectedItem.getMaxDamage() + '}');
+        out.put("held_item", heldItemJson(mc, p, p.getMainHandStack()));
 
         return out;
     }
@@ -198,19 +185,41 @@ public final class GameStateCollector {
         HitResult hit = mc.crosshairTarget;
         if (hit == null || hit.getType() == HitResult.Type.MISS)
             return null;
-        double distance = hit.getPos().distanceTo(p.getEyePos());
+        Vec3d hitPos = hit.getPos();
+        double distance = hitPos.distanceTo(p.getEyePos());
+        String rayHitJson = "{\"x\":" + fmt2(hitPos.x) + ",\"y\":" + fmt2(hitPos.y) + ",\"z\":" + fmt2(hitPos.z) + '}';
         if (hit instanceof BlockHitResult blockHit) {
             BlockState state = p.getEntityWorld().getBlockState(blockHit.getBlockPos());
-            return "{\"kind\":\"block\",\"name\":" + jsonEscape(state.getBlock().getName().getString()) + ",\"distance\":"
-                    + fmt1(distance) + '}';
+            return "{\"class\":\"block\",\"name\":" + jsonEscape(state.getBlock().getName().getString()) + ",\"distance\":"
+                    + fmt1(distance) + ",\"ray_hit\":" + rayHitJson + '}';
         }
         if (hit instanceof EntityHitResult entityHit) {
             Entity e = entityHit.getEntity();
             String kind = e instanceof PlayerEntity ? "player" : "entity";
-            return "{\"kind\":\"" + kind + "\",\"name\":" + jsonEscape(e.getName().getString()) + ",\"distance\":"
-                    + fmt1(distance) + '}';
+            return "{\"class\":\"" + kind + "\",\"name\":" + jsonEscape(e.getName().getString()) + ",\"distance\":"
+                    + fmt1(distance) + ",\"ray_hit\":" + rayHitJson + '}';
         }
         return null;
+    }
+
+    /**
+     * Item-stack obj for the held item, same shape as container/hotbar entries (minus the slot index):
+     * {@code {"item":"minecraft:cobblestone","name":"Cobblestone","count":64}} plus optional {@code durability}/
+     * {@code enchanted}/{@code tooltip}. {@code "null"} when the hand is empty.
+     */
+    private static String heldItemJson(MinecraftClient mc, ClientPlayerEntity p, ItemStack held) {
+        if (held == null || held.isEmpty())
+            return "null";
+        StringBuilder sb = new StringBuilder("{\"item\":").append(jsonEscape(Registries.ITEM.getId(held.getItem()).toString()));
+        sb.append(",\"name\":").append(jsonEscape(held.getName().getString()));
+        sb.append(",\"count\":").append(held.getCount());
+        if (held.isDamageable())
+            sb.append(",\"durability\":{\"remaining\":").append(held.getMaxDamage() - held.getDamage()).append(",\"max\":")
+                    .append(held.getMaxDamage()).append('}');
+        if (held.hasEnchantments())
+            sb.append(",\"enchanted\":true");
+        appendTooltipIfValuable(mc, p, held, sb);
+        return sb.append('}').toString();
     }
 
     /** Locator-bar style list of other players: {@code "Steve [yaw+40 pitch-0 12.5m]"}, nearest first. */
