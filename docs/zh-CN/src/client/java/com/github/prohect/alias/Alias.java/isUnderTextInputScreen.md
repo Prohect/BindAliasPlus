@@ -1,0 +1,26 @@
+# isUnderTextInputScreen 方法（src/client/java/com/github/prohect/alias/Alias.java）
+
+## 语法
+
+```java
+public static boolean isUnderTextInputScreen()
+```
+
+## 返回值
+
+如果当前界面是文本输入界面：`ChatScreen`、`CommandBlockScreen`、`SignEditScreen` 或 `BookEditScreen`，则返回 `true`，否则返回 `false`。
+
+## 备注
+
+布尔参数别名（移动、攻击、使用）用它来在玩家输入文字时抑制按键注入。如果玩家在聊天界面打开时按下 `W`，`+forward` 别名会先检查此方法，并且**不会**将前进移动注入游戏的 `KeyboardInput`。
+
+**调用方**：所有与游戏控制交互的 `+`/`-` 开关别名（`+attack`、`+use`、`+forward`、`+back`、`+left`、`+right`、`+jump`、`+sneak`、`+sprint`、`+drop`）。
+
+## 另请参阅
+
+| 条目 | 说明 |
+|------|-------------|
+| [isUnderAnyScreen](isUnderAnyScreen.md) | 限制更少——任意界面都返回 `true` |
+| [getCurrentScreen](getCurrentScreen.md) | 底层界面查询 |
+
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
