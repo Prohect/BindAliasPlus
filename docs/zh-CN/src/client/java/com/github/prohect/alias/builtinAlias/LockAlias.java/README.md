@@ -1,0 +1,40 @@
+# LockAlias
+
+用于临时锁定原版游戏按键和自定义别名按键绑定的复杂内置别名。将 KeyBinding 按键替换为 `InputUtil.UNKNOWN_KEY`，并在 mixin 检查的集合中跟踪被锁定的物理按键。
+
+## 字段
+
+| 名称 | 类型 | 说明 |
+|------|------|-------------|
+| [SUPPORTED_ACTIONS](SUPPORTED_ACTIONS.md) | `static final List<String>` | 所有受支持的按键动作类型，带 `gameKey:` 前缀 |
+| [LOCKED_PHYSICAL_KEYS](LOCKED_PHYSICAL_KEYS.md) | `static final Set<Key>` | 当前被阻止的物理按键；由键盘/鼠标 mixin 检查 |
+| `savedBoundKeys` | `static final Map<String, Key>` | 每个动作类型保存的原始按键绑定（私有，包访问） |
+| `LOCKED_ALIAS_KEYS` | `static final Map<String, Set<Key>>` | 按别名名称跟踪基于别名的锁定所涉及的锁定按键（私有，包访问） |
+| `ACTION_ALIAS_PATTERNS` | `static final Map<String, List<String>>` | 将裸动作名称映射到别名名称模式（由 static-init 填充） |
+
+## 方法
+
+| 名称 | 签名 | 说明 |
+|------|-----------|-------------|
+| [run](run.md) | `LockAlias run(String args)` | 解析 `actionType\flag` 并分派锁定/解锁 |
+| [lockAction](lockAction.md) | `static void lockAction(String)` | 锁定原版游戏按键或回退到 lockAliasByName |
+| [unlockAction](unlockAction.md) | `static void unlockAction(String)` | 解锁原版游戏按键或回退到 unlockAliasByName |
+| [lockAliasByName](lockAliasByName.md) | `static void lockAliasByName(String)` | 锁定绑定到自定义别名名称的所有物理按键 |
+| [unlockAliasByName](unlockAliasByName.md) | `static void unlockAliasByName(String)` | 解锁自定义别名名称的物理按键 |
+| [clearAllLocks](clearAllLocks.md) | `static void clearAllLocks()` | 恢复所有锁定；在服务器断开连接时调用 |
+| [getKeyBindingForAction](getKeyBindingForAction.md) | `static KeyBinding getKeyBindingForAction(String)` | 将动作类型映射到原版 KeyBinding |
+| [lockModBoundKeys](lockModBoundKeys.md) | `static void lockModBoundKeys(String)` | 阻止指向被锁定动作的模组绑定按键 |
+| [unlockModBoundKeys](unlockModBoundKeys.md) | `static void unlockModBoundKeys(String)` | 移除动作的模组按键锁定（如果不再需要） |
+| [aliasTargetsLockedAction](aliasTargetsLockedAction.md) | `static boolean aliasTargetsLockedAction(String, List)` | 递归检查别名是否指向被锁定的动作 |
+
+## 另请参阅
+
+| 条目 | 说明 |
+|------|-------------|
+| [LockAlias_OnLock](../LockAlias_OnLock.java/LockAlias_OnLock.md) | 面向用户的 `+lockKey` 包装 |
+| [LockAlias_Unlock](../LockAlias_Unlock.java/LockAlias_Unlock.md) | 面向用户的 `-lockKey` 包装 |
+| [ClientPacketListenerMixin](../../../mixin/ClientPacketListenerMixin.java/ClientPacketListenerMixin.md) | 断开连接时调用 `clearAllLocks()` |
+| [KeyBoardMixin](../../../mixin/KeyBoardMixin.java/KeyBoardMixin.md) | 按键事件时检查 `LOCKED_PHYSICAL_KEYS` |
+| [MouseMixin](../../../mixin/MouseMixin.java/MouseMixin.md) | 鼠标事件时检查 `LOCKED_PHYSICAL_KEYS` |
+
+*Documented for Commit: [6bc6cc0a92af813b68e7afd18dbda0298388962a](https://github.com/Prohect/BindAlias/tree/6bc6cc0a92af813b68e7afd18dbda0298388962a)*
