@@ -500,7 +500,7 @@ function handleLine(line) {
       makeResponse(id, {
         protocolVersion: "2024-11-05",
         capabilities: { tools: {} },
-        serverInfo: { name: "bind-alias-mcp", version: "2.0.0" },
+        serverInfo: { name: "bind-alias-mcp", version: "2.1.0" },
       }),
     );
   } else if (method === "ping") {

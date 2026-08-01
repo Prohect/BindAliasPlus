@@ -2,25 +2,14 @@
 
 All notable changes to BindAlias will be documented in this file.
 
-## TODO
+## [1.8.5] - 2026-08-01
 
-- recipe obj rename to unlocked_recipe obj
-- ```json
-  "held_item": "minecraft:cobblestone",
-  "held_item_count": 64,
-  "selected_hotbar_slot": 5,
-  "durability": null
-  ```
-  -> held_item obj which is a item stack obj (stay consistent with other item stack objs)
-- ```json
-  "target": {
-        "kind": "block",
-        "name": "Stone",
-        "distance": 0.3
-  },
-  ```
-  -> field `kind` rename to `class` & add target `pos` field obj that holds the target position `x`, `y`, `z`.
-- expand vanilla tick rate's valid range to [0.1, 10000], allow tick series commands in no cheat mode.
+### Changed
+
+- **MCP envelope channel rename** — the recipe-unlock channel `recipe` is renamed to `unlocked_recipe`.
+- **MCP state `held_item` refactored** — `held_item` (string) / `held_item_count` / `selected_hotbar_slot` / top-level `durability` collapse into a single item-stack obj `held_item` (same shape as container/hotbar entries: `item`, `name`, `count` plus optional `durability` / `enchanted` / `tooltip`; `null` when the hand is empty).
+- **MCP state `target` extended** — field `kind` renamed to `class`; added `pos` obj ({`x`, `y`, `z`}) with the exact crosshair hit position.
+- **`/tick` family without cheats** — the vanilla `/tick` command family no longer requires admin permission, so it works in singleplayer worlds with cheats off; `tick rate` valid range expanded to [0.1, 10000] (the internal 1.0 clamp was lifted to match).
 
 ## [1.8.4] - 2026-07-31
 
