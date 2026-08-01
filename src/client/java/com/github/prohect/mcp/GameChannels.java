@@ -24,7 +24,7 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
  * <li>{@link #SOUND} — sound events (subtitle-audible sounds only) with precise direction and distance, fed by
  * {@link SoundCapture}. Repeats of the same sound coalesce <b>by key</b> (even when interleaved with other sounds) into one
  * updating line with an {@code " xN"} counter, until drained.</li>
- * <li>{@link #RECIPE} — newly unlocked recipes (toast notifications), fed by {@code ClientPacketListenerMixin}.</li>
+ * <li>{@link #UNLOCKED_RECIPE} — newly unlocked recipes (toast notifications), fed by {@code ClientPacketListenerMixin}.</li>
  * </ul>
  * Every channel is a bounded, insertion-ordered buffer with a monotonic cursor; {@link #drain()} returns messages posted since
  * the previous drain and is zero-cost when nothing new arrived.
@@ -34,7 +34,7 @@ public final class GameChannels {
     public static final String CHAT = "chat";
     public static final String MOD = "mod";
     public static final String SOUND = "sound";
-    public static final String RECIPE = "recipe";
+    public static final String UNLOCKED_RECIPE = "unlocked_recipe";
 
     private static final int MAX_BUFFER = 100;
     private static final Object lock = new Object();
@@ -44,7 +44,7 @@ public final class GameChannels {
         CHANNELS.put(CHAT, new Channel(false));
         CHANNELS.put(MOD, new Channel(false));
         CHANNELS.put(SOUND, new Channel(true));
-        CHANNELS.put(RECIPE, new Channel(false));
+        CHANNELS.put(UNLOCKED_RECIPE, new Channel(false));
     }
 
     private GameChannels() {}
@@ -127,7 +127,8 @@ public final class GameChannels {
     /**
      * Drain new messages of every channel since the previous drain. Thread-safe.
      *
-     * @return non-empty channel name → new messages (insertion order: chat, mod, sound, recipe); empty map when nothing new.
+     * @return non-empty channel name → new messages (insertion order: chat, mod, sound, unlocked_recipe); empty map when
+     *         nothing new.
      */
     public static Map<String, List<String>> drain() {
         synchronized (lock) {
