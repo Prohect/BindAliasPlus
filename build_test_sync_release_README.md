@@ -14,14 +14,16 @@ Only one game client can occupy the default MCP port (25575) at a time — shut 
 
 ### MCP bridge reload
 
-Zed spawns MCP servers only at startup, so edits to `MCP/mcp_server.js` (tool descriptions, HTTP bridge logic) take effect only after a Zed reload. Use the global `zed-reload` skill:
+Edit `~/.agents/Zed/settings.json` to match the mcp bridge api `mcp_server.js` accordingly.
+
+Zed spawns MCP servers only at startup, so edits to `MCP/mcp_server.js` (tool descriptions, HTTP bridge logic) take effect only after a Zed reload. Use `terminal` zed-reload:
 
 ```bash
 zed-reload --settle 15 --wait 30 \
   "[zed-reload] Zed reloaded to restart the BindAlias MCP bridge. <context and next step>"
 ```
 
-- `--wait 30` — time for the agent's final chat message to flush before Zed closes.
+- `--wait 30` — you MUST do a final summary WITHIN this time limit before Zed closes.
 - `--settle 15` — time after Zed's window appears before injecting the revival message (MCP servers may still be starting; verify readiness by retrying `getState` for up to ~2 min).
 - The agent thread continues unattended — the revived instance reads the whole history plus the injected message and picks up where it left off.
 
