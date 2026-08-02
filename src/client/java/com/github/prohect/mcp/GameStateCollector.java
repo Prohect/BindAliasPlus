@@ -65,7 +65,6 @@ public final class GameStateCollector {
         m.put("builtinDrop", "+drop");
         m.put("builtinScreenshot", "+screenshot");
         m.put("builtinPlayerList", "+playerList");
-        m.put("builtinFreeCursor", "+freeCursor");
         m.put("builtinAdvancements", "+advancements");
         m.put("builtinDebugOverlay", "+debugOverlay");
         m.put("builtinOpenInventory", "+openInventory");
