@@ -174,7 +174,7 @@ const TOOLS = [
     description:
       "Overwrite the cfg file with new content and immediately reload it. " +
       "Requires in a singleplayer world. " +
-      "Same line format as 'readCFG'. NOTE: reloading only adds/overwrites. Put \"runAlias unloadCFGAll unloadUserAll\" as the " +
+      "Same line format as 'readCFG'. NOTE: reloading only adds/overwrites. Put \"runAlias unloadCFGAll\" as the " +
       "first line, then the cfg content to write. " +
       "Returns the standard envelope.",
     inputSchema: {
