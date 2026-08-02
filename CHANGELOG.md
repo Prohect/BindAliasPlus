@@ -7,7 +7,8 @@ All notable changes to BindAlias will be documented in this file.
 ### Added
 
 - **Per-save agent cfg** — a second cfg file at `<game_root>/saves/<save>/bind-alias/agent.cfg` loads alongside the
-  main cfg on world join. The maintainer can place initialization details here that are hidden from the MCP agent.
+  main cfg on world join. This file is readable and writable by the MCP agent via `readCFG`/`writeCFG`, while
+  the global cfg (`run/config/bind-alias.cfg`) is now hidden from the MCP API.
 - **MCP `/readNotes` and `/writeNotes` tools** — read/write arbitrary text files inside the per-save agent directory
   (`<game_root>/saves/<save>/bind-alias/<file>`). Only plain filenames (no path separators, no `..`) are accepted.
 
