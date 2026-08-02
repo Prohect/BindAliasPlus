@@ -422,7 +422,7 @@ async function handleToolCall(toolName, args) {
 
     case "writeCFG":
       return wrapResult(
-        await apiPost("/writeCFG", { content: args.content || "" }),
+        await apiPost("/writeCFG", { content: args.content || "" }, null, 30000),
       );
 
     case "listRecipes": {
@@ -445,7 +445,7 @@ async function handleToolCall(toolName, args) {
         await apiPost("/writeNotes", {
           file: args.file || "",
           content: args.content || "",
-        }),
+        }, null, 30000),
       );
 
     default:
