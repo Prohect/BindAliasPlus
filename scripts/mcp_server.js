@@ -104,7 +104,7 @@ const COMMAND_ALIASES = [
   "`var\\name\\source` — store a number for use as an arg. sources: `hotbarSlot`, `yaw`, `pitch`, `itemsOfSlotN` (N=0-9, 0=offhand, 1-9=hotbar) (stack count), a literal number, or specially `cN` which is in a different map that only `swapSlot` could access as a container_slot reference.",
   "`alias\\name_with_definition` — define or redefine an alias (\" quoted arg, or ';' repacing space arg) during alias (chain) execution",
   "`builtinRunAlias\\name` — run a alias by name (support optional \\args)(not support inline multi-alias chain)",
-  "`reapply\\action` — re-sync all held key alias to game's KeyMapping after a screen transition. Actions: `attack`, `use`, `forward`, `back`, `left`, `right`, `jump`, `sneak`, `sprint`, `drop`, `playerList`. Make most actions possible to beat the vanilla releaseAll() on setScreen event (make sure reapply is deferred after the setScreen event), `+attack` and `+use` have builtin guard to avoid this bypass for safety",
+  "`reapply\\action` — re-sync all held key alias to game's KeyMapping after a screen transition. Actions: `attack`, `use`, `forward`, `back`, `left`, `right`, `jump`, `sneak`, `sprint`, `drop`, `playerList`. Make most actions possible to beat the vanilla releaseAll() on setScreen event (make sure reapply is deferred after the setScreen event); `+attack`/`+use` presses are suppressed while a screen is open — only their release forms pass (see SCREENS)",
 ];
 
 const RUNALIAS_DESCRIPTION =
