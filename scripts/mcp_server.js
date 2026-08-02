@@ -32,7 +32,7 @@ const API_BASE = "http://127.0.0.1:" + parsePort();
 const ALIAS_RULES = [
   "SILENT FAILURES: misspelled alias_name and invalid args. ",
   "SCREENS: `+attack`/`+use`'s effects to game logic are suppressed when any screen is open. " +
-    "These aliases (+-attack, +-use, +-forward, +-back, +-left, +-right, +-jump, +-sneak, +-sprint, +-drop, +-playerList, +-advancements, `esc`, `closeScreen`, `toggleInventory`, `swapHand`, `pickItem`, `swapSlot`, `sendCommand`, `reapply`) are suppressed while a text-screen (chat, sign, book, command block) is open. " +
+    "These aliases (+-attack, +-use, +-forward, +-back, +-left, +-right, +-jump, +-sneak, +-sprint, +-drop, +-playerList, +-advancements, `esc`, `closeScreen`, `toggleInventory`, `swapHand`, `pickItem`, `swapSlot`, `sendCommand`) are suppressed while a text-screen (chat, sign, book, command block) is open. " +
     "These aliases (`+forward`, `+left`, `+right`, `+back`, `+jump`, `+sneak`, `+drop`) work on non-text-screens.  All builtin +aliases would be reapplied once per screen close event. ",
   "VARIABLES: numbers stored via the var alias can be used as numeric args (`slot`, `wait`, `yaw`, `pitch`, `setYaw`, `setPitch`, `swapSlot`), e.g. `var\\s\\hotbarSlot slot\\1 +drop -drop slot\\s`. Variables set from a `cN` source (`var\\name\\c3`) are treated as container_slot references by `swapSlot`.",
 ];
@@ -53,7 +53,6 @@ const KEY_ALIASES = [
 // SWITCH aliases — boolean state: +x = ON, -x = OFF. Never toggles.
 const SWITCH_ALIASES = [
   "`+silent` / `-silent` — suppress / restore mod feedback messages in chat",
-  "`+freeCursor` / `-freeCursor` — free the OS cursor from the game, camera driven only by yaw/pitch aliases",
 ];
 
 // ACTION aliases — one-shot calls, no +/- form.
@@ -86,8 +85,7 @@ const COMMAND_ALIASES = [
   "`log\\text` — send text to the mod log (quote arg if needed)",
   "`var\\name\\source` — store a number for use as an arg. sources: `hotbarSlot`, `yaw`, `pitch`, `itemsOfSlotN` (N=0-9, 0=offhand, 1-9=hotbar) (stack count), a literal number, or specially `cN` which is only accessible by `swapSlot` as a container_slot reference.",
   "`alias\\name_with_definition` — define or redefine an alias (\" quoted arg, or ';' repacing space arg) during alias (chain) execution",
-  "`builtinRunAlias\\name` — run a alias by name (support optional \\args)(not support inline multi-alias chain)",
-  "`reapply\\action` — re-sync all held key aliases after a screen transition. Actions: `attack`, `use`, `forward`, `back`, `left`, `right`, `jump`, `sneak`, `sprint`, `drop`, `playerList`. `+attack`/`+use` presses are suppressed while a screen is open — only their release forms pass (see SCREENS)",
+  "`builtinRunAlias\name` — run a alias by name (support optional \\args)(not support inline multi-alias chain)",
 ];
 
 const RUNALIAS_DESCRIPTION =
@@ -176,7 +174,7 @@ const TOOLS = [
     description:
       "Overwrite the cfg file with new content and immediately reload it. " +
       "Requires in a singleplayer world. " +
-      "Same line format as 'readCFG'. NOTE: reloading only adds/overwrites. Put \"runAlias unloadCFGAll unloadUserAll +freeCursor\" as the " +
+      "Same line format as 'readCFG'. NOTE: reloading only adds/overwrites. Put \"runAlias unloadCFGAll unloadUserAll\" as the " +
       "first line, then the cfg content to write. " +
       "Returns the standard envelope.",
     inputSchema: {
