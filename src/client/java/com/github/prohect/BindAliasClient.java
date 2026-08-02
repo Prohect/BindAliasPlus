@@ -45,6 +45,10 @@ public class BindAliasClient implements ClientModInitializer {
 
     public static final BindAliasClient INSTANCE = new BindAliasClient();
     public static final Path cfgPath = FabricLoader.getInstance().getConfigDir().resolve(MOD_ID + ".cfg");
+    /** Filename of the per-save agent cfg inside {@code <game_root>/saves/<save>/bind-alias/}. */
+    public static final String AGENT_CFG_FILENAME = "agent.cfg";
+    /** Subdirectory under the save directory that holds agent-scoped files. */
+    public static final String AGENT_DIR_NAME = "bind-alias";
 
     public static final ArrayDeque<KeyPressed> KEY_QUEUE = new ArrayDeque<>();
     public static final Map<InputConstants.Key, BindAliasKeyBinding> BINDING_PLUS = new HashMap<>();
@@ -193,6 +197,7 @@ public class BindAliasClient implements ClientModInitializer {
 			// registration is deduped by listener identity, so repeat joins are harmless)
 			SoundCapture.register();
 			loadCFG();
+			loadAgentCFG();
 		}));
 
 		// clear mod state on disconnect (restore locked keys, etc.)
@@ -448,6 +453,115 @@ public class BindAliasClient implements ClientModInitializer {
     /** @return {@code "[client_tick:{client_ticks}]"} if joined, {@code "[client_tick:-1]"} otherwise. */
     public static String tickPrefix() {
         return joinTick < 0 ? "[client_tick:-1]" : "[client_tick:" + (currentTick - joinTick) + "]";
+    }
+
+    /**
+     * Resolve the per-save agent cfg path: {@code <game_root>/saves/<save>/bind-alias/agent.cfg}.
+     *
+     * @return the path, or {@code null} when not in a singleplayer world
+     */
+    public static Path agentCfgPath() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null)
+            return null;
+        var server = mc.getSingleplayerServer();
+        if (server == null)
+            return null;
+        String saveName;
+        try {
+            saveName = server.getWorldData().getLevelName();
+        } catch (Exception e) {
+            return null;
+        }
+        if (saveName == null || saveName.isBlank())
+            return null;
+        return FabricLoader.getInstance().getGameDir().resolve("saves").resolve(saveName).resolve(AGENT_DIR_NAME)
+                .resolve(AGENT_CFG_FILENAME);
+    }
+
+    /**
+     * Resolve the per-save agent directory: {@code <game_root>/saves/<save>/bind-alias/}.
+     *
+     * @return the directory path, or {@code null} when not in a singleplayer world
+     */
+    public static Path agentDir() {
+        Path cfgPath = agentCfgPath();
+        return cfgPath != null ? cfgPath.getParent() : null;
+    }
+
+    /** Load (or reload) the per-save agent cfg. No-op when not in a singleplayer world. */
+    public static void loadAgentCFG() {
+        Path path = agentCfgPath();
+        if (path == null) {
+            LOGGER.debug("{}agent cfg load skipped — not in a singleplayer world", tickPrefix());
+            return;
+        }
+        LOGGER.info("{}agent autoload start (cfg: {})", tickPrefix(), path);
+        try {
+            Path parent = path.getParent();
+            if (parent != null)
+                Files.createDirectories(parent);
+            if (path.toFile().createNewFile())
+                return; // file just created → empty, nothing to load
+        } catch (IOException e) {
+            LOGGER.error("{}Could not create agent cfg file {}", tickPrefix(), path, e);
+            return;
+        }
+        byte[] data = null;
+        try (InputStream inputStream = Files.newInputStream(path)) {
+            data = new byte[inputStream.available()];
+            while (inputStream.available() > 0)
+                inputStream.read(data);
+        } catch (IOException e) {
+            LOGGER.error("{}Failed to open agent cfg file", tickPrefix(), e);
+        }
+        if (data == null)
+            return;
+        String cfg = new String(data);
+        cfg.lines().forEach(line -> {
+            try {
+                line = line.trim();
+                if (line.startsWith("/"))
+                    line = line.substring(1).trim();
+                if (!(line.isBlank() || line.startsWith("#"))) {
+                    if (line.startsWith("alias ")) {
+                        String string = line.substring("alias ".length());
+                        int i = string.indexOf(' ');
+                        String substring = string.substring(0, i);
+                        INSTANCE.commandAliasExecute(substring, string.substring(i + 1), true);
+                    } else if (line.startsWith("bind ")) {
+                        String string = line.substring("bind ".length());
+                        int i = string.indexOf(' ');
+                        String substring = string.substring(0, i);
+                        INSTANCE.commandBindExecute(substring, string.substring(i + 1), true);
+                    } else if (line.startsWith("bindByAliasName ")) {
+                        String string = line.substring("bindByAliasName ".length());
+                        int i = string.indexOf(' ');
+                        String substring = string.substring(0, i);
+                        INSTANCE.commandBindByAliasNameExecute(substring, string.substring(i + 1), true);
+                    } else if (line.startsWith("unbind ")) {
+                        String string = line.substring("unbind ".length());
+                        if (string.indexOf(' ') == -1)
+                            INSTANCE.commandUnbindExecute(string);
+                    } else if (line.startsWith("var ")) {
+                        String string = line.substring("var ".length());
+                        int i = string.indexOf(' ');
+                        if (i != -1) {
+                            String varName = string.substring(0, i);
+                            String source = string.substring(i + 1);
+                            INSTANCE.commandVarExecute(varName, source, true);
+                        }
+                    } else if (line.startsWith("runAlias ")) {
+                        String aliasName = line.substring("runAlias ".length()).trim();
+                        new UserAlias(aliasName).run("");
+                    } else {
+                        BindAliasClient.LOGGER.warn("{}Unknown command in agent cfg: {}", tickPrefix(), line);
+                    }
+                }
+            } catch (Exception e) {
+                BindAliasClient.LOGGER.warn("{}Failed to load agent CFG file", tickPrefix(), e);
+            }
+        });
     }
 
     public void loadCFG() {
