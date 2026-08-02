@@ -2,7 +2,7 @@
 
 All notable changes to BindAlias will be documented in this file.
 
-## [1.8.6] - Unreleased
+## [1.8.6] - 2026-08-02
 
 ### Added
 
@@ -17,6 +17,15 @@ All notable changes to BindAlias will be documented in this file.
   require the player to be in a singleplayer world. The main cfg is no longer accessible via the MCP API.
 - **`held_keys` no longer includes `+freeCursor`** — the internal `+freeCursor` toggle is hidden from the
   standard envelope to avoid confusing the agent with unnecessary state.
+- **Bridge tool instructions cleaned** — removed `+-freeCursor` and `reapply` from the MCP bridge descriptions
+  since they are developer-oriented and not useful to MCP agents.
+
+### Fixed
+
+- **`+use` missing from `held_keys`** in the MCP envelope.
+- **POST MCP tools timing out** — `req.end()` was missing from the bridge's `apiPost`, causing all POST-based
+  tools (`runAlias`, `writeCFG`, `defineAlias`, `writeNotes`) to hang indefinitely.
+- **`writeCFG`/`writeNotes` bridge timeout** increased from 10s to 30s to accommodate per-save cfg reload.
 
 ## [1.8.5] - 2026-08-01
 
