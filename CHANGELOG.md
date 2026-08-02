@@ -2,12 +2,21 @@
 
 All notable changes to BindAlias will be documented in this file.
 
-## TODO:
+## [1.8.6] - Unreleased
 
-- Add an independent agent cfg file path for mcp api (agent):<game_root>/saves/<save>/bind-alias/<cfg>, both cfg loads on server join. this way the maintainer could hide some initialization details from the agent. 
-- Change agent's readCFG/writeCFG scope to only agent cfg file (requires in world).
-- Hide +-freeCursor in the held_keys in the standard envelop, as these unnecessary accessible info might confuse agent.
-- mcp readNotes/writeNotes tool accepts a pure file name(with extension) that interacts files in <game_root>/saves/<save>/bind-alias/<file>, read all in a file once and overwrite all in a file once.
+### Added
+
+- **Per-save agent cfg** — a second cfg file at `<game_root>/saves/<save>/bind-alias/agent.cfg` loads alongside the
+  main cfg on world join. The maintainer can place initialization details here that are hidden from the MCP agent.
+- **MCP `/readNotes` and `/writeNotes` tools** — read/write arbitrary text files inside the per-save agent directory
+  (`<game_root>/saves/<save>/bind-alias/<file>`). Only plain filenames (no path separators, no `..`) are accepted.
+
+### Changed
+
+- **MCP `readCFG`/`writeCFG` scope** — both tools now operate exclusively on the per-save agent cfg file and
+  require the player to be in a singleplayer world. The main cfg is no longer accessible via the MCP API.
+- **`held_keys` no longer includes `+freeCursor`** — the internal `+freeCursor` toggle is hidden from the
+  standard envelope to avoid confusing the agent with unnecessary state.
 
 ## [1.8.5] - 2026-08-01
 

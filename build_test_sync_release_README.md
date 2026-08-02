@@ -33,7 +33,7 @@ zed-reload --settle 15 --wait 30 \
 
 ## release workflow
 
-1. **Develop** → build + runTestClient → **Confirm by User or MCP tools** → commits (sort into two by sync behavior)
+1. **Develop** → build + runTestClient → **Confirm by User or MCP tools** → commits (**sort into two by sync behavior**)
 2. **Sync** → the post-commit hook auto-syncs the commit record and `.git_sync_across_active_branches` files to all active branches. **Everything else (source code, build scripts, etc.) must be manually merged** per branch — cherry-pick changes, solve conflicts, then build + runTestClient + **Confirm by User or MCP tools** + commit per branch.
 3. **STOP** — wait for user confirmation before bumping
 4. **Bump** → `mod_version` in `gradle.properties` + CHANGELOG → commit
