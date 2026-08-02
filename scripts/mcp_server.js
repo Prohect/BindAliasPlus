@@ -193,6 +193,7 @@ const TOOLS = [
     description:
       "Read the entire content of a file. " +
       "Requires in a singleplayer world. " +
+      "Read 'sticker.md' first when you start, and maintain it up to date when asked to stop playing. Sort your notes by markdown reference. " +
       "Returns {\"content\":\"...\"} (empty string if the file does not exist).",
     inputSchema: {
       type: "object",
@@ -208,7 +209,7 @@ const TOOLS = [
   {
     name: "writeNotes",
     description:
-      "Overwrite a file. " +
+      "Overwrite or write a file. " +
       "Requires in a singleplayer world.",
     inputSchema: {
       type: "object",
