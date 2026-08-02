@@ -322,6 +322,7 @@ function apiPost(path, params, body, timeoutMs) {
     req.on("error", (e) => {
       resolve({ error: "Cannot connect to mod: " + e.message });
     });
+    req.end();
   });
 }
 
