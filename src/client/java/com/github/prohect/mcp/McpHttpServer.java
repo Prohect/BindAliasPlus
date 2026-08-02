@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,6 +78,8 @@ public final class McpHttpServer {
         server.createContext("/defineAlias", McpHttpServer::handleDefineAlias);
         server.createContext("/readCFG", McpHttpServer::handleReadCFG);
         server.createContext("/writeCFG", McpHttpServer::handleWriteCFG);
+        server.createContext("/readNotes", McpHttpServer::handleReadNotes);
+        server.createContext("/writeNotes", McpHttpServer::handleWriteNotes);
         server.createContext("/listRecipes", McpHttpServer::handleListRecipes);
         server.setExecutor(Executors.newCachedThreadPool(r -> {
             Thread t = new Thread(r, "BindAlias-MCP");
@@ -400,17 +403,29 @@ public final class McpHttpServer {
         }
     }
 
-    /** GET /readCFG — return the raw config file content (the only non-envelope endpoint). */
+    /** GET /readCFG — return the per-save agent cfg file content (non-envelope). Requires in a singleplayer world. */
     static void handleReadCFG(HttpExchange exchange) throws IOException {
         try {
-            String content = Files.readString(BindAliasClient.cfgPath);
+            Path path = onMainThread(BindAliasClient::agentCfgPath);
+            if (path == null) {
+                sendJson(exchange, 400, "{\"error\":\"agent cfg is only available in a singleplayer world\"}");
+                return;
+            }
+            String content;
+            try {
+                content = Files.readString(path);
+            } catch (IOException e) {
+                sendJson(exchange, 500,
+                        "{\"error\":" + GameStateCollector.jsonEscape("failed to read: " + e.getMessage()) + "}");
+                return;
+            }
             sendJson(exchange, 200, "{\"content\":" + GameStateCollector.jsonEscape(content) + "}");
-        } catch (IOException e) {
-            sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape("failed to read: " + e.getMessage()) + "}");
+        } catch (Exception e) {
+            sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
         }
     }
 
-    /** POST /writeCFG — overwrite the config file and reload it (reload log lines arrive via the mod channel). */
+    /** POST /writeCFG — overwrite the per-save agent cfg file and reload it. Requires in a singleplayer world. */
     static void handleWriteCFG(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
         String content = q.get("content");
@@ -431,14 +446,128 @@ public final class McpHttpServer {
             return;
         }
 
+        final String finalContent = content;
         try {
-            Files.writeString(BindAliasClient.cfgPath, content);
+            Path path = onMainThread(BindAliasClient::agentCfgPath);
+            if (path == null) {
+                sendJson(exchange, 400, "{\"error\":\"agent cfg is only available in a singleplayer world\"}");
+                return;
+            }
+            try {
+                Path parent = path.getParent();
+                if (parent != null)
+                    Files.createDirectories(parent);
+                Files.writeString(path, finalContent);
+            } catch (IOException e) {
+                sendJson(exchange, 500,
+                        "{\"error\":" + GameStateCollector.jsonEscape("failed to write: " + e.getMessage()) + "}");
+                return;
+            }
             String result = onMainThread(() -> {
                 String begun = StateTracker.begin(false);
-                BindAliasClient.INSTANCE.loadCFG();
+                BindAliasClient.loadAgentCFG();
                 return StateTracker.finish(begun);
             });
             sendJson(exchange, 200, result);
+        } catch (Exception e) {
+            sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
+        }
+    }
+
+    /**
+     * GET /readNotes?file=NAME — read the entire content of a file inside the per-save agent directory
+     * ({@code <game_root>/saves/<save>/bind-alias/<file>}). Requires in a singleplayer world.
+     */
+    static void handleReadNotes(HttpExchange exchange) throws IOException {
+        Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
+        String file = q.get("file");
+        if (file == null || file.isBlank()) {
+            sendJson(exchange, 400, "{\"error\":\"missing 'file' parameter\"}");
+            return;
+        }
+        // sanitize: reject paths that try to escape the agent directory
+        if (file.contains("..") || file.contains("/") || file.contains("\\")) {
+            sendJson(exchange, 400, "{\"error\":\"invalid 'file' — must be a plain filename (no path separators or '..')\"}");
+            return;
+        }
+        try {
+            Path dir = onMainThread(BindAliasClient::agentDir);
+            if (dir == null) {
+                sendJson(exchange, 400, "{\"error\":\"notes are only available in a singleplayer world\"}");
+                return;
+            }
+            Path filePath = dir.resolve(file);
+            String content;
+            try {
+                if (!Files.exists(filePath))
+                    content = "";
+                else
+                    content = Files.readString(filePath);
+            } catch (IOException e) {
+                sendJson(exchange, 500,
+                        "{\"error\":" + GameStateCollector.jsonEscape("failed to read: " + e.getMessage()) + "}");
+                return;
+            }
+            sendJson(exchange, 200, "{\"content\":" + GameStateCollector.jsonEscape(content) + "}");
+        } catch (Exception e) {
+            sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
+        }
+    }
+
+    /**
+     * POST /writeNotes?file=NAME&content=TEXT — overwrite a file inside the per-save agent directory
+     * ({@code <game_root>/saves/<save>/bind-alias/<file>}) with the given content. Requires in a singleplayer world. If content
+     * is not in the query string, it is read from the JSON body field {@code "content"}.
+     */
+    static void handleWriteNotes(HttpExchange exchange) throws IOException {
+        Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
+        String file = q.get("file");
+        String content = q.get("content");
+
+        if (file == null || file.isBlank()) {
+            sendJson(exchange, 400, "{\"error\":\"missing 'file' parameter\"}");
+            return;
+        }
+        // sanitize: reject paths that try to escape the agent directory
+        if (file.contains("..") || file.contains("/") || file.contains("\\")) {
+            sendJson(exchange, 400, "{\"error\":\"invalid 'file' — must be a plain filename (no path separators or '..')\"}");
+            return;
+        }
+
+        // if content not in query, try JSON body
+        if (content == null) {
+            String body;
+            try (InputStream is = exchange.getRequestBody()) {
+                body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            }
+            if (body != null) {
+                content = extractJsonStringField(body, "content");
+            }
+        }
+
+        if (content == null) {
+            sendJson(exchange, 400, "{\"error\":\"missing 'content'\"}");
+            return;
+        }
+
+        final String finalContent = content;
+        final String finalFile = file;
+        try {
+            Path dir = onMainThread(BindAliasClient::agentDir);
+            if (dir == null) {
+                sendJson(exchange, 400, "{\"error\":\"notes are only available in a singleplayer world\"}");
+                return;
+            }
+            Path filePath = dir.resolve(finalFile);
+            try {
+                Files.createDirectories(dir);
+                Files.writeString(filePath, finalContent);
+            } catch (IOException e) {
+                sendJson(exchange, 500,
+                        "{\"error\":" + GameStateCollector.jsonEscape("failed to write: " + e.getMessage()) + "}");
+                return;
+            }
+            sendJson(exchange, 200, "{\"ok\":true}");
         } catch (Exception e) {
             sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
         }
