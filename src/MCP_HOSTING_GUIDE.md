@@ -24,10 +24,10 @@ only starts once you join a world.
 ## MCP architecture
 
 ```
-┌───────────┐   MCP JSON-RPC (stdin/stdout)   ┌───────────────┐   HTTP (127.0.0.1:25575)   ┌───────────┐
-│  MCP Host │  ◄────────────────────────────►  │ mcp_server.js │  ◄───────────────────────►  │ BindAlias │
-│ (Zed,etc) │         tool calls, state        │   (bridge)    │    GET /state, POST /runAlias │  (mod)    │
-└───────────┘                                  └───────────────┘                              └───────────┘
+┌───────────┐   MCP JSON-RPC (stdin/stdout)    ┌───────────────┐   HTTP (127.0.0.1:25575)       ┌───────────┐
+│  MCP Host │  ◄────────────────────────────► │ mcp_server.js │  ◄───────────────────────────►│ BindAlias │
+│ (Zed,etc) │         tool calls, state        │   (bridge)    │    GET /state, POST /runAlias  │  (mod)    │
+└───────────┘                                  └───────────────┘                                └───────────┘
 ```
 
 - **`mcp_server.js`** translates MCP `tools/call` requests into HTTP calls against the mod's
