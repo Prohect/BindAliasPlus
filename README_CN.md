@@ -150,6 +150,9 @@ _注意：槽位遵循 Minecraft 的内部编号：_
 BindAlias 内置了一个 HTTP 服务器，使 AI 代理（如 Claude、ChatGPT 或自定义自动化脚本）能够观察和控制你的 Minecraft 客户端。这是
 [BindAlias MCP 工具](https://github.com/Prohect/BindAlias-mcp) 的配套模组。
 
+**托管指南：** 请参阅 [`src/MCP_HOSTING_GUIDE.md`](src/MCP_HOSTING_GUIDE.md)，了解如何为代理设置游戏、
+连接 MCP 桥接以及管理长期运行的代理会话。
+
 服务器默认监听 `http://localhost:25567`（可在 `config/bind-alias.cfg` 中配置），提供以下接口：
 
 | 接口           | 方法 | 描述                                                   |
