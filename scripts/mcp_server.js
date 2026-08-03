@@ -168,7 +168,7 @@ const TOOLS = [
           type: "array",
           items: { type: "string" },
           description:
-            "Optional list of recipe queries: result-item ids ('minecraft:torch', 'torch') or name substrings ('iron sword'). Omit to list newly unlocked recipes (diff).",
+            "Optional list of recipe queries. Omit to list newly unlocked recipes."
         },
       },
       required: [],
