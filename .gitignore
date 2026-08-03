@@ -16,8 +16,8 @@ run/*
 run/config/*
 !run/config/*.cfg
 
-# from scripts
-raw api instruction.json
+# from scripts (now under src/)
+src/raw api instruction.json
 
 release/
 

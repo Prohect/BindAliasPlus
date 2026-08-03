@@ -4,6 +4,8 @@ Harness the autoLoaded(loaded at `net.fabricmc.fabric.api.client.networking.v1.C
 **Add test aliases for new code paths, make sure the log for new test aliases is in the log**.
 **Never test MCP api with curl or raw HTTP — always use the MCP tools (getState, runAlias, etc.).**
 
+For a complete walkthrough on hosting games for agents, see [`src/MCP_HOSTING_GUIDE.md`](src/MCP_HOSTING_GUIDE.md).
+
 ### launch (detached, survives the caller)
 
 ```bash
