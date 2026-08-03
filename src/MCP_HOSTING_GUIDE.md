@@ -59,7 +59,7 @@ Run these once in chat (or via `sendCommand` in a startup alias):
 
 ```
 /gamerule doDaylightCycle false       # freeze time if you don't want the agent fighting night
-/gamerule doWeatherCycle false        # no rain surprises
+/gamerule doImmediateRespawn true     # Immediately respawn on death(agent can't respawn with aliases from the mod)
 /gamerule keepInventory true          # avoid frustration on death
 /gamerule mobGriefing false           # creepers won't destroy builds
 /gamerule doFireTick false            # fire won't spread
