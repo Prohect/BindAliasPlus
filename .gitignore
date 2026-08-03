@@ -16,6 +16,11 @@ run/*
 run/config/*
 !run/config/*.cfg
 
+# from scripts
+raw api instruction.json
+
+release/
+
 # custom
 # please add your custom gitignored files/directories to .git/info/exclude
 #
