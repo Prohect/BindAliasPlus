@@ -58,12 +58,9 @@ long-running autonomous sessions.
 Run these once in chat (or via `sendCommand` in a startup alias):
 
 ```
-/gamerule doDaylightCycle false       # freeze time if you don't want the agent fighting night
 /gamerule doImmediateRespawn true     # Immediately respawn on death(agent can't respawn with aliases from the mod)
 /gamerule keepInventory true          # avoid frustration on death
-/gamerule mobGriefing false           # creepers won't destroy builds
-/gamerule doFireTick false            # fire won't spread
-/gamerule doInsomnia false            # phantoms won't spawn
+etc.
 ```
 
 Tweak to taste — these just reduce noise for the agent.
