@@ -168,7 +168,7 @@ const TOOLS = [
           type: "array",
           items: { type: "string" },
           description:
-            "description": "Optional list of recipe queries. Omit to list newly unlocked recipes."
+            "Optional list of recipe queries. Omit to list newly unlocked recipes."
         },
       },
       required: [],
