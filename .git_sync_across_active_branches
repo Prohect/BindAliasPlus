@@ -5,6 +5,7 @@ run/config/*.cfg
 
 # sync config itself
 scripts/*
+src/+([^/])
 .git_active_branches
 .git_sync_across_active_branches
 
@@ -20,10 +21,10 @@ gradlew.bat
 settings.gradle
 LICENSE
 
-######################
-# MANUAL SYNC:       #
-# docs/en-US/        #
-# src/               #
-# build.gradle       #
-# gradle.properties  #
-######################
+#############################
+# MANUAL SYNC:              #
+# docs/en-US/               #
+# src/client/  src/main/    #
+# build.gradle              #
+# gradle.properties         #
+#############################

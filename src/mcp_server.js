@@ -29,9 +29,9 @@ const API_BASE = "http://127.0.0.1:" + parsePort();
 // runAlias description — wire-protocol facts only (chain syntax lives on the
 // `def` param below). The alias catalog and gameplay semantics (which aliases
 // exist, screens/variables interplay, etc.) change with the mod and per-world
-// cfg, so they live in scripts/agent_system_prompt.md instead of here — paste
-// that into your agent's system prompt. Run scripts/sync_mcp_instructions.sh
-// after editing this file to refresh "raw api instruction.json", a preview of
+// cfg, so they live in src/agent_system_prompt.md instead of here — paste
+// that into your agent's system prompt. Run src/sync_mcp_instructions.sh
+// after editing this file to refresh "src/raw api instruction.json", a preview of
 // exactly what a caller receives from tools/list.
 // ===========================================================================
 
