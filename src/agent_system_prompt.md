@@ -1,13 +1,16 @@
 # BindAlias agent system prompt (reference)
 
 Paste (or adapt) this into the system prompt / instructions of any AI agent connected to the
-BindAlias MCP bridge (`scripts/mcp_server.js`). It documents the *current* alias catalog and
+BindAlias MCP bridge (`src/mcp_server.js`). It documents the *current* alias catalog and
 gameplay conventions — content that changes as the mod evolves or as a world's cfg is
 customized, so it deliberately lives here instead of in the MCP tool schemas. The tool schemas
 (`tools/list`) only carry the fixed wire protocol: chain syntax, envelope shape, error contract.
 
-After editing `scripts/mcp_server.js`, run `bash scripts/sync_mcp_instructions.sh` to refresh
-`raw api instruction.json` — a preview of exactly what a caller receives.
+**Host setup:** See [`src/MCP_HOSTING_GUIDE.md`](MCP_HOSTING_GUIDE.md) for how to launch
+the game, connect the MCP bridge, and configure a world for agents.
+
+After editing `src/mcp_server.js`, run `bash src/sync_mcp_instructions.sh` to refresh
+`src/raw api instruction.json` — a preview of exactly what a caller receives.
 
 ## Usage tips
 

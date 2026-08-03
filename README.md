@@ -161,6 +161,10 @@ BindAlias includes a built-in HTTP server that enables AI agents (such as Claude
 automation scripts) to observe and control your Minecraft client. This is the companion mod for the
 [BindAlias MCP tool](https://github.com/Prohect/BindAlias-mcp).
 
+**Hosting guide:** See [`src/MCP_HOSTING_GUIDE.md`](src/MCP_HOSTING_GUIDE.md) for step-by-step
+instructions on setting up a game for agents, connecting the MCP bridge, and managing long-running
+agent sessions.
+
 The server listens on `http://localhost:25575` (falls back to the next free port, up to +9, when occupied — the chosen port is logged) and provides:
 
 | Endpoint       | Method | Description                                                              |
