@@ -50,12 +50,12 @@ const TOOLS = [
         def: {
           type: "string",
           description:
-            'Alias chain definition of 0 or more alias(es). Space for alias(with arg) separator, backslash for alias_name-arg separator or arg-arg separator, " quotes multi-word arg preventing space inside to be treated as alias(with arg) separator: e.g. `say\\"hello world"`. Semicolon for alias\'s (the alias named as `alias`) extra separator: e.g. `alias\\turnDown;setPitch\\90`, `alias\\turnRight;yaw\\90`',
+            'Alias chain definition. Space for alias(with arg) separator, backslash for alias_name-arg separator or arg-arg separator, " quotes multi-word arg preventing space inside to be treated as alias(with arg) separator: e.g. `say\\"hello world"`. Semicolon for alias\'s (the alias named as `alias`) extra separator: e.g. `alias\\turnDown;setPitch\\90`, `alias\\turnRight;yaw\\90`',
         },
         nap: {
           type: "integer",
           description:
-            "Defer the tool call's response by N client_tick (same unit as the wait\\N alias). The chain runs immediately; the response then blocks until N client_tick have elapsed. The game keeps running the whole time — you cannot react to anything or poll state until the call returns.",
+            "Defer the tool call's response by N client_tick. The chain runs immediately; the response then blocks until N client_tick have elapsed. The game keeps running the whole time — you cannot react to anything or poll state until the call returns.",
         },
       },
       required: ["def"],
@@ -136,7 +136,7 @@ const TOOLS = [
   },
   {
     name: "writeNotes",
-    description: "Write (create or overwrite) a file.",
+    description: "Write a file.",
     inputSchema: {
       type: "object",
       properties: {
