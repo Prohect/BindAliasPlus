@@ -50,7 +50,7 @@ const TOOLS = [
         def: {
           type: "string",
           description:
-            'Alias chain definition. Space for alias(with arg) separator, backslash for alias_name-arg separator or arg-arg separator, " quotes multi-word arg preventing space inside to be treated as alias(with arg) separator: e.g. `say\\"hello world"`. Semicolon for alias\'s (the alias named as `alias`) extra separator: e.g. `alias\\turnDown;setPitch\\90`, `alias\\turnRight;yaw\\90`',
+            'Alias chain definition. Space for alias(with arg) separator, backslash for alias_name-arg separator or arg-arg separator, " quotes multi-word arg preventing space inside to be parsed as alias(with arg) separator: e.g. `say\\"hello world"`. Semicolon for alias\'s (the alias named as `alias`) extra separator: e.g. `alias\\turnDown;setPitch\\90`, `alias\\turnRight;yaw\\90`',
         },
         nap: {
           type: "integer",
@@ -168,7 +168,7 @@ const TOOLS = [
           type: "array",
           items: { type: "string" },
           description:
-            "Optional list of recipe queries. Omit to list newly unlocked recipes."
+            "Optional list of recipe queries. Omit to list newly unlocked recipes.",
         },
       },
       required: [],
