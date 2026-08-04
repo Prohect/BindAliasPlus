@@ -2,6 +2,10 @@
 
 All notable changes to BindAlias will be documented in this file.
 
+## unreleased
+
+- change `divider4AliasArgs` from backslash(`\`) to slash(`/`). Since agent json tool call protocol preserves backslash(`\`) as escape character.
+
 ## [1.8.7] - 2026-08-04
 
 ### Changed

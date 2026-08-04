@@ -35,8 +35,8 @@ per screen close event.
 ## Variables
 
 Numbers stored via the `var` alias can be used as numeric args (`slot`, `wait`, `yaw`, `pitch`,
-`setYaw`, `setPitch`, `swapSlot`), e.g. `var\s\hotbarSlot slot\1 +drop -drop slot\s`. Variables
-set from a `cN` source (`var\name\c3`) are treated as container_slot references by `swapSlot`.
+`setYaw`, `setPitch`, `swapSlot`), e.g. `var/s/hotbarSlot slot/1 +drop -drop slot/s`. Variables
+set from a `cN` source (`var/name/c3`) are treated as container_slot references by `swapSlot`.
 
 ## Key aliases (+x holds, -x releases)
 
@@ -76,28 +76,28 @@ set from a `cN` source (`var\name\c3`) are treated as container_slot references 
 
 ## Command aliases (backslash separates args)
 
-- `slot\N` — select hotbar slot N (1-9) (works on/not on screen)
-- `wait\N` — defer the rest of the chain by N client_tick (N >= 0), `wait\0` is a NOP
-- `yaw\deg` / `pitch\deg` — rotate the camera by deg
-- `setYaw\deg` — set absolute yaw
-- `setPitch\deg` — set absolute pitch, -90 <= deg <= 90
-- `swapSlot\a\b` or `swapSlot\a` — SWAP two item stacks (1-arg form swaps with the selected
+- `slot/N` — select hotbar slot N (1-9) (works on/not on screen)
+- `wait/N` — defer the rest of the chain by N client_tick (N >= 0), `wait/0` is a NOP
+- `yaw/deg` or `pitch/deg` — rotate the camera by deg
+- `setYaw/deg` — set absolute yaw
+- `setPitch/deg` — set absolute pitch, -90 <= deg <= 90
+- `swapSlot/a/b` or `swapSlot/a` — SWAP two item stacks (1-arg form swaps with the selected
   hotbar slot). Slots: 1-9 hotbar, 10-36 inventory, 37 feet, 38 legs, 39 chest, 40 head, 41
   offhand, `cN` = Nth slot of a container menu (valid on a container screen if that slot
   exists). Works on a container screen when `cN` (or a `cN` var) is included; works whether or
-  not a screen is open when it isn't. Arg order doesn't matter. Example: `swapSlot\1\c2`
-- `applyRecipe\query` — apply an unlocked craftable recipe into the crafting grid on screen; NO
+  not a screen is open when it isn't. Arg order doesn't matter. Example: `swapSlot/1/c2`
+- `applyRecipe/query` — apply an unlocked craftable recipe into the crafting grid on screen; NO
   crafting performed. `query` is a result-item id (`minecraft:torch` or `torch`) or a
   case-insensitive locale-name substring (`iron sword`). Errors go to the local game chat. See
   also the `listRecipes` tool
-- `say\text` — send a chat text to server (quote arg if needed)
-- `localSay\text` — client-side-only chat text (quote arg if needed)
-- `sendCommand\cmd` — send a command to server (no leading slash) (quote arg if needed)
-- `log\text` — send text to the mod log (quote arg if needed)
-- `var\name\source` — store a number for use as an arg. Sources: `hotbarSlot`, `yaw`, `pitch`,
+- `say/text` — send a chat text to server (quote arg if needed)
+- `localSay/text` — client-side-only chat text (quote arg if needed)
+- `sendCommand/cmd` — send a command to server (no leading slash) (quote arg if needed)
+- `log/text` — send text to the mod log (quote arg if needed)
+- `var/name/source` — store a number for use as an arg. Sources: `hotbarSlot`, `yaw`, `pitch`,
   `itemsOfSlotN` (N=0-9, 0=offhand, 1-9=hotbar; stack count), a literal number, or specially
   `cN`, which is only accessible by `swapSlot` as a container_slot reference
-- `alias\name_with_definition` — define or redefine an alias (`"` quoted arg, or `;` replacing
+- `alias/name_with_definition` — define or redefine an alias (`"` quoted arg, or `;` replacing
   a space arg) during alias (chain) execution
-- `builtinRunAlias\name` — run an alias by name (supports optional `\args`; does not support an
+- `builtinRunAlias/name` — run an alias by name (supports optional `/args`; does not support an
   inline multi-alias chain)
