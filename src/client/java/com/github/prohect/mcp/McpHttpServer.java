@@ -23,6 +23,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.TickRateManager;
 
 /**
  * Lightweight HTTP API server (default {@code 127.0.0.1:25575}, falls back to the next free port up to +9 when occupied — the
@@ -184,12 +186,76 @@ public final class McpHttpServer {
         long ticksLeft;
         /** Set by the HTTP thread when the request timed out — the capture must never happen then. */
         boolean cancelled;
+        /** True when this nap engaged fast-forward — its removal must be balanced by {@link #fastForwardEnd()}. */
+        boolean fastForward;
         final CompletableFuture<String> future;
 
         NapTask(long ticksLeft, CompletableFuture<String> future) {
             this.ticksLeft = ticksLeft;
             this.future = future;
         }
+    }
+
+    // ---- nap fast-forward (slow-world bench acceleration) ----
+
+    /** Naps at least this long fast-forward the integrated server for their duration. */
+    private static final long NAP_FF_MIN_TICKS = 10;
+    /**
+     * Fast-forward rate. 20 tps is the client tick cap ({@code Minecraft.getTickTargetMillis} = max(50 ms, msPerTick)), so
+     * client and integrated server stay in lockstep; going higher would let the server outrun client ticks.
+     */
+    private static final float NAP_FF_RATE = 20.0F;
+    /** Guards {@link #ffActiveNaps} and {@link #ffPreviousRate} (HTTP threads + client tick thread). */
+    private static final Object FF_LOCK = new Object();
+    private static int ffActiveNaps;
+    private static float ffPreviousRate;
+
+    /**
+     * Engage fast-forward for a nap about to be scheduled; the pre-nap rate is recorded on the first overlapping nap and
+     * restored when the last one ends. Called on the main thread.
+     *
+     * @return true when fast-forward was engaged — the caller must then flag the NapTask so its removal (expiry or cancel) is
+     *         balanced by {@link #fastForwardEnd()}
+     */
+    private static boolean fastForwardBegin() {
+        MinecraftServer server = Minecraft.getInstance().getSingleplayerServer();
+        if (server == null)
+            return false; // remote server — no tick-rate control
+        final boolean accelerate;
+        synchronized (FF_LOCK) {
+            if (ffActiveNaps == 0)
+                ffPreviousRate = server.tickRateManager().tickrate();
+            ffActiveNaps++;
+            // no-op when the world already runs at or above the ff rate (the client caps at 20 tps anyway)
+            accelerate = ffPreviousRate < NAP_FF_RATE;
+        }
+        try {
+            if (accelerate)
+                server.execute(() -> server.tickRateManager().setTickRate(NAP_FF_RATE));
+        } catch (RuntimeException e) { // server stopping — roll back so the counter never gets stuck
+            synchronized (FF_LOCK) {
+                ffActiveNaps--;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /** Balance a {@link #fastForwardBegin()} — restores the pre-nap rate once the last overlapping fast-forward nap ends. */
+    private static void fastForwardEnd() {
+        MinecraftServer server = Minecraft.getInstance().getSingleplayerServer();
+        synchronized (FF_LOCK) {
+            if (--ffActiveNaps > 0)
+                return;
+        }
+        if (server == null)
+            return; // world left mid-nap — the rate dies with the server anyway
+        server.execute(() -> {
+            TickRateManager trm = server.tickRateManager();
+            // skip the restore when someone else changed the rate during the nap — their value wins
+            if (trm.tickrate() == NAP_FF_RATE)
+                trm.setTickRate(ffPreviousRate);
+        });
     }
 
     /**
@@ -203,11 +269,15 @@ public final class McpHttpServer {
             synchronized (task) {
                 if (task.cancelled) {
                     NAP_TASKS.remove(task);
+                    if (task.fastForward)
+                        fastForwardEnd();
                     continue;
                 }
                 if (--task.ticksLeft > 0)
                     continue;
                 NAP_TASKS.remove(task);
+                if (task.fastForward)
+                    fastForwardEnd();
                 task.future.complete(StateTracker.finish(StateTracker.begin(false)));
             }
         }
@@ -338,6 +408,8 @@ public final class McpHttpServer {
                 NapTask task = napTask;
                 onMainThread(() -> {
                     new UserAlias(definition).run("");
+                    if (nap >= NAP_FF_MIN_TICKS)
+                        task.fastForward = fastForwardBegin();
                     NAP_TASKS.add(task);
                     return null;
                 });
