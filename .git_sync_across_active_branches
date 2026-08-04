@@ -1,3 +1,17 @@
+# =============================================================================
+# Auto-sync config for scripts/post-commit (the git post-commit hook).
+#
+# Each non-comment, non-empty line is a bash glob pattern (extglob on), tested
+# with  [[ path == pattern ]]  against every file path changed in the commit,
+# relative to the repo root. The WHOLE path must match; a file matching any
+# pattern is copied onto every branch in .git_active_branches.
+#
+# Bash glob — NOT gitignore:  * crosses '/'  (scripts/* also matches
+# scripts/util/foo.sh).  src/+([^/]) matches files directly under src/ only,
+# NOT src/client/Bar.java.  !(*/*).md matches root-level .md only, NOT
+# docs/README.md.  Comment lines must start with '#' in column 0 (never append
+# an inline comment after a pattern — the whole line is the pattern).
+# =============================================================================
 .github/workflows/*.yml
 .zed/*
 docs/JAVA_DOC_GUIDE.md
