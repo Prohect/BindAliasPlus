@@ -1,4 +1,5 @@
 .github/workflows/*.yml
+.zed/
 docs/JAVA_DOC_GUIDE.md
 docs/README.md
 run/config/*.cfg
