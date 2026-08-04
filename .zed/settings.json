@@ -1,0 +1,12 @@
+{
+  "file_scan_exclusions": [
+    "*.launch",
+    ".classpath",
+    ".project",
+    ".settings",
+    ".gradle",
+    ".git",
+    "bin",
+  ],
+  "read_only_files": [ ],
+}
