@@ -29,6 +29,10 @@ loom {
             client()
             programArgs "--quickPlaySingleplayer", "Test_1_21_11"
         }
+        testClientNoCheats {
+            client()
+            programArgs "--quickPlaySingleplayer", "Test_1_21_11_no_cheats"
+        }
     }
 
     mods {
