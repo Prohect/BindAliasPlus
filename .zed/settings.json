@@ -8,5 +8,5 @@
     ".git",
     "bin",
   ],
-  "read_only_files": [ ],
+  "read_only_files": [],
 }
