@@ -11,8 +11,8 @@ import com.github.prohect.alias.BuiltinAliasWithDoubleArgs;
 import com.github.prohect.alias.BuiltinAliasWithIntegerArgs;
 import com.github.prohect.alias.UserAlias;
 import com.github.prohect.alias.builtinAlias.*;
-import com.github.prohect.alias.builtinAlias.BindAlias; // single-type import shadows com.github.prohect.BindAlias (mod
-                                                        // initializer)
+// single-type import shadows com.github.prohect.BindAlias (mod initializer)
+import com.github.prohect.alias.builtinAlias.BindAlias;
 import com.github.prohect.mcp.GameChannels;
 import com.github.prohect.mcp.McpHttpServer;
 import com.github.prohect.mcp.RecipeBookHelper;
