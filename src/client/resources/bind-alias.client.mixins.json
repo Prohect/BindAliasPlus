@@ -12,7 +12,8 @@
     "AbstractContainerScreenMixin",
     "ClientPacketListenerMixin",
     "TickCommandMixin",
-    "TickRateManagerMixin"
+    "TickRateManagerMixin",
+    "TimeCommandMixin"
   ],
   "injectors": {
     "defaultRequire": 1
