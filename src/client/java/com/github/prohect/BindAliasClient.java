@@ -11,6 +11,8 @@ import com.github.prohect.alias.BuiltinAliasWithDoubleArgs;
 import com.github.prohect.alias.BuiltinAliasWithIntegerArgs;
 import com.github.prohect.alias.UserAlias;
 import com.github.prohect.alias.builtinAlias.*;
+import com.github.prohect.alias.builtinAlias.BindAlias; // single-type import shadows com.github.prohect.BindAlias (mod
+                                                        // initializer)
 import com.github.prohect.mcp.GameChannels;
 import com.github.prohect.mcp.McpHttpServer;
 import com.github.prohect.mcp.RecipeBookHelper;
@@ -102,7 +104,7 @@ public class BindAliasClient implements ClientModInitializer {
 		new SetYawAlias().putToAliasesWithArgs();
 		new SetPitchAlias().putToAliasesWithArgs();
 		new AliasAlias().putToAliasesWithArgs();
-		new com.github.prohect.alias.builtinAlias.BindAlias().putToAliasesWithArgs();
+		new BindAlias().putToAliasesWithArgs();
 		new UnbindAlias().putToAliasesWithArgs();
 		new SayAlias().putToAliasesWithArgs();
 		new LocalSayAlias().putToAliasesWithArgs();
