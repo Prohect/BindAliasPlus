@@ -2,6 +2,12 @@
 
 All notable changes to BindAlias will be documented in this file.
 
+## [1.8.7] - 2026-08-04
+
+### Changed
+
+- **`/time` family without cheats** — the vanilla `/time` command family no longer requires gamemaster permission, so it works in singleplayer worlds with cheats off (client-side only, same approach as the existing `/tick` family).
+
 ## [1.8.6] - 2026-08-02
 
 ### Added
