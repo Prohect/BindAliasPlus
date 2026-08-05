@@ -15,6 +15,7 @@
     ".project**",
     "BUILD.md**",
     "CONTRIBUTE.md**",
+    "formatter.xml**",
     "LICENSE**",
     "settings.gradle**",
     ".github/**",
