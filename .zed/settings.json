@@ -7,6 +7,8 @@
     ".gradle",
     ".git",
     "bin",
+    // uncomment `docs` line if working on docs
+    "docs",
   ],
   "enable_language_server": true,
   "read_only_files": [],
