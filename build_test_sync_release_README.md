@@ -20,12 +20,6 @@ Wait for the client to be ready (port number before state word — netstat lists
 for i in $(seq 1 50); do netstat -ano 2>/dev/null | grep -q "25575.*LISTENING" && echo "Port 25575 listening after ${i}s" && break; sleep 1; done
 ```
 
-### sub-agent safety
-
-Parallel sub-agents that write to the same working directory — whether targeting different git branches or sharing intersecting edit trees — are **unpredictable** and **unreliable**: they race on checkout, stomp each other's staged changes, and can leave the repo in an **unrecoverable** state (detached HEAD, lost stashes, merge-conflict artifacts).
-
-**Never spawn parallel sub-agents that can write to the same pwd.** Sync branches sequentially instead.
-
 ### MCP bridge reload
 
 Edit `~/.agents/Zed/settings.json` to match the mcp bridge api `mcp_server.js` accordingly.
