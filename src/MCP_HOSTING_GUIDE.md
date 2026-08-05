@@ -26,7 +26,7 @@ only starts once you join a world.
 ```
 ┌───────────┐   MCP JSON-RPC (stdin/stdout)    ┌───────────────┐   HTTP (127.0.0.1:25575)       ┌───────────┐
 │  MCP Host │  ◄────────────────────────────► │ mcp_server.js │  ◄───────────────────────────►│ BindAlias │
-│ (Zed,etc) │         tool calls, state        │   (bridge)    │    GET /state, POST /runAlias  │  (mod)    │
+│ (Zed,etc) │         tool calls, state        │   (bridge)    │  /runAlias, /screenshot, ...   │ BindAlias │
 └───────────┘                                  └───────────────┘                                └───────────┘
 ```
 
@@ -127,7 +127,7 @@ It is recommended to specify a fixed file for the entrypoint of agent notes in y
 - **`nap` blocks the agent** — the game keeps running but the agent can't react. Agent should keep naps short
   (~2 ticks) unless the agent is genuinely waiting for a long cooldown.
 - **State diffs are free** — every `runAlias`/`defineAlias`/`getScreenshot` response carries a
-  state diff. Agent should prefer reading these over polling `getFullState`.
+  state diff. Agent should prefer reading these over requesting full snapshots (`verbose`).
 
 ---
 

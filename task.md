@@ -16,22 +16,24 @@ There was a not optimized system prompt guide: `.\src\agent_system_prompt.md`.
   (chained after init). Baseline speed 1 tps → agent has ~1 s per game tick to react.
 - **Acceleration**: `nap >= 10` fast-forwards the integrated server to 20 tps for the nap, then
   restores previous tps (implemented + E2E-verified in `McpHttpServer.java`, commit `d761ffe5`).
-- **Sub-agent tools (allowlist, nothing else)**: `runAlias`, `getFullState`, `getScreenshot`,
-  `defineAlias`, `readCFG`, `writeCFG`, `readNotes`, `writeNotes`, `listRecipes`.
+- **Sub-agent tools (allowlist, nothing else)**: `runAlias`, `getScreenshot`,
+  `defineAlias`, `readCFG`, `writeCFG`, `readNotes`, `writeNotes`, `listRecipes` (all
+  envelope tools accept optional `verbose`/`nap`).
   No terminal, no file tools, no dev context. Per-save `agent.cfg` via read/writeCFG (empty).
 - **Prompt injection**: candidate prompt written into project `AGENTS.md` (auto-injected into
   sub-agents). Bench message carries only the task, never the prompt.
-- **Bench Endpoint**: 2 game days = **48000 server ticks**, measured via `sendCommand"time query gametime"`
-  (works cheat-free via the mod's TimeCommandMixin).
+- **Bench Endpoint**: until night falls = **~12000 server ticks**, measured via `sendCommand/"time query gametime"`
+  (works cheat-free via the mod's TimeCommandMixin). (Was 2 days/48000, then 1 day/24000 —
+  shortened to keep iteration wall time low.)
 
 ## The bench task (message given to every sub-agent, verbatim template)
 
 > You are playing Minecraft in singleplayer survival (no cheats) through the tools you have.
 > Work autonomously — do not stop to ask questions.
 >
-> Goal: progress as far as you can before 2 in-game days have passed to beat the game. 
+> Goal: progress as far as you can before night falls to beat the game. 
 >
-> When you stop (goal reached, 2 days passed, or stuck), report:
+> When you stop (goal reached, night fell, or stuck), report:
 > milestones reached, final inventory, deaths, and anything that confused you about the tools.
 
 ## Iteration protocol
