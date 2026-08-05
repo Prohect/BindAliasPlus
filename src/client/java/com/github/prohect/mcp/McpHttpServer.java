@@ -74,7 +74,6 @@ public final class McpHttpServer {
                     BindAliasClient.tickPrefix(), DEFAULT_PORT, DEFAULT_PORT + MAX_PORT_ATTEMPTS - 1);
             return;
         }
-        server.createContext("/state", McpHttpServer::handleState);
         server.createContext("/screenshot", McpHttpServer::handleScreenshot);
         server.createContext("/runAlias", McpHttpServer::handleRunAlias);
         server.createContext("/defineAlias", McpHttpServer::handleDefineAlias);
@@ -161,6 +160,37 @@ public final class McpHttpServer {
         return sb.toString();
     }
 
+    /** Parse the optional {@code verbose} flag (absent → diff; "true"/"1" → full state snapshot). */
+    private static boolean parseVerbose(Map<String, String> q) {
+        String v = q.get("verbose");
+        return v != null && (v.equals("true") || v.equals("1"));
+    }
+
+    /**
+     * Parse the optional {@code nap} parameter.
+     *
+     * @return 0 when absent, the tick count when valid, -1 when malformed or outside [0, {@value #MAX_NAP_TICKS}]
+     */
+    private static long parseNap(Map<String, String> q) {
+        String napParam = q.get("nap");
+        if (napParam == null || napParam.isBlank())
+            return 0;
+        final long n;
+        try {
+            n = Long.parseLong(napParam.trim());
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+        return n >= 0 && n <= MAX_NAP_TICKS ? n : -1;
+    }
+
+    /** Merge extra members ({@code "\"recipes\":[...]"}) into an envelope just before its closing brace. */
+    private static String mergeExtra(String envelope, String extra) {
+        if (extra == null || extra.isEmpty())
+            return envelope;
+        return envelope.substring(0, envelope.length() - 1) + ',' + extra + '}';
+    }
+
     /** Send a JSON string as the HTTP response. */
     private static void sendJson(HttpExchange exchange, int code, String json) throws IOException {
         byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
@@ -188,6 +218,8 @@ public final class McpHttpServer {
         boolean cancelled;
         /** True when this nap engaged fast-forward — its removal must be balanced by {@link #fastForwardEnd()}. */
         boolean fastForward;
+        /** Capture the full state snapshot instead of the diff when the nap expires. */
+        boolean verbose;
         final CompletableFuture<String> future;
 
         NapTask(long ticksLeft, CompletableFuture<String> future) {
@@ -278,25 +310,70 @@ public final class McpHttpServer {
                 NAP_TASKS.remove(task);
                 if (task.fastForward)
                     fastForwardEnd();
-                task.future.complete(StateTracker.finish(StateTracker.begin(false)));
+                task.future.complete(StateTracker.finish(StateTracker.begin(task.verbose)));
             }
         }
     }
 
     // ---- endpoints ----
 
-    /** GET /state — full state snapshot + drained channels. */
-    static void handleState(HttpExchange exchange) throws IOException {
+    /**
+     * Shared nap path of the envelope endpoints: run {@code action} on the main thread immediately (its return value is merged
+     * into the final envelope as extra members), then defer the envelope capture by {@code nap} client_tick and block the HTTP
+     * thread for it. Fast-forward engages for {@code nap >= NAP_FF_MIN_TICKS}. On scheduling failure or timeout the task is
+     * cancelled (no late capture draining channels into a response nobody reads), a 500 is sent, and null is returned.
+     */
+    private static String runWithNap(HttpExchange exchange, long nap, boolean verbose, CheckedSupplier<String> action)
+            throws IOException {
+        CompletableFuture<String> future = new CompletableFuture<>();
+        NapTask task = new NapTask(nap, future);
+        task.verbose = verbose;
+        String[] extra = new String[1];
         try {
-            String json = onMainThread(() -> StateTracker.finish(StateTracker.begin(true)));
-            sendJson(exchange, 200, json);
+            onMainThread(() -> {
+                extra[0] = action.get();
+                if (nap >= NAP_FF_MIN_TICKS)
+                    task.fastForward = fastForwardBegin();
+                NAP_TASKS.add(task);
+                return null;
+            });
         } catch (Exception e) {
             sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
+            return null;
         }
+        String envelope;
+        try {
+            // a client_tick is 50 ms at nominal speed; the margin absorbs lag/pause hiccups
+            envelope = future.get(nap * 50 + NAP_TIMEOUT_MARGIN_MS, TimeUnit.MILLISECONDS);
+        } catch (java.util.concurrent.TimeoutException e) {
+            synchronized (task) {
+                task.cancelled = true;
+            }
+            envelope = future.getNow(null);
+            if (envelope == null) {
+                sendJson(exchange, 500, "{\"error\":\"nap timed out — game not ticking?\"}");
+                return null;
+            }
+        } catch (Exception e) {
+            synchronized (task) {
+                task.cancelled = true;
+            }
+            sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
+            return null;
+        }
+        return mergeExtra(envelope, extra[0]);
     }
 
-    /** GET /screenshot — in-memory PNG (base64) merged with the standard envelope. */
+    /** GET /screenshot[?verbose=1][&nap=N] — in-memory PNG (base64) merged with the standard envelope. */
     static synchronized void handleScreenshot(HttpExchange exchange) throws IOException {
+        Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
+        long nap = parseNap(q);
+        if (nap < 0) {
+            sendJson(exchange, 400,
+                    "{\"error\":\"invalid 'nap' — integer client_tick in [0," + MAX_NAP_TICKS + "] expected\"}");
+            return;
+        }
+        boolean verbose = parseVerbose(q);
         try {
             // Pre-check: must be in game
             Boolean inGame = onMainThread(() -> Minecraft.getInstance().player != null);
@@ -311,8 +388,9 @@ public final class McpHttpServer {
             CompletableFuture<byte[]> future = new CompletableFuture<>();
             ScreenshotCapture.nextPngFuture = future;
 
+            final long napTicks = nap;
             String begun = onMainThread(() -> {
-                String env = StateTracker.begin(false);
+                String env = napTicks == 0 ? StateTracker.begin(verbose) : null;
                 Minecraft mc = Minecraft.getInstance();
                 net.minecraft.client.Screenshot.grab(mc.gameDirectory, null, mc.gameRenderer.mainRenderTarget(), 1, msg -> {
                 });
@@ -338,25 +416,30 @@ public final class McpHttpServer {
                 return;
             }
 
+            String envelope;
+            if (napTicks == 0) {
+                envelope = StateTracker.finish(begun);
+            } else {
+                envelope = runWithNap(exchange, napTicks, verbose, () -> "");
+                if (envelope == null)
+                    return; // error already sent
+            }
             String b64 = java.util.Base64.getEncoder().encodeToString(data);
-            String envelope = StateTracker.finish(begun);
-            // merge: {"base64":"...", <envelope members>}
-            String json = "{\"base64\":" + GameStateCollector.jsonEscape(b64) + "," + envelope.substring(1);
-            sendJson(exchange, 200, json);
+            sendJson(exchange, 200, mergeExtra(envelope, "\"base64\":" + GameStateCollector.jsonEscape(b64)));
         } catch (Exception e) {
             sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
         }
     }
 
     /**
-     * POST /runAlias?def=…[&nap=N] — execute a chain of aliases (space-separated, \ for args). The state diff is captured
-     * BEFORE execution; message channels are drained AFTER the immediate part of the chain ran, so {@code log\} and chat
-     * feedback inside the chain is delivered with this response. Deferred effects (after {@code wait\N}) show up in later
-     * responses.
+     * POST /runAlias?def=…[&verbose=1][&nap=N] — execute a chain of aliases (space-separated, \ for args). Without {@code nap},
+     * the state diff is captured BEFORE execution and message channels are drained AFTER the immediate part of the chain ran,
+     * so {@code log\} and chat feedback inside the chain is delivered with this response. Deferred effects (after
+     * {@code wait\N}) show up in later responses.
      * <p>
      * {@code nap=N} (client_tick, the same unit as {@code wait\N}; 0-{@value #MAX_NAP_TICKS}) defers the whole response: the
      * chain still runs immediately, but the envelope is captured only after N client_tick elapsed — newest state diff plus
-     * every message produced during the nap.
+     * every message produced during the nap. {@code verbose} makes the captured state the full snapshot.
      */
     static void handleRunAlias(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
@@ -378,72 +461,41 @@ public final class McpHttpServer {
             return;
         }
 
-        long napTicks = 0;
-        String napParam = q.get("nap");
-        if (napParam != null && !napParam.isBlank()) {
-            try {
-                napTicks = Long.parseLong(napParam.trim());
-            } catch (NumberFormatException e) {
-                napTicks = -1;
-            }
-            if (napTicks < 0 || napTicks > MAX_NAP_TICKS) {
-                sendJson(exchange, 400,
-                        "{\"error\":\"invalid 'nap' — integer client_tick in [0," + MAX_NAP_TICKS + "] expected\"}");
-                return;
-            }
+        long nap = parseNap(q);
+        if (nap < 0) {
+            sendJson(exchange, 400,
+                    "{\"error\":\"invalid 'nap' — integer client_tick in [0," + MAX_NAP_TICKS + "] expected\"}");
+            return;
         }
+        boolean verbose = parseVerbose(q);
 
         final String definition = def;
-        final long nap = napTicks;
-        final NapTask napTask = nap == 0 ? null : new NapTask(nap, new CompletableFuture<>());
         try {
             String result;
-            if (napTask == null) {
+            if (nap == 0) {
                 result = onMainThread(() -> {
-                    String begun = StateTracker.begin(false);
+                    String begun = StateTracker.begin(verbose);
                     new UserAlias(definition).run("");
                     return StateTracker.finish(begun);
                 });
             } else {
-                NapTask task = napTask;
-                onMainThread(() -> {
+                result = runWithNap(exchange, nap, verbose, () -> {
                     new UserAlias(definition).run("");
-                    if (nap >= NAP_FF_MIN_TICKS)
-                        task.fastForward = fastForwardBegin();
-                    NAP_TASKS.add(task);
-                    return null;
+                    return "";
                 });
-                try {
-                    // a client_tick is 50 ms at nominal speed; the margin absorbs lag/pause hiccups
-                    result = task.future.get(nap * 50 + NAP_TIMEOUT_MARGIN_MS, TimeUnit.MILLISECONDS);
-                } catch (java.util.concurrent.TimeoutException e) {
-                    // Game stopped ticking — cancel so a late tick never captures (and drains channels)
-                    // into a response nobody reads; a capture that already won the race is still used.
-                    synchronized (task) {
-                        task.cancelled = true;
-                    }
-                    result = task.future.getNow(null);
-                    if (result == null) {
-                        sendJson(exchange, 500, "{\"error\":\"nap timed out — game not ticking?\"}");
-                        return;
-                    }
-                }
+                if (result == null)
+                    return; // error already sent
             }
             sendJson(exchange, 200, result);
         } catch (Exception e) {
-            // a nap task whose scheduling failed (main thread stalled) must never fire late either
-            if (napTask != null) {
-                synchronized (napTask) {
-                    napTask.cancelled = true;
-                }
-            }
             sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
         }
     }
 
     /**
-     * POST /defineAlias?name=…&def=… — define an alias via the real {@code /alias} client command. The command's feedback line
-     * ({@code "Alias x = ..."} / {@code "Can't replace builtinAlias x"}) is delivered in the response's {@code chat} channel.
+     * POST /defineAlias?name=…&def=…[&verbose=1][&nap=N] — define an alias via the real {@code /alias} client command. The
+     * command's feedback line ({@code "Alias x = ..."} / {@code "Can't replace builtinAlias x"}) is delivered in the response's
+     * {@code chat} channel.
      */
     static void handleDefineAlias(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
@@ -455,18 +507,36 @@ public final class McpHttpServer {
             return;
         }
 
+        long nap = parseNap(q);
+        if (nap < 0) {
+            sendJson(exchange, 400,
+                    "{\"error\":\"invalid 'nap' — integer client_tick in [0," + MAX_NAP_TICKS + "] expected\"}");
+            return;
+        }
+        boolean verbose = parseVerbose(q);
+
+        final String command = "alias " + name + " " + def;
         try {
-            String result = onMainThread(() -> {
-                Minecraft mc = Minecraft.getInstance();
-                if (mc.player == null)
-                    return null;
-                String begun = StateTracker.begin(false);
-                mc.player.connection.sendCommand("alias " + name + " " + def);
-                return StateTracker.finish(begun);
-            });
-            if (result == null) {
+            Boolean inWorld = onMainThread(() -> Minecraft.getInstance().player != null);
+            if (!inWorld) {
                 sendJson(exchange, 400, "{\"error\":\"not in world\"}");
                 return;
+            }
+            String result;
+            if (nap == 0) {
+                result = onMainThread(() -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    String begun = StateTracker.begin(verbose);
+                    mc.player.connection.sendCommand(command);
+                    return StateTracker.finish(begun);
+                });
+            } else {
+                result = runWithNap(exchange, nap, verbose, () -> {
+                    Minecraft.getInstance().player.connection.sendCommand(command);
+                    return "";
+                });
+                if (result == null)
+                    return; // error already sent
             }
             sendJson(exchange, 200, result);
         } catch (Exception e) {
@@ -517,6 +587,14 @@ public final class McpHttpServer {
             return;
         }
 
+        long nap = parseNap(q);
+        if (nap < 0) {
+            sendJson(exchange, 400,
+                    "{\"error\":\"invalid 'nap' — integer client_tick in [0," + MAX_NAP_TICKS + "] expected\"}");
+            return;
+        }
+        boolean verbose = parseVerbose(q);
+
         final String finalContent = content;
         try {
             Path path = onMainThread(BindAliasClient::agentCfgPath);
@@ -534,11 +612,21 @@ public final class McpHttpServer {
                         "{\"error\":" + GameStateCollector.jsonEscape("failed to write: " + e.getMessage()) + "}");
                 return;
             }
-            String result = onMainThread(() -> {
-                String begun = StateTracker.begin(false);
-                BindAliasClient.loadAgentCFG();
-                return StateTracker.finish(begun);
-            });
+            String result;
+            if (nap == 0) {
+                result = onMainThread(() -> {
+                    String begun = StateTracker.begin(verbose);
+                    BindAliasClient.loadAgentCFG();
+                    return StateTracker.finish(begun);
+                });
+            } else {
+                result = runWithNap(exchange, nap, verbose, () -> {
+                    BindAliasClient.loadAgentCFG();
+                    return "";
+                });
+                if (result == null)
+                    return; // error already sent
+            }
             sendJson(exchange, 200, result);
         } catch (Exception e) {
             sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
@@ -645,22 +733,38 @@ public final class McpHttpServer {
     }
 
     /**
-     * GET /listRecipes[?q=a,b,c] — list recipes unlocked in the recipe book. Only works while an
+     * GET /listRecipes[?q=a,b,c][&verbose=1][&nap=N] — list recipes unlocked in the recipe book. Only works while an
      * {@link AbstractRecipeBookScreen} is open. Without {@code q}: recipes learned since the previous call (diff). With
      * {@code q} (comma-separated item ids or name substrings): every query is answered independently — {@code recipes} holds
-     * the matches, {@code recipe_errors} the per-query failures (one bad query never eats valid results).
+     * the matches ({@code name}/{@code item}/{@code craftable}/{@code placeable}), {@code recipe_errors} the per-query failures
+     * (one bad query never eats valid results).
      */
     static void handleListRecipes(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
         String queryParam = q.get("q");
+        long nap = parseNap(q);
+        if (nap < 0) {
+            sendJson(exchange, 400,
+                    "{\"error\":\"invalid 'nap' — integer client_tick in [0," + MAX_NAP_TICKS + "] expected\"}");
+            return;
+        }
+        boolean verbose = parseVerbose(q);
         try {
-            String result = onMainThread(() -> {
+            String precheck = onMainThread(() -> {
                 Minecraft mc = Minecraft.getInstance();
                 if (mc.player == null)
-                    return null;
+                    return "not in world";
                 if (!(McScreenHelper.getCurrentScreen(mc) instanceof AbstractRecipeBookScreen))
-                    return "";
-                String begun = StateTracker.begin(false);
+                    return "no recipe book screen open";
+                return null;
+            });
+            if (precheck != null) {
+                sendJson(exchange, 400, "{\"error\":" + GameStateCollector.jsonEscape(precheck) + "}");
+                return;
+            }
+
+            CheckedSupplier<String> buildExtra = () -> {
+                Minecraft mc = Minecraft.getInstance();
                 List<RecipeBookHelper.RecipeInfo> recipes;
                 List<String> errors = new ArrayList<>();
                 if (queryParam == null || queryParam.isBlank()) {
@@ -683,12 +787,9 @@ public final class McpHttpServer {
                         }
                     }
                 }
-                String envelope = StateTracker.finish(begun);
-                // pre-size for envelope + recipes (~80 chars/recipe) + optional errors
-                int estCap = envelope.length() + recipes.size() * 80 + errors.size() * 60;
-                StringBuilder sb = new StringBuilder(estCap);
-                sb.append(envelope, 0, envelope.length() - 1);
-                sb.append(",\"recipes\":").append(RecipeBookHelper.recipesJson(recipes));
+                // pre-size for ~80 chars/recipe + optional errors
+                StringBuilder sb = new StringBuilder(recipes.size() * 80 + errors.size() * 60 + 16);
+                sb.append("\"recipes\":").append(RecipeBookHelper.recipesJson(recipes));
                 if (!errors.isEmpty()) {
                     sb.append(",\"recipe_errors\":[");
                     for (int i = 0; i < errors.size(); i++) {
@@ -698,15 +799,20 @@ public final class McpHttpServer {
                     }
                     sb.append(']');
                 }
-                return sb.append('}').toString();
-            });
-            if (result == null) {
-                sendJson(exchange, 400, "{\"error\":\"not in world\"}");
-                return;
-            }
-            if (result.isEmpty()) {
-                sendJson(exchange, 400, "{\"error\":\"no recipe book screen open\"}");
-                return;
+                return sb.toString();
+            };
+
+            String result;
+            if (nap == 0) {
+                result = onMainThread(() -> {
+                    String begun = StateTracker.begin(verbose);
+                    String extra = buildExtra.get();
+                    return mergeExtra(StateTracker.finish(begun), extra);
+                });
+            } else {
+                result = runWithNap(exchange, nap, verbose, buildExtra);
+                if (result == null)
+                    return; // error already sent
             }
             sendJson(exchange, 200, result);
         } catch (Exception e) {
