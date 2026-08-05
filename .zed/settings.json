@@ -8,5 +8,6 @@
     ".git",
     // "bin",
   ],
+  "enable_language_server": true,
   "read_only_files": [],
 }
