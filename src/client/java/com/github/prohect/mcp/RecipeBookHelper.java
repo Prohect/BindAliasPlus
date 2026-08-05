@@ -2,8 +2,10 @@ package com.github.prohect.mcp;
 
 import com.github.prohect.BindAliasClient;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
@@ -11,10 +13,16 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.entity.player.StackedItemContents;
+import net.minecraft.world.inventory.AbstractCraftingMenu;
+import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.inventory.RecipeBookMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.display.FurnaceRecipeDisplay;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
 import net.minecraft.world.item.crafting.display.RecipeDisplayId;
+import net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay;
+import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 
 /**
@@ -29,8 +37,8 @@ public final class RecipeBookHelper {
 
     private RecipeBookHelper() {}
 
-    /** One unlocked recipe, deduplicated by (item id, display name). */
-    public record RecipeInfo(String name, String itemId, boolean craftable, RecipeDisplayId displayId) {}
+    /** One unlocked recipe, deduplicated by (item id, display name), preferring a display the open menu can place. */
+    public record RecipeInfo(String name, String itemId, boolean craftable, boolean placeable, RecipeDisplayId displayId) {}
 
     // ---- listing ----
 
@@ -46,10 +54,14 @@ public final class RecipeBookHelper {
         ContextMap context = SlotDisplayContext.fromLevel(p.level());
         StackedItemContents stacked = new StackedItemContents();
         p.getInventory().fillStackedContents(stacked);
-        if (p.containerMenu instanceof RecipeBookMenu menu)
+        RecipeBookMenu menu = p.containerMenu instanceof RecipeBookMenu m ? m : null;
+        if (menu != null)
             menu.fillCraftSlotsStackedContents(stacked);
 
-        Set<String> seen = new HashSet<>();
+        // Several displays can yield the same result item (e.g. cobblestone slab: crafting display AND stonecutter
+        // display). Dedup prefers the display the open menu can place — otherwise applyRecipe could pick one the
+        // server rejects (ClassCastException in recipeMatches) or silently ignores.
+        Map<String, Integer> indexByKey = new HashMap<>();
         for (RecipeCollection collection : p.getRecipeBook().getCollections()) {
             for (RecipeDisplayEntry entry : collection.getRecipes()) {
                 List<ItemStack> results = entry.resultItems(context);
@@ -58,12 +70,40 @@ public final class RecipeBookHelper {
                 ItemStack result = results.get(0);
                 String itemId = BuiltInRegistries.ITEM.getKey(result.getItem()).toString();
                 String name = result.getHoverName().getString();
-                if (!seen.add(itemId + '|' + name))
-                    continue;
-                out.add(new RecipeInfo(name, itemId, entry.canCraft(stacked), entry.id()));
+                boolean placeable = menu != null && placeableIn(menu, entry.display());
+                RecipeInfo info = new RecipeInfo(name, itemId, entry.canCraft(stacked), placeable, entry.id());
+                String key = itemId + '|' + name;
+                Integer existing = indexByKey.get(key);
+                if (existing == null) {
+                    indexByKey.put(key, out.size());
+                    out.add(info);
+                } else if (placeable && !out.get(existing).placeable()) {
+                    out.set(existing, info);
+                }
             }
         }
         return out;
+    }
+
+    /**
+     * Whether the open menu can place this display — mirrors the recipe book's own per-menu filtering
+     * ({@code CraftingRecipeBookComponent#canDisplay}, {@code FurnaceRecipeBookComponent#selectMatchingRecipes}): crafting
+     * menus (inventory 2x2, crafting table 3x3) take crafting displays that fit the grid, furnace menus take furnace displays,
+     * and everything else is rejected (the server throws on such packets or silently ignores them).
+     */
+    public static boolean placeableIn(RecipeBookMenu menu, RecipeDisplay display) {
+        if (menu instanceof AbstractCraftingMenu crafting) {
+            return switch (display) {
+                case ShapedCraftingRecipeDisplay shaped ->
+                    crafting.getGridWidth() >= shaped.width() && crafting.getGridHeight() >= shaped.height();
+                case ShapelessCraftingRecipeDisplay shapeless ->
+                    crafting.getGridWidth() * crafting.getGridHeight() >= shapeless.ingredients().size();
+                default -> false;
+            };
+        }
+        if (menu instanceof AbstractFurnaceMenu)
+            return display instanceof FurnaceRecipeDisplay;
+        return false;
     }
 
     /**
@@ -131,7 +171,7 @@ public final class RecipeBookHelper {
             first = false;
             sb.append("{\"name\":").append(GameStateCollector.jsonEscape(r.name())).append(",\"item\":")
                     .append(GameStateCollector.jsonEscape(r.itemId())).append(",\"craftable\":").append(r.craftable())
-                    .append('}');
+                    .append(",\"placeable\":").append(r.placeable()).append('}');
         }
         return sb.append(']').toString();
     }
