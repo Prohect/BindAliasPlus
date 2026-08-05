@@ -10,16 +10,19 @@ import java.util.Map;
  *
  * <pre>{@code {"client_tick":N, "state":{...}, "chat":[...], "mod":[...], "sound":[...], "unlocked_recipe":[...]}}</pre>
  * <p>
- * {@code state} is the FULL snapshot for {@code getState} and only the <b>changed</b> members for every other tool (a member
- * serialized as {@code null} means it disappeared — e.g. the container screen closed). {@code state} is omitted entirely when
- * nothing changed. {@code held_keys} is the exception: it is included in <b>every</b> envelope while non-empty, because screen
- * transitions re-apply held boolean aliases behind the scenes (see {@code MouseMixin#lockCursor}) and the caller must always
- * know what is currently held.
+ * {@code state} is the FULL snapshot when the caller passes {@code verbose} and only the <b>changed</b> members otherwise (a
+ * member serialized as {@code null} means it disappeared — e.g. the container screen closed). {@code state} is omitted entirely
+ * when nothing changed. {@code held_keys} is the exception: it is included in <b>every</b> envelope while non-empty, because
+ * screen transitions re-apply held boolean aliases behind the scenes (see {@code MouseMixin#lockCursor}) and the caller must
+ * always know what is currently held.
  * <p>
  * Channels are drained by {@link #finish(String)} — each message is delivered exactly once; empty channels are omitted. The
- * {@code container} and {@code hotbar} members are diffed at slot granularity: full view on getState / open / menu change,
+ * {@code container} and {@code hotbar} members are diffed at slot granularity: full view on verbose / open / menu change,
  * afterwards only changed slots ({@code "item":null} = slot became empty) plus {@code empty_inv}/{@code container_grid} or
- * {@code hotbar_empty} only when they changed. Typical usage per request, in one main-thread roundtrip:
+ * {@code hotbar_empty} only when they changed. While a container screen is open, the hotbar members are NOT emitted — the
+ * container's {@code inventory_items}/{@code empty_inv} already cover slots 1-41; the transition emits
+ * {@code "hotbar":null,"hotbar_empty":null} once. {@code selected} (slot index + item stack) is always present. Typical usage
+ * per request, in one main-thread roundtrip:
  *
  * <pre>
  * String env = StateTracker.begin(false); // state snapshot BEFORE the action
@@ -50,7 +53,7 @@ public final class StateTracker {
      * Begin an envelope: snapshot the current state and emit {@code {"client_tick":N[,"state":{...}]}}. A world change since
      * the previous call forces a full snapshot. Must be called on the Minecraft main thread.
      *
-     * @param full true for getState (always every member), false for the changed-members diff
+     * @param full true for verbose (always every member), false for the changed-members diff
      */
     public static synchronized String begin(boolean full) {
         if (BindAliasClient.joinTick != baselineJoinTick) {
@@ -112,36 +115,50 @@ public final class StateTracker {
             lastContainer = snap;
         }
 
-        // hotbar — diffed at slot granularity (full on getState / world change)
+        // hotbar — standalone only while NO container screen is open (an open container's
+        // inventory_items/empty_inv already cover slots 1-41). On the transition to a container, the members are
+        // nulled once and the baselines dropped, so the next no-container envelope re-emits the full hotbar.
         if (mc.player != null) {
-            Map<String, String> curHotbar = GameStateCollector.hotbarItems(mc.player);
-            String curEmpty = GameStateCollector.hotbarEmptyRanges(mc.player);
-
-            if (full || lastHotbarItems == null) {
-                if (state.length() > 0)
-                    state.append(',');
-                state.append("\"hotbar\":").append(GameStateCollector.hotbarFullJson(curHotbar));
-                if (curEmpty != null) {
-                    state.append(",\"hotbar_empty\":").append(GameStateCollector.jsonEscape(curEmpty));
-                } else if (lastHotbarEmpty != null) {
-                    state.append(",\"hotbar_empty\":null");
+            if (snap != null) {
+                if (lastHotbarItems != null) {
+                    if (state.length() > 0)
+                        state.append(',');
+                    state.append("\"hotbar\":null");
+                    if (lastHotbarEmpty != null)
+                        state.append(",\"hotbar_empty\":null");
+                    lastHotbarItems = null;
+                    lastHotbarEmpty = null;
                 }
             } else {
-                String hbDiff = GameStateCollector.hotbarDiffJson(lastHotbarItems, curHotbar);
-                if (hbDiff != null) {
+                Map<String, String> curHotbar = GameStateCollector.hotbarItems(mc.player);
+                String curEmpty = GameStateCollector.hotbarEmptyRanges(mc.player);
+
+                if (full || lastHotbarItems == null) {
                     if (state.length() > 0)
                         state.append(',');
-                    state.append("\"hotbar\":").append(hbDiff);
+                    state.append("\"hotbar\":").append(GameStateCollector.hotbarFullJson(curHotbar));
+                    if (curEmpty != null) {
+                        state.append(",\"hotbar_empty\":").append(GameStateCollector.jsonEscape(curEmpty));
+                    } else if (lastHotbarEmpty != null) {
+                        state.append(",\"hotbar_empty\":null");
+                    }
+                } else {
+                    String hbDiff = GameStateCollector.hotbarDiffJson(lastHotbarItems, curHotbar);
+                    if (hbDiff != null) {
+                        if (state.length() > 0)
+                            state.append(',');
+                        state.append("\"hotbar\":").append(hbDiff);
+                    }
+                    if (!java.util.Objects.equals(curEmpty, lastHotbarEmpty)) {
+                        if (state.length() > 0)
+                            state.append(',');
+                        state.append("\"hotbar_empty\":")
+                                .append(curEmpty == null ? "null" : GameStateCollector.jsonEscape(curEmpty));
+                    }
                 }
-                if (!java.util.Objects.equals(curEmpty, lastHotbarEmpty)) {
-                    if (state.length() > 0)
-                        state.append(',');
-                    state.append("\"hotbar_empty\":")
-                            .append(curEmpty == null ? "null" : GameStateCollector.jsonEscape(curEmpty));
-                }
+                lastHotbarItems = curHotbar;
+                lastHotbarEmpty = curEmpty;
             }
-            lastHotbarItems = curHotbar;
-            lastHotbarEmpty = curEmpty;
         }
 
         if (state.length() > 0)

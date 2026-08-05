@@ -117,7 +117,7 @@ public final class GameStateCollector {
         if (heldKeys != null)
             out.put("held_keys", heldKeys);
 
-        out.put("held_item", heldItemJson(mc, p, p.getMainHandStack()));
+        out.put("selected", selectedJson(mc, p));
 
         return out;
     }
@@ -201,7 +201,17 @@ public final class GameStateCollector {
     }
 
     /**
-     * Item-stack obj for the held item, same shape as container/hotbar entries (minus the slot index):
+     * Selected hotbar slot: {@code {"slot":N,"item":{...}}} — N is 1-9 (the selectedSlot index), {@code "item"} is the stack
+     * obj (null when empty). Always emitted, with or without an open container — unlike the hotbar members, which an open
+     * container absorbs into its own inventory_items/empty_inv view.
+     */
+    private static String selectedJson(MinecraftClient mc, ClientPlayerEntity p) {
+        int slot = p.getInventory().selectedSlot + 1;
+        return "{\"slot\":" + slot + ",\"item\":" + heldItemJson(mc, p, p.getMainHandStack()) + '}';
+    }
+
+    /**
+     * Item-stack obj for the held item, same shape as container entries (minus the slot index):
      * {@code {"item":"minecraft:cobblestone","name":"Cobblestone","count":64}} plus optional {@code durability}/
      * {@code enchanted}/{@code tooltip}. {@code "null"} when the hand is empty.
      */
