@@ -4,6 +4,13 @@ All notable changes to BindAlias will be documented in this file.
 
 ## unreleased
 
+## [1.9.0] - 2026-08-05
+
+### Changed
+
+- **MCP: verbose/nap unification** — replaced the separate `/state` endpoint with a `verbose` param on every envelope tool (diff by default, full snapshot on `verbose=true`). Added `nap` support to `/screenshot` and shared helpers (`parseNap`, `parseVerbose`, `mergeExtra`).
+- **MCP: `selected` hotbar slot** — always emits the current hotbar slot index and item stack regardless of container screen; hotbar members are now suppressed while a container is open to avoid redundancy.
+- **MCP: recipe placeability** — recipes now include a `placeable` field reflecting the open menu's grid/capability; `applyRecipe` rejects recipes that can't be placed in the current menu (e.g. 3×3 recipe in the 2×2 inventory grid).
 - change `divider4AliasArgs` from backslash(`\`) to slash(`/`). Since agent json tool call protocol preserves backslash(`\`) as escape character.
 
 ## [1.8.7] - 2026-08-04
