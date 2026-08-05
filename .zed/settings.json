@@ -8,7 +8,7 @@
     "**/.DS_Store",
     "**/Thumbs.db",
     "**/.settings",
-    // custom, focus on daily develop
+    // custom, focus on daily develop, comment out line if need
     "[^/]*.launch",
     ".classpath**",
     ".gitattributes**",
