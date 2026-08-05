@@ -45,6 +45,13 @@ public class ApplyRecipeAlias extends BuiltinAliasWithStringArgs<ApplyRecipeAlia
             chatError(player, "[applyRecipe] not unlocked or unknown recipe: " + query);
             return this;
         }
+        if (!recipe.placeable()) {
+            // mirrors the recipe book's per-menu filtering: a 3x3 recipe in the 2x2 inventory grid, a stonecutter
+            // display at a crafting table, etc. — the server would throw on or silently ignore such a packet
+            chatError(player,
+                    "[applyRecipe] " + recipe.name() + " cannot be placed in this menu (grid too small or wrong station)");
+            return this;
+        }
         if (!recipe.craftable()) {
             chatError(player, "[applyRecipe] missing ingredients for: " + recipe.name());
             return this;
