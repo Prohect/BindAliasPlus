@@ -2,6 +2,12 @@
 
 All notable changes to BindAlias will be documented in this file.
 
+## [1.11.1] - 2026-08-07
+
+### Fixed
+
+- **MCP: `runAlias` without `snap` returned `{}`** — the pre-execution state diff and channels were discarded when `snap` was not defined. Now returns a single envelope with state diff and drained channels, matching the documented contract.
+
 ## [1.11.0] - 2026-08-07
 
 ### Changed
