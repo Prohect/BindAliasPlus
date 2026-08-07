@@ -50,6 +50,8 @@ public final class McpHttpServer {
     private static final long MAX_SNAP_TICKS = 1200;
     /** Grace beyond a snap's expected wall time (ticks × 50 ms) before the request is failed as not-ticking. */
     private static final long SNAP_TIMEOUT_MARGIN_MS = 15_000;
+    /** Max wait for the async screenshot pipeline (GPU readback + PNG encode) before giving up on the image. */
+    private static final long SCREENSHOT_TIMEOUT_SECONDS = 3;
     private static HttpServer server;
     private static int port = DEFAULT_PORT;
 
@@ -261,8 +263,8 @@ public final class McpHttpServer {
         boolean verbose;
         /** Whether to drain message channels when this snap expires — only the last snap in a multi-snap set drains. */
         boolean drainChannels = true;
-        /** Base64 PNG screenshot to include in this envelope, or null. */
-        String screenShotB64;
+        /** Grab a screenshot at expiry and include it in this envelope as base64 PNG. */
+        boolean wantScreenShot;
         /** Index into the shared results array (used by multi-snap). */
         int resultIndex;
         /** Shared multi-snap context, or null for single-snap (legacy path). */
@@ -379,24 +381,60 @@ public final class McpHttpServer {
 
                 String begun = StateTracker.begin(task.verbose);
                 String envelope = task.drainChannels ? StateTracker.finish(begun) : StateTracker.finishNoDrain(begun);
-                if (task.screenShotB64 != null) {
-                    envelope = mergeExtra(envelope, "\"screenShot\":" + GameStateCollector.jsonEscape(task.screenShotB64));
-                }
-
-                if (task.multiCtx != null) {
-                    MultiSnapContext ctx = task.multiCtx;
-                    synchronized (ctx) {
-                        if (!ctx.cancelled) {
-                            ctx.results[task.resultIndex] = envelope;
-                            if (ctx.remaining.decrementAndGet() == 0)
-                                ctx.combinedFuture.complete(ctx.results);
-                        }
-                    }
-                } else if (task.future != null) {
-                    task.future.complete(envelope);
+                if (task.wantScreenShot) {
+                    attachScreenshotAsync(task, envelope);
+                } else {
+                    completeSnapTask(task, envelope);
                 }
             }
         }
+    }
+
+    /** Complete a snap task's result: the single-snap future, or the task's slot in the shared multi-snap context. */
+    private static void completeSnapTask(SnapTask task, String envelope) {
+        if (task.multiCtx != null) {
+            MultiSnapContext ctx = task.multiCtx;
+            synchronized (ctx) {
+                if (!ctx.cancelled) {
+                    ctx.results[task.resultIndex] = envelope;
+                    if (ctx.remaining.decrementAndGet() == 0)
+                        ctx.combinedFuture.complete(ctx.results);
+                }
+            }
+        } else if (task.future != null) {
+            task.future.complete(envelope);
+        }
+    }
+
+    /**
+     * Grab a screenshot <em>now</em> (called on the main thread at snap expiry, so the frame matches the captured state) and
+     * complete the task once the PNG is ready, merging it into the envelope. Falls back to completing without a screenshot on
+     * failure or timeout.
+     */
+    private static void attachScreenshotAsync(SnapTask task, String envelope) {
+        CompletableFuture<byte[]> pngFuture = new CompletableFuture<>();
+        ScreenshotCapture.nextPngFuture = pngFuture;
+        try {
+            MinecraftClient mc = MinecraftClient.getInstance();
+            net.minecraft.client.util.ScreenshotRecorder.saveScreenshot(mc.runDirectory, null, mc.getFramebuffer(), 1, msg -> {
+            });
+        } catch (Exception e) {
+            if (ScreenshotCapture.nextPngFuture == pngFuture)
+                ScreenshotCapture.nextPngFuture = null;
+            completeSnapTask(task, envelope);
+            return;
+        }
+        final String env = envelope;
+        pngFuture.orTimeout(SCREENSHOT_TIMEOUT_SECONDS, TimeUnit.SECONDS).whenComplete((data, err) -> {
+            if (ScreenshotCapture.nextPngFuture == pngFuture)
+                ScreenshotCapture.nextPngFuture = null; // timed out — don't let a stale grab complete a future request
+            String result = env;
+            if (err == null && data != null) {
+                result = mergeExtra(env,
+                        "\"screenShot\":" + GameStateCollector.jsonEscape(Base64.getEncoder().encodeToString(data)));
+            }
+            completeSnapTask(task, result);
+        });
     }
 
     /**
@@ -414,7 +452,7 @@ public final class McpHttpServer {
                         });
                 return null;
             });
-            byte[] data = future.get(3, TimeUnit.SECONDS);
+            byte[] data = future.get(SCREENSHOT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
             if (data == null)
                 return null;
             return Base64.getEncoder().encodeToString(data);
@@ -422,19 +460,6 @@ public final class McpHttpServer {
             ScreenshotCapture.nextPngFuture = null;
             return null;
         }
-    }
-
-    /**
-     * Take screenshots upfront for each SnapSpec that has {@code screenShot=true}. Returns a parallel array of base64 strings
-     * (null where no screenshot was requested). Blocks the calling thread.
-     */
-    private static String[] captureScreenshots(List<SnapSpec> specs) {
-        String[] shots = new String[specs.size()];
-        for (int i = 0; i < specs.size(); i++) {
-            if (specs.get(i).screenShot)
-                shots[i] = captureScreenshotB64();
-        }
-        return shots;
     }
 
     // ---- endpoint plumbing ----
@@ -446,12 +471,11 @@ public final class McpHttpServer {
      * action); entries with {@code deferredTick > 0} use the snap-task mechanism.
      *
      * @param specs capture-point specs (may contain both immediate and deferred)
-     * @param screenshots pre-captured base64 strings for each spec (null where no screenshot)
      * @param action the game-thread action to run once before captures
      * @param extra action-produced JSON members merged into the <em>last</em> envelope
      * @return single envelope object (one spec) or JSON array (multiple specs), or null on error
      */
-    private static String runWithSnapSpecs(HttpExchange exchange, List<SnapSpec> specs, String[] screenshots, boolean verbose,
+    private static String runWithSnapSpecs(HttpExchange exchange, List<SnapSpec> specs, boolean verbose,
             CheckedSupplier<String> action) throws IOException {
 
         // Separate immediate (deferredTick==0) from deferred (deferredTick>0)
@@ -497,15 +521,21 @@ public final class McpHttpServer {
                         String env =
                                 (idx == immediateIdx.get(immediateIdx.size() - 1) && deferredIdx.isEmpty()) ? envelopeWithExtra
                                         : immediateEnvelope;
-                        if (screenshots[idx] != null) {
-                            env = mergeExtra(env, "\"screenShot\":" + GameStateCollector.jsonEscape(screenshots[idx]));
-                        }
                         results[idx] = env;
                     }
                     return null;
                 });
             } catch (Exception e) {
                 return sendError(exchange, e.getMessage());
+            }
+            // Screenshots for immediate captures are taken after the action, so they show the post-action frame.
+            for (int idx : immediateIdx) {
+                if (specs.get(idx).screenShot) {
+                    String b64 = captureScreenshotB64();
+                    if (b64 != null) {
+                        results[idx] = mergeExtra(results[idx], "\"screenShot\":" + GameStateCollector.jsonEscape(b64));
+                    }
+                }
             }
         } else {
             // No immediate captures — just run the action
@@ -534,8 +564,7 @@ public final class McpHttpServer {
             CompletableFuture<String> future = new CompletableFuture<>();
             SnapTask task = new SnapTask(deferredSpecs.get(0).deferredTick, future);
             task.verbose = verbose;
-            int srcIdx = deferredIdx.get(0);
-            task.screenShotB64 = screenshots[srcIdx];
+            task.wantScreenShot = deferredSpecs.get(0).screenShot;
 
             try {
                 onMainThread(() -> {
@@ -577,7 +606,7 @@ public final class McpHttpServer {
                 // Only the last deferred snap gets verbose + drains channels; intermediate snaps are diff-only.
                 tasks[i].verbose = (i == dCount - 1) && verbose;
                 tasks[i].drainChannels = (i == dCount - 1);
-                tasks[i].screenShotB64 = screenshots[deferredIdx.get(i)];
+                tasks[i].wantScreenShot = deferredSpecs.get(i).screenShot;
             }
             if (doFastForward)
                 tasks[dCount - 1].fastForward = true;
@@ -686,8 +715,7 @@ public final class McpHttpServer {
 
         final String definition = def;
         try {
-            String[] screenshots = captureScreenshots(specs);
-            String result = runWithSnapSpecs(exchange, specs, screenshots, verbose, () -> {
+            String result = runWithSnapSpecs(exchange, specs, verbose, () -> {
                 new UserAlias(definition).run("");
                 return "";
             });
@@ -725,8 +753,7 @@ public final class McpHttpServer {
                 sendJson(exchange, 400, "{\"error\":\"not in world\"}");
                 return;
             }
-            String[] screenshots = captureScreenshots(specs);
-            String result = runWithSnapSpecs(exchange, specs, screenshots, verbose, () -> {
+            String result = runWithSnapSpecs(exchange, specs, verbose, () -> {
                 MinecraftClient.getInstance().player.networkHandler.sendChatCommand(command);
                 return "";
             });
@@ -804,8 +831,7 @@ public final class McpHttpServer {
                         "{\"error\":" + GameStateCollector.jsonEscape("failed to write: " + e.getMessage()) + "}");
                 return;
             }
-            String[] screenshots = captureScreenshots(specs);
-            String result = runWithSnapSpecs(exchange, specs, screenshots, verbose, () -> {
+            String result = runWithSnapSpecs(exchange, specs, verbose, () -> {
                 BindAliasClient.loadAgentCFG();
                 return "";
             });
@@ -967,8 +993,7 @@ public final class McpHttpServer {
                 return sb.toString();
             };
 
-            String[] screenshots = captureScreenshots(specs);
-            String result = runWithSnapSpecs(exchange, specs, screenshots, verbose, buildExtra);
+            String result = runWithSnapSpecs(exchange, specs, verbose, buildExtra);
             if (result == null)
                 return;
             sendJson(exchange, 200, result);
