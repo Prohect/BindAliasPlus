@@ -2,7 +2,12 @@
 
 All notable changes to BindAlias will be documented in this file.
 
-## unreleased
+## [1.10.0] - 2026-08-07
+
+### Changed
+
+- **MCP: `nap` → `snap`** — replaced the single-integer `nap` parameter with `snap`, an array of `{deferredTick, screenShot}` objects. Each entry captures the standard envelope at the given tick offset with an optional per-point screenshot. A single entry returns one envelope; multiple entries return a JSON array of envelopes — one per capture point.
+- **MCP: `getScreenshot` merged into envelope** — removed the standalone `getScreenshot` tool. Screenshots are now requested per-snap-entry via `screenShot: true` and returned as the `screenShot` field in the standard envelope. All envelope-returning tools (`runAlias`, `defineAlias`, `writeCFG`, `listRecipes`) support the `snap` parameter.
 
 ## [1.9.0] - 2026-08-05
 
