@@ -2,6 +2,13 @@
 
 All notable changes to BindAlias will be documented in this file.
 
+## [1.11.0] - 2026-08-07
+
+### Changed
+
+- **MCP: deep state diff** — state diffs now use recursive JSON comparison so only changed sub-fields are emitted (e.g. `{"pos":{"yaw":45}}` instead of the entire `pos` object). Arrays are diffed as a whole.
+- **MCP: verbose and channels scoped to last deferredTick** — in multi-snap calls, `verbose` only applies to the last `deferredTick` envelope; message channels (chat, mod, sound, unlocked_recipe) only appear in the last envelope since entries carry tick-index info internally.
+
 ## [1.10.0] - 2026-08-07
 
 ### Changed
