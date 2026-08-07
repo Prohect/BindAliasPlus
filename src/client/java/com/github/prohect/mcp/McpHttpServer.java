@@ -467,6 +467,19 @@ public final class McpHttpServer {
         int total = specs.size();
         String[] results = new String[total];
 
+        // No snap defined — return the pre-execution state diff + drained channels as a single envelope.
+        if (total == 0) {
+            try {
+                return onMainThread(() -> {
+                    String extraStr = action.get();
+                    String begun = StateTracker.begin(verbose);
+                    return mergeExtra(StateTracker.finish(begun), extraStr);
+                });
+            } catch (Exception e) {
+                return sendError(exchange, e.getMessage());
+            }
+        }
+
         // 1. Run action + capture immediate envelopes
         if (!immediateIdx.isEmpty() || deferredIdx.isEmpty()) {
             try {
