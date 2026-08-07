@@ -14,6 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +23,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.RecipeBookScreen;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.ServerTickManager;
 
 /**
  * Lightweight HTTP API server (default {@code 127.0.0.1:25575}, falls back to the next free port up to +9 when occupied — the
@@ -31,8 +36,8 @@ import net.minecraft.client.gui.screen.ingame.RecipeBookScreen;
  * Every game-interacting endpoint returns the same <b>envelope</b> assembled by {@link StateTracker}: {@code {"client_tick":N,
  * "state":{...}, "chat":[...], "mod":[...], "sound":[...], "unlocked_recipe":[...]}} — changed-state diff (full for
  * {@code /state}) plus freshly drained message channels, so callers never need a separate poll for feedback. {@code /readCFG}
- * is the only non-envelope endpoint (raw file text). All game-thread access goes through
- * {@link MinecraftClient#execute(Runnable)} with a timeout to keep HTTP threads from blocking forever.
+ * is the only non-envelope endpoint (raw file text). All game-thread access goes through {@link Minecraft#execute(Runnable)}
+ * with a timeout to keep HTTP threads from blocking forever.
  * <p>
  * Started from {@link BindAliasClient#onInitializeClient()}.
  */
@@ -41,10 +46,10 @@ public final class McpHttpServer {
     private static final int DEFAULT_PORT = 25575;
     private static final int MAX_PORT_ATTEMPTS = 10;
     private static final int TIMEOUT_SECONDS = 5;
-    /** Max {@code nap} value — 1200 client ticks = 60 s at the nominal 20 client ticks per second. */
-    private static final long MAX_NAP_TICKS = 1200;
-    /** Grace beyond a nap's expected wall time (ticks × 50 ms) before the request is failed as not-ticking. */
-    private static final long NAP_TIMEOUT_MARGIN_MS = 15_000;
+    /** Max {@code deferredTick} value — 1200 client ticks = 60 s at the nominal 20 client ticks per second. */
+    private static final long MAX_SNAP_TICKS = 1200;
+    /** Grace beyond a snap's expected wall time (ticks × 50 ms) before the request is failed as not-ticking. */
+    private static final long SNAP_TIMEOUT_MARGIN_MS = 15_000;
     private static HttpServer server;
     private static int port = DEFAULT_PORT;
 
@@ -72,7 +77,6 @@ public final class McpHttpServer {
                     BindAliasClient.tickPrefix(), DEFAULT_PORT, DEFAULT_PORT + MAX_PORT_ATTEMPTS - 1);
             return;
         }
-        server.createContext("/screenshot", McpHttpServer::handleScreenshot);
         server.createContext("/runAlias", McpHttpServer::handleRunAlias);
         server.createContext("/defineAlias", McpHttpServer::handleDefineAlias);
         server.createContext("/readCFG", McpHttpServer::handleReadCFG);
@@ -164,22 +168,53 @@ public final class McpHttpServer {
         return v != null && (v.equals("true") || v.equals("1"));
     }
 
+    /** A single capture-point specification: tick offset + whether to include a screenshot. */
+    private record SnapSpec(long deferredTick, boolean screenShot) {}
+
     /**
-     * Parse the optional {@code nap} parameter.
+     * Parse the optional {@code snap} parameter — comma-separated {@code deferredTick:screenShot} pairs (e.g.
+     * {@code snap=1:1,2:0,3:1}). The action runs immediately; state is captured at each offset. A {@code deferredTick} of 0
+     * means capture immediately (no defer). The {@code screenShot} flag (0/1) controls whether a base64 PNG screenshot is
+     * included in that envelope.
      *
-     * @return 0 when absent, the tick count when valid, -1 when malformed or outside [0, {@value #MAX_NAP_TICKS}]
+     * @return sorted (by tick), unique specs; empty when absent. Sentinel {@code deferredTick = -1} on parse error.
      */
-    private static long parseNap(Map<String, String> q) {
-        String napParam = q.get("nap");
-        if (napParam == null || napParam.isBlank())
-            return 0;
-        final long n;
-        try {
-            n = Long.parseLong(napParam.trim());
-        } catch (NumberFormatException e) {
-            return -1;
+    private static List<SnapSpec> parseSnaps(Map<String, String> q) {
+        String snapParam = q.get("snap");
+        if (snapParam == null || snapParam.isBlank())
+            return List.of();
+        List<SnapSpec> specs = new ArrayList<>();
+        for (String part : snapParam.split(",")) {
+            String trimmed = part.trim();
+            if (trimmed.isEmpty())
+                continue;
+            String[] pair = trimmed.split(":", 2);
+            long tick;
+            boolean ss = false;
+            try {
+                tick = Long.parseLong(pair[0].trim());
+                if (tick < 0 || tick > MAX_SNAP_TICKS)
+                    return List.of(new SnapSpec(-1, false)); // sentinel
+                if (pair.length > 1) {
+                    int flag = Integer.parseInt(pair[1].trim());
+                    ss = flag == 1;
+                }
+            } catch (NumberFormatException e) {
+                return List.of(new SnapSpec(-1, false)); // sentinel
+            }
+            // deduplicate by tick (first occurrence wins for screenShot)
+            boolean dup = false;
+            for (SnapSpec s : specs) {
+                if (s.deferredTick == tick) {
+                    dup = true;
+                    break;
+                }
+            }
+            if (!dup)
+                specs.add(new SnapSpec(tick, ss));
         }
-        return n >= 0 && n <= MAX_NAP_TICKS ? n : -1;
+        specs.sort(Comparator.comparingLong(SnapSpec::deferredTick));
+        return specs;
     }
 
     /** Merge extra members ({@code "\"recipes\":[...]"}) into an envelope just before its closing brace. */
@@ -199,127 +234,412 @@ public final class McpHttpServer {
         }
     }
 
+    /** Send a 500 error and return null (for use in return statements). */
+    private static String sendError(HttpExchange exchange, String msg) throws IOException {
+        sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(msg) + "}");
+        return null;
+    }
+
     @FunctionalInterface
     private interface CheckedSupplier<T> {
         T get() throws Exception;
     }
 
-    // ---- nap (client_tick deferred responses) ----
+    // ---- snap (client_tick deferred captures) ----
 
-    /** Pending nap responses — ticked by {@code MinecraftClientMixin} on every client tick. */
-    private static final List<NapTask> NAP_TASKS = new CopyOnWriteArrayList<>();
+    /** Pending snap tasks — ticked by {@code MinecraftClientMixin} on every client tick. */
+    private static final List<SnapTask> SNAP_TASKS = new CopyOnWriteArrayList<>();
 
-    private static final class NapTask {
+    private static final class SnapTask {
         /** Client ticks remaining (access under {@code synchronized (this)}). */
         long ticksLeft;
         /** Set by the HTTP thread when the request timed out — the capture must never happen then. */
         boolean cancelled;
-        /** Capture the full state snapshot instead of the diff when the nap expires. */
+        /** True when this snap engaged fast-forward — its removal must be balanced by {@link #fastForwardEnd()}. */
+        boolean fastForward;
+        /** Capture the full state snapshot instead of the diff when the snap expires. */
         boolean verbose;
+        /** Base64 PNG screenshot to include in this envelope, or null. */
+        String screenShotB64;
+        /** Index into the shared results array (used by multi-snap). */
+        int resultIndex;
+        /** Shared multi-snap context, or null for single-snap (legacy path). */
+        MultiSnapContext multiCtx;
+        /** Future for single-snap responses (null when multiCtx is set). */
         final CompletableFuture<String> future;
 
-        NapTask(long ticksLeft, CompletableFuture<String> future) {
+        SnapTask(long ticksLeft, CompletableFuture<String> future) {
             this.ticksLeft = ticksLeft;
             this.future = future;
+            this.resultIndex = -1;
+        }
+
+        SnapTask(long ticksLeft, MultiSnapContext multiCtx, int resultIndex) {
+            this.ticksLeft = ticksLeft;
+            this.future = null;
+            this.multiCtx = multiCtx;
+            this.resultIndex = resultIndex;
         }
     }
 
+    /** Shared state for a multi-snap request: N tasks → N results → one aggregated response. */
+    private static final class MultiSnapContext {
+        final String[] results;
+        final AtomicInteger remaining;
+        final CompletableFuture<String[]> combinedFuture;
+        volatile boolean cancelled;
+
+        MultiSnapContext(int count, CompletableFuture<String[]> combinedFuture) {
+            this.results = new String[count];
+            this.remaining = new AtomicInteger(count);
+            this.combinedFuture = combinedFuture;
+        }
+    }
+
+    // ---- snap fast-forward (slow-world bench acceleration) ----
+
+    /** Snaps at least this long fast-forward the integrated server for their duration. */
+    private static final long SNAP_FF_MIN_TICKS = 10;
     /**
-     * Count down pending nap responses; on expiry capture the envelope fresh (newest state diff + channels drained, so
-     * everything produced during the nap is delivered). Called from {@code MinecraftClientMixin} after the WaitAlias queue, so
-     * a {@code wait\N} task expiring on the same client_tick is already reflected. The {@code synchronized} makes
-     * cancel-vs-capture atomic: a cancelled nap never drains channels into a response nobody reads.
+     * Fast-forward rate. 20 tps is the client tick cap ({@code Minecraft.getTickTargetMillis} = max(50 ms, msPerTick)), so
+     * client and integrated server stay in lockstep; going higher would let the server outrun client ticks.
      */
-    public static void tickNapTasks() {
-        for (NapTask task : NAP_TASKS) {
+    private static final float SNAP_FF_RATE = 20.0F;
+    /** Guards {@link #ffActiveSnaps} and {@link #ffPreviousRate} (HTTP threads + client tick thread). */
+    private static final Object FF_LOCK = new Object();
+    private static int ffActiveSnaps;
+    private static float ffPreviousRate;
+
+    /**
+     * Engage fast-forward for a snap about to be scheduled; the pre-snap rate is recorded on the first overlapping snap and
+     * restored when the last one ends. Called on the main thread.
+     *
+     * @return true when fast-forward was engaged — the caller must then flag the SnapTask so its removal (expiry or cancel) is
+     *         balanced by {@link #fastForwardEnd()}
+     */
+    private static boolean fastForwardBegin() {
+        MinecraftServer server = MinecraftClient.getInstance().getServer();
+        if (server == null)
+            return false; // remote server — no tick-rate control
+        final boolean accelerate;
+        synchronized (FF_LOCK) {
+            if (ffActiveSnaps == 0)
+                ffPreviousRate = server.getTickManager().getTickRate();
+            ffActiveSnaps++;
+            accelerate = ffPreviousRate < SNAP_FF_RATE;
+        }
+        try {
+            if (accelerate)
+                server.execute(() -> server.getTickManager().setTickRate(SNAP_FF_RATE));
+        } catch (RuntimeException e) { // server stopping — roll back so the counter never gets stuck
+            synchronized (FF_LOCK) {
+                ffActiveSnaps--;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /** Balance a {@link #fastForwardBegin()} — restores the pre-snap rate once the last overlapping fast-forward snap ends. */
+    private static void fastForwardEnd() {
+        MinecraftServer server = MinecraftClient.getInstance().getServer();
+        synchronized (FF_LOCK) {
+            if (--ffActiveSnaps > 0)
+                return;
+        }
+        if (server == null)
+            return;
+        server.execute(() -> {
+            ServerTickManager trm = server.getTickManager();
+            if (trm.getTickRate() == SNAP_FF_RATE)
+                trm.setTickRate(ffPreviousRate);
+        });
+    }
+
+    /**
+     * Count down pending snap tasks; on expiry capture the envelope fresh. Called from {@code MinecraftClientMixin} after the
+     * WaitAlias queue, so a {@code wait\N} task expiring on the same client_tick is already reflected.
+     */
+    public static void tickSnapTasks() {
+        for (SnapTask task : SNAP_TASKS) {
             synchronized (task) {
                 if (task.cancelled) {
-                    NAP_TASKS.remove(task);
+                    SNAP_TASKS.remove(task);
+                    if (task.fastForward)
+                        fastForwardEnd();
                     continue;
                 }
                 if (--task.ticksLeft > 0)
                     continue;
-                NAP_TASKS.remove(task);
-                task.future.complete(StateTracker.finish(StateTracker.begin(task.verbose)));
+                SNAP_TASKS.remove(task);
+                if (task.fastForward)
+                    fastForwardEnd();
+
+                String envelope = StateTracker.finish(StateTracker.begin(task.verbose));
+                if (task.screenShotB64 != null) {
+                    envelope = mergeExtra(envelope, "\"screenShot\":" + GameStateCollector.jsonEscape(task.screenShotB64));
+                }
+
+                if (task.multiCtx != null) {
+                    MultiSnapContext ctx = task.multiCtx;
+                    synchronized (ctx) {
+                        if (!ctx.cancelled) {
+                            ctx.results[task.resultIndex] = envelope;
+                            if (ctx.remaining.decrementAndGet() == 0)
+                                ctx.combinedFuture.complete(ctx.results);
+                        }
+                    }
+                } else if (task.future != null) {
+                    task.future.complete(envelope);
+                }
             }
-        }
-    }
-
-    // ---- endpoints ----
-
-    /** GET /screenshot[?verbose=1][&nap=N] — in-memory PNG (base64) merged with the standard envelope. */
-    static synchronized void handleScreenshot(HttpExchange exchange) throws IOException {
-        Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
-        long nap = parseNap(q);
-        if (nap < 0) {
-            sendJson(exchange, 400,
-                    "{\"error\":\"invalid 'nap' — integer client_tick in [0," + MAX_NAP_TICKS + "] expected\"}");
-            return;
-        }
-        boolean verbose = parseVerbose(q);
-        try {
-            // Pre-check: must be in game
-            Boolean inGame = onMainThread(() -> MinecraftClient.getInstance().player != null);
-            if (!inGame) {
-                sendJson(exchange, 400, "{\"error\":\"not in game\"}");
-                return;
-            }
-
-            // Arm the mixin capture and trigger the native screenshot.
-            CompletableFuture<byte[]> future = new CompletableFuture<>();
-            ScreenshotCapture.nextPngFuture = future;
-
-            String begun = onMainThread(() -> {
-                String env = StateTracker.begin(verbose);
-                MinecraftClient mc = MinecraftClient.getInstance();
-                net.minecraft.client.util.ScreenshotRecorder.saveScreenshot(mc.runDirectory, null, mc.getFramebuffer(), 1,
-                        msg -> {
-                        });
-                return env;
-            });
-
-            // Wait on the HTTP thread (not the game thread) for the
-            // I/O-thread PNG encode to finish.
-            byte[] data;
-            try {
-                data = future.get(3, TimeUnit.SECONDS);
-            } catch (java.util.concurrent.TimeoutException e) {
-                sendJson(exchange, 500, "{\"error\":\"screenshot timed out\"}");
-                return;
-            } catch (Exception e) {
-                sendJson(exchange, 500,
-                        "{\"error\":\"screenshot failed: " + GameStateCollector.jsonEscape(e.getMessage()) + "\"}");
-                return;
-            }
-
-            if (data == null) {
-                sendJson(exchange, 500, "{\"error\":\"screenshot encode failed\"}");
-                return;
-            }
-
-            String b64 = java.util.Base64.getEncoder().encodeToString(data);
-            String envelope = StateTracker.finish(begun);
-            sendJson(exchange, 200, mergeExtra(envelope, "\"base64\":" + GameStateCollector.jsonEscape(b64)));
-        } catch (Exception e) {
-            sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
         }
     }
 
     /**
-     * POST /runAlias?def=…[&verbose=1][&nap=N] — execute a chain of aliases (space-separated, \ for args). Without {@code nap},
-     * the state diff is captured BEFORE execution and message channels are drained AFTER the immediate part of the chain ran,
-     * so {@code log\} and chat feedback inside the chain is delivered with this response. Deferred effects (after
-     * {@code wait\N}) show up in later responses.
+     * Take a screenshot and return the base64-encoded PNG, or null on failure. Uses the mixin capture pipeline
+     * ({@link ScreenshotCapture} + {@code NativeImageMixin}) for in-memory capture. Blocks the calling thread.
+     */
+    private static String captureScreenshotB64() {
+        CompletableFuture<byte[]> future = new CompletableFuture<>();
+        ScreenshotCapture.nextPngFuture = future;
+        try {
+            onMainThread(() -> {
+                MinecraftClient mc = MinecraftClient.getInstance();
+                net.minecraft.client.util.ScreenshotRecorder.saveScreenshot(mc.runDirectory, null, mc.getFramebuffer(), 1,
+                        msg -> {
+                        });
+                return null;
+            });
+            byte[] data = future.get(3, TimeUnit.SECONDS);
+            if (data == null)
+                return null;
+            return Base64.getEncoder().encodeToString(data);
+        } catch (Exception e) {
+            ScreenshotCapture.nextPngFuture = null;
+            return null;
+        }
+    }
+
+    /**
+     * Take screenshots upfront for each SnapSpec that has {@code screenShot=true}. Returns a parallel array of base64 strings
+     * (null where no screenshot was requested). Blocks the calling thread.
+     */
+    private static String[] captureScreenshots(List<SnapSpec> specs) {
+        String[] shots = new String[specs.size()];
+        for (int i = 0; i < specs.size(); i++) {
+            if (specs.get(i).screenShot)
+                shots[i] = captureScreenshotB64();
+        }
+        return shots;
+    }
+
+    // ---- endpoint plumbing ----
+
+    /**
+     * Run an action and optionally capture state at deferred tick offsets with per-point screenshots.
      * <p>
-     * {@code nap=N} (client_tick, the same unit as {@code wait\N}; 0-{@value #MAX_NAP_TICKS}) defers the whole response: the
-     * chain still runs immediately, but the envelope is captured only after N client_tick elapsed — newest state diff plus
-     * every message produced during the nap. {@code verbose} makes the captured state the full snapshot.
+     * {@code specs} are sorted by deferredTick. Entries with {@code deferredTick == 0} are handled immediately (alongside the
+     * action); entries with {@code deferredTick > 0} use the snap-task mechanism.
+     *
+     * @param specs capture-point specs (may contain both immediate and deferred)
+     * @param screenshots pre-captured base64 strings for each spec (null where no screenshot)
+     * @param action the game-thread action to run once before captures
+     * @param extra action-produced JSON members merged into the <em>last</em> envelope
+     * @return single envelope object (one spec) or JSON array (multiple specs), or null on error
+     */
+    private static String runWithSnapSpecs(HttpExchange exchange, List<SnapSpec> specs, String[] screenshots, boolean verbose,
+            CheckedSupplier<String> action) throws IOException {
+
+        // Separate immediate (deferredTick==0) from deferred (deferredTick>0)
+        List<Integer> immediateIdx = new ArrayList<>();
+        List<Integer> deferredIdx = new ArrayList<>();
+        for (int i = 0; i < specs.size(); i++) {
+            if (specs.get(i).deferredTick == 0)
+                immediateIdx.add(i);
+            else
+                deferredIdx.add(i);
+        }
+
+        int total = specs.size();
+        String[] results = new String[total];
+
+        // 1. Run action + capture immediate envelopes
+        if (!immediateIdx.isEmpty() || deferredIdx.isEmpty()) {
+            try {
+                onMainThread(() -> {
+                    String extraStr = action.get();
+                    String begun = StateTracker.begin(verbose);
+                    // For the immediate captures, reuse the same state snapshot
+                    String immediateEnvelope = StateTracker.finish(begun);
+                    // Apply extra to the last immediate envelope
+                    String envelopeWithExtra = mergeExtra(immediateEnvelope, extraStr);
+                    for (int idx : immediateIdx) {
+                        String env =
+                                (idx == immediateIdx.get(immediateIdx.size() - 1) && deferredIdx.isEmpty()) ? envelopeWithExtra
+                                        : immediateEnvelope;
+                        if (screenshots[idx] != null) {
+                            env = mergeExtra(env, "\"screenShot\":" + GameStateCollector.jsonEscape(screenshots[idx]));
+                        }
+                        results[idx] = env;
+                    }
+                    return null;
+                });
+            } catch (Exception e) {
+                return sendError(exchange, e.getMessage());
+            }
+        } else {
+            // No immediate captures — just run the action
+            try {
+                onMainThread(() -> {
+                    action.get();
+                    return null;
+                });
+            } catch (Exception e) {
+                return sendError(exchange, e.getMessage());
+            }
+        }
+
+        if (deferredIdx.isEmpty()) {
+            // Only immediate results
+            return assembleResponse(results, total);
+        }
+
+        // 2. Create snap tasks for deferred entries
+        List<SnapSpec> deferredSpecs = deferredIdx.stream().map(specs::get).toList();
+        int dCount = deferredSpecs.size();
+        boolean doFastForward = deferredSpecs.get(dCount - 1).deferredTick >= SNAP_FF_MIN_TICKS;
+
+        if (dCount == 1) {
+            // Single deferred snap
+            CompletableFuture<String> future = new CompletableFuture<>();
+            SnapTask task = new SnapTask(deferredSpecs.get(0).deferredTick, future);
+            task.verbose = verbose;
+            int srcIdx = deferredIdx.get(0);
+            task.screenShotB64 = screenshots[srcIdx];
+
+            try {
+                onMainThread(() -> {
+                    if (doFastForward)
+                        task.fastForward = fastForwardBegin();
+                    SNAP_TASKS.add(task);
+                    return null;
+                });
+            } catch (Exception e) {
+                return sendError(exchange, e.getMessage());
+            }
+
+            String envelope;
+            try {
+                long timeoutMs = deferredSpecs.get(0).deferredTick * 50 + SNAP_TIMEOUT_MARGIN_MS;
+                envelope = future.get(timeoutMs, TimeUnit.MILLISECONDS);
+            } catch (java.util.concurrent.TimeoutException e) {
+                synchronized (task) {
+                    task.cancelled = true;
+                }
+                envelope = future.getNow(null);
+                if (envelope == null)
+                    return sendError(exchange, "snap timed out — game not ticking?");
+            } catch (Exception e) {
+                synchronized (task) {
+                    task.cancelled = true;
+                }
+                return sendError(exchange, e.getMessage());
+            }
+            results[deferredIdx.get(0)] = envelope;
+        } else {
+            // Multi deferred snap
+            CompletableFuture<String[]> combinedFuture = new CompletableFuture<>();
+            MultiSnapContext ctx = new MultiSnapContext(dCount, combinedFuture);
+            SnapTask[] tasks = new SnapTask[dCount];
+
+            for (int i = 0; i < dCount; i++) {
+                tasks[i] = new SnapTask(deferredSpecs.get(i).deferredTick, ctx, i);
+                tasks[i].verbose = verbose;
+                tasks[i].screenShotB64 = screenshots[deferredIdx.get(i)];
+            }
+            if (doFastForward)
+                tasks[dCount - 1].fastForward = true;
+
+            try {
+                onMainThread(() -> {
+                    if (doFastForward)
+                        tasks[dCount - 1].fastForward = fastForwardBegin();
+                    for (SnapTask t : tasks)
+                        SNAP_TASKS.add(t);
+                    return null;
+                });
+            } catch (Exception e) {
+                return sendError(exchange, e.getMessage());
+            }
+
+            String[] deferredEnvelopes;
+            try {
+                long maxSnap = deferredSpecs.get(dCount - 1).deferredTick;
+                long timeoutMs = maxSnap * 50 + SNAP_TIMEOUT_MARGIN_MS;
+                deferredEnvelopes = combinedFuture.get(timeoutMs, TimeUnit.MILLISECONDS);
+            } catch (java.util.concurrent.TimeoutException e) {
+                synchronized (ctx) {
+                    ctx.cancelled = true;
+                }
+                for (SnapTask t : tasks) {
+                    synchronized (t) {
+                        t.cancelled = true;
+                    }
+                }
+                return sendError(exchange, "snap timed out — game not ticking?");
+            } catch (Exception e) {
+                synchronized (ctx) {
+                    ctx.cancelled = true;
+                }
+                for (SnapTask t : tasks) {
+                    synchronized (t) {
+                        t.cancelled = true;
+                    }
+                }
+                return sendError(exchange, e.getMessage());
+            }
+
+            for (int i = 0; i < dCount; i++)
+                results[deferredIdx.get(i)] = deferredEnvelopes[i];
+        }
+
+        return assembleResponse(results, total);
+    }
+
+    /** Build the final JSON response: single object for one result, array for multiple. */
+    private static String assembleResponse(String[] results, int total) {
+        // Find non-null results
+        List<String> nonNull = new ArrayList<>();
+        for (String r : results) {
+            if (r != null)
+                nonNull.add(r);
+        }
+        if (nonNull.isEmpty())
+            return "{}";
+        if (nonNull.size() == 1)
+            return nonNull.get(0);
+        StringBuilder sb = new StringBuilder(2048 * nonNull.size());
+        sb.append('[');
+        for (int i = 0; i < nonNull.size(); i++) {
+            if (i > 0)
+                sb.append(',');
+            sb.append(nonNull.get(i));
+        }
+        return sb.append(']').toString();
+    }
+
+    // ---- endpoints ----
+
+    /**
+     * POST /runAlias?def=…[&verbose=1][&snap=tick:flag,…] — execute a chain of aliases. {@code snap} is a comma-separated list
+     * of {@code deferredTick:screenShot} pairs (e.g. {@code 1:1,2:0,3:1}). The chain runs immediately; state is captured at
+     * each offset. {@code screenShot}=1 includes a base64 PNG.
      */
     static void handleRunAlias(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
         String def = q.get("def");
 
-        // Legacy support: also accept name+args
         if (def == null || def.isBlank()) {
             String name = q.get("name");
             String args = q.getOrDefault("args", "");
@@ -335,65 +655,30 @@ public final class McpHttpServer {
             return;
         }
 
-        long nap = parseNap(q);
-        if (nap < 0) {
-            sendJson(exchange, 400,
-                    "{\"error\":\"invalid 'nap' — integer client_tick in [0," + MAX_NAP_TICKS + "] expected\"}");
+        List<SnapSpec> specs = parseSnaps(q);
+        if (!specs.isEmpty() && specs.get(0).deferredTick == -1) {
+            sendJson(exchange, 400, "{\"error\":\"invalid 'snap' — comma-separated deferredTick:screenShot in [0,"
+                    + MAX_SNAP_TICKS + "] expected\"}");
             return;
         }
         boolean verbose = parseVerbose(q);
 
         final String definition = def;
-        final NapTask napTask = nap == 0 ? null : new NapTask(nap, new CompletableFuture<>());
         try {
-            String result;
-            if (napTask == null) {
-                result = onMainThread(() -> {
-                    String begun = StateTracker.begin(verbose);
-                    new UserAlias(definition).run("");
-                    return StateTracker.finish(begun);
-                });
-            } else {
-                NapTask task = napTask;
-                task.verbose = verbose;
-                onMainThread(() -> {
-                    new UserAlias(definition).run("");
-                    NAP_TASKS.add(task);
-                    return null;
-                });
-                try {
-                    // a client_tick is 50 ms at nominal speed; the margin absorbs lag/pause hiccups
-                    result = task.future.get(nap * 50 + NAP_TIMEOUT_MARGIN_MS, TimeUnit.MILLISECONDS);
-                } catch (java.util.concurrent.TimeoutException e) {
-                    // Game stopped ticking — cancel so a late tick never captures (and drains channels)
-                    // into a response nobody reads; a capture that already won the race is still used.
-                    synchronized (task) {
-                        task.cancelled = true;
-                    }
-                    result = task.future.getNow(null);
-                    if (result == null) {
-                        sendJson(exchange, 500, "{\"error\":\"nap timed out — game not ticking?\"}");
-                        return;
-                    }
-                }
-            }
+            String[] screenshots = captureScreenshots(specs);
+            String result = runWithSnapSpecs(exchange, specs, screenshots, verbose, () -> {
+                new UserAlias(definition).run("");
+                return "";
+            });
+            if (result == null)
+                return; // error already sent
             sendJson(exchange, 200, result);
         } catch (Exception e) {
-            // a nap task whose scheduling failed (main thread stalled) must never fire late either
-            if (napTask != null) {
-                synchronized (napTask) {
-                    napTask.cancelled = true;
-                }
-            }
             sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
         }
     }
 
-    /**
-     * POST /defineAlias?name=…&def=…[&verbose=1][&nap=N] — define an alias via the real {@code /alias} client command. The
-     * command's feedback line ({@code "Alias x = ..."} / {@code "Can't replace builtinAlias x"}) is delivered in the response's
-     * {@code chat} channel.
-     */
+    /** POST /defineAlias?name=…&def=…[&verbose=1][&snap=tick:flag,…] */
     static void handleDefineAlias(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
         String name = q.get("name");
@@ -404,34 +689,35 @@ public final class McpHttpServer {
             return;
         }
 
-        long nap = parseNap(q);
-        if (nap < 0) {
-            sendJson(exchange, 400,
-                    "{\"error\":\"invalid 'nap' — integer client_tick in [0," + MAX_NAP_TICKS + "] expected\"}");
+        List<SnapSpec> specs = parseSnaps(q);
+        if (!specs.isEmpty() && specs.get(0).deferredTick == -1) {
+            sendJson(exchange, 400, "{\"error\":\"invalid 'snap' — comma-separated deferredTick:screenShot in [0,"
+                    + MAX_SNAP_TICKS + "] expected\"}");
             return;
         }
         boolean verbose = parseVerbose(q);
 
+        final String command = "alias " + name + " " + def;
         try {
-            String result = onMainThread(() -> {
-                MinecraftClient mc = MinecraftClient.getInstance();
-                if (mc.player == null)
-                    return null;
-                String begun = StateTracker.begin(verbose);
-                mc.player.networkHandler.sendChatCommand("alias " + name + " " + def);
-                return StateTracker.finish(begun);
-            });
-            if (result == null) {
+            Boolean inWorld = onMainThread(() -> MinecraftClient.getInstance().player != null);
+            if (!inWorld) {
                 sendJson(exchange, 400, "{\"error\":\"not in world\"}");
                 return;
             }
+            String[] screenshots = captureScreenshots(specs);
+            String result = runWithSnapSpecs(exchange, specs, screenshots, verbose, () -> {
+                MinecraftClient.getInstance().player.networkHandler.sendChatCommand(command);
+                return "";
+            });
+            if (result == null)
+                return;
             sendJson(exchange, 200, result);
         } catch (Exception e) {
             sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
         }
     }
 
-    /** GET /readCFG — return the per-save agent cfg file content (non-envelope). Requires in a singleplayer world. */
+    /** GET /readCFG — return the per-save agent cfg file content (non-envelope). */
     static void handleReadCFG(HttpExchange exchange) throws IOException {
         try {
             Path path = onMainThread(BindAliasClient::agentCfgPath);
@@ -453,26 +739,32 @@ public final class McpHttpServer {
         }
     }
 
-    /** POST /writeCFG — overwrite the per-save agent cfg file and reload it. Requires in a singleplayer world. */
+    /** POST /writeCFG — overwrite the per-save agent cfg file and reload it. */
     static void handleWriteCFG(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
         String content = q.get("content");
 
-        // if content not in query, try JSON body
         if (content == null) {
             String body;
             try (InputStream is = exchange.getRequestBody()) {
                 body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             }
-            if (body != null) {
+            if (body != null)
                 content = extractJsonStringField(body, "content");
-            }
         }
 
         if (content == null) {
             sendJson(exchange, 400, "{\"error\":\"missing 'content'\"}");
             return;
         }
+
+        List<SnapSpec> specs = parseSnaps(q);
+        if (!specs.isEmpty() && specs.get(0).deferredTick == -1) {
+            sendJson(exchange, 400, "{\"error\":\"invalid 'snap' — comma-separated deferredTick:screenShot in [0,"
+                    + MAX_SNAP_TICKS + "] expected\"}");
+            return;
+        }
+        boolean verbose = parseVerbose(q);
 
         final String finalContent = content;
         try {
@@ -491,21 +783,20 @@ public final class McpHttpServer {
                         "{\"error\":" + GameStateCollector.jsonEscape("failed to write: " + e.getMessage()) + "}");
                 return;
             }
-            String result = onMainThread(() -> {
-                String begun = StateTracker.begin(false);
+            String[] screenshots = captureScreenshots(specs);
+            String result = runWithSnapSpecs(exchange, specs, screenshots, verbose, () -> {
                 BindAliasClient.loadAgentCFG();
-                return StateTracker.finish(begun);
+                return "";
             });
+            if (result == null)
+                return;
             sendJson(exchange, 200, result);
         } catch (Exception e) {
             sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
         }
     }
 
-    /**
-     * GET /readNotes?file=NAME — read the entire content of a file inside the per-save agent directory
-     * ({@code <game_root>/saves/<save>/bind-alias/<file>}). Requires in a singleplayer world.
-     */
+    /** GET /readNotes?file=NAME */
     static void handleReadNotes(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
         String file = q.get("file");
@@ -513,7 +804,6 @@ public final class McpHttpServer {
             sendJson(exchange, 400, "{\"error\":\"missing 'file' parameter\"}");
             return;
         }
-        // sanitize: reject paths that try to escape the agent directory
         if (file.contains("..") || file.contains("/") || file.contains("\\")) {
             sendJson(exchange, 400, "{\"error\":\"invalid 'file' — must be a plain filename (no path separators or '..')\"}");
             return;
@@ -527,10 +817,7 @@ public final class McpHttpServer {
             Path filePath = dir.resolve(file);
             String content;
             try {
-                if (!Files.exists(filePath))
-                    content = "";
-                else
-                    content = Files.readString(filePath);
+                content = Files.exists(filePath) ? Files.readString(filePath) : "";
             } catch (IOException e) {
                 sendJson(exchange, 500,
                         "{\"error\":" + GameStateCollector.jsonEscape("failed to read: " + e.getMessage()) + "}");
@@ -542,11 +829,7 @@ public final class McpHttpServer {
         }
     }
 
-    /**
-     * POST /writeNotes?file=NAME&content=TEXT — overwrite a file inside the per-save agent directory
-     * ({@code <game_root>/saves/<save>/bind-alias/<file>}) with the given content. Requires in a singleplayer world. If content
-     * is not in the query string, it is read from the JSON body field {@code "content"}.
-     */
+    /** POST /writeNotes?file=NAME&content=TEXT */
     static void handleWriteNotes(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
         String file = q.get("file");
@@ -556,21 +839,18 @@ public final class McpHttpServer {
             sendJson(exchange, 400, "{\"error\":\"missing 'file' parameter\"}");
             return;
         }
-        // sanitize: reject paths that try to escape the agent directory
         if (file.contains("..") || file.contains("/") || file.contains("\\")) {
             sendJson(exchange, 400, "{\"error\":\"invalid 'file' — must be a plain filename (no path separators or '..')\"}");
             return;
         }
 
-        // if content not in query, try JSON body
         if (content == null) {
             String body;
             try (InputStream is = exchange.getRequestBody()) {
                 body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             }
-            if (body != null) {
+            if (body != null)
                 content = extractJsonStringField(body, "content");
-            }
         }
 
         if (content == null) {
@@ -601,23 +881,35 @@ public final class McpHttpServer {
         }
     }
 
-    /**
-     * GET /listRecipes[?q=a,b,c] — list recipes unlocked in the recipe book. Only works while a {@link RecipeBookScreen} is
-     * open. Without {@code q}: recipes learned since the previous call (diff). With {@code q} (comma-separated item ids or name
-     * substrings): every query is answered independently — {@code recipes} holds the matches, {@code recipe_errors} the
-     * per-query failures (one bad query never eats valid results).
-     */
+    /** GET /listRecipes[?q=a,b,c][&verbose=1][&snap=tick:flag,…] */
     static void handleListRecipes(HttpExchange exchange) throws IOException {
         Map<String, String> q = parseQuery(exchange.getRequestURI().getQuery());
         String queryParam = q.get("q");
+
+        List<SnapSpec> specs = parseSnaps(q);
+        if (!specs.isEmpty() && specs.get(0).deferredTick == -1) {
+            sendJson(exchange, 400, "{\"error\":\"invalid 'snap' — comma-separated deferredTick:screenShot in [0,"
+                    + MAX_SNAP_TICKS + "] expected\"}");
+            return;
+        }
+        boolean verbose = parseVerbose(q);
+
         try {
-            String result = onMainThread(() -> {
+            String precheck = onMainThread(() -> {
                 MinecraftClient mc = MinecraftClient.getInstance();
                 if (mc.player == null)
-                    return null;
+                    return "not in world";
                 if (!(McScreenHelper.getCurrentScreen(mc) instanceof RecipeBookScreen))
-                    return "";
-                String begun = StateTracker.begin(false);
+                    return "no recipe book screen open";
+                return null;
+            });
+            if (precheck != null) {
+                sendJson(exchange, 400, "{\"error\":" + GameStateCollector.jsonEscape(precheck) + "}");
+                return;
+            }
+
+            CheckedSupplier<String> buildExtra = () -> {
+                MinecraftClient mc = MinecraftClient.getInstance();
                 List<RecipeBookHelper.RecipeInfo> recipes;
                 List<String> errors = new ArrayList<>();
                 if (queryParam == null || queryParam.isBlank()) {
@@ -640,12 +932,8 @@ public final class McpHttpServer {
                         }
                     }
                 }
-                String envelope = StateTracker.finish(begun);
-                // pre-size for envelope + recipes (~80 chars/recipe) + optional errors
-                int estCap = envelope.length() + recipes.size() * 80 + errors.size() * 60;
-                StringBuilder sb = new StringBuilder(estCap);
-                sb.append(envelope, 0, envelope.length() - 1);
-                sb.append(",\"recipes\":").append(RecipeBookHelper.recipesJson(recipes));
+                StringBuilder sb = new StringBuilder(recipes.size() * 80 + errors.size() * 60 + 16);
+                sb.append("\"recipes\":").append(RecipeBookHelper.recipesJson(recipes));
                 if (!errors.isEmpty()) {
                     sb.append(",\"recipe_errors\":[");
                     for (int i = 0; i < errors.size(); i++) {
@@ -655,16 +943,13 @@ public final class McpHttpServer {
                     }
                     sb.append(']');
                 }
-                return sb.append('}').toString();
-            });
-            if (result == null) {
-                sendJson(exchange, 400, "{\"error\":\"not in world\"}");
+                return sb.toString();
+            };
+
+            String[] screenshots = captureScreenshots(specs);
+            String result = runWithSnapSpecs(exchange, specs, screenshots, verbose, buildExtra);
+            if (result == null)
                 return;
-            }
-            if (result.isEmpty()) {
-                sendJson(exchange, 400, "{\"error\":\"no recipe book screen open\"}");
-                return;
-            }
             sendJson(exchange, 200, result);
         } catch (Exception e) {
             sendJson(exchange, 500, "{\"error\":" + GameStateCollector.jsonEscape(e.getMessage()) + "}");
@@ -672,9 +957,7 @@ public final class McpHttpServer {
     }
 
     /**
-     * Extract a string field's value from a flat JSON object body, decoding escapes in a single left-to-right pass. A naive
-     * indexOf('"') search for the closing quote stops early at escaped quotes (\"), truncating cfg content that contains quoted
-     * alias args (e.g. say\"...\").
+     * Extract a string field's value from a flat JSON object body, decoding escapes in a single left-to-right pass.
      *
      * @return the decoded string, or null if the field is absent or malformed
      */
@@ -721,6 +1004,6 @@ public final class McpHttpServer {
             } else
                 sb.append(c);
         }
-        return null; // unterminated string
+        return null;
     }
 }
