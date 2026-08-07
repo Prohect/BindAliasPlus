@@ -34,7 +34,7 @@ There was a not optimized system prompt guide: `.\src\agent_system_prompt.md`.
 > Work autonomously — do not stop to ask questions.
 >
 > Goal: progress as far as you can before night falls to beat the game. Night falls at
-> ~12000 ticks — stop when `sendCommand/"time query gametime"` reaches 12000.
+> ~12000 ticks — stop when `client_tick` elapses 12000 since you join.
 >
 > When you stop (goal reached, night fell, or stuck, or requested to stop by host), report:
 > milestones reached, final inventory, deaths, and anything that confused you about the tools.
