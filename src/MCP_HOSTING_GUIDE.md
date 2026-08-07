@@ -123,10 +123,11 @@ It is recommended to specify a fixed file for the entrypoint of agent notes in y
 
 ## Performance notes
 
-- **`getScreenshot` is in-memory** — no file I/O for the api call-response flow, no chat spam in chat channel. the file would be saved to disk.
-- **`nap` blocks the agent** — the game keeps running but the agent can't react. Agent should keep naps short
+- **Screenshots are in-memory** — no file I/O for the api call-response flow. The file is still saved to disk.
+  Request a screenshot by including `{"deferredTick": N, "screenShot": true}` in the `snap` array.
+- **`snap` blocks the agent** — the game keeps running but the agent can't react. Agent should keep snaps short
   (~2 ticks) unless the agent is genuinely waiting for a long cooldown.
-- **State diffs are free** — every `runAlias`/`defineAlias`/`getScreenshot` response carries a
+- **State diffs are free** — every `runAlias`/`defineAlias`/`writeCFG`/`listRecipes` response carries a
   state diff. Agent should prefer reading these over requesting full snapshots (`verbose`).
 
 ---
