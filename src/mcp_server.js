@@ -38,7 +38,7 @@ const API_BASE = "http://127.0.0.1:" + parsePort();
 const RUNALIAS_DESCRIPTION =
   "Execute a chain of aliases against the running game. " +
   "SILENT FAILURES: an unknown alias name or invalid args fails that step with no thrown error. " +
-  "Returns the standard envelope: the state diff captured before execution, or after the snap when `snap` is given.";
+  "Returns the standard envelope: the state diff captured alongside the chain (no `snap`), or after each deferredTick when `snap` is given.";
 
 // Shared optional params for every tool that returns the standard envelope.
 const VERBOSE_PARAM = {
