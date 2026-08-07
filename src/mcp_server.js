@@ -44,7 +44,7 @@ const RUNALIAS_DESCRIPTION =
 const VERBOSE_PARAM = {
   type: "boolean",
   description:
-    "Optional (default false). When true, the LAST deferredTick envelope's state is the FULL snapshot instead of the diff; all other envelopes are always diffs. When there are no deferred snaps (all deferredTick=0), the single shared envelope is full.",
+    "Optional (default false). When true, the LAST deferredTick envelope's state is the FULL snapshot instead of the diff; all other envelopes are always diffs. When there are no deferred snaps (all deferredTick=0), the single shared envelope is likewise full only when verbose is true.",
 };
 const SNAP_PARAM = {
   type: "array",
@@ -61,13 +61,13 @@ const SNAP_PARAM = {
       screenShot: {
         type: "boolean",
         description:
-          "Optional (default false). When true, a base64 PNG screenshot is included in this capture point's envelope as the `screenShot` field.",
+          "Optional (default false). When true, a base64 PNG screenshot of the frame at this capture point is delivered as an image content block paired with this point's envelope.",
       },
     },
     required: ["deferredTick"],
   },
   description:
-    "Optional. Capture the standard envelope at the given client_tick offsets, each optionally with a screenshot. The action runs immediately; state is captured at each `deferredTick`. Each envelope carries a progressive state diff (full snapshot on the LAST deferredTick when `verbose` is true); message channels (chat, mod, sound, unlocked_recipe) are only drained into the LAST envelope — earlier envelopes omit them since channel entries already carry tick-index info. A single entry returns one envelope; multiple entries (e.g. [{\"deferredTick\":1},{\"deferredTick\":2,\"screenShot\":true}]) return an array of envelopes — one per capture point. The game keeps running the whole time — you cannot react to anything or poll state until the call returns. A deferredTick >= 10 fast-forwards a singleplayer world (~20 tps) for the duration of the longest snap.",
+    "Optional. Capture the standard envelope at the given client_tick offsets, each optionally with a screenshot. The action runs immediately; state is captured at each `deferredTick`. Each envelope carries a progressive state diff (full snapshot on the LAST deferredTick when `verbose` is true); message channels (chat, mod, sound, unlocked_recipe) are only drained into the LAST envelope — earlier envelopes omit them since channel entries already carry tick-index info. A single entry returns one envelope; multiple entries (e.g. [{\"deferredTick\":1},{\"deferredTick\":2,\"screenShot\":true}]) return an array of envelopes — one per capture point, each screenshot delivered as its own image block. The game keeps running the whole time — you cannot react to anything or poll state until the call returns. A deferredTick >= 10 fast-forwards a singleplayer world (~20 tps) for the duration of the longest snap.",
 };
 
 const TOOLS = [
@@ -351,37 +351,34 @@ function envelopeWithScreenshot(result) {
 }
 
 // Convert a multi-snap response (array of envelopes) into MCP content.
-// Each envelope may contain a `screenShot` field — the first screenshot is
-// surfaced as an image block; subsequent ones are kept as text.
+// Every `screenShot` field is surfaced as its own image content block, placed
+// immediately before the text block of the envelope it belongs to. When no
+// envelope has a screenshot, the whole array is a single text block.
 function multiSnapResult(envelopes) {
-  const content = [];
-  let firstScreenshot = null;
-
-  for (let i = 0; i < envelopes.length; i++) {
-    const env = envelopes[i];
-    if (env && typeof env.screenShot === "string") {
-      if (firstScreenshot === null) {
-        firstScreenshot = env.screenShot;
-      }
-      // Remove screenShot from the envelope text to avoid bloat
-      const { screenShot, ...rest } = env;
-      envelopes[i] = rest;
-    }
+  const hasShots = envelopes.some(
+    (env) => env && typeof env.screenShot === "string",
+  );
+  if (!hasShots) {
+    const compact = JSON.stringify(envelopes);
+    return textResult(
+      compact.length <= 120 ? compact : JSON.stringify(envelopes, null, 2),
+    );
   }
 
-  if (firstScreenshot !== null) {
+  const content = [];
+  for (const env of envelopes) {
+    let out = env;
+    if (env && typeof env.screenShot === "string") {
+      const { screenShot, ...rest } = env;
+      content.push({ type: "image", data: screenShot, mimeType: "image/png" });
+      out = rest;
+    }
+    const compact = JSON.stringify(out);
     content.push({
-      type: "image",
-      data: firstScreenshot,
-      mimeType: "image/png",
+      type: "text",
+      text: compact.length <= 120 ? compact : JSON.stringify(out, null, 2),
     });
   }
-
-  const compact = JSON.stringify(envelopes);
-  content.push({
-    type: "text",
-    text: compact.length <= 120 ? compact : JSON.stringify(envelopes, null, 2),
-  });
   return { content };
 }
 
