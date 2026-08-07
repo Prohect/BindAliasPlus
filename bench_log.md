@@ -259,3 +259,118 @@ player drowned (respawned at spawn). WORLD IS DIRTY — next bench MUST restore 
 No-cheats client still running (port 25575). Next: (1) calibrate tower timing on
 runTestClient; (2) write v5 prompt (tower fix, applyRecipe contract, sound-feed semantics,
 grass tip); (3) restore pristine + bench v5.
+
+## v5 — tower calibration + v5 prompt (2026-08-06)
+
+Session-start infra fix: this thread had no bind-alias MCP tools (Zed `Write-` profile had
+`enable_all_context_servers: false`, no bind-alias entry) — patched
+`~/.agents/Zed/settings.json` (backup `settings.json.bak-20260806-mcprofile`): Write- now
+enables the 8 current tools; stale `getFullState` entries removed from Agent-mc profiles.
+zed-reload spawned the bridge.
+
+TOWER CALIBRATION (runTestClient, Test_26_2, dry land at spawn, 1 tps, dirt in hand,
+setPitch/85 + wait/9 aim settle first):
+- Tap form [`+jump wait/4 +use wait/2 -use -jump wait/8`]: 1/1 block, then 3/3 blocks in a
+  3x-repeated single chain (y 0→1→4). 14 ticks/block.
+- Hold form [`+jump +use wait/30 -use -jump`]: 3/3 blocks in 30 ticks (y 4→7), one placement
+  per jump cycle — confirms rightClickDelay=4 re-attempt lands in the ticks-2-7 window.
+- Both forms 100% on dry land → code-derived fix VERIFIED in-game. v4's documented
+  [+jump wait/8 +use ...] fires at tick ~8-9 (feet ~0.8 m) = outside the window, matching
+  v4c's 15/15 failures.
+
+v5 prompt deltas vs v4 (all from verified facts):
+1. Tower pattern replaced: hold-both form (primary, robust) + wait/4 tap form, with the
+   feet->1m/ticks-2-7 rule and the water exception explained.
+2. applyRecipe contract: "applied" = request sent; nap for post-state, VERIFY grid non-empty
+   in container state before taking c1; screen reopen = full re-sync recovery.
+3. New sound-feed bullet: subtitle feed, yaw/pitch relative to view when heard (rounded
+   20°), true-3D distance can exceed reach; yaw/<relYaw>+pitch/<relPitch> faces the source.
+4. New grass bullet: tall grass intercepts swings/placements — clear it first.
+
+v5 BENCH — ABORTED (infra, 2026-08-06 ~12:50-13:10). No-cheats client launched fine on the
+restored pristine save (gametime 82, PauseScreen, 1 tps), AGENTS.md injected with v5 — but
+every spawn_agent attempt failed: first `User canceled`, then transient network errors, then
+a Kimi API temperature contradiction: with model_parameters temperature=1 the sub-agent
+request was rejected ("only 0.6 is allowed for this model"); with 0.6 it was rejected the
+other way ("only 1 is allowed"). User stopped the session. OPEN for next session: the
+sub-agent spawn apparently hits a model with a different temperature constraint than the
+main thread (k3-256k @1 works; maybe spawn uses k3 or another default) — try setting
+`agent.subagent_model` explicitly (e.g. k3-256k @ temperature 1) in settings.json.
+Cleanup done: client shut down, temperature reverted to 1, AGENTS.md restored (project
+rules), pristine save restored (idle drift only, no agent changes). The Write- profile
+bind-alias tools addition in settings.json was KEPT (needed for the bench loop).
+NEXT: resolve the sub-agent model/temperature issue, then bench v5 unchanged (prompt ready
+in src/agent_system_prompt.md; tower calibration already verified above).
+
+## v5 bench attempt 2 — infra OK, bench PAUSED by user before agent spawn (2026-08-06 ~15:56)
+
+- Sub-agent spawn blocker RESOLVED: trivial no-tool spawn_agent returned OK. The explicit
+  `agent.subagent_model` (Kimi/k3-256k) already in settings.json seems to have fixed the
+  temperature contradiction; no settings change needed this session.
+- Bench setup completed: pristine save restored (gametime 82 verified via time query),
+  AGENTS.md backed up to `AGENTS.md.project-rules.bak` and overwritten with the v5 prompt,
+  no-cheats client launched (PauseScreen, 1 tps, spawn 6.5/69/4.5), autoload cfg ran.
+- Bench sub-agent spawn returned `User canceled`; user then called PAUSE (resume later).
+  The world was NEVER touched by an agent.
+- Cleanup for the pause: client shut down via builtinShutdown (port 25575 closed).
+  AGENTS.md LEFT AS v5 PROMPT (not restored) so the bench is ready to fire.
+- RESUME CHECKLIST: (1) restore pristine save (launch-time idle drift only);
+  (2) launch `gradlew runTestClientNoCheats` detached, wait for port 25575, verify
+  gametime ~82 + PauseScreen; (3) spawn the bench sub-agent with the verbatim task message
+  and the 8-tool allowlist; (4) after the bench, record results here, restore
+  `AGENTS.md.project-rules.bak` -> AGENTS.md when the loop is done.
+
+## v5 — bench COMPLETED but INVALID as clean datapoint (2026-08-06 16:05-18:24)
+
+Infra (kept): resumed per user instruction "no reset, same save, same subagent". The canceled
+session (10a1daa4) proved UN-RESUMABLE (transport error x3 while fresh no-tool spawns worked)
+-> fresh bench spawn instead. Temperature contradiction root-caused: Kimi rejects k3-256k at
+temp 1 ("only 0.6") AND at 0.6 ("only 1") — gateway-side inconsistency; `k3` @ temp 1 works
+reliably. FIX KEPT in settings.json: `model_parameters` scoped per model (k3->1, k3-256k->0.6),
+`agent.subagent_model` = k3. Message change (user-mandated): bench message now carries a
+PRECISE TICK ENDPOINT ("night falls at ~12000 ticks; stop when time query reaches 12000"),
+because agents may not realize night falls.
+
+Run (session 442bbe9e, v5 prompt, world = same save, age ~852 at start):
+- Wall ~16:05 -> 18:24 (~2 h 19 m). Stopped at gametime 36062.
+- LOG-VERIFIED milestones: Stone Age 16:26, Getting an Upgrade 16:43 (stone pick),
+  Acquire Hardware 17:21 (iron ingot — smelted ITSELF), crafting table placed, furnace-less,
+  staircase mine + cave found (y~12-45), sealed lit foxhole at spawn for the night.
+  Final inv (host-verified): stone pick/sword/wooden axe, iron ingot, raw iron, 9 raw copper,
+  ~40 cobble/andesite/diorite, dirt, granite. NO torches left, NO logs, NO food.
+- LOG-VERIFIED deaths: 2 — fell from a high place (18:04), slain by zombie (18:20).
+- Mod log: ZERO PlaceRecipePacket errors; 1x `[switchSlot]An item stack remains on the cursor`
+  WARN (18:14) — matches the agent's lost-stone-axe report.
+
+**Endpoint overshoot + self-report confabulation (the big finding, user warned exactly this):**
+agent's FIRST time query was 8509 (16:34), then 9546, 11161, 11803 (16:48) — all BEFORE the
+12000 endpoint. It then went 22 min wall without checking (11803 -> 18089 at 17:10), blew past
+nightfall, and RETARGETED to 36000 (next dusk). In its final report and follow-up it claimed
+the world "was already at 33431 when I first queried" (FALSE — first query 8509) and that
+sword/iron/copper were "carried over from the interrupted session" (FALSE — Acquire Hardware
+earned 17:21; the pristine save was verified note-free and item-free). Reported 1 death (log:
+2). LESSON: agent self-reports are unreliable even about checkable facts — always verify
+against the game log. v6 message candidate: check gametime after EVERY long nap and at least
+every ~10 min wall (a 600-tick nap passes in ~30 s wall at 20 tps ff).
+
+Agent-reported confusions (signals to verify, NOT yet prompt facts):
+1. swapSlot into OCCUPIED non-container slots silently no-ops (consistent with documented
+   all-or-nothing); agent also claims verbose full-state shows only HOTBAR unless a screen is
+   open — VERIFY in mod code: does the full snapshot include inv slots 10-41? If not, that's a
+   real visibility gap (its first craft chain "vanished" into unseen leftovers in 10-15).
+2. Closing a screen with an item on the cursor LOST the stone axe (mod log WARN confirms the
+   cursor state existed). VERIFY what screen-close does with the cursor stack (vanilla: carried
+   vs dropped vs returned) -> prompt rule candidate: never close a screen with a cursor item.
+3. `+use` tap on ground placed the table AND opened it (double-fire?) — verify.
+4. Stone pick on dirt needs ~wait/30 per block; wait/15 resets progress — unverified timing.
+5. Mining floor-ahead at pitch 30-35 creates an accidental descending staircase -> 17-block
+   fall into a cave (technique hazard; arguably a prompt tip: dig-down in place only).
+6. +attack stuck once; held_keys rule caught it (prompt working as intended).
+7. Agent's own sticker tip: dig straight down in place (no +forward wiggle) stays on-column —
+   contradicts the prompt's documented wiggle; keep both under review.
+
+Status: NOT comparable to v0-v4c (started age 852 + ran 3x budget to day-2 dusk). A clean v5
+datapoint still requires a pristine-save rerun with the tick-endpoint message.
+NEXT: (1) verify confusion #1 (full-state inventory visibility) + #2 (cursor-on-close) in code;
+(2) restore pristine, bench v5.1 = v5 prompt unchanged + tick-endpoint message;
+(3) only then fold verified findings into a v6 prompt.
