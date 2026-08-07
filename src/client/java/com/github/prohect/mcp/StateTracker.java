@@ -1,6 +1,10 @@
 package com.github.prohect.mcp;
 
 import com.github.prohect.BindAliasClient;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,11 +78,25 @@ public final class StateTracker {
         for (Map.Entry<String, String> e : current.entrySet()) {
             String key = e.getKey();
             String value = e.getValue();
-            // held_keys is force-included whenever non-empty (see class javadoc)
-            if (full || key.equals("held_keys") || !value.equals(last.get(key))) {
+            if (full) {
                 if (state.length() > 0)
                     state.append(',');
                 state.append('"').append(key).append("\":").append(value);
+            } else if (key.equals("held_keys")) {
+                // held_keys is force-included whenever non-empty (see class javadoc)
+                if (!value.equals(last.get(key))) {
+                    if (state.length() > 0)
+                        state.append(',');
+                    state.append('"').append(key).append("\":").append(value);
+                }
+            } else {
+                // Deep-diff: recursively compare JSON so only changed sub-fields are emitted.
+                String diffed = diffJson(last.get(key), value);
+                if (diffed != null) {
+                    if (state.length() > 0)
+                        state.append(',');
+                    state.append('"').append(key).append("\":").append(diffed);
+                }
             }
         }
         // members that disappeared since the previous snapshot → explicit null
@@ -168,7 +186,81 @@ public final class StateTracker {
         return jsonBuilder.toString();
     }
 
-    /** Drain all message channels into the envelope and close it. Thread-safe. */
+    // ---- deep JSON diff (recursive field-level comparison) ----
+
+    /**
+     * Deep-diff two JSON values (serialized as strings). Returns the minimal diff — only changed sub-fields for objects/arrays,
+     * the full new value when old was absent, {@code "null"} when the key disappeared, or {@code null} when identical.
+     */
+    private static String diffJson(String oldVal, String newVal) {
+        if (oldVal == null)
+            return newVal;
+        if (newVal == null)
+            return "null";
+        if (oldVal.equals(newVal))
+            return null;
+
+        try {
+            JsonElement oldElem = JsonParser.parseString(oldVal);
+            JsonElement newElem = JsonParser.parseString(newVal);
+            String diffed = diffElement(oldElem, newElem);
+            return diffed != null ? diffed : newVal;
+        } catch (Exception e) {
+            return newVal; // parse error → fall back to full replacement
+        }
+    }
+
+    private static String diffElement(JsonElement oldElem, JsonElement newElem) {
+        if (oldElem == null)
+            return newElem.toString();
+        if (newElem.isJsonNull())
+            return oldElem.isJsonNull() ? null : "null";
+        if (oldElem.isJsonNull())
+            return newElem.toString();
+
+        if (oldElem.isJsonObject() && newElem.isJsonObject())
+            return diffObject(oldElem.getAsJsonObject(), newElem.getAsJsonObject());
+        if (oldElem.isJsonArray() && newElem.isJsonArray())
+            return diffArray(oldElem.getAsJsonArray(), newElem.getAsJsonArray());
+
+        return oldElem.equals(newElem) ? null : newElem.toString();
+    }
+
+    /** Recursively diff two JSON objects: only emit fields that were added, changed, or removed. */
+    private static String diffObject(JsonObject oldObj, JsonObject newObj) {
+        StringBuilder sb = new StringBuilder("{");
+        boolean first = true;
+
+        for (Map.Entry<String, JsonElement> e : newObj.entrySet()) {
+            String key = e.getKey();
+            String diffed = diffElement(oldObj.get(key), e.getValue());
+            if (diffed != null) {
+                if (!first)
+                    sb.append(',');
+                first = false;
+                sb.append('"').append(key).append("\":").append(diffed);
+            }
+        }
+        for (Map.Entry<String, JsonElement> e : oldObj.entrySet()) {
+            String key = e.getKey();
+            if (!newObj.has(key)) {
+                if (!first)
+                    sb.append(',');
+                first = false;
+                sb.append('"').append(key).append("\":null");
+            }
+        }
+
+        sb.append('}');
+        return first ? null : sb.toString();
+    }
+
+    /** Arrays are diffed as a whole — positional element diffs are too ambiguous to be useful. */
+    private static String diffArray(JsonArray oldArr, JsonArray newArr) {
+        return oldArr.equals(newArr) ? null : newArr.toString();
+    }
+
+    // ---- envelope assembly ----
     public static String finish(String begun) {
         StringBuilder sb = new StringBuilder(begun);
         Map<String, List<String>> channels = GameChannels.drain();
@@ -184,5 +276,12 @@ public final class StateTracker {
             sb.append(']');
         }
         return sb.append('}').toString();
+    }
+
+    /**
+     * Close the envelope WITHOUT draining message channels — used by intermediate snap captures so only the last one drains.
+     */
+    public static String finishNoDrain(String begun) {
+        return begun + '}';
     }
 }
