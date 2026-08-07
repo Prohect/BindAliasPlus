@@ -331,7 +331,7 @@ function wrapResult(result) {
   if (typeof result.content === "string") {
     // readCFG: raw config file text
     return textResult(
-      result.content.length ? result.content : "(config file is empty)",
+      result.content.length ? result.content : "",
     );
   }
   return jsonResult(result);
