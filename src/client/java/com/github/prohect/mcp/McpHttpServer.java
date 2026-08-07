@@ -259,6 +259,8 @@ public final class McpHttpServer {
         boolean fastForward;
         /** Capture the full state snapshot instead of the diff when the snap expires. */
         boolean verbose;
+        /** Whether to drain message channels when this snap expires — only the last snap in a multi-snap set drains. */
+        boolean drainChannels = true;
         /** Base64 PNG screenshot to include in this envelope, or null. */
         String screenShotB64;
         /** Index into the shared results array (used by multi-snap). */
@@ -375,7 +377,8 @@ public final class McpHttpServer {
                 if (task.fastForward)
                     fastForwardEnd();
 
-                String envelope = StateTracker.finish(StateTracker.begin(task.verbose));
+                String begun = StateTracker.begin(task.verbose);
+                String envelope = task.drainChannels ? StateTracker.finish(begun) : StateTracker.finishNoDrain(begun);
                 if (task.screenShotB64 != null) {
                     envelope = mergeExtra(envelope, "\"screenShot\":" + GameStateCollector.jsonEscape(task.screenShotB64));
                 }
@@ -468,9 +471,12 @@ public final class McpHttpServer {
             try {
                 onMainThread(() -> {
                     String extraStr = action.get();
-                    String begun = StateTracker.begin(verbose);
+                    // When deferred snaps follow, immediate captures are intermediate: diff-only, no channel drain.
+                    boolean immVerbose = deferredIdx.isEmpty() && verbose;
+                    String begun = StateTracker.begin(immVerbose);
                     // For the immediate captures, reuse the same state snapshot
-                    String immediateEnvelope = StateTracker.finish(begun);
+                    String immediateEnvelope =
+                            deferredIdx.isEmpty() ? StateTracker.finish(begun) : StateTracker.finishNoDrain(begun);
                     // Apply extra to the last immediate envelope
                     String envelopeWithExtra = mergeExtra(immediateEnvelope, extraStr);
                     for (int idx : immediateIdx) {
@@ -554,7 +560,9 @@ public final class McpHttpServer {
 
             for (int i = 0; i < dCount; i++) {
                 tasks[i] = new SnapTask(deferredSpecs.get(i).deferredTick, ctx, i);
-                tasks[i].verbose = verbose;
+                // Only the last deferred snap gets verbose + drains channels; intermediate snaps are diff-only.
+                tasks[i].verbose = (i == dCount - 1) && verbose;
+                tasks[i].drainChannels = (i == dCount - 1);
                 tasks[i].screenShotB64 = screenshots[deferredIdx.get(i)];
             }
             if (doFastForward)
