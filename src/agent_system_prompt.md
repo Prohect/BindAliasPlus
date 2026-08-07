@@ -19,9 +19,11 @@ After editing `src/mcp_server.js`, run `bash src/sync_mcp_instructions.sh` to re
   need the full snapshot (e.g. lost track of inventory), pass `verbose:true` on any envelope
   tool. Non-envelope tools (`readCFG`, `readNotes`, `writeNotes`) return plain-text/file
   content — they do not carry state.
-  State notes: `selected` is your selected hotbar slot (`{slot, item}`); while a container
-  screen is open, the `container` member already includes all inventory + hotbar slots and
-  the `hotbar` members are not sent.
+  State notes: `selected` is your selected hotbar slot (`{slot, item}`); with no screen
+  open the state reports only the hotbar — your main inventory (slots 10-41) is invisible
+  until you open a container screen (e.g. `toggleInventory`), so open it to audit your full
+  inventory. While a container screen is open, the `container` member already includes all
+  inventory + hotbar slots and the `hotbar` members are not sent.
 - `runAlias` returns immediately with the state diff captured alongside the chain
   (after immediate aliases like `log`/`yaw`, before deferred `wait/N` steps execute).
   The chain continues over the following client ticks — use `snap` to block until it
@@ -56,7 +58,9 @@ After editing `src/mcp_server.js`, run `bash src/sync_mcp_instructions.sh` to re
 `swapSlot`, `sendCommand`) are suppressed while a text-screen (chat, sign, book, command
 block) is open. These aliases (`+forward`, `+left`, `+right`, `+back`, `+jump`, `+sneak`,
 `+drop`) work on non-text-screens. All builtin `+`aliases are reapplied once per screen close
-event.
+event. Closing a screen never loses items: a stack held on the cursor (and anything left in a
+crafting grid) is returned to your inventory on close — if an item seems to vanish after
+closing a screen, it moved to a main-inventory slot (see State notes above).
 
 ## Timing, aiming, and movement quirks
 
