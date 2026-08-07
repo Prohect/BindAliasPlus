@@ -14,11 +14,13 @@ There was a not optimized system prompt guide: `.\src\agent_system_prompt.md`.
   immediateRespawn on, clean spawn area.
 - **Autoload cfg** (`run/config/bind-alias.cfg`, minimal): `+freeCursor`, unpause, `tick rate 1`
   (chained after init). Baseline speed 1 tps → agent has ~1 s per game tick to react.
-- **Acceleration**: `nap >= 10` fast-forwards the integrated server to 20 tps for the nap, then
-  restores previous tps (implemented + E2E-verified in `McpHttpServer.java`, commit `d761ffe5`).
-- **Sub-agent tools (allowlist, nothing else)**: `runAlias`, `getScreenshot`,
-  `defineAlias`, `readCFG`, `writeCFG`, `readNotes`, `writeNotes`, `listRecipes` (all
-  envelope tools accept optional `verbose`/`nap`).
+- **Acceleration**: a `snap` capture point with `deferredTick >= 10` fast-forwards the
+  integrated server to 20 tps for the duration of the longest snap, then restores previous
+  tps (implemented + E2E-verified in `McpHttpServer.java`, commit `d761ffe5`).
+- **Sub-agent tools (allowlist, nothing else)**: `runAlias`, `defineAlias`, `readCFG`,
+  `writeCFG`, `readNotes`, `writeNotes`, `listRecipes` (all envelope tools accept optional
+  `verbose`/`snap`; screenshots are requested per snap entry via `screenShot:true` — there
+  is no standalone screenshot tool).
   No terminal, no file tools, no dev context. Per-save `agent.cfg` via read/writeCFG (empty).
 - **Prompt injection**: candidate prompt written into project `AGENTS.md` (auto-injected into
   sub-agents). Bench message carries only the task, never the prompt.
@@ -31,7 +33,8 @@ There was a not optimized system prompt guide: `.\src\agent_system_prompt.md`.
 > You are playing Minecraft in singleplayer survival (no cheats) through the tools you have.
 > Work autonomously — do not stop to ask questions.
 >
-> Goal: progress as far as you can before night falls to beat the game. 
+> Goal: progress as far as you can before night falls to beat the game. Night falls at
+> ~12000 ticks — stop when `sendCommand/"time query gametime"` reaches 12000.
 >
 > When you stop (goal reached, night fell, or stuck, or requested to stop by host), report:
 > milestones reached, final inventory, deaths, and anything that confused you about the tools.
@@ -77,16 +80,23 @@ Clean up temporary files and restore backup if asked to stop.
   `verbose:true` on any envelope tool. State notes: `selected` is your selected hotbar slot
   (`{slot, item}`); while a container screen is open, the `container` member already includes
   all inventory + hotbar slots and the `hotbar` members are not sent.
-- `runAlias` returns immediately and its attached state diff is from BEFORE the chain ran —
-  the chain itself executes over the following client ticks. Never fire a second chain while
-  one is still running (overlapping chains corrupt each other); use the `nap` param to block
-  until the chain has finished and get the post-execution diff.
+- `runAlias` returns immediately with the state diff captured alongside the chain
+  (after immediate aliases like `log`/`yaw`, before deferred `wait/N` steps execute).
+  The chain continues over the following client ticks — use `snap` to block until it
+  finishes and get the post-execution diff.
 - The game may run far slower than real time (e.g. 1 tick/s). Batch a whole micro-plan into
   one `runAlias` chain (`wait/N` between steps) instead of one tool call per action.
-- `nap` blocks the response for N client_tick with the game running the whole time — you can't
-  react to anything or poll state until it returns. `nap >= 10` fast-forwards the server
-  (~20 tps) for the nap, so boring waits (furnace smelting, growth) pass quickly in wall time.
-  Only take long naps when you are safe (sheltered, no mobs around).
+- `snap` blocks the response for N client_tick with the game running the whole time — you can't
+  react to anything or poll state until it returns. `deferredTick >= 10` fast-forwards the server
+  (~20 tps) for the snap, so boring waits (furnace smelting, growth) pass quickly in wall time.
+  Only take long snaps when you are safe (sheltered, no mobs around).
+  `snap` accepts an array of `{deferredTick, screenShot?}` objects: pass
+  `[{"deferredTick": N, "screenShot": true}]` to get a screenshot after N ticks.
+  Multiple entries produce an array of envelopes — one per capture point.
+  Each envelope carries a progressive state diff so you can track changes across ticks (e.g. check
+  `target` at multiple points after a rotation in one call). Message channels (chat, mod, sound,
+  `unlocked_recipe`) only appear in the LAST envelope — earlier ones omit them. `verbose` only
+  applies to the last `deferredTick` envelope (all others are always diff).
 - Read `sticker.md` via `readNotes` first when you start a session, and update it as you go
   (position, plans, discoveries) — your context is finite, notes are not. Sort notes by
   markdown reference.
@@ -119,6 +129,14 @@ event.
 - `target` is null beyond block reach (~4.5 m) and at pitch exactly ±90 — use ±85 for
   straight up/down. Only mine/attack when `target` shows the block/entity; if it's null,
   move closer first.
+- `sound` entries are the vanilla subtitle feed: yaw/pitch are RELATIVE to your view
+  direction at the moment the sound played (yaw+0 pitch+0 = exactly where you were
+  looking), rounded to 20°, and distances are true 3D — they legitimately exceed block
+  reach. To face a source: `yaw/<relYaw>` and `pitch/<relPitch>`. Never treat a sound
+  position as something within reach.
+- Tall grass and small plants intercept your aim: swings break the grass instead of the
+  block/mob behind it, and placements can target it oddly — clear grass around your work
+  area first.
 - Yaw compass: 0 = south (+Z), 90 = west (-X), 180 = north (-Z), 270 = east (+X). Pitch:
   negative looks up, positive looks down.
 - Broken blocks drop items on the ground — they are NOT auto-collected. Walk into drops to
@@ -132,8 +150,13 @@ event.
   state diff before a long chain and re-select the tool with `slot/N` if needed.
 - Proven patterns (send the bracketed block in one call, repeat as needed):
   - Tower up (needs clear space above — a low ceiling bonks the jump and the placement
-    fails): hold a block, `setPitch/85`, then repeat [`+jump wait/8 +use wait/4 -use -jump
-    wait/6`].
+    fails): hold a block, `setPitch/85`, wait ~8 ticks for the aim to settle, then either
+    hold both keys [`+jump +use wait/30 -use -jump`] (robust — a held `+use` re-attempts
+    every ~5 ticks, so one attempt lands in the airborne window of each jump) or repeat
+    the tap form [`+jump wait/4 +use wait/2 -use -jump wait/8`]. Placing below yourself
+    only succeeds while your feet are >1 m airborne (ticks ~2-7 after the jump starts) —
+    a `+use` fired at tick 8+ always fails on dry land (it only works in water, where
+    floating keeps you rising).
   - Dig straight down: `setPitch/85`, then repeat [`+attack wait/24 -attack +forward wait/3
     -forward`].
 - For patterns you repeat, define a named alias once (`defineAlias`) and reuse it; persist
@@ -187,9 +210,13 @@ set from a `cN` source (`var/name/c3`) are treated as container_slot references 
   result-item id (`minecraft:torch` or `torch`) or a case-insensitive locale-name substring
   (`iron sword`). Prefer item ids — a multi-word name must be quoted
   (`applyRecipe/"iron sword"`), otherwise only the first word reaches the alias.
-  Missing-ingredient errors go to the local game chat. Taking the result out
-  of c1 (see `swapSlot`) is what performs the craft — wait ~2 ticks after `applyRecipe`,
-  take into an empty slot, and confirm the take in the state diff. Symmetrically, wait a few
+  Missing-ingredient errors go to the local game chat. "Applied" only means the
+  request was sent — the grid fills when the server's container sync arrives (~2-3 ticks).
+  The contract: `applyRecipe`, block with `snap` for the post-execution diff, VERIFY the
+  grid slots are non-empty in the `container` state, then take c1 (see `swapSlot`) into an
+  empty slot — taking the result is what performs the craft — and confirm the take in the
+  state diff. If a take vanishes or the grid looks stale, close and reopen the screen:
+  reopening forces a full re-sync. Symmetrically, wait a few
   ticks after TAKING a result before the next `applyRecipe` — at slow tick rates the
   ingredient counts take a moment to re-sync, and a premature call can wrongly report
   missing ingredients. A recipe that doesn't fit
