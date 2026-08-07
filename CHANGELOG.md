@@ -2,6 +2,16 @@
 
 All notable changes to BindAlias will be documented in this file.
 
+## [1.11.2] - 2026-08-08
+
+### Fixed
+
+- **MCP: snap screenshots were stale** — all screenshots were captured before the alias chain ran, so every snap envelope carried a pre-action frame. Immediate snaps now capture right after the action; deferred snaps capture at expiry on the main thread, ensuring the frame matches the captured state.
+
+### Changed
+
+- **MCP: each snap screenshot delivered as its own image block** — multi-snap responses now return one image block per screenshot instead of bundling everything into a single block, matching the documented per-envelope delivery contract.
+
 ## [1.11.1] - 2026-08-07
 
 ### Fixed
