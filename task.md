@@ -68,6 +68,13 @@ Check `AGENTS.md`, rename it for backup if not match bench injection.
 
 Clean up temporary files and restore backup if asked to stop.
 
+## Constraints
+
+- Do **not** document every builtin alias in the prompt — some confuse more than they help.
+- Do **not** edit the MCP bridge instructions (`src/mcp_server.js`); the bridge carries wire
+  protocol only. If it seems wrong, pause and propose instead.
+- Minimal changes; keep the bridge/tool-schema separation of concerns.
+
 ## Current optimizing system prompts
 
 ```markdown
@@ -236,10 +243,3 @@ set from a `cN` source (`var/name/c3`) are treated as container_slot references 
 - `builtinRunAlias/name` — run an alias by name (supports optional `/args`; does not support an
   inline multi-alias chain)
 ```
-
-## Constraints
-
-- Do **not** document every builtin alias in the prompt — some confuse more than they help.
-- Do **not** edit the MCP bridge instructions (`src/mcp_server.js`); the bridge carries wire
-  protocol only. If it seems wrong, pause and propose instead.
-- Minimal changes; keep the bridge/tool-schema separation of concerns.
