@@ -44,7 +44,7 @@ const RUNALIAS_DESCRIPTION =
 const VERBOSE_PARAM = {
   type: "boolean",
   description:
-    "Optional (default false). When true, the envelope's state is the FULL snapshot instead of the diff.",
+    "Optional (default false). When true, the LAST deferredTick envelope's state is the FULL snapshot instead of the diff; all other envelopes are always diffs. When there are no deferred snaps (all deferredTick=0), the single shared envelope is full.",
 };
 const SNAP_PARAM = {
   type: "array",
@@ -67,7 +67,7 @@ const SNAP_PARAM = {
     required: ["deferredTick"],
   },
   description:
-    "Optional. Capture the standard envelope at the given client_tick offsets, each optionally with a screenshot. The action runs immediately; state is captured at each `deferredTick`. A single entry returns one envelope; multiple entries (e.g. [{\"deferredTick\":1},{\"deferredTick\":2,\"screenShot\":true}]) return an array of envelopes — one per capture point. The game keeps running the whole time — you cannot react to anything or poll state until the call returns. A deferredTick >= 10 fast-forwards a singleplayer world (~20 tps) for the duration of the longest snap.",
+    "Optional. Capture the standard envelope at the given client_tick offsets, each optionally with a screenshot. The action runs immediately; state is captured at each `deferredTick`. Each envelope carries a progressive state diff (full snapshot on the LAST deferredTick when `verbose` is true); message channels (chat, mod, sound, unlocked_recipe) are only drained into the LAST envelope — earlier envelopes omit them since channel entries already carry tick-index info. A single entry returns one envelope; multiple entries (e.g. [{\"deferredTick\":1},{\"deferredTick\":2,\"screenShot\":true}]) return an array of envelopes — one per capture point. The game keeps running the whole time — you cannot react to anything or poll state until the call returns. A deferredTick >= 10 fast-forwards a singleplayer world (~20 tps) for the duration of the longest snap.",
 };
 
 const TOOLS = [

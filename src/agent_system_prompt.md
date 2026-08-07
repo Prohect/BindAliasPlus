@@ -32,6 +32,10 @@ After editing `src/mcp_server.js`, run `bash src/sync_mcp_instructions.sh` to re
   `snap` accepts an array of `{deferredTick, screenShot?}` objects: pass
   `[{"deferredTick": N, "screenShot": true}]` to get a screenshot after N ticks.
   Multiple entries produce an array of envelopes — one per capture point.
+  Each envelope carries a progressive state diff so you can track changes across ticks (e.g. check
+  `target` at multiple points after a rotation in one call). Message channels (chat, mod, sound,
+  `unlocked_recipe`) only appear in the LAST envelope — earlier ones omit them. `verbose` only
+  applies to the last `deferredTick` envelope (all others are always diff).
 - Read `sticker.md` via `readNotes` first when you start a session, and update it as you go
   (position, plans, discoveries) — your context is finite, notes are not. Sort notes by
   markdown reference.
