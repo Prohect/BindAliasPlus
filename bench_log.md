@@ -374,3 +374,20 @@ datapoint still requires a pristine-save rerun with the tick-endpoint message.
 NEXT: (1) verify confusion #1 (full-state inventory visibility) + #2 (cursor-on-close) in code;
 (2) restore pristine, bench v5.1 = v5 prompt unchanged + tick-endpoint message;
 (3) only then fold verified findings into a v6 prompt.
+
+## MCP API rewrite (2026-08-07, after v5) — nap→snap, getScreenshot merged
+
+Mod v1.10.0-1.11.1 (commits 17d980da..6dcf541d), wire-contract changes only — no gameplay facts
+changed:
+- `nap` (single integer) REPLACED by `snap`: an array of `{deferredTick, screenShot?}` capture
+  points. Multi-entry calls return an envelope array with progressive diffs; message channels
+  (chat, mod, sound, unlocked_recipe) and the verbose full snapshot appear only in the LAST
+  envelope. Fast-forward trigger unchanged semantically: `deferredTick >= 10` (was `nap >= 10`).
+- Standalone `getScreenshot` tool REMOVED — screenshots are `screenShot:true` on a snap entry.
+  Sub-agent allowlist drops from 8 tools to 7.
+- `runAlias` without `snap` now returns the pre-execution envelope (previously `{}`).
+- `src/agent_system_prompt.md` was resynced in those commits; task.md's bench-env section and
+  embedded prompt copy resynced afterwards (embedded copy verified byte-identical to the src
+  prompt body). Prompt wording now says "snap"/"deferredTick" wherever it said "nap".
+NEXT bench (v5.1/v6) runs on the snap-era prompt — tool-contract behavior is comparable, but
+agent reports citing "nap"/getScreenshot would indicate stale-context confusion, not mod bugs.
