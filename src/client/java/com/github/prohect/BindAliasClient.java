@@ -172,7 +172,7 @@ public class BindAliasClient implements ClientModInitializer {
 		new UserAlias("builtinSetPerspective/1", false, true).putToAliasesWithoutArgs("TPS");
 		new UserAlias("builtinSetPerspective/2", false, true).putToAliasesWithoutArgs("TPS2");
 		// Lock aliases (lock/unlock game actions or custom UserAliases)
-		// +lock\<action> / -lock\<action> — compact arg-based form with suggestions
+		// +lock/<action> / -lock/<action> — compact arg-based form with suggestions
 		new LockAlias_OnLock().putToAliasesWithArgs();
 		new LockAlias_Unlock().putToAliasesWithArgs();
 		// Reapply alias — manually re-assert a held-down boolean alias
