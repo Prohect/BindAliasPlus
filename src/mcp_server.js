@@ -38,7 +38,37 @@ const API_BASE = "http://127.0.0.1:" + parsePort();
 const RUNALIAS_DESCRIPTION =
   "Execute a chain of aliases against the running game. " +
   "SILENT FAILURES: an unknown alias name or invalid args fails that step with no thrown error. " +
-  "Returns the standard envelope: the state diff captured before execution, or after the nap when `nap` is given.";
+  "Returns the standard envelope: the state diff captured before execution, or after the snap when `snap` is given.";
+
+// Shared optional params for every tool that returns the standard envelope.
+const VERBOSE_PARAM = {
+  type: "boolean",
+  description:
+    "Optional (default false). When true, the envelope's state is the FULL snapshot instead of the diff.",
+};
+const SNAP_PARAM = {
+  type: "array",
+  items: {
+    type: "object",
+    properties: {
+      deferredTick: {
+        type: "integer",
+        minimum: 0,
+        maximum: 1200,
+        description:
+          "Client_tick offset at which to capture the standard envelope. 0 = capture immediately alongside the action; 1-1200 = defer capture by this many ticks. The action runs once immediately regardless.",
+      },
+      screenShot: {
+        type: "boolean",
+        description:
+          "Optional (default false). When true, a base64 PNG screenshot is included in this capture point's envelope as the `screenShot` field.",
+      },
+    },
+    required: ["deferredTick"],
+  },
+  description:
+    "Optional. Capture the standard envelope at the given client_tick offsets, each optionally with a screenshot. The action runs immediately; state is captured at each `deferredTick`. A single entry returns one envelope; multiple entries (e.g. [{\"deferredTick\":1},{\"deferredTick\":2,\"screenShot\":true}]) return an array of envelopes — one per capture point. The game keeps running the whole time — you cannot react to anything or poll state until the call returns. A deferredTick >= 10 fast-forwards a singleplayer world (~20 tps) for the duration of the longest snap.",
+};
 
 const TOOLS = [
   {
@@ -52,24 +82,11 @@ const TOOLS = [
           description:
             'Alias chain definition. Space(\' \') for alias(with arg) separator, slash(\'/\') for alias_name-arg separator or arg-arg separator, quote(\'"\') quotes multi-word arg preventing space inside to be parsed as alias(with arg) separator: e.g. `say/"hello world"`. Semicolon for alias\'s (the alias named as `alias`) extra separator: e.g. `alias/turnDown;setPitch/90`, `alias/turnRight;yaw/90`',
         },
-        nap: {
-          type: "integer",
-          description:
-            "Defer the tool call's response by N client_tick. The chain runs immediately; the response then blocks until N client_tick have elapsed. The game keeps running the whole time — you cannot react to anything or poll state until the call returns.",
-        },
+        snap: SNAP_PARAM,
+        verbose: VERBOSE_PARAM,
       },
       required: ["def"],
     },
-  },
-  {
-    name: "getFullState",
-    description: "Get full state and drain messages.",
-    inputSchema: { type: "object", properties: {}, required: [] },
-  },
-  {
-    name: "getScreenshot",
-    description: "Screenshot, and standard envelope.",
-    inputSchema: { type: "object", properties: {}, required: [] },
   },
   {
     name: "defineAlias",
@@ -86,6 +103,8 @@ const TOOLS = [
           description:
             "Alias definition string (chain syntax, same as 'runAlias').",
         },
+        snap: SNAP_PARAM,
+        verbose: VERBOSE_PARAM,
       },
       required: ["name", "def"],
     },
@@ -113,6 +132,8 @@ const TOOLS = [
           type: "string",
           description: "Full config file content to write.",
         },
+        snap: SNAP_PARAM,
+        verbose: VERBOSE_PARAM,
       },
       required: ["content"],
     },
@@ -159,8 +180,8 @@ const TOOLS = [
       "List recipes unlocked in the recipe book. Only works while a recipe-book screen is open (player inventory via toggleInventory, crafting table, furnace, ...). " +
       "Without 'queries': returns recipes learned since the previous 'listRecipes' call (a diff — the first call after joining the world returns everything). " +
       "With 'queries' (result-item ids like 'minecraft:torch' or 'torch', or locale-name substrings like 'iron sword'): every query is answered independently — matches land in 'recipes', per-query failures in 'recipe_errors'. " +
-      "Entries: {name, item, craftable}. craftable=true means the ingredients are in your inventory right now. " +
-      "Returns the standard envelope plus recipes/recipe_errors (see the 'getFullState' description).",
+      "Entries: {name, item, craftable, placeable}. craftable=true means the ingredients are in your inventory right now; placeable=false means the open menu cannot place it (grid too small or wrong station). " +
+      "Returns the standard envelope plus recipes/recipe_errors.",
     inputSchema: {
       type: "object",
       properties: {
@@ -170,6 +191,8 @@ const TOOLS = [
           description:
             "Optional list of recipe queries. Omit to list newly unlocked recipes.",
         },
+        snap: SNAP_PARAM,
+        verbose: VERBOSE_PARAM,
       },
       required: [],
     },
@@ -191,10 +214,10 @@ function buildUrl(path, params) {
   return url;
 }
 
-function apiGet(path, params) {
+function apiGet(path, params, timeoutMs) {
   const url = buildUrl(path, params);
   return new Promise((resolve) => {
-    const req = http.get(url, { timeout: 10000 }, (res) => {
+    const req = http.get(url, { timeout: timeoutMs || 10000 }, (res) => {
       let data = "";
       res.on("data", (chunk) => {
         data += chunk;
@@ -289,10 +312,22 @@ function jsonResult(obj) {
 }
 
 // Normalize a raw bridge/mod response into a proper MCP tool result.
+// Handles extraction of an embedded `screenShot` (base64 PNG) into an image content block.
 function wrapResult(result) {
   if (result == null) return errorResult("no response from mod");
   if (Array.isArray(result.content)) return result; // already MCP-shaped
   if (result.error) return errorResult(result.error); // bridge/mod error
+
+  // Multi-snap response: array of envelopes
+  if (Array.isArray(result)) {
+    return multiSnapResult(result);
+  }
+
+  // Single envelope — check for embedded screenshot
+  if (typeof result === "object" && typeof result.screenShot === "string") {
+    return envelopeWithScreenshot(result);
+  }
+
   if (typeof result.content === "string") {
     // readCFG: raw config file text
     return textResult(
@@ -302,69 +337,126 @@ function wrapResult(result) {
   return jsonResult(result);
 }
 
+// Convert a single envelope that contains a `screenShot` field into MCP content
+// blocks: image content for the screenshot + text content for the rest.
+function envelopeWithScreenshot(result) {
+  const { screenShot, ...envelope } = result;
+  const content = [{ type: "image", data: screenShot, mimeType: "image/png" }];
+  const compact = JSON.stringify(envelope);
+  content.push({
+    type: "text",
+    text: compact.length <= 120 ? compact : JSON.stringify(envelope, null, 2),
+  });
+  return { content };
+}
+
+// Convert a multi-snap response (array of envelopes) into MCP content.
+// Each envelope may contain a `screenShot` field — the first screenshot is
+// surfaced as an image block; subsequent ones are kept as text.
+function multiSnapResult(envelopes) {
+  const content = [];
+  let firstScreenshot = null;
+
+  for (let i = 0; i < envelopes.length; i++) {
+    const env = envelopes[i];
+    if (env && typeof env.screenShot === "string") {
+      if (firstScreenshot === null) {
+        firstScreenshot = env.screenShot;
+      }
+      // Remove screenShot from the envelope text to avoid bloat
+      const { screenShot, ...rest } = env;
+      envelopes[i] = rest;
+    }
+  }
+
+  if (firstScreenshot !== null) {
+    content.push({
+      type: "image",
+      data: firstScreenshot,
+      mimeType: "image/png",
+    });
+  }
+
+  const compact = JSON.stringify(envelopes);
+  content.push({
+    type: "text",
+    text: compact.length <= 120 ? compact : JSON.stringify(envelopes, null, 2),
+  });
+  return { content };
+}
+
+// Shared envelope plumbing: pass through verbose and encode snap as deferredTick:screenShot pairs.
+// A snap extends the HTTP timeout (a client_tick is ~50 ms at nominal speed).
+function envelopeParams(args) {
+  const params = {};
+  if (args.verbose === true) params.verbose = "1";
+
+  // snap: array of {deferredTick, screenShot?} → comma-separated "tick:flag" query param
+  const snap = args.snap;
+  let maxSnap = 0;
+  if (Array.isArray(snap) && snap.length > 0) {
+    const parts = [];
+    for (const entry of snap) {
+      if (entry == null || typeof entry !== "object") continue;
+      const tick = Number(entry.deferredTick);
+      if (!Number.isInteger(tick) || tick < 0 || tick > 1200) continue;
+      const ss = entry.screenShot === true ? 1 : 0;
+      parts.push(tick + ":" + ss);
+      if (tick > maxSnap) maxSnap = tick;
+    }
+    if (parts.length > 0) params.snap = parts.join(",");
+  }
+
+  return { params, maxSnap };
+}
+
 async function handleToolCall(toolName, args) {
   switch (toolName) {
-    case "getFullState":
-      return wrapResult(await apiGet("/state"));
-
-    case "getScreenshot": {
-      const result = await apiGet("/screenshot");
-      if (result.error) return wrapResult(result);
-      if (result.base64) {
-        const { base64, ...envelope } = result;
-        const content = [
-          { type: "image", data: base64, mimeType: "image/png" },
-        ];
-        content.push({ type: "text", text: JSON.stringify(envelope) });
-        return { content };
-      }
-      return errorResult("screenshot failed: unexpected response from mod");
-    }
-
     case "runAlias": {
-      const nap = Number(args.nap);
-      const napTicks =
-        Number.isInteger(nap) && nap >= 1 && nap <= 1200 ? nap : 0;
-      const params = { def: args.def || "" };
-      if (napTicks > 0) params.nap = String(napTicks);
+      const { params, maxSnap } = envelopeParams(args);
+      params.def = args.def || "";
       const result = await apiPost(
         "/runAlias",
         params,
         null,
-        10000 + napTicks * 50,
+        10000 + maxSnap * 50,
       );
       return wrapResult(result);
     }
 
     case "defineAlias": {
-      const result = await apiPost("/defineAlias", {
-        name: args.name || "",
-        def: args.def || "",
-      });
+      const { params, maxSnap } = envelopeParams(args);
+      params.name = args.name || "";
+      params.def = args.def || "";
+      const result = await apiPost(
+        "/defineAlias",
+        params,
+        null,
+        10000 + maxSnap * 50,
+      );
       return wrapResult(result);
     }
 
     case "readCFG":
       return wrapResult(await apiGet("/readCFG"));
 
-    case "writeCFG":
+    case "writeCFG": {
+      const { params, maxSnap } = envelopeParams(args);
+      params.content = args.content || "";
       return wrapResult(
-        await apiPost(
-          "/writeCFG",
-          { content: args.content || "" },
-          null,
-          30000,
-        ),
+        await apiPost("/writeCFG", params, null, 30000 + maxSnap * 50),
       );
+    }
 
     case "listRecipes": {
       let queries = args.queries;
       if (typeof queries === "string") queries = [queries];
-      const params =
-        Array.isArray(queries) && queries.length > 0
-          ? { q: queries.join(",") }
-          : null;
-      return wrapResult(await apiGet("/listRecipes", params));
+      const { params, maxSnap } = envelopeParams(args);
+      if (Array.isArray(queries) && queries.length > 0)
+        params.q = queries.join(",");
+      return wrapResult(
+        await apiGet("/listRecipes", params, 10000 + maxSnap * 50),
+      );
     }
 
     case "readNotes":
@@ -443,7 +535,7 @@ function handleLine(line) {
       makeResponse(id, {
         protocolVersion: "2024-11-05",
         capabilities: { tools: {} },
-        serverInfo: { name: "bind-alias-mcp", version: "2.1.0" },
+        serverInfo: { name: "bind-alias-mcp", version: "3.0.0" },
       }),
     );
   } else if (method === "ping") {
