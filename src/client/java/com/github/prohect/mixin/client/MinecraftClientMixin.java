@@ -34,8 +34,8 @@ public class MinecraftClientMixin {
             dropAlias.tickDrop();
         }
 
-        // Count down MCP nap responses — last, so the deferred envelope capture
+        // Count down MCP snap tasks — last, so the deferred envelope capture
         // reflects everything else this tick already did (WaitAlias chain, drop, ...)
-        McpHttpServer.tickNapTasks();
+        McpHttpServer.tickSnapTasks();
     }
 }
