@@ -28,14 +28,14 @@ public class MinecraftClientMixin {
         }
 
         // Drive continuous drop while the drop-key alias is held
-        // (container screens via onMouseClick, 3D game via timesPressed).
+        // (container screens via slotClicked, 3D game via clickCount).
         AliasWithArgs<?> raw = com.github.prohect.alias.Alias.aliasesWithArgs_notSuggested.get("builtinDrop");
         if (raw instanceof DropAlias dropAlias) {
             dropAlias.tickDrop();
         }
 
-        // Count down MCP nap responses — last, so the deferred envelope capture
+        // Count down MCP snap tasks — last, so the deferred envelope capture
         // reflects everything else this tick already did (WaitAlias chain, drop, ...)
-        McpHttpServer.tickNapTasks();
+        McpHttpServer.tickSnapTasks();
     }
 }
