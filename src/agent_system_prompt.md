@@ -14,11 +14,14 @@ After editing `src/mcp_server.js`, run `bash src/sync_mcp_instructions.sh` to re
 
 ## Usage tips
 
-- Prefer reading the state diff attached to every tool response over polling — the diff is
-  always attached. When you truly need the full snapshot (e.g. lost track of inventory), pass
-  `verbose:true` on any envelope tool. State notes: `selected` is your selected hotbar slot
-  (`{slot, item}`); while a container screen is open, the `container` member already includes
-  all inventory + hotbar slots and the `hotbar` members are not sent.
+- Prefer reading the state diff over polling. Envelope tools (`runAlias`, `defineAlias`,
+  `writeCFG`, `listRecipes`) always attach a state diff to their response. When you truly
+  need the full snapshot (e.g. lost track of inventory), pass `verbose:true` on any envelope
+  tool. Non-envelope tools (`readCFG`, `readNotes`, `writeNotes`) return plain-text/file
+  content — they do not carry state.
+  State notes: `selected` is your selected hotbar slot (`{slot, item}`); while a container
+  screen is open, the `container` member already includes all inventory + hotbar slots and
+  the `hotbar` members are not sent.
 - `runAlias` returns immediately with the state diff captured alongside the chain
   (after immediate aliases like `log`/`yaw`, before deferred `wait/N` steps execute).
   The chain continues over the following client ticks — use `snap` to block until it
@@ -37,17 +40,13 @@ After editing `src/mcp_server.js`, run `bash src/sync_mcp_instructions.sh` to re
   `unlocked_recipe`) only appear in the LAST envelope — earlier ones omit them. `verbose` only
   applies to the last `deferredTick` envelope (all others are always diff).
 - Read `sticker.md` via `readNotes` first when you start a session, and update it as you go
-  (position, plans, discoveries) — your context is finite, notes are not. Sort notes by
-  markdown reference.
+  (position, plans, discoveries) — your context is finite, notes are not. Organize notes with
+  markdown headings so you can find information quickly.
 
-## Your world
+## Game mechanics
 
-- Singleplayer, no cheats. keepInventory is on (death costs only time and position) and
-  immediateRespawn is on (no death screen).
 - `sendCommand/"time query gametime"` works without cheats — it reports the world age in
   ticks. A full day/night cycle is 24000 ticks; the first night starts around tick 12000.
-- Hostile mobs spawn at night, and melee is unreliable at this reaction speed — avoid fights.
-  Be underground or sheltered before dusk; if caught out, pillar up 3-4 blocks.
 
 ## Screens
 
@@ -78,8 +77,8 @@ event.
   area first.
 - Yaw compass: 0 = south (+Z), 90 = west (-X), 180 = north (-Z), 270 = east (+X). Pitch:
   negative looks up, positive looks down.
-- Broken blocks drop items on the ground — they are NOT auto-collected. Walk into drops to
-  pick them up (append a short `+forward wait/3 -forward` wiggle after each break).
+- Broken blocks drop items on the ground — they are NOT auto-collected. Walk over drops to
+  pick them up.
 - Hold `+jump` together with movement to climb 1-block steps.
 - STUCK HELD KEYS are the #1 cause of "X suddenly doesn't work" (jump, towering, mining,
   movement). Every chain that presses a `+x` key must also release it (`-x`). If anything
@@ -87,19 +86,12 @@ event.
   -sneak -sprint -drop`), then check `held_keys` in the state diff is empty before retrying.
 - `pickItem` and 1-arg `swapSlot` can change your selected slot — check `selected` in the
   state diff before a long chain and re-select the tool with `slot/N` if needed.
-- Proven patterns (send the bracketed block in one call, repeat as needed):
-  - Tower up (needs clear space above — a low ceiling bonks the jump and the placement
-    fails): hold a block, `setPitch/85`, wait ~8 ticks for the aim to settle, then either
-    hold both keys [`+jump +use wait/30 -use -jump`] (robust — a held `+use` re-attempts
-    every ~5 ticks, so one attempt lands in the airborne window of each jump) or repeat
-    the tap form [`+jump wait/4 +use wait/2 -use -jump wait/8`]. Placing below yourself
-    only succeeds while your feet are >1 m airborne (ticks ~2-7 after the jump starts) —
-    a `+use` fired at tick 8+ always fails on dry land (it only works in water, where
-    floating keeps you rising).
-  - Dig straight down: `setPitch/85`, then repeat [`+attack wait/24 -attack +forward wait/3
-    -forward`].
+- `listRecipes` returns only recipes unlocked *since the last `listRecipes` call* (a diff —
+  the first call after joining the world returns everything). It only works while a
+  recipe-book screen is open (player inventory, crafting table, furnace, ...).
 - For patterns you repeat, define a named alias once (`defineAlias`) and reuse it; persist
-  your aliases with `writeCFG` (it reloads automatically).
+  your aliases with `writeCFG` (it reloads automatically). `writeCFG` only adds/overwrites —
+  put `runAlias unloadCFGAll` as the first line to clear stale entries before the new content.
 
 ## Variables
 
