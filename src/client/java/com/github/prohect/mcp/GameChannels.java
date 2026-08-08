@@ -25,6 +25,9 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
  * {@link SoundCapture}. Repeats of the same sound coalesce <b>by key</b> (even when interleaved with other sounds) into one
  * updating line with an {@code " xN"} counter, until drained.</li>
  * <li>{@link #UNLOCKED_RECIPE} — newly unlocked recipes (toast notifications), fed by {@code ClientPacketListenerMixin}.</li>
+ * <li>{@link #AGENT_MSG} — structured agent messages (state diffs from the {@code diffState} alias, base64 screenshots from the
+ * {@code printScreen} alias), keyed by {@code clientTick} (deduped per tick); drained as raw JSON objects via
+ * {@link #drainAgentMsg()} instead of the string-based {@link #drain()}.</li>
  * </ul>
  * Every channel is a bounded, insertion-ordered buffer with a monotonic cursor; {@link #drain()} returns messages posted since
  * the previous drain and is zero-cost when nothing new arrived.
@@ -35,6 +38,7 @@ public final class GameChannels {
     public static final String MOD = "mod";
     public static final String SOUND = "sound";
     public static final String UNLOCKED_RECIPE = "unlocked_recipe";
+    public static final String AGENT_MSG = "agent_msg";
 
     private static final int MAX_BUFFER = 100;
     private static final Object lock = new Object();
@@ -158,6 +162,98 @@ public final class GameChannels {
                 if (ch.coalescing)
                     ch.byKey.clear();
             }
+            AGENT_ENTRIES.clear();
+        }
+    }
+
+    // ---- agent_msg channel (structured entries, keyed by clientTick only — one entry per tick) ----
+
+    private static final int MAX_AGENT_BUFFER = 100;
+    /** insertion-ordered: clientTick → entry */
+    private static final LinkedHashMap<Long, AgentEntry> AGENT_ENTRIES = new LinkedHashMap<>();
+
+    private static final class AgentEntry {
+        final long clientTick;
+        String state;
+        String screenShot;
+        /** True while the entry holds fields not yet delivered by {@link #drainAgentMsg()}. */
+        boolean dirty;
+
+        AgentEntry(long clientTick) {
+            this.clientTick = clientTick;
+        }
+    }
+
+    /**
+     * Post a state diff JSON to the {@link #AGENT_MSG} channel keyed by clientTick. Only the first state at a given tick is
+     * kept — subsequent calls at the same tick are no-ops (same-tick diffs are identical).
+     */
+    public static void postAgentState(long clientTick, String stateJson) {
+        if (stateJson == null || stateJson.isEmpty())
+            return;
+        synchronized (lock) {
+            AgentEntry entry = agentEntry(clientTick);
+            if (entry.state != null)
+                return; // already have state at this tick — dedup
+            entry.state = stateJson;
+            entry.dirty = true;
+        }
+    }
+
+    /**
+     * Post a base64 PNG screenshot to the {@link #AGENT_MSG} channel keyed by clientTick. Only the first screenshot at a given
+     * tick is kept — subsequent calls at the same tick are no-ops (same frame).
+     */
+    public static void postAgentScreenShot(long clientTick, String base64) {
+        if (base64 == null || base64.isEmpty())
+            return;
+        synchronized (lock) {
+            AgentEntry entry = agentEntry(clientTick);
+            if (entry.screenShot != null)
+                return; // already have screenshot at this tick — dedup
+            entry.screenShot = base64;
+            entry.dirty = true;
+        }
+    }
+
+    private static AgentEntry agentEntry(long clientTick) {
+        AgentEntry entry = AGENT_ENTRIES.get(clientTick);
+        if (entry == null) {
+            entry = new AgentEntry(clientTick);
+            AGENT_ENTRIES.put(clientTick, entry);
+            while (AGENT_ENTRIES.size() > MAX_AGENT_BUFFER)
+                AGENT_ENTRIES.remove(AGENT_ENTRIES.keySet().iterator().next());
+        }
+        return entry;
+    }
+
+    /**
+     * Drain {@link #AGENT_MSG} entries sorted by {@code client_tick} ascending. Each entry is a raw JSON object
+     * ({@code {"client_tick":N,"state":{...},"screenShot":"..."}} — fields omitted when unset). The returned strings are JSON
+     * values, not plain text: insert them into the envelope <b>without</b> json-escaping. Thread-safe.
+     */
+    public static List<String> drainAgentMsg() {
+        synchronized (lock) {
+            List<AgentEntry> sorted = new ArrayList<>();
+            for (AgentEntry e : AGENT_ENTRIES.values()) {
+                if (e.dirty)
+                    sorted.add(e);
+            }
+            sorted.sort((a, b) -> Long.compare(a.clientTick, b.clientTick));
+
+            List<String> out = new ArrayList<>();
+            for (AgentEntry e : sorted) {
+                e.dirty = false;
+                StringBuilder sb = new StringBuilder(
+                        64 + (e.state == null ? 0 : e.state.length()) + (e.screenShot == null ? 0 : e.screenShot.length()));
+                sb.append("{\"client_tick\":").append(e.clientTick);
+                if (e.state != null)
+                    sb.append(",\"state\":").append(e.state);
+                if (e.screenShot != null)
+                    sb.append(",\"screenShot\":\"").append(e.screenShot).append('"');
+                out.add(sb.append('}').toString());
+            }
+            return out;
         }
     }
 

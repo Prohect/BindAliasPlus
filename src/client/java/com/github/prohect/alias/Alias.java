@@ -21,7 +21,7 @@ public interface Alias<T extends Alias<T>> {
     HashMap<String, AliasWithArgs<?>> aliasesWithArgs = new HashMap<>();
     HashMap<String, AliasWithArgs<?>> aliasesWithArgs_notSuggested = new HashMap<>();
     char divider4AliasDefinition = ' ';
-    char divider4AliasArgs = '\\';
+    char divider4AliasArgs = '/';
 
     /**
      * ignore blocks covered by double quotes
