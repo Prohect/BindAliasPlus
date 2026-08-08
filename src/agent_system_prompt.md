@@ -31,16 +31,19 @@ After editing `src/mcp_server.js`, run `bash src/sync_mcp_instructions.sh` to re
 - The game may run far slower than real time (e.g. 1 tick/s). Batch a whole micro-plan into
   one `runAlias` chain (`wait/N` between steps) instead of one tool call per action.
 - `snap` blocks the response for N client_tick with the game running the whole time — you can't
-  react to anything or poll state until it returns. `deferredTick >= 10` fast-forwards the server
+  react to anything or poll state until it returns. `snapDeferredTicks >= 10` fast-forwards the server
   (~20 tps) for the snap, so boring waits (furnace smelting, growth) pass quickly in wall time.
   Only take long snaps when you are safe (sheltered, no mobs around).
-  `snap` accepts an array of `{deferredTick, screenShot?}` objects: pass
-  `[{"deferredTick": N, "screenShot": true}]` to get a screenshot after N ticks.
-  Multiple entries produce an array of envelopes — one per capture point.
-  Each envelope carries a progressive state diff so you can track changes across ticks (e.g. check
-  `target` at multiple points after a rotation in one call). Message channels (chat, mod, sound,
-  `unlocked_recipe`) only appear in the LAST envelope — earlier ones omit them. `verbose` only
-  applies to the last `deferredTick` envelope (all others are always diff).
+  `snapDeferredTicks` is a single integer (0 = immediate, absent = immediate): pass
+  `snapDeferredTicks: N` to defer the state capture by N ticks.
+  The envelope carries a state diff (full snapshot with `verbose: true`).
+  Message channels (chat, mod, sound, unlocked_recipe, agent_msg) are drained into the envelope.
+- The `agent_msg` channel collects structured entries from the `diffState` and `printScreen` aliases.
+  `diffState` captures a state diff at its point in the chain; `printScreen` grabs a base64 PNG
+  screenshot (async — may arrive in a subsequent envelope). When both run during the same chain
+  (same clientTick), their outputs merge into one JSON object. Only one state and one screenshot
+  are kept per tick — duplicates at the same tick are no-ops.
+  Example use in a chain: `yaw/45 wait/8 diffState printScreen`.
 - Read `sticker.md` via `readNotes` first when you start a session, and update it as you go
   (position, plans, discoveries) — your context is finite, notes are not. Organize notes with
   markdown headings so you can find information quickly.
@@ -124,6 +127,10 @@ set from a `cN` source (`var/name/c3`) are treated as container_slot references 
 - `swapHand` — swap main hand and offhand items
 - `pickItem` — select the hotbar slot if one matches the targeted block/entity, otherwise try
   to move (by SWAP) a matching item stack in your inventory to the selected slot
+- `diffState` — capture a state diff right now and post it to the `agent_msg` channel, keyed by
+  the current clientTick so it merges with a `printScreen` call in the same chain
+- `printScreen` — grab a screenshot (async) and post the base64 PNG to the `agent_msg` channel,
+  keyed by clientTick; only one screenshot per tick is kept (duplicates are no-ops)
 
 ## Command aliases (backslash separates args)
 
