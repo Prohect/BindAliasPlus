@@ -2,15 +2,24 @@
 
 All notable changes to BindAlias will be documented in this file.
 
-## [1.11.2] - 2026-08-08
+## [1.12.0] - 2026-08-08
 
-### Fixed
+### Added
 
-- **MCP: snap screenshots were stale** — all screenshots were captured before the alias chain ran, so every snap envelope carried a pre-action frame. Immediate snaps now capture right after the action; deferred snaps capture at expiry on the main thread, ensuring the frame matches the captured state.
+- **`diffState` alias** — captures a state diff mid-chain and posts it to the new `agent_msg` channel
+- **`printScreen` alias** — grabs an async screenshot and posts base64 PNG to `agent_msg`
+- **`agent_msg` channel** — structured message channel keyed by clientTick; same-tick state+screenshot entries merge automatically
 
 ### Changed
 
-- **MCP: each snap screenshot delivered as its own image block** — multi-snap responses now return one image block per screenshot instead of bundling everything into a single block, matching the documented per-envelope delivery contract.
+- **MCP: simplified snap parameter** — `snap` (multi-entry array) replaced by `snapDeferredTicks` (single integer defer); screenshots moved from snap into `printScreen` alias
+- **MCP: JS bridge** — extracts `agent_msg` screenshots as MCP image blocks, removes legacy multi-snap code
+
+### Fixed
+
+- **cfg auto-load** — world-specific `agent.cfg` no longer wipes global `bind-alias.cfg` aliases
+- **deferred snap `extra`** — recipes JSON from `listRecipes` now preserved in deferred snap envelopes
+- **1.21.x alias parsing** — `divider4AliasArgs` corrected from `\\` to `/`, fixing all `BuiltinAliasWithArgs` aliases (`yaw`, `log`, `say`, etc.) on 1.21.x branches
 
 ## [1.11.1] - 2026-08-07
 
