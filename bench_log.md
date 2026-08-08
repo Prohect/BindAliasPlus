@@ -391,3 +391,66 @@ changed:
   prompt body). Prompt wording now says "snap"/"deferredTick" wherever it said "nap".
 NEXT bench (v5.1/v6) runs on the snap-era prompt — tool-contract behavior is comparable, but
 agent reports citing "nap"/getScreenshot would indicate stale-context confusion, not mod bugs.
+
+## v6 — generic-refactor prompt + inventory-visibility/cursor facts — CLEAN bench (2026-08-08 02:52-03:58)
+
+Prompt baseline note: commit a984a2a0 ("Refactor system prompt to focus on generic mechanics")
+deliberately removed the v5 proven patterns (tower/dig-down) and world specifics. The benched
+v6 = that refactored prompt + two bullets folded in from v5-bench confusions, code-verified
+this session BEFORE the bench:
+1. INVENTORY VISIBILITY (v5 confusion #1 — VERIFIED TRUE in GameStateCollector.java): with no
+   screen open the state reports ONLY the hotbar (hotbarItems reads slots 0-8); the
+   `container` member exists only while an AbstractContainerScreen is open, and then covers
+   all player slots 1-41. Added to State notes: main inventory invisible until you open a
+   container screen (e.g. toggleInventory) — open it to audit your full inventory.
+2. CURSOR-ON-CLOSE (v5 confusion #2 — VERIFIED SAFE in vanilla): AbstractContainerMenu.removed
+   -> dropOrPlaceInInventory -> placeItemBackInInventory (drops only if player removed/
+   disconnected); InventoryMenu.removed also returns craft-grid leftovers. So the v5 "lost
+   stone axe" (switchSlot cursor WARN) was placed back into the then-invisible main
+   inventory — confusions #1 and #2 were the SAME root cause. Added to Screens section:
+   closing a screen never loses items; a "vanished" item moved to an unseen main-inv slot.
+
+Infra: user confirmed the Aug-4 backup IS the valid minimal clean save (verified same seed
+2276001184421191130, gamerules keep_inventory=1/immediate_respawn=1, overworld ticks 61,
+empty agent.cfg) — task.md's "re-backup required" note was outdated. Restored from it
+(gametime 82 at launch, idle drift only). Sub-agent spawn failed once with the KNOWN Kimi
+temperature contradiction ("only 1 is allowed") — plain retry succeeded (session 534c570e).
+Settings left untouched per user instruction.
+
+Bench (v6 prompt in AGENTS.md, verbatim task message, 7-tool allowlist):
+- Wall 02:52 -> 03:58 (~66 min). Agent stopped at gametime 12111 (endpoint 12000 — only
+  +111 overshoot; 8 time queries total, last three 11270/11778/12111 spaced ~3-5 min wall).
+  Compare v5's 24000-tick overshoot — endpoint discipline fixed.
+- LOG-VERIFIED milestones: Stone Age 03:10:15, Getting an Upgrade 03:13:34 (stone pick).
+  Crafting table placed+used, full stone tool set, furnace CRAFTED (never placed), sealed
+  in a dirt-capped tunnel at (41,76,8) before nightfall. Host-verified final state:
+  gametime 12238, HP 20/20, hunger 18, pos (41.3,76,8.7), hotbar matches agent report
+  (logs/dirt/cobble/stone pick/furnace/sticks/stone sword/wooden axe; wooden pick + stone
+  axe in main inv per report — main inv not host-visible without a screen, taken on trust).
+- DEATHS: 0 (log has zero death messages). Mod log: ZERO PlaceRecipePacket errors, ZERO
+  cursor WARNs. Agent self-report matched the log on every checkable fact this time.
+- No "nap"/getScreenshot mentions — snap-era prompt absorbed cleanly.
+
+Agent-reported confusions (signals to verify, NOT prompt facts):
+1. Furnace placement failed silently ~5x in a cramped 1-wide cell while the crafting table
+   placed fine earlier. -> VERIFIED in code AFTER the bench: BlockItem.canPlace requires
+   isUnobstructed(state, pos, CollisionContext.placementContext(player)) — a placement
+   whose collision shape intersects the player's own AABB is denied with no feedback.
+   (This is also the generic root cause of the old dry-land tower failures.) Folded into
+   the prompt as a generic bullet -> current src prompt is now v7-UNBENCHED.
+2. "Block broken" subtitle entries can be distant leaf decay, not own mining. Consistent
+   with the documented subtitle-feed semantics (feed includes all nearby sounds, not just
+   self-caused) — no prompt change; durability/inventory remain the truth source.
+3. Hunting animals at 1 tps is near-impossible (sheep flee during slow ticks; grass eats
+   swings). World/gameplay strategy, not a tool fact — no prompt change (generic-only rule).
+4. "snap fast-forward burns gametime": inherent (ff trades wall time, gametime passes 1:1);
+   the prompt already documents the 20-tps ff — the agent's pain was budget PLANNING, not a
+   contract surprise. No prompt change.
+5. Aim/movement lag dominated time cost — already documented.
+
+Assessment: v6 is the FIRST fully clean, endpoint-compliant bench. Endpoint compliance and
+zero confabulation are the big wins vs v5. Progress (stone age + furnace, no iron/food/
+torches) is slower than v5's but v5 ran 3x budget; per-12000-tick pace is comparable.
+NEXT: bench v7 (= v6 + placement-obstruction bullet) on restored pristine save; keep
+watching whether the inventory-visibility bullet makes the agent audit its main inventory
+(this agent never reported lost items, so the bullet's effect is unproven either way).
