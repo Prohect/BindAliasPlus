@@ -275,6 +275,19 @@ public final class StateTracker {
             }
             sb.append(']');
         }
+        // agent_msg entries are already JSON objects — insert raw, NOT jsonEscape-wrapped
+        List<String> agentMsgs = GameChannels.drainAgentMsg();
+        if (!agentMsgs.isEmpty()) {
+            sb.append(",\"").append(GameChannels.AGENT_MSG).append("\":[");
+            boolean first = true;
+            for (String msg : agentMsgs) {
+                if (!first)
+                    sb.append(',');
+                first = false;
+                sb.append(msg);
+            }
+            sb.append(']');
+        }
         return sb.append('}').toString();
     }
 
