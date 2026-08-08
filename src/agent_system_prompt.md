@@ -26,11 +26,11 @@ After editing `src/mcp_server.js`, run `bash src/sync_mcp_instructions.sh` to re
   inventory + hotbar slots and the `hotbar` members are not sent.
 - `runAlias` returns immediately with the state diff captured alongside the chain
   (after immediate aliases like `log`/`yaw`, before deferred `wait/N` steps execute).
-  The chain continues over the following client ticks — use `snap` to block until it
-  finishes and get the post-execution diff.
+  The chain continues over the following client ticks — pass `snapDeferredTicks: N`
+  to defer the capture and get the post-execution diff.
 - The game may run far slower than real time (e.g. 1 tick/s). Batch a whole micro-plan into
   one `runAlias` chain (`wait/N` between steps) instead of one tool call per action.
-- `snap` blocks the response for N client_tick with the game running the whole time — you can't
+- `snapDeferredTicks` blocks the response for N client_tick with the game running the whole time — you can't
   react to anything or poll state until it returns. `snapDeferredTicks >= 10` fast-forwards the server
   (~20 tps) for the snap, so boring waits (furnace smelting, growth) pass quickly in wall time.
   Only take long snaps when you are safe (sheltered, no mobs around).
