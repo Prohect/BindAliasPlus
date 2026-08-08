@@ -38,7 +38,7 @@ const API_BASE = "http://127.0.0.1:" + parsePort();
 const RUNALIAS_DESCRIPTION =
   "Execute a chain of aliases against the running game. " +
   "SILENT FAILURES: an unknown alias name or invalid args fails that step with no thrown error. " +
-  "Returns the standard envelope (see SNAP_DEFERRED_TICKS_PARAM for its shape); agent_msg entries from diffState / printScreen aliases are delivered as MCP image+text content blocks.";
+  "Returns the standard envelope; screenshots from agent_msg entries are delivered as MCP image content blocks.";
 
 // Shared optional params for every tool that returns the standard envelope.
 const VERBOSE_PARAM = {
@@ -54,10 +54,8 @@ const SNAP_DEFERRED_TICKS_PARAM = {
     "Client_tick offset at which to capture the standard envelope. 0 = capture immediately alongside the action; 1-1200 = defer capture by this many ticks. The action runs once immediately regardless. A snapDeferredTicks >= 10 fast-forwards a singleplayer world (~20 tps) for the duration of the snap.",
 };
 
-// What the standard envelope may carry: {"client_tick":N, "state":{...}, "chat":[...], "mod":[...],
-// "sound":[...], "unlocked_recipe":[...], "agent_msg":[...]}.  agent_msg entries are structured JSON
-// objects ({"client_tick":N,"state":{...},"screenShot":"base64..."}) posted by diffState / printScreen
-// aliases mid-chain; screenshots in agent_msg are delivered as MCP image content blocks.
+// Standard envelope shape: {"client_tick":N, "state":{...}, "chat":[...], "mod":[...],
+// "sound":[...], "unlocked_recipe":[...], "agent_msg":[...]}.
 
 const TOOLS = [
   {
