@@ -79,6 +79,9 @@ closing a screen, it moved to a main-inventory slot (see State notes above).
 - Tall grass and small plants intercept your aim: swings break the grass instead of the
   block/mob behind it, and placements can target it oddly — clear grass around your work
   area first.
+- A block placement is silently denied when the new block would intersect your own body
+  (vanilla obstruction check) — in cramped spaces, target a face that puts the block
+  outside the cell you occupy, or step back first.
 - Yaw compass: 0 = south (+Z), 90 = west (-X), 180 = north (-Z), 270 = east (+X). Pitch:
   negative looks up, positive looks down.
 - Broken blocks drop items on the ground — they are NOT auto-collected. Walk over drops to
