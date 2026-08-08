@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * Hooks {@link NativeImage#writeTo(Path)} to capture PNG bytes in memory before they hit disk. The MCP screenshot endpoint
- * polls {@link ScreenshotCapture#nextPngFuture} instead of reading the filesystem, cutting response time from ~500 ms (sleep +
- * FS scan) to &lt;50 ms (GPU readback + PNG encode).
+ * polls {@link ScreenshotCapture#pollPngFuture()} instead of reading the filesystem, cutting response time from ~500 ms (sleep
+ * + FS scan) to &lt;50 ms (GPU readback + PNG encode).
  */
 @Mixin(NativeImage.class)
 public abstract class NativeImageMixin {
@@ -36,10 +36,9 @@ public abstract class NativeImageMixin {
             return;
         }
 
-        CompletableFuture<byte[]> f = ScreenshotCapture.nextPngFuture;
+        CompletableFuture<byte[]> f = ScreenshotCapture.pollPngFuture();
         if (f == null)
             return;
-        ScreenshotCapture.nextPngFuture = null; // one-shot
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
