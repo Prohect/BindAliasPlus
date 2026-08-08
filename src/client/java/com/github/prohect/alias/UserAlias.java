@@ -141,7 +141,7 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                         }
                         firstItem = false;
                     }
-                    waitAlias.run(aliasRecord.args(), definitionLeft.toString());
+                    waitAlias.run(aliasRecord.args(), definitionLeft.toString(), List.of(this));
                     return this;
                 }
                 default -> {
@@ -237,7 +237,7 @@ public final class UserAlias implements AliasWithoutArgs<UserAlias> {
                             firstItem = false;
                         }
                     }
-                    waitAlias.run(aliasRecord.args(), definitionLeft.toString());
+                    waitAlias.run(aliasRecord.args(), definitionLeft.toString(), userAliasesCallChains);
                     return;
                 }
                 default -> {
