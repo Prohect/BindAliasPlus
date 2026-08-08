@@ -44,30 +44,14 @@ const RUNALIAS_DESCRIPTION =
 const VERBOSE_PARAM = {
   type: "boolean",
   description:
-    "Optional (default false). When true, the LAST deferredTick envelope's state is the FULL snapshot instead of the diff; all other envelopes are always diffs. When there are no deferred snaps (all deferredTick=0), the single shared envelope is likewise full only when verbose is true.",
+    "Optional (default false). When true, the envelope's state is the FULL snapshot instead of the diff.",
 };
-const SNAP_PARAM = {
-  type: "array",
-  items: {
-    type: "object",
-    properties: {
-      deferredTick: {
-        type: "integer",
-        minimum: 0,
-        maximum: 1200,
-        description:
-          "Client_tick offset at which to capture the standard envelope. 0 = capture immediately alongside the action; 1-1200 = defer capture by this many ticks. The action runs once immediately regardless.",
-      },
-      screenShot: {
-        type: "boolean",
-        description:
-          "Optional (default false). When true, a base64 PNG screenshot of the frame at this capture point is delivered as an image content block paired with this point's envelope.",
-      },
-    },
-    required: ["deferredTick"],
-  },
+const SNAP_DEFERRED_TICKS_PARAM = {
+  type: "integer",
+  minimum: 0,
+  maximum: 1200,
   description:
-    "Optional. Capture the standard envelope at the given client_tick offsets, each optionally with a screenshot. The action runs immediately; state is captured at each `deferredTick`. Each envelope carries a progressive state diff (full snapshot on the LAST deferredTick when `verbose` is true); message channels (chat, mod, sound, unlocked_recipe) are only drained into the LAST envelope — earlier envelopes omit them since channel entries already carry tick-index info. A single entry returns one envelope; multiple entries (e.g. [{\"deferredTick\":1},{\"deferredTick\":2,\"screenShot\":true}]) return an array of envelopes — one per capture point, each screenshot delivered as its own image block. The game keeps running the whole time — you cannot react to anything or poll state until the call returns. A deferredTick >= 10 fast-forwards a singleplayer world (~20 tps) for the duration of the longest snap.",
+    "Client_tick offset at which to capture the standard envelope. 0 = capture immediately alongside the action; 1-1200 = defer capture by this many ticks. The action runs once immediately regardless. A deferredTick >= 10 fast-forwards a singleplayer world (~20 tps) for the duration of the snap.",
 };
 
 const TOOLS = [
@@ -82,7 +66,7 @@ const TOOLS = [
           description:
             'Alias chain definition. Space(\' \') for alias(with arg) separator, slash(\'/\') for alias_name-arg separator or arg-arg separator, quote(\'"\') quotes multi-word arg preventing space inside to be parsed as alias(with arg) separator: e.g. `say/"hello world"`. Semicolon for alias\'s (the alias named as `alias`) extra separator: e.g. `alias/turnDown;setPitch/90`, `alias/turnRight;yaw/90`',
         },
-        snap: SNAP_PARAM,
+        snapDeferredTicks: SNAP_DEFERRED_TICKS_PARAM,
         verbose: VERBOSE_PARAM,
       },
       required: ["def"],
@@ -103,7 +87,7 @@ const TOOLS = [
           description:
             "Alias definition string (chain syntax, same as 'runAlias').",
         },
-        snap: SNAP_PARAM,
+        snapDeferredTicks: SNAP_DEFERRED_TICKS_PARAM,
         verbose: VERBOSE_PARAM,
       },
       required: ["name", "def"],
@@ -132,7 +116,7 @@ const TOOLS = [
           type: "string",
           description: "Full config file content to write.",
         },
-        snap: SNAP_PARAM,
+        snapDeferredTicks: SNAP_DEFERRED_TICKS_PARAM,
         verbose: VERBOSE_PARAM,
       },
       required: ["content"],
@@ -191,7 +175,7 @@ const TOOLS = [
           description:
             "Optional list of recipe queries. Omit to list newly unlocked recipes.",
         },
-        snap: SNAP_PARAM,
+        snapDeferredTicks: SNAP_DEFERRED_TICKS_PARAM,
         verbose: VERBOSE_PARAM,
       },
       required: [],
@@ -302,31 +286,12 @@ function textResult(text) {
   return { content: [{ type: "text", text }] };
 }
 
-// JSON object -> text content: compact one-liner when short, pretty-printed
-// when long (state snapshots).
-function jsonResult(obj) {
-  const compact = JSON.stringify(obj);
-  return textResult(
-    compact.length <= 120 ? compact : JSON.stringify(obj, null, 2),
-  );
-}
-
 // Normalize a raw bridge/mod response into a proper MCP tool result.
-// Handles extraction of an embedded `screenShot` (base64 PNG) into an image content block.
+// Extracts base64 PNG screenshots from `agent_msg` channel entries into MCP image content blocks.
 function wrapResult(result) {
   if (result == null) return errorResult("no response from mod");
   if (Array.isArray(result.content)) return result; // already MCP-shaped
   if (result.error) return errorResult(result.error); // bridge/mod error
-
-  // Multi-snap response: array of envelopes
-  if (Array.isArray(result)) {
-    return multiSnapResult(result);
-  }
-
-  // Single envelope — check for embedded screenshot
-  if (typeof result === "object" && typeof result.screenShot === "string") {
-    return envelopeWithScreenshot(result);
-  }
 
   if (typeof result.content === "string") {
     // readCFG: raw config file text
@@ -334,75 +299,86 @@ function wrapResult(result) {
       result.content.length ? result.content : "",
     );
   }
-  return jsonResult(result);
+
+  // Single envelope — extract agent_msg screenshots into image content blocks
+  return envelopeResult(result);
 }
 
-// Convert a single envelope that contains a `screenShot` field into MCP content
-// blocks: image content for the screenshot + text content for the rest.
-function envelopeWithScreenshot(result) {
-  const { screenShot, ...envelope } = result;
-  const content = [{ type: "image", data: screenShot, mimeType: "image/png" }];
-  const compact = JSON.stringify(envelope);
-  content.push({
-    type: "text",
-    text: compact.length <= 120 ? compact : JSON.stringify(envelope, null, 2),
-  });
-  return { content };
+// Format a JSON-serializable value as text: compact one-liner when short, pretty-printed when long.
+function formatJson(val) {
+  const compact = JSON.stringify(val);
+  return compact.length <= 120 ? compact : JSON.stringify(val, null, 2);
 }
 
-// Convert a multi-snap response (array of envelopes) into MCP content.
-// Every `screenShot` field is surfaced as its own image content block, placed
-// immediately before the text block of the envelope it belongs to. When no
-// envelope has a screenshot, the whole array is a single text block.
-function multiSnapResult(envelopes) {
-  const hasShots = envelopes.some(
-    (env) => env && typeof env.screenShot === "string",
-  );
-  if (!hasShots) {
-    const compact = JSON.stringify(envelopes);
-    return textResult(
-      compact.length <= 120 ? compact : JSON.stringify(envelopes, null, 2),
-    );
+// Convert an envelope into MCP content blocks, extracting `screenShot` fields from `agent_msg` entries
+// as image blocks. The outer envelope and agent_msg entries are merged into a single timeline sorted by
+// client_tick, with each image followed by its entry text (minimal {"client_tick":N} stamp when no state).
+function envelopeResult(envelope) {
+  const items = []; // {tick, shot, text}
+
+  // 1. Separate agent_msg entries from the outer envelope
+  let outerTick = null;
+  let restEnvelope = envelope;
+  if (restEnvelope && Array.isArray(restEnvelope.agent_msg)) {
+    const { agent_msg, ...outer } = restEnvelope;
+    restEnvelope = outer;
+    outerTick = restEnvelope.client_tick;
+
+    for (const entry of agent_msg) {
+      if (!entry) continue;
+      const { screenShot, ...cleanEntry } = entry;
+      items.push({
+        tick: entry.client_tick,
+        shot: typeof screenShot === "string" ? screenShot : null,
+        text: formatJson(cleanEntry),
+      });
+    }
   }
 
-  const content = [];
-  for (const env of envelopes) {
-    let out = env;
-    if (env && typeof env.screenShot === "string") {
-      const { screenShot, ...rest } = env;
-      content.push({ type: "image", data: screenShot, mimeType: "image/png" });
-      out = rest;
-    }
-    const compact = JSON.stringify(out);
-    content.push({
-      type: "text",
-      text: compact.length <= 120 ? compact : JSON.stringify(out, null, 2),
+  // 2. Outer envelope as a text-only item
+  if (outerTick != null || Object.keys(restEnvelope).length > 0) {
+    items.push({
+      tick: outerTick,
+      shot: null,
+      text: formatJson(restEnvelope),
     });
   }
+
+  // 3. Sort by client_tick ascending (nulls last)
+  items.sort((a, b) => {
+    if (a.tick == null) return 1;
+    if (b.tick == null) return -1;
+    return a.tick - b.tick;
+  });
+
+  // 4. Flatten: each item → image (if any) then text
+  const content = [];
+  for (const item of items) {
+    if (item.shot != null) {
+      content.push({ type: "image", data: item.shot, mimeType: "image/png" });
+    }
+    if (item.text != null) {
+      content.push({ type: "text", text: item.text });
+    }
+  }
+
+  if (content.length === 0) {
+    content.push({ type: "text", text: "{}" });
+  }
+
   return { content };
 }
 
-// Shared envelope plumbing: pass through verbose and encode snap as deferredTick:screenShot pairs.
+// Shared envelope plumbing: pass through verbose and snapDeferredTicks as a single query param.
 // A snap extends the HTTP timeout (a client_tick is ~50 ms at nominal speed).
 function envelopeParams(args) {
   const params = {};
   if (args.verbose === true) params.verbose = "1";
 
-  // snap: array of {deferredTick, screenShot?} → comma-separated "tick:flag" query param
-  const snap = args.snap;
-  let maxSnap = 0;
-  if (Array.isArray(snap) && snap.length > 0) {
-    const parts = [];
-    for (const entry of snap) {
-      if (entry == null || typeof entry !== "object") continue;
-      const tick = Number(entry.deferredTick);
-      if (!Number.isInteger(tick) || tick < 0 || tick > 1200) continue;
-      const ss = entry.screenShot === true ? 1 : 0;
-      parts.push(tick + ":" + ss);
-      if (tick > maxSnap) maxSnap = tick;
-    }
-    if (parts.length > 0) params.snap = parts.join(",");
-  }
+  // snapDeferredTicks: single integer defer in [0, 1200]
+  const ticks = Number(args.snapDeferredTicks);
+  const maxSnap = (Number.isInteger(ticks) && ticks >= 0 && ticks <= 1200) ? ticks : 0;
+  if (maxSnap > 0) params.snapDeferredTicks = String(maxSnap);
 
   return { params, maxSnap };
 }
