@@ -10,6 +10,39 @@
 # gradle.properties, settings.gradle).  When those change the cache is
 # automatically invalidated and the full pipeline reruns.
 #
+# ============================================================================
+# WHY THIS SCRIPT IS SHAPED THE WAY IT IS  (ghost-error history)
+# ============================================================================
+#
+# jdtls imports this project through Buildship (the Gradle importer), whose
+# "Project and External Dependencies" container includes Loom's client
+# source-set output: build/classes/java/client.  When that directory is
+# missing at container-resolution time, JDT attaches problem markers to the
+# project ROOT ("The container ... references non existing library ...").
+# Those markers are persisted in jdtls's workspace cache
+# (%APPDATA%\Roaming\jdtls-<hash>\.metadata\...) and restored on every
+# restart, so they survive `rm` of project files and window reloads.  The IDE
+# shows them as "ghost" errors: counted in the status bar, but expanding to
+# nothing in the Problems panel (a directory cannot be opened as a buffer).
+#
+# The fix for the ghost errors is to delete that whole jdtls-* workspace
+# directory while jdtls is stopped; the next start re-imports the project
+# from scratch and the markers are gone.
+#
+# Consequences baked into this script:
+#   - `clean` is always followed by `build -x test`: cleaning alone would
+#     leave the classpath-referenced output dirs missing while the IDE
+#     re-syncs; building right after guarantees they exist with real classes.
+#   - `build` and `genSources` are separate invocations: Gradle 9 rejects
+#     them combined (compileJava consumes genSources' output without a
+#     declared dependency).
+#   - There is deliberately NO mkdir "guard" for the output dirs: a fresh
+#     jdtls import does not produce the markers even when the dirs are
+#     missing — the ghost errors only ever came from the stale cache.
+#   - Every Gradle invocation uses --no-daemon so sequential runs never
+#     contend for the daemon lock.
+# ============================================================================
+#
 # To install:  cp scripts/post-checkout .git/hooks/post-checkout
 # =============================================================================
 
@@ -96,7 +129,15 @@ if [ -d "$SRC_DIR" ] && [ "$(find "$SRC_DIR" -name '*.java' 2>/dev/null | wc -l)
     echo "[1/4] Sources already present: $SRC_DIR ($(find "$SRC_DIR" -name '*.java' | wc -l) files)"
 else
     echo "[1/4] Generating Minecraft sources..."
-    ./gradlew clean
+    # Branches can target different Minecraft versions: clean + compile so no
+    # stale outputs from the previous branch survive, and the classpath dirs
+    # the IDE references (build/classes/java/client, build/resources/client)
+    # hold real classes instead of being absent.
+    ./gradlew clean --no-daemon
+    # build and genSources must stay separate invocations: Gradle 9 rejects
+    # them combined (compileJava consumes the genSources output without a
+    # declared dependency).
+    ./gradlew build -x test --no-daemon --quiet
     ./gradlew genSources --no-daemon --quiet
 fi
 
